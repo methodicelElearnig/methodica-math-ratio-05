@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 3</title>
+<link rel="stylesheet" href="styles.css?v=20260818b">
+</head>
+<body>
+<div id="app">
+
+  <!-- =========================================================
+       מסך 1 — מסך מעבר (TransitionScreen), data-screen="0", id="s0".
+       שקף 38 בתסריט. אותה תבנית בדיוק כמו מסך-המעבר הראשון של סיין 2
+       (.s0-content/.s0-line-1/2/3/.s0-avatar-wrap). ראו ARCHITECTURE.md.
+       ========================================================= -->
+  <section class="screen active" data-screen="0" id="s0">
+    <div class="s0-content">
+      <p class="s0-line-1">אין כמו תרגול לחיזוק הלמידה</p>
+      <p class="s0-line-2">3 שאלות</p>
+      <p class="s0-line-3">וכבר בהתחלה יש רמז! ענו נכון על 2 שאלות ומעלה כדי להתקדם.</p>
+      <div class="s0-avatar-wrap">
+        <video class="s0-avatar" id="s0-avatar" autoplay loop muted playsinline></video>
+      </div>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="bottom-bar-inner s0-bar">
+        <!-- Never shown on the first screen -->
+        <div class="bar-back"><button class="btn-back" id="s0-back" hidden>חזרה</button></div>
+        <div class="bar-actions"><button class="btn-continue" id="s0-continue" onclick="goTo(1)">אפשר להתחיל!</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       מסך 2 — מסך גלילה, "שאלה 1 מתוך 3" (קבוצת התקדמות A), data-screen="1",
+       id="s1". פרחי-שוקולד/יחס. פלייסהולדר-יישומון קבוע בצד שמאל
+       (427×636px — היישומון האינטראקטיבי האמיתי (רשת 50 משבצות,
+       צביעה לפי יחס) לא נבנה בשלב הזה, לפי החלטת-מוצר מפורשת — לא
+       ניחוש. ראו ARCHITECTURE.md § "פלייסהולדר-יישומון").
+       3 חלקים: א'+ב' בדיקה מעורבת (2 קלט מספרי + פיל כן/לא), ג' שאלה
+       חד-ברירה רגילה (SCQ). ========================================================= -->
+  <section class="screen" data-screen="1" id="s1">
+    <nav class="progress-question" id="s1-progress" aria-label="ניווט שאלות">
+      <div class="progress-question__item" data-question="1">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 1</span>
+      </div>
+      <div class="progress-question__connector" data-connector="1"></div>
+      <div class="progress-question__item" data-question="2">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 2</span>
+      </div>
+      <div class="progress-question__connector" data-connector="2"></div>
+      <div class="progress-question__item" data-question="3">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 3</span>
+      </div>
+    </nav>
+
+    <!-- פלייסהולדר-יישומון — ראה ARCHITECTURE.md להחלטה המלאה. class
+         ייעודי (.s1-widget-placeholder) כדי שיהיה קל לאתר ולהחליף. -->
+    <div class="s1-widget-placeholder">
+      <span>כאן ייכנס יישומון אינטראקטיבי: רשת של 50 משבצות, בחירת צבע שוקולד וצביעת משבצות לפי יחס נתון (ראה ARCHITECTURE.md).</span>
+    </div>
+
+    <!-- Gesture Hint (Cursor Scroll) — SELF-QA-lomda.md §7, מוגבל לפאנל-
+         הגלילה הימני בלבד (לא לכל רוחב המסך, כי הפלייסהולדר בצד שמאל
+         אינו גולל). -->
+    <div class="gesture-hint-scroll-wrap" id="s1-scroll-gesture" hidden>
+      <div class="gesture-hint">
+        <div class="gesture-hint-ring gesture-hint-ring--big"></div>
+        <div class="gesture-hint-ring gesture-hint-ring--small"></div>
+        <img class="gesture-hint-hand" src="assets/images/gesture-hand-cursor.svg" alt="">
+      </div>
+    </div>
+
+    <div class="s1-scroll-area" id="s1-scroll-area">
+    <div class="s1-scroll-inner">
+      <p class="scroll-intro-text">1. רינה הכינה פרחי שוקולד משני סוגים: שוקולד לבן ושוקולד מריר. היא רצתה לסדר אותם בתבנית עם 50 שקעים. היעזרו ביישומון, בחרו סוג שוקולד, וצבעו את המשבצות בהתאם ליחס הנדרש בכל סעיף, וענו על השאלות.</p>
+
+      <div class="s1-part" id="s1-part-1">
+        <p class="s1-body">א. היחס בין מספר פרחי השוקולד המריר למספר פרחי השוקולד הלבן הוא 9 : 1.</p>
+        <div class="viq-answers">
+          <div class="viq-answer-row">
+            <span class="viq-answer-label">מספר פרחי השוקולד הלבנים בתבנית</span>
+            <input class="viq-input" id="s1-p1-white" type="number" inputmode="numeric" dir="ltr" placeholder=" " aria-label="מספר פרחי שוקולד לבנים, סעיף א" oninput="s1MixOnInput('p1')">
+          </div>
+          <div class="viq-answer-row">
+            <span class="viq-answer-label">מספר פרחי השוקולד המריר בתבנית</span>
+            <input class="viq-input" id="s1-p1-dark" type="number" inputmode="numeric" dir="ltr" placeholder=" " aria-label="מספר פרחי שוקולד מריר, סעיף א" oninput="s1MixOnInput('p1')">
+          </div>
+          <div class="viq-answer-row">
+            <span class="viq-answer-label">האם נשארו שקעים ריקים?</span>
+            <div class="s1-yn-group" role="radiogroup" aria-label="בחירת כן או לא">
+              <div class="scq-opt s1-yn-opt" role="radio" aria-checked="false" tabindex="0" id="s1-p1-yes" data-id="yes" onclick="s1MixSelectYN('p1','yes')">
+                <span class="scq-opt-text">כן</span><span class="scq-radio"></span>
+              </div>
+              <div class="scq-opt s1-yn-opt" role="radio" aria-checked="false" tabindex="0" id="s1-p1-no" data-id="no" onclick="s1MixSelectYN('p1','no')">
+                <span class="scq-opt-text">לא</span><span class="scq-radio"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="btn-continue s3-inline-btn" id="s1-p1-check" disabled onclick="s1MixCheck('p1')">צדקתי?</button>
+        <div id="s1-p1-feedbox" class="scq-fb-box is-static">
+          <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
+          <p class="scq-fb-body"></p>
+        </div>
+      </div>
+
+      <!-- ⚠️ תוקן (20.08.2026, לפי בקשה מפורשת: "התוכן לא יעלה
+           בהדרגתיות") — הוסר hidden, כל שלושת החלקים גלויים תמיד. -->
+      <div class="s1-part" id="s1-part-2">
+        <p class="s1-body">ב. כעת היחס בין מספר פרחי השוקולד המריר למספר פרחי השוקולד הלבן הוא 3 : 1.</p>
+        <div class="viq-answers">
+          <div class="viq-answer-row">
+            <span class="viq-answer-label">מספר פרחי השוקולד הלבנים בתבנית</span>
+            <input class="viq-input" id="s1-p2-white" type="number" inputmode="numeric" dir="ltr" placeholder=" " aria-label="מספר פרחי שוקולד לבנים, סעיף ב" oninput="s1MixOnInput('p2')">
+          </div>
+          <div class="viq-answer-row">
+            <span class="viq-answer-label">מספר פרחי השוקולד המריר בתבנית</span>
+            <input class="viq-input" id="s1-p2-dark" type="number" inputmode="numeric" dir="ltr" placeholder=" " aria-label="מספר פרחי שוקולד מריר, סעיף ב" oninput="s1MixOnInput('p2')">
+          </div>
+          <div class="viq-answer-row">
+            <span class="viq-answer-label">האם נשארו שקעים ריקים?</span>
+            <div class="s1-yn-group" role="radiogroup" aria-label="בחירת כן או לא">
+              <div class="scq-opt s1-yn-opt" role="radio" aria-checked="false" tabindex="0" id="s1-p2-yes" data-id="yes" onclick="s1MixSelectYN('p2','yes')">
+                <span class="scq-opt-text">כן</span><span class="scq-radio"></span>
+              </div>
+              <div class="scq-opt s1-yn-opt" role="radio" aria-checked="false" tabindex="0" id="s1-p2-no" data-id="no" onclick="s1MixSelectYN('p2','no')">
+                <span class="scq-opt-text">לא</span><span class="scq-radio"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="btn-continue s3-inline-btn" id="s1-p2-check" disabled onclick="s1MixCheck('p2')">צדקתי?</button>
+        <div id="s1-p2-feedbox" class="scq-fb-box is-static">
+          <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
+          <p class="scq-fb-body"></p>
+        </div>
+      </div>
+
+      <div class="s1-part" id="s1-part-3">
+        <p class="s1-body">ג. רונית טוענת שכאשר היחס בין מספר פרחי השוקולד המריר למספר פרחי השוקולד הלבן הוא 3 : 1, אפשר לחשב מראש כמה פרחי שוקולד נקבל מכל סוג. מספר פרחי השוקולד הלבן הוא 50 · (1/4) = 12.5. מאחר שלא ייתכן לקבל חצי פרח שוקולד, יישארו לנו שקעים ריקים.</p>
+        <p class="scq-qtext-em">האם רונית צודקת?</p>
+        <div class="scq-answers" role="radiogroup" aria-label="אפשרויות תשובה">
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="a" onclick="scqSelect('s1p3','a')">
+            <span class="scq-opt-text">כן</span>
+            <span class="scq-radio"></span>
+          </div>
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="b" onclick="scqSelect('s1p3','b')">
+            <span class="scq-opt-text">לא</span>
+            <span class="scq-radio"></span>
+          </div>
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="c" onclick="scqSelect('s1p3','c')">
+            <span class="scq-opt-text">אי אפשר לדעת</span>
+            <span class="scq-radio"></span>
+          </div>
+        </div>
+        <button class="btn-continue s3-inline-btn" id="s1-p3-check" disabled onclick="scqCheck('s1p3')">צדקתי?</button>
+        <div id="s1-p3-feedbox" class="scq-fb-box is-static">
+          <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
+          <p class="scq-fb-body"></p>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <!-- אין .btn-hint במסך הזה: לא נמצא טקסט-רמז מפורש בתסריט (שקפים
+         39-41), אותו ממצא שכבר תועד בסיינים 1+2 לשאלות דומות. -->
+    <div class="bottom-bar">
+      <div class="bottom-bar-inner">
+        <div class="bar-back"><button class="btn-back" id="s1-back" onclick="goTo(0)">חזרה</button></div>
+        <div class="bar-actions"><button class="btn-continue" id="s1-continue" disabled onclick="goTo(2)">המשך</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       מסך 3 — מסך סטטי (לא גלילה), "שאלה 2 מתוך 3" (קבוצת התקדמות A),
+       data-screen="2", id="s2". גיאומטריית זוויות (angle-diagram-cd.png,
+       490×250 בפועל) + 4 טענות נכון/לא נכון. אין רמז — לא נמצא טקסט-
+       רמז מפורש בתסריט (שקף 42).
+       ========================================================= -->
+  <section class="screen" data-screen="2" id="s2">
+    <nav class="progress-question" id="s2-progress" aria-label="ניווט שאלות">
+      <div class="progress-question__item" data-question="1">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 1</span>
+      </div>
+      <div class="progress-question__connector" data-connector="1"></div>
+      <div class="progress-question__item" data-question="2">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 2</span>
+      </div>
+      <div class="progress-question__connector" data-connector="2"></div>
+      <div class="progress-question__item" data-question="3">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 3</span>
+      </div>
+    </nav>
+
+    <div class="s2-static-wrap">
+      <div class="scq-question">
+        <div class="scq-text-col">
+          <div class="scq-qtext-body">
+            <p class="scq-qbody">2. בסרטוט נתונה ∢ACB וקטע CD היוצא מקודקוד הזווית ומחלק אותה לשתי זוויות α ו-β. היחס בין α ל-β הוא 7 : 2.</p>
+            <p class="scq-qtext-em">סמנו את המשפטים הנכונים:</p>
+          </div>
+          <div class="tf-rows" id="s2-rows">
+            <div class="tf-row" id="s2-row-1">
+              <div class="tf-stmt">
+                <span class="tf-num">1.</span>
+                <span class="tf-text">זוויות α ו-β הן זוויות קודקודיות ולכן הן זוויות שוות.</span>
+              </div>
+              <div class="tf-btns">
+                <button class="tf-btn" id="s2-r1-true" onclick="s2P1Select(1,'true')">נכון</button>
+                <button class="tf-btn" id="s2-r1-false" onclick="s2P1Select(1,'false')">לא נכון</button>
+              </div>
+            </div>
+            <div class="tf-row" id="s2-row-2">
+              <div class="tf-stmt">
+                <span class="tf-num">2.</span>
+                <span class="tf-text">גודלה של זווית α הוא 40°.</span>
+              </div>
+              <div class="tf-btns">
+                <button class="tf-btn" id="s2-r2-true" onclick="s2P1Select(2,'true')">נכון</button>
+                <button class="tf-btn" id="s2-r2-false" onclick="s2P1Select(2,'false')">לא נכון</button>
+              </div>
+            </div>
+            <div class="tf-row" id="s2-row-3">
+              <div class="tf-stmt">
+                <span class="tf-num">3.</span>
+                <span class="tf-text">גודלה של זווית β הוא 180° · 7/9 = 140°.</span>
+              </div>
+              <div class="tf-btns">
+                <button class="tf-btn" id="s2-r3-true" onclick="s2P1Select(3,'true')">נכון</button>
+                <button class="tf-btn" id="s2-r3-false" onclick="s2P1Select(3,'false')">לא נכון</button>
+              </div>
+            </div>
+            <div class="tf-row" id="s2-row-4">
+              <div class="tf-stmt">
+                <span class="tf-num">4.</span>
+                <span class="tf-text">זוויות α ו-β הן זוויות צמודות ולכן סכומן הוא 180°.</span>
+              </div>
+              <div class="tf-btns">
+                <button class="tf-btn" id="s2-r4-true" onclick="s2P1Select(4,'true')">נכון</button>
+                <button class="tf-btn" id="s2-r4-false" onclick="s2P1Select(4,'false')">לא נכון</button>
+              </div>
+            </div>
+          </div>
+          <button class="btn-continue s3-inline-btn" id="s2-check" disabled onclick="s2P1Check()">צדקתי?</button>
+        </div>
+        <!-- התמונה שנייה ב-DOM כדי לרדת פיזית שמאלה תחת RTL אמיתי,
+             לפי אותה מוסכמה בדיוק כמו scq-img בסיין 2. -->
+        <div class="scq-img scq-img--wide-diagram">
+          <div class="scq-img-inner scq-img-inner--diagram">
+            <img src="assets/images/angle-diagram-cd.png" alt="שרטוט זווית ACB עם קטע CD היוצא מקודקוד הזווית, מחלק אותה לזוויות α ו-β">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="s2-feedbox" class="scq-fb-box">
+      <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
+      <p class="scq-fb-body"></p>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="bottom-bar-inner">
+        <div class="bar-back"><button class="btn-back" id="s2-back" onclick="goTo(1)">חזרה</button></div>
+        <div class="bar-actions"><button class="btn-continue" id="s2-continue" disabled onclick="goTo(3)">המשך</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       מסך 4 — מסך גלילה, "שאלה 3 מתוך 3" (קבוצת התקדמות A), data-screen="3",
+       id="s3". "כרטיס הזהב" של פורים. תמונה קבועה (purim-gold-tickets.jpeg)
+       מוצגת בחלקים א'/ב' בלבד — מוסתרת לגמרי בחלק ג' (onDone של חלק ב',
+       ב-JS, לא CSS). 3 חלקים: א' VIQ זוגי (יחס "___ : ___"), ב' SCQ
+       רגיל (4 אפשרויות), ג' **MCQ** (בחירה מרובה, 2 מתוך 3 — המימוש
+       הראשון בפרויקט של הרכיב הזה). אין רמז.
+       ========================================================= -->
+  <section class="screen" data-screen="3" id="s3">
+    <nav class="progress-question" id="s3-progress" aria-label="ניווט שאלות">
+      <div class="progress-question__item" data-question="1">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 1</span>
+      </div>
+      <div class="progress-question__connector" data-connector="1"></div>
+      <div class="progress-question__item" data-question="2">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 2</span>
+      </div>
+      <div class="progress-question__connector" data-connector="2"></div>
+      <div class="progress-question__item" data-question="3">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 3</span>
+      </div>
+    </nav>
+
+    <div class="gesture-hint-scroll-wrap" id="s3-scroll-gesture" hidden>
+      <div class="gesture-hint">
+        <div class="gesture-hint-ring gesture-hint-ring--big"></div>
+        <div class="gesture-hint-ring gesture-hint-ring--small"></div>
+        <img class="gesture-hint-hand" src="assets/images/gesture-hand-cursor.svg" alt="">
+      </div>
+    </div>
+
+    <!-- id נוסף (מעבר ל-class) כדי ש-s3HidePhoto() ב-script.js יוכל
+         להסתיר את כל העמודה בבת-אחת בחלק ג'. -->
+    <div class="s3-fixed-images" id="s3-fixed-images">
+      <div class="s3-img-frame">
+        <img src="assets/images/purim-gold-tickets.jpeg" alt="כרטיסי זהב של הגרלת פורים">
+      </div>
+    </div>
+
+    <div class="s3-scroll-area" id="s3-scroll-area">
+    <div class="s3-scroll-inner">
+      <p class="scroll-intro-text">3. במסיבת פורים של תנועת הנוער, רועי ועינת רצו לקנות יחד את "כרטיס הזהב" הגדול שמחירו 12 שקלים, כדי להגדיל את הסיכוי שלהם לזכות בפרס. הם אספו את המטבעות שהיו להם בכיס: רועי מצא 5 שקלים. עינת מצאה 7 שקלים.</p>
+
+      <div class="s3-part" id="s3-part-1">
+        <p class="scq-qtext-em">א. מהו היחס בין ההשקעה של רועי לבין ההשקעה של עינת?</p>
+        <div class="viq-answers">
+          <div class="viq-answer-row">
+            <span class="viq-coord" dir="ltr">
+              <input class="viq-input viq-input--sm" id="s3-p1-a" type="number" inputmode="numeric" dir="ltr" placeholder=" " aria-label="חלק ראשון ביחס (רועי)" oninput="s3P1OnInput()">
+              :
+              <input class="viq-input viq-input--sm" id="s3-p1-b" type="number" inputmode="numeric" dir="ltr" placeholder=" " aria-label="חלק שני ביחס (עינת)" oninput="s3P1OnInput()">
+            </span>
+          </div>
+        </div>
+        <button class="btn-continue s3-inline-btn" id="s3-p1-check" disabled onclick="s3P1Check()">צדקתי?</button>
+        <div id="s3-p1-feedbox" class="scq-fb-box is-static">
+          <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
+          <p class="scq-fb-body"></p>
+        </div>
+      </div>
+
+      <!-- ⚠️ תוקן (20.08.2026, לפי בקשה מפורשת) — הוסר hidden, כל
+           שלושת החלקים גלויים תמיד. -->
+      <div class="s3-part" id="s3-part-2">
+        <p class="s3-body">רועי ועינת זכו בפרס הגדול של 120 שקלים!!! עכשיו הם רוצים לחלק את 120 השקלים בצורה הוגנת, לפי יחס הכסף שכל אחד מהם שילם בקניה.</p>
+        <p class="scq-qtext-em">ב. סמנו את התשובה הנכונה:</p>
+        <div class="scq-answers" role="radiogroup" aria-label="אפשרויות תשובה">
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="a" onclick="s3P2Select('a')">
+            <span class="scq-opt-text">רועי יקבל 50 שקלים ועינת תקבל 70 שקלים</span>
+            <span class="scq-radio"></span>
+          </div>
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="b" onclick="s3P2Select('b')">
+            <span class="scq-opt-text">רועי יקבל 60 שקלים ועינת תקבל 60 שקלים</span>
+            <span class="scq-radio"></span>
+          </div>
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="c" onclick="s3P2Select('c')">
+            <span class="scq-opt-text">רועי יקבל 70 שקלים ועינת תקבל 50 שקלים</span>
+            <span class="scq-radio"></span>
+          </div>
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="d" onclick="s3P2Select('d')">
+            <span class="scq-opt-text">רועי יקבל 20 שקלים ועינת תקבל 100 שקלים</span>
+            <span class="scq-radio"></span>
+          </div>
+        </div>
+        <button class="btn-continue s3-inline-btn" id="s3-p2-check" disabled onclick="s3P2Check()">צדקתי?</button>
+        <div id="s3-p2-feedbox" class="scq-fb-box is-static">
+          <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
+          <p class="scq-fb-body"></p>
+        </div>
+      </div>
+
+      <div class="s3-part" id="s3-part-3">
+        <p class="s3-body">ג. רועי הציע חלוקה אחרת: "מכיוון שזכינו ב-120 שקלים, בואו פשוט נתחלק חצי-בחצי, וכל אחד מאיתנו יקבל 60 שקלים". עינת אמרה שההצעה של רועי אינה הוגנת כלפיה.</p>
+        <p class="scq-qtext-em">סמנו את המשפטים הנכונים מתמטית:</p>
+        <div class="scq-answers" role="group" aria-label="אפשרויות תשובה (בחירה מרובה)">
+          <div class="scq-opt" role="checkbox" aria-checked="false" tabindex="0" data-id="a" onclick="mcqToggle('s3p3','a')">
+            <span class="scq-opt-text">ההצעה לא הוגנת כי עינת שילמה יותר כסף בקנייה, ולכן היא צריכה לקבל נתח גדול יותר מכספי הזכייה.</span>
+            <span class="scq-radio"></span>
+          </div>
+          <div class="scq-opt" role="checkbox" aria-checked="false" tabindex="0" data-id="b" onclick="mcqToggle('s3p3','b')">
+            <span class="scq-opt-text">ההצעה הוגנת, מכיוון שברגע שיש זכייה משותפת, לא משנה כמה כל אחד שילם בהתחלה – הפרס תמיד שייך לשני השותפים באופן שווה לחלוטין.</span>
+            <span class="scq-radio"></span>
+          </div>
+          <div class="scq-opt" role="checkbox" aria-checked="false" tabindex="0" data-id="c" onclick="mcqToggle('s3p3','c')">
+            <span class="scq-opt-text">ההצעה לא הוגנת, כי היחס בין הכספים שהם שילמו הוא 5 : 7, והסכומים 60 ו-60 מייצגים יחס שונה של 1 : 1.</span>
+            <span class="scq-radio"></span>
+          </div>
+        </div>
+        <button class="btn-continue s3-inline-btn" id="s3-p3-check" disabled onclick="mcqCheck('s3p3')">צדקתי?</button>
+        <div id="s3-p3-feedbox" class="scq-fb-box is-static">
+          <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
+          <p class="scq-fb-body"></p>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="bottom-bar-inner">
+        <div class="bar-back"><button class="btn-back" id="s3-back" onclick="goTo(2)">חזרה</button></div>
+        <div class="bar-actions"><button class="btn-continue" id="s3-continue" disabled onclick="goTo(4)">המשך</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       מסך 5 — מסך מעבר (TransitionScreen), data-screen="4", id="s4".
+       שקף 46 בתסריט. משתמש-חוזר ב-.s0-content הגנרי — "יופי של
+       עבודה!" (המשפט הבולט) ממופה ל-.s0-line-2 מטעמי משקל-חזותי (אין
+       "מספר גדול" במקור, אבל class זה נבחר לצורך המשקל בלבד — ראו
+       ARCHITECTURE.md § "מסך 5" לתיעוד שיקול-הדעת). כפתור "בואו נתחיל!"
+       (לא "אפשר להתחיל!" — כדי לא לחזור מילה-במילה על כפתור מסך 1;
+       שיקול-דעת, אין ניסוח-כפתור מפורש בתסריט לשקף הזה — ראו
+       ARCHITECTURE.md).
+       ========================================================= -->
+  <section class="screen" data-screen="4" id="s4">
+    <div class="s0-content">
+      <p class="s0-line-1">יופי של עבודה!</p>
+      <p class="s0-line-2">הנה עוד 2 תרגילים ברמת קושי גבוהה יותר.
+</p>
+      <p class="s0-line-3">קטן עליכם!</p>
+      <div class="s0-avatar-wrap">
+        <video class="s0-avatar" id="s4-avatar" autoplay loop muted playsinline></video>
+      </div>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="bottom-bar-inner">
+        <div class="bar-back"><button class="btn-back" id="s4-back" onclick="goTo(3)">חזרה</button></div>
+        <div class="bar-actions"><button class="btn-continue" id="s4-continue" onclick="goTo(5)">בואו נתחיל!</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       מסך 6 — מסך גלילה, קבוצת-התקדמות **נפרדת** (practiceProgress2,
+       2 פריטים בלבד: "שאלה 1"=סעיפים א'+ב' יחד, "שאלה 2"=סעיף 3),
+       data-screen="5", id="s5". שעות-עבודה/חלוקת-כסף. תמונה קבועה
+       מתחלפת בכל חלק (לא מוסתרת כמו במסך 4): boy-washing-car.jpeg
+       (ברירת-מחדל, חלק א') → girl-washing-car.jpeg (חלק ב') →
+       lottery-kiosk-siblings.jpeg (חלק 3), דרך s5SetPhoto(). מסך אחרון
+       בסיין — כפתור "המשך" הראשי הוא no-op בטוח (goTo(6),
+       TOTAL_SCREENS=6 → תקף רק 0-5), בדיוק לפי המוסכמה המתועדת כבר
+       בסיין 1 (#s6-continue→goTo(7)) ובסיין 2 (#s4-continue→goTo(5)).
+       ========================================================= -->
+  <section class="screen" data-screen="5" id="s5">
+    <nav class="progress-question" id="s5-progress" aria-label="ניווט שאלות">
+      <div class="progress-question__item" data-question="1">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 1</span>
+      </div>
+      <div class="progress-question__connector" data-connector="1"></div>
+      <div class="progress-question__item" data-question="2">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 2</span>
+      </div>
+    </nav>
+
+    <div class="gesture-hint-scroll-wrap" id="s5-scroll-gesture" hidden>
+      <div class="gesture-hint">
+        <div class="gesture-hint-ring gesture-hint-ring--big"></div>
+        <div class="gesture-hint-ring gesture-hint-ring--small"></div>
+        <img class="gesture-hint-hand" src="assets/images/gesture-hand-cursor.svg" alt="">
+      </div>
+    </div>
+
+    <!-- תמונה בודדת, מוחלפת ב-JS (s5SetPhoto) בכל חלק — לא שלוש
+         תמונות מוערמות כמו s3-fixed-images במסך 4 (שם שתי התמונות
+         נשארות קבועות; כאן מתחלפת תמונה אחת). -->
+    <div class="s3-fixed-images" id="s5-fixed-images">
+      <div class="s3-img-frame">
+        <img id="s5-fixed-img" src="assets/images/boy-washing-car.jpeg" alt="ילד שוטף מכונית">
+      </div>
+    </div>
+
+    <div class="s3-scroll-area" id="s5-scroll-area">
+    <div class="s3-scroll-inner">
+      <div class="s3-part" id="s5-part-1">
+        <p class="scroll-intro-text">נעמי ויוני עבדו יחד בשטיפת מכוניות בשכונה. נעמי עבדה 2 שעות ויוני עבד 5 שעות. הם החליטו לחלק את הכסף שירוויחו לפי היחס בין מספר השעות שעבד כל אחד (כלומר יחס של 2 : 5).</p>
+        <p class="scq-qtext-em">א. השלימו את המשפטים הבאים: אם נועה ויוני ירוויחו יחד 210 ש"ח, הם יחלקו את הכסף ביניהם בצורה הבאה:</p>
+        <div class="viq-answers">
+          <div class="viq-answer-row">
+            <span class="viq-answer-label">נועה תקבל ___ ש"ח</span>
+            <input class="viq-input" id="s5-p1-a" type="number" inputmode="numeric" dir="ltr" placeholder=" " aria-label="סכום שנועה תקבל" oninput="s5P1OnInput()">
+          </div>
+          <div class="viq-answer-row">
+            <span class="viq-answer-label">יוני יקבל ___ ש"ח</span>
+            <input class="viq-input" id="s5-p1-b" type="number" inputmode="numeric" dir="ltr" placeholder=" " aria-label="סכום שיוני יקבל" oninput="s5P1OnInput()">
+          </div>
+        </div>
+        <button class="btn-continue s3-inline-btn" id="s5-p1-check" disabled onclick="s5P1Check()">צדקתי?</button>
+        <div id="s5-p1-feedbox" class="scq-fb-box is-static">
+          <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
+          <p class="scq-fb-body"></p>
+        </div>
+      </div>
+
+      <!-- ⚠️ תוקן (20.08.2026, לפי בקשה מפורשת) — הוסר hidden, כל
+           שלושת החלקים גלויים תמיד. -->
+      <div class="s3-part" id="s5-part-2">
+        <p class="s3-body">בשבוע לאחר מכן שוב עבדו נעמי ויוני בשטיפת מכוניות. היחס בין מספר שעות העבודה היה 2:5. הפעם הם הרוויחו סכום כסף חדש ולא ידוע. יוני חישב ומצא כי חלקו ברווחים היה 100 ש"ח.</p>
+        <p class="scq-qtext-em">ב. איזה מהמשפטים הבאים מתאר נכונה את החלוקה ביניהם?</p>
+        <div class="scq-answers" role="radiogroup" aria-label="אפשרויות תשובה">
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="a" onclick="s5P2Select('a')">
+            <span class="scq-opt-text">נועה ויוני הרוויחו יחד 140 ש"ח, ונועה קיבלה 40 ש"ח</span>
+            <span class="scq-radio"></span>
+          </div>
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="b" onclick="s5P2Select('b')">
+            <span class="scq-opt-text">נועה קיבלה 50 ש"ח, כי היא תמיד מקבלת מחצית מהסכום של יוני</span>
+            <span class="scq-radio"></span>
+          </div>
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="c" onclick="s5P2Select('c')">
+            <span class="scq-opt-text">נועה ויוני הרוויחו יחד 200 ש"ח, ויוני קיבל 100 ש"ח.</span>
+            <span class="scq-radio"></span>
+          </div>
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="d" onclick="s5P2Select('d')">
+            <span class="scq-opt-text">נועה קיבלה 60 ש"ח, והסכום הכולל שהרוויחו יחד היה 210 ש"ח</span>
+            <span class="scq-radio"></span>
+          </div>
+        </div>
+        <button class="btn-continue s3-inline-btn" id="s5-p2-check" disabled onclick="s5P2Check()">צדקתי?</button>
+        <div id="s5-p2-feedbox" class="scq-fb-box is-static">
+          <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
+          <p class="scq-fb-body"></p>
+        </div>
+      </div>
+
+      <div class="s3-part" id="s5-part-3">
+        <p class="s3-body">2. מיה ועומר זכו ב-90 ש"ח, האם הם יכולים לחלק את הכסף ביחס הנתון (5 : 2) כך שכל אחד מהם יקבל כסף בשטרות?</p>
+        <div class="scq-answers" role="radiogroup" aria-label="אפשרויות תשובה">
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="a" onclick="s5P3Select('a')">
+            <span class="scq-opt-text">כן</span>
+            <span class="scq-radio"></span>
+          </div>
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="b" onclick="s5P3Select('b')">
+            <span class="scq-opt-text">לא</span>
+            <span class="scq-radio"></span>
+          </div>
+        </div>
+        <button class="btn-continue s3-inline-btn" id="s5-p3-check" disabled onclick="s5P3Check()">צדקתי?</button>
+        <div id="s5-p3-feedbox" class="scq-fb-box is-static">
+          <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
+          <p class="scq-fb-body"></p>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <!-- ⚠️ goTo(6): TOTAL_SCREENS=6 (אינדקסים תקפים 0-5) — no-op בטוח
+         לפי ה-bounds guard של goTo() (אין עדיין מסך 7 בדיסק), לא קריסה.
+         זהה למוסכמה המתועדת כבר בסיין 1 (#s6-continue→goTo(7)) ובסיין 2
+         (#s4-continue→goTo(5)) — יעד-ניווט אמיתי לתחילת-הסיין-הבא/מסך-
+         סיום דורש אישור-מוצר, לא הומצא כאן. -->
+    <div class="bottom-bar">
+      <div class="bottom-bar-inner">
+        <div class="bar-back"><button class="btn-back" id="s5-back" onclick="goTo(4)">חזרה</button></div>
+        <div class="bar-actions"><button class="btn-continue" id="s5-continue" disabled onclick="goTo(6)">המשך</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GLOBAL — Report/Issue button (.flag-btn) ============
+       רכיב גלובלי יחיד, מחוץ לכל .screen, ישירות ב-#app, לפי
+       720-templates skill (_global-components.md). ויזואלי בלבד — עדיין
+       בלי התנהגות קליק (ייתכן שיחובר ל-LMS בהמשך). -->
+  <button class="flag-btn" aria-label="מצאתם בעיה?" title="מצאתם בעיה?">
+    <span class="flag-btn-icon" aria-hidden="true">
+      <img class="flag-btn-icon-default" src="assets/images/btn-flag-default.png" alt="">
+      <img class="flag-btn-icon-hover" src="assets/images/btn-flag-hover.png" alt="">
+    </span>
+    <span class="flag-btn-label">מצאתם בעיה?</span>
+  </button>
+
+  <!-- ============ GLOBAL — Image zoom modal ============
+       מופע-משותף יחיד לכל היחידה, מחוץ לכל .screen, ישירות ב-#app, לפי
+       מפרט 720-templates _global-components.md ("Image zoom"). אין
+       עדיין תמונת-תוכן שמפעילה אותו בסיין הזה (לא נתבקש/לא נדרש). -->
+  <div id="img-zoom-modal" class="img-zoom-modal hidden" aria-hidden="true" data-zoom-close="true">
+    <div class="img-zoom-modal__panel" role="dialog" aria-modal="true" aria-label="הגדלת תמונה">
+      <button class="img-zoom-close" type="button" data-zoom-close="true" aria-label="סגירת הגדלת תמונה">
+        <svg class="img-zoom-close__icon" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 1L14 14M14 1L1 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="img-zoom-modal__stage"></div>
+    </div>
+  </div>
+
+</div>
+<script src="script.js?v=20260818b"></script>
+</body>
+</html>
