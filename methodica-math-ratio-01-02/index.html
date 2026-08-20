@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 2</title>
+<link rel="stylesheet" href="styles.css?v=20260817b">
+</head>
+<body>
+<div id="app">
+
+  <!-- =========================================================
+       מסך 1 — מסך מעבר (TransitionScreen), data-screen="0", id="s0"
+       שקף 28 בתסריט ("מסך הזנקה"). שלוש רמות-טיפוגרפיה נפרדות (לא שתי
+       שורות אחידות כמו במסך-המעבר של סיין 1) — כותרת-מספר גדולה
+       ("4 שאלות") באמצע, מבוססת על מוקאפ-השקף עצמו. כפתור-המשך מקבל
+       תווית מהתסריט ("אפשר להתחיל!"). ראו ARCHITECTURE.md § "מסך 1".
+       ========================================================= -->
+  <section class="screen active" data-screen="0" id="s0">
+    <div class="s0-content">
+      <p class="s0-line-1">סיימנו את שלב הלימוד, נעבור לתרגול ונענה על</p>
+      <p class="s0-line-2">4 שאלות</p>
+      <p class="s0-line-3">צריך לענות נכון על 3 שאלות לפחות.</p>
+      <div class="s0-avatar-wrap">
+        <video class="s0-avatar" id="s0-avatar" autoplay loop muted playsinline></video>
+      </div>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="bottom-bar-inner s0-bar">
+        <div class="bar-actions"><button class="btn-continue" id="s0-continue" onclick="goTo(1)">אפשר להתחיל!</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       מסך 2 — ValueInputQuestion + פלייסהולדר-תמונה, data-screen="1",
+       id="s1". שקף 29, "שאלה 1 (סעיפים א'+ב') מתוך 4". פריסה מועתקת
+       ממסך 11 (data-screen="10", id="s10") של methodica-science-mass-
+       measure-03-01 (תמונה+טקסט+סרגל התקדמות) — לפי בקשה מפורשת,
+       השאלה החד-ברירה של המקור הוחלפה בשאלת-קלט (VIQ, כמו מסך 6 באותה
+       לומדה). תמונת המקור (צילום-מסך טלפון) הוחלפה בפלייסהולדר, לפי
+       בקשה מפורשת. אין רמז — לא נמצא טקסט-רמז מפורש בתסריט (הכפתור
+       מופיע במוקאפ אבל בלי תוכן), ראו ARCHITECTURE.md.
+       ========================================================= -->
+  <section class="screen" data-screen="1" id="s1">
+    <nav class="progress-question" id="s1-progress" aria-label="ניווט שאלות">
+      <div class="progress-question__item" data-question="1">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 1</span>
+      </div>
+      <div class="progress-question__connector" data-connector="1"></div>
+      <div class="progress-question__item" data-question="2">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 2</span>
+      </div>
+      <div class="progress-question__connector" data-connector="2"></div>
+      <div class="progress-question__item" data-question="3">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 3</span>
+      </div>
+      <div class="progress-question__connector" data-connector="3"></div>
+      <div class="progress-question__item" data-question="4">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 4</span>
+      </div>
+    </nav>
+
+    <div class="scq-scroll-outer">
+    <div class="scq-question">
+      <div class="scq-text-col">
+        <div class="scq-qtext-body">
+          <p class="scq-qbody">1. בטורניר הגיימינג השנתי של בית הספר, קבוצה של 30 תלמידים פתחה ערוץ משותף ברשת כדי להעלות סרטונים מהטורניר.<br>התלמידים חילקו ביניהם את העבודה לשני תפקידים בלבד: חלקם שחקנים שיצלמו את עצמם משחקים וחלקם עורכי וידאו.<br>על כל 3 עורכי וידאו יש 7 שחקנים.</p>
+          <p class="scq-qtext-em">ענו על השאלות הבאות:</p>
+        </div>
+        <div class="viq-answers">
+          <div class="viq-answer-row">
+            <span class="viq-answer-label">א. כמה תלמידים בערוץ הם שחקנים?</span>
+            <input class="viq-input" id="s1-a" type="number" inputmode="numeric" dir="ltr" placeholder=" " aria-label="תשובה לסעיף א" oninput="s1OnInput()">
+          </div>
+          <div class="viq-answer-row">
+            <span class="viq-answer-label">ב. כמה תלמידים בערוץ הם עורכי וידאו?</span>
+            <input class="viq-input" id="s1-b" type="number" inputmode="numeric" dir="ltr" placeholder=" " aria-label="תשובה לסעיף ב" oninput="s1OnInput()">
+          </div>
+        </div>
+      </div>
+      <!-- ⚠️ תוקן (18.08.2026) — התמונה חייבת להיות שנייה ב-DOM (לא
+           ראשונה), כדי שתחת RTL אמיתי (flex-direction:row, בלי שום
+           direction override) היא תרד פיזית שמאלה והטקסט ימינה — לפי
+           720-templates skill § SingleChoiceQuestion.md "Left: .scq-img
+           ... Right: question text" (המרקאבה הראשונית הפוכה בטעות). -->
+      <!-- ⚠️ הוחלף (20.08.2026) — נכס אמיתי סופק (פון.jpg), במקום
+           פלייסהולדר. לפי בקשה מפורשת ("לא צריך שתקיף אותה במסגרת") —
+           .scq-img-inner (בלי border משלה, רק overflow:hidden לקצוות
+           מעוגלים) היא כבר הדפוס הבלתי-ממוסגר הקיים בפרויקט (זהה
+           לדיאגרמת-הזווית במסך 4) — לא הומצא וריאנט חדש. -->
+      <div class="scq-img">
+        <div class="scq-img-inner">
+          <img src="assets/images/פון.jpg" alt="צילום מסך של ערוץ הגיימינג">
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <!-- ⚠️ תוקן שוב (20.08.2026, לפי בקשה מפורשת: "מסך 2 סיין 2 הוא
+         לא מסך גלילה") — .scq-scroll-outer לא היה מוגדר בכלל ב-CSS,
+         כלומר לא הפעיל שום גלילה בפועל; ה-.is-static שהוחל כאן ב-
+         19.08.2026 הניח בטעות (לפי שם-המחלקה בלבד) שזה מסך-גלילה. הוחזר
+         להיות פופאפ-צף/גריר רגיל (כמו s2-feedbox בסיין 3) — הועבר חזרה
+         להיות ילד-ישיר של .screen (לא מקונן ב-.scq-text-col), כדי
+         שה-offsetParent של הגרירה יהיה הקנבס המלא, לא עמודת-הטקסט
+         הצרה. -->
+    <div id="s1-feedbox" class="scq-fb-box">
+      <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
+      <p class="scq-fb-body"></p>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="bottom-bar-inner">
+        <div class="bar-back"><button class="btn-back" id="s1-back" onclick="goTo(0)">חזרה</button></div>
+        <div class="bar-actions"><button class="btn-continue" id="s1-check" disabled onclick="s1Check()">צדקתי?</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       מסך 3 — ValueInputQuestion + פלייסהולדר-תמונה, data-screen="2",
+       id="s2". שקף 30, "שאלה 2 מתוך 4". אותו מבנה בדיוק כמו מסך 2 —
+       הפעם שתי תשובות הן זוגות-קואורדינטות (A(x,y)/B(x,y)) המוטבעות
+       במשפט, לפי הערת-ההפקה "לשים מקום למילוי בתוך הסוגריים".
+       ========================================================= -->
+  <section class="screen" data-screen="2" id="s2">
+    <nav class="progress-question" id="s2-progress" aria-label="ניווט שאלות">
+      <div class="progress-question__item" data-question="1">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 1</span>
+      </div>
+      <div class="progress-question__connector" data-connector="1"></div>
+      <div class="progress-question__item" data-question="2">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 2</span>
+      </div>
+      <div class="progress-question__connector" data-connector="2"></div>
+      <div class="progress-question__item" data-question="3">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 3</span>
+      </div>
+      <div class="progress-question__connector" data-connector="3"></div>
+      <div class="progress-question__item" data-question="4">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 4</span>
+      </div>
+    </nav>
+
+    <div class="scq-scroll-outer">
+    <div class="scq-question">
+      <div class="scq-text-col">
+        <div class="scq-qtext-body">
+          <p class="scq-qbody">2. קבוצת תלמידים פתחה שידור חי ביוטיוב. בתחילת השידור, היו בצ'אט 30 משתתפים.<br>היחס בין מספר הבנים למספר הבנות היה 5:1.<br>לאורך זמן השידור, הצטרפו לצ'אט רק בנים, והיחס בין הבנים לבנות השתנה ל-1:1.<br>לפניכם ציר מספרים, ציר ה-X מייצג את מספר הבנים, ציר ה-Y מייצג את מספר הבנות.</p>
+          <p class="scq-qtext-em">השלימו את הנתונים בהתאם לגרף:</p>
+        </div>
+        <div class="viq-answers">
+          <div class="viq-answer-row viq-answer-row--coord">
+            <span class="viq-answer-label">א. נקודה A – מייצגת את מספר הבנים והבנות בצ'אט בתחילת השידור.</span>
+            <span class="viq-coord" dir="ltr">
+              A (
+              <input class="viq-input viq-input--sm" id="s2-a-x" type="number" inputmode="numeric" dir="ltr" placeholder=" " aria-label="נקודה A, ציר X" oninput="s2OnInput()">
+              ,
+              <input class="viq-input viq-input--sm" id="s2-a-y" type="number" inputmode="numeric" dir="ltr" placeholder=" " aria-label="נקודה A, ציר Y" oninput="s2OnInput()">
+              )
+            </span>
+          </div>
+          <div class="viq-answer-row viq-answer-row--coord">
+            <span class="viq-answer-label">ב. נקודה B – מייצגת את מספר הבנים והבנות בחצי השעה השנייה.</span>
+            <span class="viq-coord" dir="ltr">
+              B (
+              <input class="viq-input viq-input--sm" id="s2-b-x" type="number" inputmode="numeric" dir="ltr" placeholder=" " aria-label="נקודה B, ציר X" oninput="s2OnInput()">
+              ,
+              <input class="viq-input viq-input--sm" id="s2-b-y" type="number" inputmode="numeric" dir="ltr" placeholder=" " aria-label="נקודה B, ציר Y" oninput="s2OnInput()">
+              )
+            </span>
+          </div>
+        </div>
+      </div>
+      <!-- ⚠️ תוקן (18.08.2026) — אותו תיקון-סדר כמו מסך 2 (s1): התמונה/
+           הגרף חייבים להיות שניים ב-DOM כדי לרדת פיזית שמאלה תחת RTL
+           אמיתי. ⚠️ הוחלף (20.08.2026) — נכס אמיתי סופק ("גרף מסך
+           3.png"), אותו דפוס בלתי-ממוסגר (.scq-img-inner) כמו s1. -->
+      <div class="scq-img">
+        <div class="scq-img-inner">
+          <img src="assets/images/גרף מסך 3.png" alt="ציר מספרים המציג את מספר הבנים (ציר X) ומספר הבנות (ציר Y) בצ'אט">
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <!-- ⚠️ תוקן שוב (20.08.2026) — אותו תיקון בדיוק כמו s1-feedbox
+         למעלה: מסך זה אינו מסך-גלילה (.scq-scroll-outer בלי CSS
+         בפועל), הוחזר לפופאפ-צף/גריר רגיל, ילד-ישיר של .screen. -->
+    <div id="s2-feedbox" class="scq-fb-box">
+      <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
+      <p class="scq-fb-body"></p>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="bottom-bar-inner">
+        <div class="bar-back"><button class="btn-back" id="s2-back" onclick="goTo(1)">חזרה</button></div>
+        <div class="bar-actions"><button class="btn-continue" id="s2-check" disabled onclick="s2Check()">צדקתי?</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       מסך 4 — מסך גלילה, שאלה 3 מתוך 4, data-screen="3", id="s3".
+       שקפים 31-33, שלושה חלקים נחשפים בזה אחר זה: (1) מידע בלבד, ללא
+       שאלה; (2) שאלה חד-ברירה (רפרנס: מסך 19 סיין 1 יעד 11 — s18 שם);
+       (3) נכון/לא נכון, 3 טענות (רפרנס: תבנית tf-row, סיין 4 יעד 3
+       מסך 4). שתי תמונות קבועות בצד שמאל לאורך כל שלושת החלקים (לפי
+       בקשה מפורשת "אל תיגע בתמונות"): צילום-בניין אמיתי (חולץ מה-pptx
+       כ-picture shape מוטמע) + דיאגרמת-משולש (יוצאה מהשקף, PowerPoint
+       COM export + טרימינג). ראו ARCHITECTURE.md § "מסך 4".
+       ========================================================= -->
+  <section class="screen" data-screen="3" id="s3">
+    <nav class="progress-question" id="s3-progress" aria-label="ניווט שאלות">
+      <div class="progress-question__item" data-question="1">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 1</span>
+      </div>
+      <div class="progress-question__connector" data-connector="1"></div>
+      <div class="progress-question__item" data-question="2">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 2</span>
+      </div>
+      <div class="progress-question__connector" data-connector="2"></div>
+      <div class="progress-question__item" data-question="3">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 3</span>
+      </div>
+      <div class="progress-question__connector" data-connector="3"></div>
+      <div class="progress-question__item" data-question="4">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 4</span>
+      </div>
+    </nav>
+
+    <!-- Gesture Hint (Cursor Scroll) — SELF-QA-lomda.md §7. מוצג פעם
+         אחת בכניסה למסך, נעלם בגלילה אמיתית ראשונה. -->
+    <div class="gesture-hint-scroll-wrap" id="s3-scroll-gesture" hidden>
+      <div class="gesture-hint">
+        <div class="gesture-hint-ring gesture-hint-ring--big"></div>
+        <div class="gesture-hint-ring gesture-hint-ring--small"></div>
+        <img class="gesture-hint-hand" src="assets/images/gesture-hand-cursor.svg" alt="">
+      </div>
+    </div>
+
+    <div class="s3-fixed-images">
+      <div class="s3-img-frame">
+        <img src="assets/images/triangle-roof-building.jpg" alt="מבנה ציבורי עם גג זכוכית בצורת משולש">
+      </div>
+      <div class="s3-img-frame s3-img-frame--diagram">
+        <img src="assets/images/triangle-diagram-roof.png" alt="שרטוט משולש BAC, זווית A היא 60 מעלות">
+      </div>
+    </div>
+
+    <div class="s3-scroll-area" id="s3-scroll-area">
+    <div class="s3-scroll-inner">
+      <div class="s3-part" id="s3-part-1">
+        <p class="s3-body">3. משרד אדריכלות מתכנן מבנה ציבורי חדש בעל גג זכוכית בצורת משולש.<br>האדריכלית הראשית קבעה כלל כי אחת מזווית המשולש חייבת להיות בת 60° (∢BAC = 60°).<br>את המרווח שנשאר עבור שתי הזוויות האחרות של משולש הגג, החליטו האדריכליות לחלק כך שהיחס ביניהן יהיה בדיוק 5:3.</p>
+      </div>
+
+      <!-- ⚠️ תוקן (20.08.2026, לפי בקשה מפורשת: "לא צריך שהתוכן יופיע
+           בהדרגתיות") — הוסר hidden + כפתור "המשך" של חלק 1 (לא היה
+           תלוי-פונקציונלית בשום דבר, רק חשף את חלק 2). כל שלושת
+           החלקים גלויים תמיד, הלומד/ת גולל/ת. -->
+      <div class="s3-part" id="s3-part-2">
+        <p class="scq-qtext-em">א. סמנו את הגודל המדויק של שתי הזוויות האחרות במבנה המתוכנן:</p>
+        <div class="scq-answers" role="radiogroup" aria-label="אפשרויות תשובה">
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="a" onclick="s3P2Select('a')">
+            <span class="scq-opt-text">30°,50°</span>
+            <span class="scq-radio"></span>
+          </div>
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="b" onclick="s3P2Select('b')">
+            <span class="scq-opt-text">45°,75°</span>
+            <span class="scq-radio"></span>
+          </div>
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="c" onclick="s3P2Select('c')">
+            <span class="scq-opt-text">40°,80°</span>
+            <span class="scq-radio"></span>
+          </div>
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="d" onclick="s3P2Select('d')">
+            <span class="scq-opt-text">36°,60°</span>
+            <span class="scq-radio"></span>
+          </div>
+        </div>
+        <button class="btn-continue s3-inline-btn" id="s3-p2-check" disabled onclick="s3P2Check()">צדקתי?</button>
+        <div id="s3-p2-feedbox" class="scq-fb-box is-static">
+          <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
+          <p class="scq-fb-body"></p>
+        </div>
+      </div>
+
+      <div class="s3-part" id="s3-part-3">
+        <p class="s3-body">ב. האדריכליות שוקלות לשנות את הזווית הידועה (∢BAC = 60°), אך להשאיר את היחס בין שתי הזוויות האחרות כמו שהיה - 3:5.</p>
+        <p class="scq-qtext-em">קבעו לגבי כל אחת מהטענות הבאות האם היא נכונה או לא נכונה:</p>
+        <div class="tf-rows" id="s3-p3-rows">
+          <div class="tf-row" id="s3-p3-row-1">
+            <div class="tf-stmt">
+              <span class="tf-num">1.</span>
+              <span class="tf-text">אם זווית ∢BAC תהיה בת 100°, אז הזווית הנוספת, הקטנה מבין השתיים האחרות, תהיה בת 30°.</span>
+            </div>
+            <div class="tf-btns">
+              <button class="tf-btn" id="s3-p3-r1-true" onclick="s3P3Select(1,'true')">נכון</button>
+              <button class="tf-btn" id="s3-p3-r1-false" onclick="s3P3Select(1,'false')">לא נכון</button>
+            </div>
+          </div>
+          <div class="tf-row" id="s3-p3-row-2">
+            <div class="tf-stmt">
+              <span class="tf-num">2.</span>
+              <span class="tf-text">כדי לקבל זוויות שגודלן הוא מספר שלם, סכום שתי הזוויות האחרות חייב להיות מספר שמתחלק ב-8 ללא שארית.</span>
+            </div>
+            <div class="tf-btns">
+              <button class="tf-btn" id="s3-p3-r2-true" onclick="s3P3Select(2,'true')">נכון</button>
+              <button class="tf-btn" id="s3-p3-r2-false" onclick="s3P3Select(2,'false')">לא נכון</button>
+            </div>
+          </div>
+          <div class="tf-row" id="s3-p3-row-3">
+            <div class="tf-stmt">
+              <span class="tf-num">3.</span>
+              <span class="tf-text">אם זווית ∢BAC תשתנה לזווית בת 20°, אחת מהזוויות האחרות של המשולש תהיה זווית ישרה.</span>
+            </div>
+            <div class="tf-btns">
+              <button class="tf-btn" id="s3-p3-r3-true" onclick="s3P3Select(3,'true')">נכון</button>
+              <button class="tf-btn" id="s3-p3-r3-false" onclick="s3P3Select(3,'false')">לא נכון</button>
+            </div>
+          </div>
+        </div>
+        <button class="btn-continue s3-inline-btn" id="s3-p3-check" disabled onclick="s3P3Check()">צדקתי?</button>
+        <div id="s3-p3-feedbox" class="scq-fb-box is-static">
+          <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
+          <p class="scq-fb-body"></p>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <!-- אין .btn-hint במסך הזה (וגם לא בתוך אף אחד משלושת חלקי-התוכן —
+         מידע-בלבד בחלק 1, SCQ בחלק 2, נכון/לא-נכון בחלק 3): לא נמצא
+         טקסט-רמז מפורש בתסריט/במוקאפ (שקפים 31-33) לאף חלק, אותו ממצא
+         שכבר תועד למסכים 2-3 (s1/s2, ראו ההערות שם) — לא הושמט בטעות.
+         ראו ARCHITECTURE.md § "בדיקה מקיפה מול SELF-QA-lomda.md". -->
+    <div class="bottom-bar">
+      <div class="bottom-bar-inner">
+        <div class="bar-back"><button class="btn-back" id="s3-back" onclick="goTo(2)">חזרה</button></div>
+        <div class="bar-actions"><button class="btn-continue" id="s3-continue" disabled onclick="goTo(4)">המשך</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       מסך 5 — מסך גלילה, שאלה 4 מתוך 4, data-screen="4", id="s4".
+       שקפים 34-36, שלושה חלקים: (1)+(2) שאלה חד-ברירה בלי תמונה
+       (רפרנס: מסך 20 סיין 1 יעד 3), (3) שאלת-קלט כפולה (2 תשובות
+       נפרדות). פסקת-הקשר (יחסי הניצחונות) קבועה, מוצגת תמיד מעל שלושת
+       החלקים — לא חוזרת בכל חלק. ראו ARCHITECTURE.md § "מסך 5".
+       ========================================================= -->
+  <section class="screen" data-screen="4" id="s4">
+    <nav class="progress-question" id="s4-progress" aria-label="ניווט שאלות">
+      <div class="progress-question__item" data-question="1">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 1</span>
+      </div>
+      <div class="progress-question__connector" data-connector="1"></div>
+      <div class="progress-question__item" data-question="2">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 2</span>
+      </div>
+      <div class="progress-question__connector" data-connector="2"></div>
+      <div class="progress-question__item" data-question="3">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 3</span>
+      </div>
+      <div class="progress-question__connector" data-connector="3"></div>
+      <div class="progress-question__item" data-question="4">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 4</span>
+      </div>
+    </nav>
+
+    <!-- Gesture Hint (Cursor Scroll) — SELF-QA-lomda.md §7. -->
+    <div class="gesture-hint-scroll-wrap" id="s4-scroll-gesture" hidden>
+      <div class="gesture-hint">
+        <div class="gesture-hint-ring gesture-hint-ring--big"></div>
+        <div class="gesture-hint-ring gesture-hint-ring--small"></div>
+        <img class="gesture-hint-hand" src="assets/images/gesture-hand-cursor.svg" alt="">
+      </div>
+    </div>
+
+    <div class="s4-scroll-area" id="s4-scroll-area">
+    <div class="s4-scroll-inner">
+      <p class="s4-context">4. מאמן שחייה משווה בין נתונים של שחיינית ושחיין שהצטיינו לאורך העונה:<br>
+        <strong>שחיין א' (דניאל):</strong> היחס בין <strong>מספר ניצחונות</strong> לבין <strong>מספר המישחים</strong> שהשתתף בהם הוא 3:5.<br>
+        <strong>שחיינית ב' (נופר):</strong> היחס בין <strong>מספר ניצחונות</strong> לבין <strong>מספר המישחים</strong> שהשתתפה בהם הוא 3:8.</p>
+
+      <div class="s4-part" id="s4-part-1">
+        <p class="s4-body"><strong>א. דניאל ונופר השיגו אותו מספר ניצחונות.</strong><br>מבלי לחשב, מי מבינהם שחה ב<strong>יותר מישחים</strong> לאורך העונה?</p>
+        <div class="scq-answers" role="radiogroup" aria-label="אפשרויות תשובה">
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="a" onclick="s4P1Select('a')">
+            <span class="scq-opt-text">דניאל</span>
+            <span class="scq-radio"></span>
+          </div>
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="b" onclick="s4P1Select('b')">
+            <span class="scq-opt-text">נופר</span>
+            <span class="scq-radio"></span>
+          </div>
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="c" onclick="s4P1Select('c')">
+            <span class="scq-opt-text">מספר המישחים בהם השתתפו זהה.</span>
+            <span class="scq-radio"></span>
+          </div>
+        </div>
+        <button class="btn-continue s3-inline-btn" id="s4-p1-check" disabled onclick="s4P1Check()">צדקתי?</button>
+        <div id="s4-p1-feedbox" class="scq-fb-box is-static">
+          <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
+          <p class="scq-fb-body"></p>
+        </div>
+      </div>
+
+      <!-- ⚠️ תוקן (20.08.2026, לפי בקשה מפורשת) — אותו תיקון בדיוק כמו
+           מסך 4 (s3): הוסר hidden, כל שלושת החלקים גלויים תמיד. -->
+      <div class="s4-part" id="s4-part-2">
+        <p class="s4-body"><strong>ב. מי ניצח ביותר מישחים העונה?</strong></p>
+        <div class="scq-answers" role="radiogroup" aria-label="אפשרויות תשובה">
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="a" onclick="s4P2Select('a')">
+            <span class="scq-opt-text">דניאל</span>
+            <span class="scq-radio"></span>
+          </div>
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="b" onclick="s4P2Select('b')">
+            <span class="scq-opt-text">נופר</span>
+            <span class="scq-radio"></span>
+          </div>
+          <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="c" onclick="s4P2Select('c')">
+            <span class="scq-opt-text">שניהם ניצחו באותו מספר משחים.</span>
+            <span class="scq-radio"></span>
+          </div>
+        </div>
+        <button class="btn-continue s3-inline-btn" id="s4-p2-check" disabled onclick="s4P2Check()">צדקתי?</button>
+        <div id="s4-p2-feedbox" class="scq-fb-box is-static">
+          <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
+          <p class="scq-fb-body"></p>
+        </div>
+      </div>
+
+      <div class="s4-part" id="s4-part-3">
+        <p class="s4-body"><strong>ג. ידוע כי דניאל ניצח ב-12 משחים.</strong></p>
+        <p class="scq-qtext-em">השלימו:</p>
+        <div class="viq-answers">
+          <div class="viq-answer-row">
+            <span class="viq-answer-label">כמה מישחים בסך הכל שחה דניאל העונה?</span>
+            <input class="viq-input" id="s4-p3-a" type="number" inputmode="numeric" dir="ltr" placeholder=" " aria-label="סך משחקי דניאל" oninput="s4P3OnInput()">
+          </div>
+          <div class="viq-answer-row">
+            <span class="viq-answer-label">כמה מישחים בסך הכל שחתה נופר העונה?</span>
+            <input class="viq-input" id="s4-p3-b" type="number" inputmode="numeric" dir="ltr" placeholder=" " aria-label="סך משחקי נופר" oninput="s4P3OnInput()">
+          </div>
+        </div>
+        <button class="btn-continue s3-inline-btn" id="s4-p3-check" disabled onclick="s4P3Check()">צדקתי?</button>
+        <div id="s4-p3-feedbox" class="scq-fb-box is-static">
+          <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
+          <p class="scq-fb-body"></p>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <!-- אין .btn-hint במסך הזה (וגם לא בתוך אף אחד משלושת חלקי-התוכן —
+         SCQ בחלק א', SCQ בחלק ב', VIQ כפול בחלק ג'): לא נמצא טקסט-רמז
+         מפורש בתסריט/במוקאפ (שקפים 34-36) לאף חלק, אותה סיבה בדיוק כמו
+         s1/s2/s3. ראו ARCHITECTURE.md § "בדיקה מקיפה מול SELF-QA-lomda.md". -->
+    <div class="bottom-bar">
+      <div class="bottom-bar-inner">
+        <div class="bar-back"><button class="btn-back" id="s4-back" onclick="goTo(3)">חזרה</button></div>
+        <!-- ⚠️ goTo(5): TOTAL_SCREENS=5 (אינדקסים תקפים 0-4) — no-op בטוח
+             לפי ה-bounds guard של goTo() (אין דף/סיין 3 בדיסק עדיין),
+             לא קריסה. זהה למוסכמה המתועדת כבר בסיין 1 עבור מסכו האחרון
+             (#s6-continue → goTo(7), ARCHITECTURE.md שם). לא שונה כאן
+             במתכוון — יעד-ניווט אמיתי לתחילת הסיין הבא/מסך-סיום דורש
+             אישור-מוצר. ראו ARCHITECTURE.md § התיקונים (18.08.2026). -->
+        <div class="bar-actions"><button class="btn-continue" id="s4-continue" disabled onclick="goTo(5)">המשך</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GLOBAL — Report/Issue button (.flag-btn) ============
+       רכיב גלובלי יחיד, מחוץ לכל .screen, ישירות ב-#app, לפי
+       720-templates skill (_global-components.md). ויזואלי בלבד — עדיין
+       בלי התנהגות קליק (ייתכן שיחובר ל-LMS בהמשך). נכסים ניטרליים
+       (ללא צבע-נושא אפוי) — הועתקו כפי-שהם מסיין 1. -->
+  <button class="flag-btn" aria-label="מצאתם בעיה?" title="מצאתם בעיה?">
+    <span class="flag-btn-icon" aria-hidden="true">
+      <img class="flag-btn-icon-default" src="assets/images/btn-flag-default.png" alt="">
+      <img class="flag-btn-icon-hover" src="assets/images/btn-flag-hover.png" alt="">
+    </span>
+    <span class="flag-btn-label">מצאתם בעיה?</span>
+  </button>
+
+  <!-- ============ GLOBAL — Image zoom modal ============
+       מופע-משותף יחיד לכל היחידה, מחוץ לכל .screen, ישירות ב-#app, לפי
+       מפרט 720-templates _global-components.md ("Image zoom"). כל תמונת
+       תוכן שתצטרך זום (במסכי תוכן עתידיים) תוסיף כפתור .img-zoom-btn
+       משלה בתוך ה-wrapper שלה (position:relative, בלי stacking context). -->
+  <div id="img-zoom-modal" class="img-zoom-modal hidden" aria-hidden="true" data-zoom-close="true">
+    <div class="img-zoom-modal__panel" role="dialog" aria-modal="true" aria-label="הגדלת תמונה">
+      <button class="img-zoom-close" type="button" data-zoom-close="true" aria-label="סגירת הגדלת תמונה">
+        <svg class="img-zoom-close__icon" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 1L14 14M14 1L1 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="img-zoom-modal__stage"></div>
+    </div>
+  </div>
+
+</div>
+<script src="script.js?v=20260817b"></script>
+</body>
+</html>

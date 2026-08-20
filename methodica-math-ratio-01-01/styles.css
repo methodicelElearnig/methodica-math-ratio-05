@@ -1,0 +1,2506 @@
+/* =========================================================
+   לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 1
+   תשתית בסיס בלבד (Prompt 1) — אין עדיין תוכן אמיתי. מסך יחיד
+   placeholder + כל הרכיבים הגלובליים מוכנים לשימוש. ייבנה תוכן
+   בהדרגה מסך אחר מסך לפי הבריף/פיגמה (Prompt 2 ואילך).
+
+   מקור: הועתק/הותאם מהמנוע הגלובלי של
+   methodica-science-mass-measure-03-01 (720 מדעים, יעד 3, סיין 1) —
+   ראו ARCHITECTURE.md לפירוט מלא של מה הועתק ומה שונה.
+   ========================================================= */
+
+/* ---------- Subject theme tokens (Math) ----------
+   720-design-guidelines skill → colors-and-gradients.md, טבלת
+   Subject tokens (עמודת Math) — אושר במפורש ע"י המשתמשת. נטען ישירות
+   על :root (לא data-subject-theme override): הפרויקט כולו במתמטיקה
+   בלבד, אין צורך במיתוג ריצה בין נושאים.
+   ⚠️ מחליף את סעיף 0.6 ב-סיכום-תהליך-בניית-הלומדה.md (הישן/stale) —
+   ראו ARCHITECTURE.md להסבר המלא של התיקון. ---------- */
+:root {
+  --subject-100: #EAD9FF;
+  --subject-200: #CEC7FF;
+  --subject-300: #E1D9FF;
+  --subject-350: #B3B0FF;
+  --subject-400: #BDB3FC;
+  --subject-500: #3B2FC2;
+  --subject-600: #383896;
+  --subject-700: #5656CC;
+  --subject-800: #4B35A5;
+  --subject-900: #2F2478;
+  --subject-alpha-100: rgba(165, 28, 255, 0);
+  --subject-alpha-200: rgba(165, 28, 255, 0.3);
+}
+
+/* ---------- Fonts (עותק מקומי לסין זה, ב-assets/fonts — כל סין
+   עצמאי לחלוטין, לפי כלל העצמאות של הפרויקט) ---------- */
+@font-face {
+  font-family: 'Assistant';
+  src: url('assets/fonts/assistant-hebrew.woff2') format('woff2');
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+}
+@font-face {
+  font-family: 'Assistant';
+  src: url('assets/fonts/assistant-latin.woff2') format('woff2');
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+                 U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+}
+
+/* ---------- Reset ---------- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  direction: rtl;
+  font-family: 'Assistant', 'Segoe UI', Arial, sans-serif;
+  background: #ffffff;
+}
+button {
+  font-family: inherit;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: inherit;
+}
+button:disabled { cursor: default; }
+img { display: block; max-width: none; }
+
+/* ---------- Canvas & viewport scaling ---------- */
+#app {
+  width: 1280px;
+  height: 710px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+  background: #fff;
+  overflow: hidden;
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+}
+.screen.active { display: block; }
+
+/* transitions removed on purpose — Figma states change instantly
+   (same convention as the science lomdot; entrance/reveal motion is
+   added later, per-screen, by the animation-system skill — not here) */
+* { transition: none !important; }
+
+/* =========================================================
+   מסך 1 — בחירת דמות מלווה (TwoOptionSelection), data-screen="0", id="s0"
+   הועתק ממסך 1 (s0) של methodica-science-mass-measure-03-01 — מידות
+   זהות (top/left/width לעמודת הכותרת, 296px לכרטיס). התאמה מכוונת אחת:
+   .options-row כאן הוא RTL אמיתי (אין direction:ltr, בניגוד למקור) —
+   ראו ARCHITECTURE.md.
+   ========================================================= */
+.screen1-content {
+  position: absolute;
+  top: 64px;
+  left: 235px;            /* (1280 - 810) / 2 = 235px */
+  width: 810px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 48px;
+}
+.screen1-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+.screen1-title {
+  font-family: 'Assistant', sans-serif;
+  font-size: 40px;
+  font-weight: 700;
+  color: #303030;
+  text-align: center;
+  line-height: 1.2;
+}
+.screen1-subtitle {
+  font-family: 'Assistant', sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: #303030;
+  text-align: center;
+}
+
+/* שורת כרטיסים — true RTL: אין direction override. תחת dir="rtl" ברירת
+   המחדל של flex-direction:row כבר ממקמת את הילד הראשון ב-DOM פיזית
+   מימין ואת השני משמאל (main-axis start=right/end=left ב-RTL) — בלי
+   שום טריק direction:ltr, בניגוד למקור שעדיין משתמש בו כאן. */
+.options-row {
+  display: flex;
+  flex-direction: row;
+  gap: 100px;
+  justify-content: center;
+  align-items: center;
+}
+
+.option-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  width: 296px;
+  cursor: pointer;
+  user-select: none;
+}
+.option-card:focus-visible {
+  outline: 2px solid var(--subject-500);
+  outline-offset: 6px;
+  border-radius: 18px;
+}
+.option-card-frame {
+  width: 296px;
+  background: #ffffff;
+  border: 3px solid rgba(201, 206, 216, 0.4);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.option-card:hover .option-card-frame,
+.option-card:focus-visible .option-card-frame {
+  border-color: var(--subject-500);
+  background: var(--subject-100);
+}
+.option-card.selected .option-card-frame {
+  border-color: var(--subject-500);
+  background: var(--subject-100);
+}
+
+/* תמונה/וידאו בתוך המסגרת — aspect 296/278 per Figma. וידאו (המקרה
+   שלנו, שני הכרטיסים) ממלא את המסגרת לגמרי (object-fit:cover) — לא
+   contain כמו תמונת-דמות שקופה, כי כאן אין רקע שקוף להראות דרכו. */
+.option-card-img {
+  width: 100%;
+  aspect-ratio: 296 / 278;
+}
+.option-card-img video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* בר תחתון — מסך 1 בלבד: אין .bar-back בכלל (אין מסך קודם). "בחרתי"
+   מיושר לפיזי-שמאל דרך flex-end תחת RTL אמיתי (בלי direction:ltr) —
+   selector מורכב כדי לנצח את .bottom-bar-inner (justify-content:
+   space-between) בלי תלות בסדר-הופעה. */
+.bottom-bar-inner.s0-bar {
+  justify-content: flex-end;
+}
+
+/* ════════════════════════════════════════════════════════
+   GLOBAL — Bottom bar (74px, per Figma)
+   RTL אמיתי לאורך כל הבר: אין direction:ltr בשום מקום כאן. הסדר
+   הפיזי (bar-back מימין / bar-actions משמאל) מושג ע"י סדר ה-DOM
+   (bar-back ראשון = flex-start = ימין ב-RTL; bar-actions שני =
+   flex-end = שמאל), לא ע"י היפוך direction. בכל מסך, .bar-back
+   מופיע לפני .bar-actions ב-DOM. ════════════════════════════ */
+.bottom-bar {
+  position: absolute;
+  bottom: -3px; /* -3px hides the bottom border line */
+  left: 0;
+  right: 0;
+  height: 74px;
+  background: #ffffff;
+  border-top: 0.4px solid #AEAEAE;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bottom-bar-inner {
+  width: 1232px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.bar-back {
+  display: flex;
+  align-items: center;
+}
+
+/* === Continue button (gradient pill) — Math gradient ===
+   SELF-QA-lomda.md §6: reference CSS, Math gradient per
+   720-design-guidelines/colors-and-gradients.md ("Math gradient"),
+   `to bottom` re-expressed as `180deg` for consistency with the rest
+   of the codebase's gradient syntax — same visual result. NOTE: this
+   gradient's exact intended usage (Continue button vs. something
+   narrower) is flagged as an open/unconfirmed question in the design
+   skill itself — see ARCHITECTURE.md "Assumptions" section. */
+.btn-continue {
+  display: flex; align-items: center; justify-content: center;
+  height: 39px;
+  background: linear-gradient(180deg, #6F6AD5 8.654%, #4B35A5 38.462%, #270075 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 1000px;
+  font-family: 'Assistant', sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  padding: 0 20px;
+  min-width: 140px;
+  box-sizing: border-box;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-continue:disabled {
+  background: #AEAEAE;
+  color: #303030;
+  cursor: not-allowed;
+}
+.btn-continue:not(:disabled):hover { opacity: 0.88; }
+.btn-continue:focus-visible {
+  outline: 3px solid var(--subject-500);
+  outline-offset: 2px;
+}
+
+/* === Back button (חזרה) — never shown on the first screen ===
+   SELF-QA-lomda.md §6: border/text color = var(--subject-700), never
+   var(--subject-500) (the single most commonly confused value in this
+   family — see the warning in SELF-QA-lomda.md §6). */
+.btn-back {
+  display: flex; align-items: center; justify-content: center;
+  height: 39px;
+  background: #ffffff;
+  color: var(--subject-700);
+  border: 1px solid var(--subject-700);
+  border-radius: 1000px;
+  font-family: 'Assistant', sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  padding: 0 20px;
+  min-width: 140px;
+  box-sizing: border-box;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-back[hidden] { display: none; }
+.btn-back:hover { background: #f0f8ff; }
+.btn-back:focus-visible {
+  outline: 3px solid var(--subject-700);
+  outline-offset: 2px;
+}
+
+/* === Hint button (אפשר רמז?) — CSS ready, not instantiated on the
+   placeholder screen (no question exists yet). SELF-QA-lomda.md §6:
+   border/text = var(--subject-700); the icon class actually applied
+   in markup is .scq-hint-icon (26×24) — the family also has an older,
+   unused .hint-icon (26×22) class name in some source files; only
+   .scq-hint-icon is current, see 720-templates skill's "superseded
+   rule" warning. Do not reintroduce .hint-icon here. */
+.btn-hint {
+  display: flex; align-items: center; justify-content: center;
+  height: 39px;
+  background: #ffffff;
+  color: var(--subject-700);
+  border: 1px solid var(--subject-700);
+  border-radius: 1000px;
+  font-family: 'Assistant', sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  padding: 0 20px;
+  min-width: 140px;
+  box-sizing: border-box;
+  cursor: pointer;
+  gap: 6px;
+  white-space: nowrap;
+}
+.btn-hint[hidden] { display: none; }
+/* ⚠️ תוקן/אוחד (20.08.2026) — הכלל הזה נמצא כפול/מפוצל בקובץ (עוד
+   עותק חלקי-בלבד, ללא mask, ישב כאן; עותק שני עם ה-mask אבל בלי
+   width/height ישב בנפרד הרבה יותר למטה בקובץ — שני הקטעים יחד
+   התלכדו במקרה לאייקון עובד, לא תכנון מכוון). אוחד כאן לכלל שלם
+   אחד; שני המקורות הוסרו. */
+.btn-hint .scq-hint-icon {
+  flex-shrink: 0;
+  width: 26px;
+  height: 24px;
+  background-color: currentColor;
+  -webkit-mask: url('assets/images/icon-bulb-outline-white.svg') center / contain no-repeat;
+  mask: url('assets/images/icon-bulb-outline-white.svg') center / contain no-repeat;
+}
+.btn-hint:disabled { color: #aeaeae; border-color: #aeaeae; cursor: not-allowed; }
+.btn-hint:hover { background: #f0f8ff; }
+.btn-hint:focus-visible {
+  outline: 3px solid var(--subject-500);
+  outline-offset: 2px;
+}
+
+/* ════════════════════════════════════════════════════════
+   GLOBAL — SCQ answer pills (720-templates skill, SingleChoiceQuestion)
+   הועתק 1:1 מ-methodica-science-mass-measure-03-01 (עם var(--subject-*)
+   theme-aware, כבר כך במקור). ברירת מחדל: עמודה (flex-direction:column).
+   מסך 2 (אולימפיאדת המדעים) מוסיף וריאנט שורה — ראו §"מסך 2" למטה.
+   ════════════════════════════════════════════════════════ */
+.scq-answers {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* RTL column: flex-start = physical right */
+  gap: 12px;
+  width: 604px;
+  max-width: 100%;
+}
+.scq-opt {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border: 2px solid var(--subject-500);
+  border-radius: 999px;
+  cursor: pointer;
+  background: #fff;
+  box-sizing: border-box;
+}
+/* ⚠️ נוסף (18.08.2026) — accessibility-baseline: רכיב אינטראקטיבי-
+   מקלדת (role="radio" tabindex="0") בלי שום :focus-visible קודם,
+   בניגוד ל-.btn-continue/.btn-back/.btn-hint/.option-card/.img-zoom-btn
+   שכולם כבר כוללים כלל כזה — אותו טיפול חזותי. */
+.scq-opt:focus-visible { outline: 2px solid var(--subject-500); outline-offset: 2px; }
+.scq-opt-text {
+  flex: 1;
+  font-weight: 400;
+  font-size: 22px;
+  color: #222;
+  text-align: right;
+}
+.scq-radio {
+  order: -1;
+  position: relative;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--subject-500);
+  border-radius: 999px;
+  background: #fff;
+}
+.scq-opt.selected .scq-radio { background: var(--subject-500); }
+.scq-radio::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.scq-opt.correct {
+  border-width: 1.5px;
+  border-color: #609e12;
+  background: #edf8ed;
+}
+.scq-opt.correct .scq-radio {
+  border-color: #609e12;
+  background: #609e12;
+}
+.scq-opt.correct .scq-radio::after {
+  background-image: url('assets/images/icon-check-white.svg');
+  background-size: 12px 9px;
+}
+.scq-opt.wrong {
+  border-width: 1.5px;
+  border-color: #b20010;
+  background: #fff0f4;
+}
+.scq-opt.wrong .scq-radio {
+  border-color: #b20010;
+  background: #b20010;
+}
+.scq-opt.wrong .scq-radio::after {
+  background-image: url('assets/images/icon-x-white.svg');
+  background-size: 10px 10px;
+}
+.scq-opt.disabled { cursor: default; }
+
+/* ⚠️ נוסף (17.08.2026) — תיקון באג-מיקום: "צדקתי?" חייב להיות מיושר
+   ("שמאל, מתחת למסיחים") ביחס ל-**רוחב בלוק-המסיחים עצמו** (604px),
+   לא ביחס לרוחב-המסך/אזור-הגלילה המלא. קודם, הכפתור היה sibling ישיר
+   של .scq-answers בתוך container ברוחב מלא (~998px) — .align-self:
+   flex-end אז דחף אותו לקצה השמאלי של **כל** אזור-הגלילה (רחוק מדי
+   מהמסיחים, ליד עמודת התמונות!), בדיוק כפי שנראה בצילום-מסך שהמשתמשת
+   שלחה. התיקון: עוטפים scq-answers+button יחד ב-.oly-answer-block
+   (604px) — עכשיו flex-end על הכפתור נדחף לקצה השמאלי של ה-604px
+   האלה בדיוק, כלומר צמוד לקצה-השמאלי של בלוק-המסיחים עצמו. */
+.oly-answer-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* RTL column: flex-start = פיזית ימין */
+  width: 604px;
+  max-width: 100%;
+  gap: 12px;
+}
+
+/* =========================================================
+   מסך 2 — אולימפיאדת המדעים (מסך גלילה מותאם), data-screen="1", id="s1"
+   "מסך לא בתבנית" (הערת מפיקה, שקפים 4-5) — ראו ARCHITECTURE.md לפירוט
+   מלא + כל ההנחות שדורשות אישור אנושי.
+   ========================================================= */
+
+/* ⚠️ עודכן ב-16.08.2026 (סבב שני) — תיקון מהותי לפי משוב מפורש:
+   1. **רק התמונות ("החלק השמאלי") נשארות קבועות** — לא כותרת/פסקת-
+      הקדמה, שהועברו לתוך .oly-scroll-area (בזרימה רגילה, לא absolute).
+      הפרשנות הקודמת (header שלם = כותרת+טקסט+תמונות, הכול "צף")
+      הייתה שגויה — "תמונות ונתוני יחס" בהערת המפיקה מתייחס לתמונות
+      ולכיתוב-היחס הצמוד להן בלבד.
+   2. **כל גודלי הפונט תוקנו לטוקנים המאושרים** ב-720-design-guidelines
+      → typography.md (הגדלים הקודמים — 16/14/13/11px — לא היו בטבלת
+      הטוקנים כלל, המצאה גורפת שהמשתמשת ציינה בצדק): כותרת =
+      Heading/H-5 (40px Bold); פסקת-הקדמה = Body/B-3 (24px Regular);
+      תווית/יחס-משלחת = Body/B-8 (20px Bold) / Body/B-6 (20px Regular).
+   3. **אזור הגלילה קיבל שטח אמיתי** (604px גובה, לא 166px כפי שהיה) —
+      כי הכותרת/הקדמה כבר לא "אוכלות" שטח קבוע מעליו; מתחיל מ-left:222px
+      (אחרי עמודת התמונות 150px + 32px רווח), לא top:470px כמו קודם.
+   מיקום התמונות עצמן — absolute עם left קבוע (לא flex+סדר-DOM), לפי
+   הרפרנס המפורש ("מסך 16 סיין 1 יעד 11") ודפוס מאומת שכבר קיים
+   ב-methodica-science-mass-measure-03-01 (`#s11 .scq-img
+   {position:absolute; left:40px}`). ראו ARCHITECTURE.md § "מסך 2" ←
+   "עדכון (סבב שני)" לפירוט המלא. */
+/* ⚠️ עודכן (17.08.2026, סבב שלישי) — הוגדל שוב מ-170px, לפי בקשה
+   מפורשת נוספת ("להרחיב יותר... התמונות יגדלו איתו"). 240px היה שובר
+   את הגובה הזמין (85 top + 2×[240+label+ratio] + 20 gap ≈ 705px,
+   בעוד הבר התחתון מתחיל ב-636px = 710−74) — במקום זאת גודל התמונה
+   הוגבל ל-200px, והמרווחים (outer/inner gap) צומצמו, כך שהעמודה כולה
+   (2 תמונות+תוויות) נשארת בתוך 85–629px, בלי לחפוף את הבר התחתון. */
+.oly-fixed-images {
+  position: absolute;
+  top: 85px;
+  left: 40px; /* פיזי, קבוע — לא flex+סדר-DOM */
+  width: 260px; /* הוגדל מ-200px (19.08.2026, לפי בקשה מפורשת) — ראו
+    .oly-delegation-img-frame למטה + .oly-scroll-area/.gesture-hint-
+    scroll-wrap שהוזזו בהתאם. */
+  display: flex;
+  flex-direction: column; /* מוערם זו-מעל-זו, לא שורה — לפי בקשה מפורשת */
+  gap: 12px;
+}
+.oly-delegation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+/* ⚠️ תוקן (17.08.2026, סבב שני) — לפי בקשה מפורשת: התמונה ממלאת את כל
+   המסגרת (object-fit:cover, לא contain — המשתמשת ביקשה מפורשות "התמונה
+   צריכה למלא את המסגרת", גם אם זה חותך מעט מהצדדים כי 320:255 ≠
+   170:170. גם נוסף כפתור הגדלת-תמונה (.img-zoom-btn, הרכיב הגלובלי
+   שכבר מוכן מאז שלב התשתית — ראו _global-components.md → "Image
+   zoom"). position:relative על המסגרת (בלי transform/filter/z-index
+   על העטיפה עצמה — לפי הכלל, כדי לא ליצור stacking context) הוא מה
+   שממקם את הכפתור נכון בפינה, לא ביחס למסך כולו. */
+/* ⚠️ תוקן (17.08.2026) — תוקן באג מבני: לפי בקשה מפורשת ("מגעילה
+   לגמרי", "לא הסתכלת על הסקייל שקשור להגדלת התמונה בלומדות קודמות").
+   ברפרנס (methodica-science-mass-measure-03-01, .scq-img/.scq-img-inner)
+   האלמנט שה-JS משכפל בפועל (imgZoomOpen: `trigger.parentElement`) הוא
+   ה-*inner* wrapper, שממדיו width:100%/height:100% (יחסי!) — לא px
+   קבועים. זה מה שגורם לתמונה המשוכפלת להתאים את עצמה אוטומטית לגודל
+   ה-stage הענק (660×660) בתוך המודאל. הקוד הקודם כאן החיל px קבוע
+   (170×170) ישירות על האלמנט המשוכפל עצמו — כך שבתוך המודאל הוא נשאר
+   170×170 קטנטן במקום להתמלא ל-660×660, בניגוד גמור להתנהגות
+   ברפרנס. התיקון: `.oly-delegation-img-frame` (החדש, החיצוני) הוא
+   שמחזיק את המידה הפיזית הקבועה למסך הרגיל; `.oly-delegation-img-frame-inner`
+   (מה שבפועל משוכפל ל-JS) הוא עכשיו יחסי (100%/100%) בדיוק כמו
+   .scq-img-inner ברפרנס — 2 רמות, לא רמה אחת, בדיוק לפי המבנה שכבר
+   קיים ומתועד בפרויקטי המדעים. */
+.oly-delegation-img-frame {
+  width: 210px; /* הוגדל מ-200px (19.08.2026, לפי בקשה מפורשת) */
+  height: 210px;
+  box-sizing: border-box;
+}
+.oly-delegation-img-frame-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 3px solid rgba(201, 206, 216, 0.4); /* אותה מוסכמה כמו .option-card-frame */
+  border-radius: 16px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.oly-delegation-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* Body/B-8 (20px Bold) */
+.oly-delegation-label {
+  font-family: 'Assistant', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #303030;
+  text-align: center;
+}
+/* Body/B-6 (20px Regular) */
+.oly-delegation-ratio {
+  font-family: 'Assistant', sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--subject-700);
+  text-align: center;
+}
+
+/* אזור הגלילה — top:32 (יישור עם עמודת התמונות), left:222 (40+150+32
+   רווח, אחרי עמודת התמונות הקבועה), right:40, bottom:74 (מעל הבר
+   התחתון) → 604px גובה זמין. גלילה טבעית (wheel/מגע/פס-גלילה) — ראו
+   script.js § s1InitScrollJump לתיקון-באג שהוסיף preventDefault-על-
+   הגלגלת, שחסם לגמרי גלילה בפועל. כותרת+הקדמה+כל 3 השאלות בזרימה
+   רגילה כאן (לא absolute) — השאלה הראשונה מיד אחרי טקסט-ההקדמה, לפי
+   בקשה מפורשת. */
+/* ⚠️ תוקן (18.08.2026) — לפי בקשה מפורשת: הגלילה בכל מסך, בכל הלומדה
+   (שני הסינים), חייבת להיות בצד ימין — לא ברירת המחדל הטבעית של
+   הדפדפן תחת RTL אמיתי (פס-גלילה משמאל). direction:ltr כאן הוא אך
+   ורק לצורך מיקום-פס-הגלילה; .oly-scroll-inner (עוטף חדש, ראה למטה)
+   משחזר direction:rtl מפורש לכל התוכן בפועל — זהה לטכניקה שכבר
+   יושמה בסיין 2 (methodica-math-ratio-01-02, ARCHITECTURE.md §
+   "פס-גלילה בצד ימין"). */
+.oly-scroll-area {
+  position: absolute;
+  top: 70px; left: 332px; right: 40px; bottom: 74px; /* left: 40+260(עמודת תמונות, הוגדלה 19.08.2026)+32(רווח) */
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* ⚠️ תוקן (18.08.2026) — לא היה כאן שום padding-right בכלל, אז פס-
+     הגלילה (8px) ישב צמוד-ממש לתוכן, מרווח 0px. בדיקה חיה מול Figma
+     (fileKey eSbp4bKHgBky0rakDb8l9N, node-id 1038:18223, "scrolling")
+     מדדה מרווח אמיתי של ~12px בין קצה-התוכן לפס-הגלילה. 20px padding
+     - 8px רוחב-פס = 12px מרווח נראה, תואם. */
+  padding-right: 20px;
+  box-sizing: border-box;
+  cursor: grab;
+  direction: ltr;
+}
+.oly-scroll-inner { direction: rtl; width: 100%; }
+.oly-scroll-area::-webkit-scrollbar { width: 8px; }
+.oly-scroll-area::-webkit-scrollbar-track {
+  background: rgba(201, 206, 216, 0.4);
+  border-radius: 16px;
+}
+.oly-scroll-area::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.56);
+  border-radius: 24px;
+}
+
+/* ════════════════════════════════════════════════════════
+   GLOBAL — Gesture Hint: Cursor Scroll (SELF-QA-lomda.md §7, Figma node
+   2915:35184). מקור: methodica-science-mass-measure-03-01 — יד/טבעות/
+   keyframes הועתקו כפי-שהם (גיאומטריה+תזמון לא תלויי-נושא). **הבדל
+   מכוון:** SELF-QA מקשיח #B0DFFF/#00BAFF (ערכי Science/350/400) —
+   כאן, var(--subject-350)/var(--subject-400) (theme-aware, כבר
+   מוגדרים ב-:root של הפרויקט הזה) כדי שיפתרו נכון לצבעי Math. היד
+   עצמה (SVG) ניטרלית (שחור/לבן), לא תלוית-נושא, הועתקה בלי שינוי.
+   ════════════════════════════════════════════════════════ */
+.gesture-hint-scroll-wrap {
+  position: absolute;
+  top: 70px; left: 332px; right: 40px; bottom: 74px; /* זהה בדיוק ל-.oly-scroll-area */
+  pointer-events: none;
+  z-index: 20;
+}
+.gesture-hint-scroll-wrap[hidden] { display: none; }
+/* ⚠️ תוקן (20.08.2026, לפי דיווח "אין כף יד ליד הסקרול בר במסך 3") —
+   #s2-scroll-gesture נשא גם את .s2-gesture-hint-wrap (מיועד-לדריסה)
+   וגם את .gesture-hint-scroll-wrap הבסיסית — אבל .s2-gesture-hint-wrap
+   לא קיבלה כלל הגדרת CSS משל-עצמה, אז נשאר עם קואורדינטות הבסיס
+   (top:70;left:332), שהן קואורדינטות .oly-scroll-area (מסך 2, יש לו
+   עמודת-תמונה 260px), לא .s2-scroll-area (מסך 3, אין עמודת-תמונה,
+   left:40 מההתחלה) — היד התיישרה למקטע לא-נכון של המסך. תוקן: */
+.s2-gesture-hint-wrap { top: 70px; left: 40px; right: 40px; bottom: 74px; } /* תואם ל-.s2-scroll-area המתוקן */
+
+/* ⚠️ נוסף (18.08.2026) — Gesture Hint: Cursor Drag (SELF-QA-lomda.md §7):
+   מסך 3/"garden" (id=s2) מכיל אינטראקציית-גרירה אמיתית (סעיף ה, דיאגרמת-
+   המשוואה, s2E*) שלא קיבלה עד כה שום gesture hint — רק ה-Cursor-Scroll
+   הגלובלי של אזור-הגלילה קיבל טיפול. לפי הכלל המתועד למעלה ("כל מסך
+   שמכיל גלילה/קליק/גרירה"), לא רק המסך-הראשון-מסוגו. ⚠️ לא אותרה
+   דוגמת Cursor-Drag קיימת בפרויקט הזה או בפרויקטי-הרפרנס של 720 מדעים
+   שנבדקו — המפרט המדויק מ-Figma (מיקום/עיתוי) לא אומת עצמאית; נעשה
+   שימוש באותו טיפול חזותי בדיוק כמו Cursor-Scroll (יד+טבעות פועמות),
+   רק שההצגה/הסתרה מחוברות לגרירה (s2MaybeShowDragGesture/
+   s2HideDragGesture, script.js) במקום לגלילה. עוטף ממוקם inset:0
+   בתוך .s2-eq-diagram עצמו (שכבר position:relative), לא coordinates
+   קבועים ביחס לכל-המסך — כי הדיאגרמה חלק מתוכן-גלילה, לא עוגן-קנבס. */
+.gesture-hint-drag-wrap {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
+}
+.gesture-hint-drag-wrap[hidden] { display: none; }
+.gesture-hint {
+  position: absolute;
+  left: 50%; top: 62%; /* 62%, לא 50% — אותה מוסכמה כמו המקור (לא במרכז-מוחלט) */
+  translate: -50% -50%;
+  width: 0; height: 0;
+  pointer-events: none;
+}
+/* QA 19.08.2026: ברמז-גלילה (לא רמז-גרירה — .gesture-hint-drag-wrap
+   נשאר במרכז, ליד יעד-הגרירה בפועל) היד חייבת להופיע קרוב לפס-הגלילה
+   עצמו (בצד ימין), לא במרכז האזור — אחרת אין קשר חזותי ברור בין היד
+   לגלילה. `92%` יחסי (לא ערך-פיקסלים) כדי שיתאים אוטומטית לרוחב-
+   עמודת-הגלילה השונה בכל מסך. */
+/* QA 20.08.2026 (תוקן שוב — 92% לא היה מספיק קרוב בפועל, לפי דיווח
+   חוזר): עוגן ב-right:6px קבוע (לא אחוז) — ממורכז בתוך אזור-פס-הגלילה
+   עצמו (padding-right:20px, פס 8px רוחב, לכן מרכז-הפס ~4-10px מהקצה
+   הימני) — כך שהיד תמיד צמודה ממש לפס-הגלילה בפועל, ללא תלות ברוחב
+   העמודה (בניגוד לאחוז, שמתרחק מהקצה ככל שהעמודה רחבה יותר). */
+.gesture-hint-scroll-wrap .gesture-hint { left: auto; right: 6px; }
+.gesture-hint-hand,
+.gesture-hint-ring {
+  position: absolute;
+  left: 0; top: 0;
+  translate: -50% -50%;
+}
+.gesture-hint-hand { width: 28px; height: 33px; z-index: 3; }
+.gesture-hint-ring {
+  border-radius: 50%;
+  opacity: 0;
+}
+.gesture-hint-ring--small {
+  width: 12px; height: 12px;
+  border: 1.5px solid var(--subject-350);
+  z-index: 2;
+  animation: gesture-ring-small 2s infinite;
+}
+.gesture-hint-ring--big {
+  width: 64px; height: 64px;
+  background: var(--subject-350);
+  border: 2.5px solid var(--subject-400);
+  z-index: 1;
+  animation: gesture-ring-big 2s infinite;
+}
+@keyframes gesture-ring-small {
+  0%   { opacity: 0;    scale: 0.2 0.2; }
+  3%   { opacity: 0.75; scale: 1   1; }
+  10%  { opacity: 0;    scale: 1.1 1.1; }
+  100% { opacity: 0;    scale: 1.1 1.1; }
+}
+@keyframes gesture-ring-big {
+  0%    { opacity: 0;    scale: 0.05 0.05; }
+  5%    { opacity: 0.85; }
+  7.5%  {                scale: 0.22 0.22; }
+  22.5% {                scale: 0.6  0.6; }
+  35%   { opacity: 0.65; }
+  37.5% {                scale: 0.85 0.85; }
+  45%   { opacity: 0.35; }
+  50%   { opacity: 0;    scale: 1 1; }
+  100%  { opacity: 0;    scale: 1 1; }
+}
+
+/* Heading/H-5 (40px Bold) — טוקן מאושר */
+.oly-title {
+  font-family: 'Assistant', sans-serif;
+  font-size: 24px; /* ⚠️ תוקן (20.08.2026, לפי בקשה מפורשת שוב) — היה
+    40px (Heading/H-5, לפי טבלת-הטוקנים הכללית ב-720-design-guidelines).
+    המשתמשת ביקשה במפורש 24px למסך הזה — דורס את ההתאמה-לטוקן-הכללי
+    הקודמת; לא אומת מול צומת-Figma ספציפי למסך הזה (לא קיים). */
+  font-weight: 700;
+  color: var(--subject-500); /* תוקן (20.08.2026, לפי בקשה מפורשת) — היה #303030 אפור, לא צבע-הנושא */
+  text-align: right;
+  margin: 0 0 16px;
+}
+.oly-intro { margin-bottom: 8px; }
+/* Body/B-3 (24px Regular) — טוקן מאושר, גם לפסקה וגם לפריטי הרשימה */
+.oly-intro p {
+  font-family: 'Assistant', sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: #303030;
+  text-align: right;
+  line-height: 1.4;
+  margin: 0;
+}
+.oly-intro-list {
+  margin: 8px 0 0;
+  padding-inline-start: 24px; /* לוגי — מתאים עצמו לימין תחת RTL */
+  padding-inline-end: 0;
+}
+.oly-intro-list li {
+  font-family: 'Assistant', sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: #303030;
+  text-align: right;
+  line-height: 1.4;
+}
+
+.oly-question {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* RTL column: physical right */
+  width: 100%;
+  padding: 24px 0 32px;
+  box-sizing: border-box;
+  /* הקו המפריד (border-bottom) שהיה כאן הוסר לפי בקשה מפורשת —
+     היה המצאה שלי, לא מ-Figma/תסריט. */
+}
+.oly-question[hidden] { display: none; }
+
+/* שקף 7 — פסקת-מעבר + דמות מלווה+בועית, מוצג מיד אחרי סעיף ג' בזרימה
+   הרגילה (לא absolute), נחשף רק אחרי שנענתה. תוקן (17.08.2026) — שורה
+   (row), לא עמודה: הדמות פיזית משמאל לטקסט (כמו במסך 2 סיין 1 יעד 3,
+   שם הדמות צמודה לטקסט, לא מתחתיו). RTL אמיתי: הטקסט ראשון ב-DOM
+   (flex-start = פיזית ימין), הדמות+בועית שנייה (flex-end = פיזית
+   שמאל) — בלי direction override, אותה מוסכמה כמו בכל מקום אחר
+   בפרויקט. */
+.oly-outro {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  width: 100%;
+  gap: 24px;
+  padding: 24px 0 32px;
+  box-sizing: border-box;
+}
+.oly-outro[hidden] { display: none; }
+.oly-outro .oly-intro { flex: 1; min-width: 0; margin-bottom: 0; }
+.oly-outro .char-bubble-wrap { flex-shrink: 0; }
+
+/* ════════════════════════════════════════════════════════
+   GLOBAL — Companion character + speech bubble widget
+   מקור: methodica-science-mass-measure-03-01 (יעד 3), מסכים 2+4 —
+   .char-bubble-wrap/.char-speech-bubble/.char-bubble-avatar. גודל
+   הדמות (300×230px, object-fit:cover) הועתק כפי-שהוא לפי בקשה מפורשת
+   ("גודל הדמות כמו במסך 2 סיין 1 יעד 3") — לא נמדד/שוער מחדש. הבדל
+   מכוון יחיד: במקור זה position:absolute (מסך יחיד, לא-גולל, קבוע);
+   כאן זה חלק מזרימת-תוכן רגילה (position:static, ברירת המחדל) — כל
+   מסך עתידי שישתמש בווידג'ט הזה בהקשר "מסך יחיד קבוע" יכול להוסיף
+   position:absolute משלו scoped, בלי לשנות את הבסיס הגלובלי כאן.
+   ════════════════════════════════════════════════════════ */
+.char-bubble-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+/* ⚠️ נוסף (17.08.2026) — תיקון באג אמיתי: בלי ה-override הזה, ה-
+   attribute הילידי `hidden` (שמסתמך על display:none ברמת ה-UA
+   stylesheet, עדיפות-נמוכה) מפסיד מול ה-display:flex של הכלל למעלה
+   (אותה עדיפות-selector, סדר-קובץ מכריע) — כך שהדמות נשארה גלויה
+   תמיד בפועל, גם כש-JS הגדיר hidden=true (מסך 3, סעיף ג': תמונת-
+   המשוב הופיעה מתחתיה במקום במקומה). אותה מוסכמה בדיוק כמו
+   .oly-question[hidden]/.s2-section[hidden] הקיימים כבר בפרויקט. */
+.char-bubble-wrap[hidden] { display: none; }
+.char-speech-bubble {
+  position: relative;
+  background: #fff;
+  border: 2px solid var(--subject-500);
+  border-radius: 16px;
+  padding: 12px 16px;
+  max-width: 260px;
+}
+.char-speech-bubble p {
+  margin: 0;
+  font-family: 'Assistant', sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: #222;
+  text-align: center;
+}
+/* זנב הבועה — שני משולשי CSS מוערמים, לא asset (זהה למקור) */
+.char-speech-bubble::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -10px;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 12px solid var(--subject-500);
+}
+.char-speech-bubble::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 10px solid #fff;
+}
+.char-bubble-avatar {
+  overflow: hidden; /* ⚠️ נוסף (20.08.2026) — נדרש עבור ה-transform:scale
+    הממוקד למטה (yellow-avatr-asking) — קוצץ את מה שגולש מעבר לתיבת
+    300×230, בלי להזיז את הפריסה (transform לא משנה את גודל-הקופסה). */
+}
+.char-bubble-avatar video {
+  width: 300px;
+  height: 230px;
+  object-fit: cover;
+  display: block;
+}
+/* ⚠️ נוסף (20.08.2026, לפי דיווח: הנכס הזה רחב-מדי עם שטח-לבן ריק
+   מסביב לדמות, כך שהדמות יוצאת קטנה יחסית לדמות הטורקיז/כחולה
+   באותה תיבה) — object-fit:cover בלבד לא פותר את זה: הוא ממלא את
+   התיבה לפי יחס-הממדים של הווידאו, אבל לא "מתמקד" בדמות עצמה בתוך
+   התיבה שהיא תופסת. תוקן ע"י הגדלה ממוקדת (transform:scale) רק
+   לנכס הזה, קצוצה חזרה ל-300×230 ע"י overflow:hidden בהורה. ⚠️
+   **לא אומת חזותית** — בסביבה הזו אין ffmpeg/כלי-חילוץ-פריימים כדי
+   למדוד את גודל-הדמות המדויק בתוך הפריים, אז 1.4 הוא קירוב-ראשוני;
+   יש לבדוק בעין ולכוונן (transform:scale) במידת הצורך. */
+.char-bubble-avatar video[src*="yellow-avatr-asking"] {
+  transform: scale(1.4);
+  transform-origin: center center;
+}
+
+/* Body/B-5 (24px Bold) — טוקן מאושר */
+.oly-qtext {
+  font-family: 'Assistant', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  color: var(--subject-500);
+  text-align: right;
+  width: 100%;
+  margin-bottom: 16px;
+}
+/* .oly-qtext-lead — QA 20.08.2026, לפי בקשה מפורשת (בולד לפי התסריט):
+   בשקף 6, "ג. חשיבה יחסית: " הוא ריצת-טקסט רגילה נפרדת (לא בולד),
+   ורק המשך המשפט ("איזו משלחת...") הוא הבולד בפועל — שימוש יחיד ב-
+   .oly-qtext (שאלה ג' בלבד; שאלות א'/ב' כן צריכות בולד מלא, תואם
+   ל-.oly-qtext הרגיל). */
+.oly-qtext-lead { font-weight: 400; }
+
+/* ⚠️ הוסר (17.08.2026) — וריאנט-שורה (.oly-answers-row) שהמסיחים
+   ישבו זה-ליד-זה, לפי בקשה מפורשת קודמת. המשתמשת חזרה בה וביקשה
+   לסדר את המסיחים אחד מעל השני כמו בכל שאלה חד-ברירה אחרת בפרויקט —
+   .scq-answers הגלובלית (עמודה, ברירת המחדל) חלה כאן ישירות בלי override,
+   בלי צורך בוריאנט מקומי. */
+
+/* ⚠️ הוסר (17.08.2026) — וריאנט "עשיר" (label+שורת-נימוק נפרדת) לשאלה
+   ג', לפי בקשה מפורשת: המסיח הוא עכשיו ריצת-טקסט אחת ("**משלחת א**:
+   נימוק..."), לא שני אלמנטים נפרדים בעיצוב שונה — ראו .scq-opt-text
+   ב-index.html (strong מוטבע). אורך-שתי-השורות מושג ע"י גלישת טקסט
+   טבעית בתוך רוחב הפיל (604px), לא ע"י פיצול מבני. */
+
+/* ⚠️ תוקן (16.08.2026) — "צדקתי?" הוא לא כפתור-פיל-מתאר מומצא: לפי
+   SELF-QA-lomda.md §6, "Check ('צדקתי?' / Figma 'continue')" הוא אותו
+   רכיב בדיוק כמו .btn-continue הגלובלי (גרדיאנט מלא, disabled=אפור
+   מלא #AEAEAE/#303030 — לא opacity דהוי על הצבע). המחלקה עצמה
+   (class="btn-continue oly-check-btn" ב-index.html) מספקת את כל
+   העיצוב מ-.btn-continue הגלובלי כבר-קיים; .oly-check-btn נשארת רק
+   ל-scoping מיקומי (align-self/margin) בתוך זרימת השאלה, לא לעיצוב. */
+/* תוקן (16.08.2026) — "צדקתי?" עובר לצד שמאל, מתחת למסיחים, לפי בקשה
+   מפורשת. .oly-question הוא flex-direction:column תחת RTL אמיתי —
+   align-self:flex-end בעמודה כזו הוא פיזית שמאל (לא ימין), אותה
+   התנהגות בדיוק כמו .tbl-page{align-items:flex-start=ימין} בפרויקטי
+   המדעים — ראו ה-gotcha המתועד ב-_global-components.md. */
+.oly-check-btn {
+  align-self: flex-end;
+  margin-top: 4px;
+  margin-left:15px
+}
+
+/* ⚠️ תוקן (16.08.2026) — .oly-fb (משוב מוטבע/סטטי) הוסר לגמרי. המשתמשת
+   ציינה בצדק שהמשוב חייב להיות גריר לפי _global-components.md →
+   "Feedback popup system" — לא היה מקום לסטות מהכלל הגלובלי. שלוש
+   תיבות המשוב של מסך 2 (s1-q1/q2/q3-feedbox) הן עכשיו מופעי
+   .scq-fb-box אמיתיים (ראו index.html — ילדים ישירים של #s1, לא
+   מוטבעים בתוך .oly-scroll-area), גרירות דרך scqFbMakeDraggable
+   (script.js), עם אותם bounds קנבס-רוחביים (clampPopupPosition) כמו
+   בכל מסך-שאלה אחר.
+
+   ════════════════════════════════════════════════════════
+   מסך 3 — יהב ויעל שותלים גינה (מסך גלילה מותאם), data-screen="2", id="s2"
+   תוכן משקפים 8-9,11-14 (שקף 10 דולג — "מסך לא להפקה" בתסריט עצמו).
+   ראו ARCHITECTURE.md § "מסך 3" לפירוט מלא + כל ההנחות/קירובים.
+   ════════════════════════════════════════════════════════ */
+/* ⚠️ נוסף (17.08.2026) — padding-left, לפי בקשה מפורשת: "כל התוכן
+   בחלק השמאלי... דביק לסרגל [הגלילה]". תחת RTL, פס-הגלילה של הדפדפן
+   נמצא בקצה השמאלי של אזור-הגלילה (לא הימני, כמו ב-LTR) — אלמנטים
+   שממוקמים פיזית-שמאל בתוך שורות ה-flex (תמונה/פלייסהולדר/דמות) היו
+   צמודים ממש לפס הזה. */
+/* ⚠️ תוקן (18.08.2026) — אותו תיקון "גלילה בצד ימין" כמו .oly-scroll-area
+   למעלה. padding-left→padding-right כי הצד שצריך את המרווח מפס-הגלילה
+   התחלף. */
+.s2-scroll-area {
+  position: absolute;
+  top: 70px; /* ⚠️ תוקן (20.08.2026, לפי בקשה מפורשת: "מסך 2 הוא המצב
+    התקין, מסך 3 צריך להתמקם בדיוק אותו דבר") — היה 32px, לא תואם ל-
+    top:70px של .oly-scroll-area (מסך 2). left/right נשארו כמו שהם —
+    למסך 3 אין עמודת-תמונה קבועה בצד (left:332 במסך 2 נובע ממנה,
+    לא הבדל-מיקום לתקן). */
+  left: 40px; right: 40px; bottom: 74px;
+  /* ⚠️ תוקן (18.08.2026) — היה 14px (מרווח נראה בפועל 14-8=6px). בדיקה
+     חיה מול Figma (node-id 1038:18223) מדדה ~12px — עודכן ל-20px. */
+  padding-right: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+  cursor: grab;
+  direction: ltr;
+}
+.s2-scroll-inner { direction: rtl; width: 100%; }
+.s2-scroll-area::-webkit-scrollbar { width: 8px; }
+.s2-scroll-area::-webkit-scrollbar-track {
+  background: rgba(201, 206, 216, 0.4);
+  border-radius: 16px;
+}
+.s2-scroll-area::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.56);
+  border-radius: 24px;
+}
+
+.s2-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* RTL column: physical right */
+  width: 100%;
+  gap: 16px;
+  padding: 20px 0;
+  box-sizing: border-box;
+}
+.s2-section[hidden] { display: none; }
+
+/* Body/B-3 (24px Regular) — טוקן מאושר */
+.s2-body {
+  font-family: 'Assistant', sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: #303030;
+  text-align: right;
+  line-height: 1.4;
+  width: 100%;
+  margin: 0;
+}
+/* Body/B-5 (24px Bold) — טוקן מאושר, לשאלות/כותרות-משנה */
+.s2-qtext {
+  font-weight: 700;
+  color: var(--subject-500);
+}
+.s2-ddq-instruction { color: var(--subject-500); font-weight: 700; }
+
+/* ⚠️ נוסף (17.08.2026, סבב מבנה מחדש) — שורת flex גנרית (טקסט זורם
+   בצד ימין flex:1 + אלמנט-צד קבוע בצד שמאל), לפי בקשה מפורשת: "מסודר
+   כמו מסך 2 בסיין 6 יעד 3" (s6-textimg-row). משמשת גם לסעיף א' (עם
+   תמונה כאלמנט-הצד) וגם לסעיף ד' (עם דמות+בועית כאלמנט-הצד) — לפי
+   בקשה מפורשת "[סעיף ד] דומה מבנית לחלק הראשון". RTL אמיתי: טקסט
+   ראשון ב-DOM (flex-start=ימין), אלמנט-הצד שני (flex-end=שמאל). */
+/* ⚠️ תוקן (17.08.2026) — ה-gap-ים היו הפוכים ביחס לרפרנס המדויק
+   (s6-textimg-row: row gap:16px, s6-textimg-content gap:24px) —
+   נמצא בהשוואה חוזרת, מדויקת, ערך-מול-ערך. */
+.s2-flow-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+}
+.s2-flow-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* תמונת-הקדמה (שקף 8, תצלום אמיתי) — גודל 380×380 (מרובע, object-fit:
+   cover) לפי בקשה מפורשת ("מסודר כמו מסך 2 בסיין 6") — .s6-textimg-img
+   ב-methodica-science-mass-measure-03-06 הוא 380×380 בדיוק; תמונת
+   המקור שלנו היא 523×349 בפועל (לא מרובעת) — נחתכת ע"י object-fit:
+   cover, אותו עיקרון בדיוק כמו ברפרנס. שתי-רמות (חיצונית קבועה +
+   פנימית יחסית 100%/100%) לפי אותו תיקון-מבנה כמו .oly-delegation-img-frame
+   (ראו למעלה) — הרמה הפנימית היא זו שבפועל משוכפלת למודאל-הזום. */
+/* ⚠️ תוקן (17.08.2026) — בועת-הדיבור של יהב חייבת להיות בועה אמיתית
+   (צורה+זנב, כמו .char-speech-bubble), לא טקסט-שטוח בתוך גבולות
+   התמונה.
+   ⚠️ תוקן שוב (20.08.2026, לפי בקשה מפורשת) — .s2-hook-visual הפך
+   משורת-עמודה (בועה מעל תמונה) לשורת-row: בועה **לצד** התמונה,
+   פיזית מימין לה (זנב פונה שמאלה, בסגנון Figma node 2287:20072
+   "ScrollFeedbackTooltip" — שם הבועה יושבת מימין ותג-הזנב פונה שמאלה
+   אל מה שהיא "מסבירה"). סדר-DOM נשאר בועה-ראשונה/תמונה-שנייה כפי
+   שהיה — ב-row תחת RTL זה כבר נותן ימין/שמאל נכון, בלי צורך לשנות
+   סדר. align-items:center ממרכז את הבועה אנכית ביחס לגובה-התמונה
+   (380px), תואם למיקום-הזנב-הממורכז בצומת. */
+.s2-hook-visual {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+}
+/* .s2-hook-bubble — QA 20.08.2026: וריאנט-זנב חדש, ממוקם-בלבד, על גבי
+   .char-speech-bubble הבסיסית (עדיין מילוי-לבן/גבול-סגול-2px/רדיוס-
+   16px משם — לא שונו). מחליף רק את כיוון-הזנב מ"למטה" ל"שמאלה"
+   (פונה אל התמונה שיושבת לצד הבועה, לא מתחתיה) — לפי Figma node
+   2287:20072 ("ScrollFeedbackTooltip", שם הבועה יושבת מימין וזנבה
+   פונה שמאלה, אבל מילוי-סגול-מלא שם, לא לבן/גבול-סגול כמו שהתבקש
+   כאן). אותה טכניקה בדיוק כמו הבסיס (שני משולשי-CSS מוערמים —
+   ::before סגול-חיצוני, ::after לבן-פנימי-קטן-יותר) — רק מסובבת
+   90° ומורכזת אנכית (top:50%) במקום אופקית (left:50%). לא נוגע
+   ב-.char-speech-bubble הבסיסית — 4 המופעים האחרים בפרויקט (עמודה
+   מעל-אווטאר, זנב-למטה) לא משתנים. */
+.s2-hook-bubble { max-width: 220px; }
+.s2-hook-bubble::before {
+  left: -12px;
+  bottom: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left: 0;
+  border-right: 12px solid var(--subject-500);
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+}
+/* ⚠️ נוסף (20.08.2026) — .s2-flow-bubble (סעיף ד', בועה גדולה: פסקה+2
+   שורות-נוסחה) יורשת גם את .s2-hook-bubble (זנב-שמאלה, אותו מיקום
+   בדיוק כמו בועת-סעיף-א') — אבל 220px (max-width הבסיסי של
+   .s2-hook-bubble, מיועד למשפט קצר) צר בהרבה מדי לתוכן הזה. הכלל
+   הזה גובר (סדר-מקור, לא ספציפיות-CSS — שני הכללים 0-1-0). כן דורס
+   בחזרה text-align/font-size/color של .s2-body/.s2-formula-line
+   הפנימיים (ראו .char-speech-bubble p למעלה, שאחרת היה דורס אותם). */
+.s2-flow-bubble {
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.s2-flow-bubble .s2-body {
+  text-align: right;
+  font-size: 20px;
+  font-weight: 400;
+  color: #303030;
+}
+.s2-flow-bubble .s2-formula-line {
+  text-align: right;
+  font-size: 24px;
+  font-weight: 700;
+  color: #303030;
+  justify-content: flex-end;
+}
+/* בועה-קטנה מעל התמונה (לא לצדה) — עמודה: בועה למעלה, מסגרת-תמונה
+   למטה. הבועה משתמשת בזנב-הבסיס (.char-speech-bubble הרגילה, פונה
+   למטה) — הזנב פונה ישירות אל התמונה שמתחתיה. ה-gap חייב לפנות מקום
+   לזנב הבולט (~17px) כדי שלא ייחתך/יחפוף את קצה-המסגרת. */
+.s2-hook-img-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  flex-shrink: 0;
+}
+.s2-hook-bubble::after {
+  left: -9px;
+  bottom: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left: 0;
+  border-right: 10px solid #fff;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+}
+.s2-hook-img-frame {
+  width: 380px;
+  height: 380px;
+  /* ⚠️ תוקן שוב (20.08.2026) — נוסף padding:8px, לפי בדיקה חיה מול
+     ה-Figma הנכון לסיין/מסך הזה בפועל (fileKey eSbp4bKHgBky0rakDb8l9N,
+     node-id 525:9109, "MultiplyChoiceQuestionImage - State 01"): שם
+     ה-img הוא aspect-square עם p-[8px] חיצוני, ורק בתוך הריפוד הזה
+     יושב ה-border+radius בפועל. התיקון הקודם (17.08.2026) שהסיר את
+     ה-border כולו הסתמך על רפרנס-אנלוגי מפרויקט-אחות אחר
+     (.s6-textimg-img), לא על הצומת-Figma האמיתי של המסך הזה — עכשיו
+     שיש צומת ישיר, הוא הסמכות הקובעת. */
+  padding: 8px;
+  box-sizing: border-box;
+}
+.s2-hook-img-frame-inner {
+  /* ⚠️ תוקן (20.08.2026) — border הוחזר, לפי הצומת-Figma הנכון (ראו
+     הערה למעלה): `border:1px solid rgba(174,174,174,0.5)` — הערך
+     המדויק שנקרא מהצומת עצמו (525:9109), לא זהה לערך של
+     .oly-delegation-img-frame-inner (3px rgba(201,206,216,.4), צומת
+     אחר לגמרי, מסך אחר) — כל מסגרת-תמונה בפרויקט הזה נגזרת מהצומת-
+     Figma הספציפי-לה, לא ממוסכמה גורפת אחידה. */
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(174, 174, 174, 0.5);
+  border-radius: 16px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.s2-hook-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ⚠️ הוסר (17.08.2026) — .s2-hook-bubble-overlay (טקסט-שטוח בתוך גבולות
+   התמונה) הוחלף ב-.s2-hook-visual + .char-speech-bubble האמיתית (בועה
+   עם צורה+זנב, יושבת מעל התמונה) — ראו .s2-hook-visual למעלה. */
+
+/* ⚠️ הוסר (17.08.2026) — .s2-callout (תיבה מלאה ברקע סגול) הייתה
+   המצאה שלי, לא קיימת בשום מסך-רפרנס. לפי בקשה מפורשת ("לעשות כמו
+   במסכי הרפרנסים"): הטקסט המודגש הזה עבר ל-.s2-qtext הרגילה (מודגש+
+   צבע, בלי תיבת-רקע) — אותה מוסכמה שכבר קיימת ומאושרת בסעיף ג' של
+   אותו מסך ("סמנו לכמה שורות הגעתם:"), לא רכיב חדש. */
+
+/* דמות-בועה עדיין ללא נכס וידאו לתוכן הזה — placeholder מתועד, לא
+   resolveCharBubbleVideo שגוי/שבור. אותו גודל בדיוק כמו
+   .char-bubble-avatar video (300×230) כדי שההחלפה העתידית לא תזיז
+   פריסה. ראו ARCHITECTURE.md § "מסך 3" → "נכסים חסרים". */
+.char-bubble-avatar-pending {
+  width: 300px;
+  height: 230px;
+  border: 2px dashed var(--subject-350);
+  border-radius: 16px;
+  background: var(--subject-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.char-bubble-avatar-pending span {
+  font-family: 'Assistant', sans-serif;
+  font-size: 20px;
+  color: #303030;
+  opacity: 0.6;
+}
+
+/* ⚠️ הוחלף (17.08.2026, סבב מבנה מחדש) — .s2-applet-placeholder (עמודה
+   בודדת) הוחלף ב-.s2-sim-row/.s2-sim-placeholder/.s2-sim-text, לפי
+   בקשה מפורשת: "מסודר כמו מסך 6 בסיין 1 יעד 3" (dq-sim-placeholder/
+   dq-question-panel) — שם זה שתי-עמודות ברוחב-מסך-מלא (position:
+   absolute); כאן, בתוך סעיף בזרימה רגילה בתוך מסך-גלילה, מותאם
+   לשורת-flex עם פלייסהולדר בגודל קבוע (לא מסך-מלא) + טור-טקסט גמיש.
+   הסימולציה עצמה נשארת ריקה — PLACEHOLDER מפורש, "נפתח אחר כך". */
+.s2-sim-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 24px;
+  width: 100%;
+}
+/* ⚠️ תוקן (17.08.2026) — ברפרנס המדויק (.dq-sim-placeholder), הפלייסהולדר
+   הוא מלבן אפור-שטוח פשוט: background:#c4c4c4, בלי border, בלי
+   border-radius בכלל. הגרסה הקודמת כאן השתמשה בסגנון "פלייסהולדר
+   מקווקו-סגול" גנרי משלי (dashed + subject-100) — לא תואם את הרפרנס
+   בכלל. תוקן להתאמה מדויקת (רק צבע הטקסט הותאם ללבן, כדי שיהיה קריא
+   על רקע אפור-כהה, במקום הטקסט הבנוי-לרקע-בהיר של הרפרנס — שם אין
+   טקסט כלל, כי שם יש סימולציה פעילה, לא פלייסהולדר ריק). */
+.s2-sim-placeholder {
+  flex-shrink: 0;
+  width: 460px;
+  max-width: 100%;
+  height: 320px;
+  background: #c4c4c4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+}
+.s2-sim-placeholder span {
+  font-family: 'Assistant', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  padding: 0 20px;
+}
+.s2-sim-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.s2-check-btn {
+  align-self: flex-end; /* עקבי עם מסך 2 — "צדקתי?" בצד שמאל */
+  margin-top: 4px;
+}
+
+/* ⚠️ נוסף (17.08.2026, סבב מבנה מחדש) — סעיף ג': שורה (שאלה+מסיחים
+   בימין, דמות+בועית בשמאל), לפי בקשה מפורשת שמיקום הדמות יהיה "כמו
+   מסך 2 בסיין 3 יעד 3" (char-bubble-wrap, שם position:absolute
+   קבוע-למסך-כולו left:24px/bottom:90px). כאן, בתוך סעיף בזרימה רגילה
+   במסך-גלילה, מומש כשורת-flex (לא עוגן קנבס-מוחלט) כדי להישאר עקבי
+   עם ארכיטקטורת "הכול בזרימה" של מסך-הגלילה — ראו ARCHITECTURE.md. */
+/* ⚠️ תוקן (17.08.2026) — אותו תיקון gap-הפוך כמו .s2-flow-row/.s2-flow-text
+   (ראו למעלה) — ברפרנס המדויק (.scq-question/.scq-content), row
+   gap:16px, content gap:24px. */
+.s2-scq-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+}
+.s2-scq-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+/* ⚠️ נוסף (17.08.2026) — עמודת-הצד (פיזית שמאל): הדמות+בועית ותמונת-
+   המשוב חולקות בדיוק את אותו מקום — toggle של hidden ביניהן
+   (script.js § s2CCheck/resetScreenState2), לא שני בלוקים נפרדים
+   שמופיעים אחד-מתחת-לשני. flex-shrink:0 כדי שלא יתכווץ מול .s2-scq-content. */
+.s2-scq-side { flex-shrink: 0; }
+
+/* ⚠️ תוקן (17.08.2026) — הותאם למדויק ל-.scq-img/.scq-img-inner
+   ברפרנס (מסך 3 בסיין 2): רמה חיצונית עם padding:8px (לא רק width/
+   height), מסגרת 1px solid rgba(174,174,174,.5) על הרמה הפנימית (לא
+   3px rgba(201,206,216,.4) שהיה כאן קודם — זו הייתה מסגרת שאולה
+   מ-.oly-delegation-img-frame, לא מ-.scq-img האמיתי). תמונת-משוב
+   (שקף 12: "התמונה עולה יחד עם המשוב" — הערת-מפיקה מפורשת). ⚠️ תמונה
+   אמיתית סופקה (צנונית+כרובית.png, 1450×1085px) — הוחלף מ-PLACEHOLDER.
+   מוצג/מוסתר ב-JS (s2CCheck/resetScreenState2) — "רק בזמן שהמשוב
+   יופיע", לא קבוע. */
+.s2-fb-img-frame {
+  width: 380px;
+  height: 380px;
+  max-width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+.s2-fb-img-frame[hidden] { display: none; }
+.s2-fb-img-frame-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(174, 174, 174, 0.5);
+  border-radius: 16px;
+  background: #fff;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.s2-fb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* שבר מוצג (3/7 וכו') — component קטן משותף, אין רכיב-שבר גלובלי קיים
+   בפרויקטי המדעים; נבנה כאן לפי הצורך (קו מעל/מתחת, לא / רגיל) */
+.frac {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: middle;
+  font-size: 0.75em;
+  line-height: 1.2;
+  margin: 0 4px;
+}
+.frac-num { border-bottom: 1.5px solid currentColor; padding: 0 6px 2px; }
+.frac-den { padding: 2px 6px 0; }
+
+.s2-formula-line {
+  font-family: 'Assistant', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #303030;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  direction: ltr; /* הביטוי המתמטי עצמו (מספרים+שבר+סימנים) נשאר LTR פנימי,
+                     כמו כל ביטוי מתמטי בטקסט עברי — לא המשפט כולו */
+  width: 100%;
+  justify-content: flex-end; /* פיזית ימין, תואם ליישור שאר הטקסט בעמודה */
+  margin: 0;
+}
+
+/* ════════════════════════════════════════════════════════
+   סעיף ה (שקף 14) — וריאנט מקומי חדש של DragAndDropQuestion:
+   "דיאגרמת-משוואה". שוחזר מרינדור בפועל של השקף (PowerPoint COM
+   export), לא ממקור Figma — קירוב חזותי, לא מדויק-פיקסל. מצבי הצבע
+   (default/hover/dropped/correct/wrong) לקוחים מהטבלה הקנונית של
+   DragAndDropQuestion (720-templates skill), לא הומצאו.
+   ════════════════════════════════════════════════════════ */
+/* ⚠️ תוקן ביסודו (20.08.2026, לפי דיווח "שום דבר לא נראה תקין בחלק
+   הזה") — height:280px קבוע + .s2-eq-formula position:absolute עם
+   top ממוצע-ידנית (42px) היו שבירים מיסודם: ברגע שמשבצת גדלה
+   (ראו .s2-eq-target למעלה — עכשיו height:auto, גולש לכמה שורות
+   בשביל הכרטיסים הארוכים), אין שום מנגנון שמעדכן את ה-280px/42px
+   האלה, אז התוכן חורג/חופף את שורת-המסיחים שמתחתיו. הוחלף בפריסת
+   flex פשוטה וגמישה: הקונטיינר גדל אוטומטית לפי תוכנו (min-height,
+   לא height קבוע), וה-formula זורם בתוכו רגיל (לא absolute) וממורכז
+   ע"י flex — לא צריך יותר לחשב ידנית "כמה px למרכז". */
+.s2-eq-diagram {
+  position: relative;
+  width: 700px;
+  max-width: 100%;
+  min-height: 280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0;
+  box-sizing: border-box;
+}
+.s2-eq-formula {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap; /* ⚠️ נוסף (20.08.2026) — המשוואה חייבת להישאר שורה
+    אחת אחידה; ראו גם תיקון .s2-eq-num-col למטה — הגלישה שדווחה נבעה
+    מחוסר-יישור אנכי בין העמודות, לא מ-wrap בפועל. */
+  gap: 24px; /* ⚠️ תוקן (18.08.2026) — היה 10px, לא מספיק מרחב לתיבות-
+    השחרור (170px) ליד כל איבר במשוואה. */
+  direction: ltr;
+  font-family: 'Assistant', sans-serif;
+  font-size: 32px; /* ⚠️ תוקן (18.08.2026) — 36px לא היה בטבלת-הטוקנים המאושרת {88,80,64,40,32,28,24,22,20,26} */
+  font-weight: 700;
+  color: #303030;
+  white-space: nowrap; /* חל על טקסט-המשוואה עצמו (מספרים/·/=) בלבד —
+    .s2-eq-placed-card דורס בחזרה ל-normal, ראו שם, כדי שהתוית הארוכה
+    בפועל תוכל לגלוש לשתי-שלוש שורות בתוך המשבצת. */
+}
+/* ⚠️ תוקן ביסודו (18.08.2026) — ראה ההערה המלאה ב-index.html ליד
+   .s2-eq-diagram: ה"מיקום דינמי ב-JS" שההערה הקודמת כאן תיארה מעולם
+   לא נכתב בפועל, וזה שורש-הבאג החוזר שהמשתמשת דיווחה עליו. תוקן
+   ע"י פריסת flex-column סטטית (.s2-eq-num-col למטה) — כל משבצת
+   מקוננת ב-HTML ישירות ליד המספר שלה (מעל/מתחת), לא ממוקמת
+   absolute+JS. .s2-eq-target עצמו כבר לא position:absolute — הוא
+   ילד-flex רגיל בתוך .s2-eq-num-col. צבעי/מסגרות-המצבים (dashed/
+   correct/wrong) עדיין תואמים למוסכמה המדויקת של מסך 18 בסיין 1
+   יעד 3 (.s17-zone) — לא השתנו.
+
+   ⚠️ תוקן שוב ביסודו (20.08.2026, לפי דיווח: "המשוואה צריכה להיות
+   כתובה כשורה אחת, ולסדר את איזורי השחרור מסביב לאלמנטים"). שורש-
+   הבאג: flex-column פשוט + align-items:center *על .s2-eq-formula*
+   ממרכז כל עמודה כמקטע-שלם לפי הגובה-הכולל שלה — אבל העמודות לא
+   סימטריות (עמודת-השבר: משבצת/שבר/משבצת = 3 מקטעים; עמודות 70/40:
+   משבצת+מספר = 2 מקטעים בלבד), אז "המרכז הגיאומטרי" של כל עמודה לא
+   חופף לשורת-המספרים בפועל — 4/7 יושב בערך על קו אחד, אבל 70/40
+   נשלפים למעלה/למטה ממנו, וזה מה שנראה "לא שורה אחת". הוחלף ל-
+   CSS Grid בעל 3 שורות-קבועות (מעל/מספר/מתחת) בכל עמודה — עכשיו
+   שורת-האמצע (המספר/השבר) מיושרת בדיוק לאותו קו בכל עמודה, בלי
+   תלות בכמות-האלמנטים בעמודה הספציפית; המשבצות (מעל/מתחת) הופכות
+   ל"מסביב" אמיתי לקו-המספרים, לא גורמות-הסטה. */
+.s2-eq-num-col {
+  display: grid;
+  grid-template-rows: minmax(64px, auto) auto minmax(64px, auto);
+  align-items: center;
+  justify-items: center;
+  row-gap: 8px;
+}
+/* מיפוי מפורש שורה→אלמנט (לא להסתמך על סדר-DOM גרידא — בעמודת 40/
+   knownsize סדר-ה-DOM הוא "מספר, אז משבצת", ההפך מעמודת 70/
+   groupsize; מיפוי מפורש מבטל את התלות השברירית הזו). */
+#s2-target-known, #s2-target-groupsize { grid-row: 1; }
+.s2-eq-num-col > .frac, #s2-eq-n70, #s2-eq-n40 { grid-row: 2; }
+#s2-target-total, #s2-target-knownsize { grid-row: 3; }
+/* ⚠️ תוקן (20.08.2026, לפי דיווח: "אף אחד מאיזורי השחרור לא בגודל של
+   אלמנטי הגרירה") — אומת ישירות מול הצומת הקנוני של הרכיב הזה
+   (fileKey eSbp4bKHgBky0rakDb8l9N, node-id 1249:32691, "Drag&Drop
+   State"): width קבוע (172px, זהה ל-.s2-ddq-slot) + height גמיש
+   (min-height:64px, זהה ל-.s2-ddq-card, לא גובה-קבוע) — כי הכרטיסים
+   בפועל ("הגודל של החלק הידוע לפי היחס" וכו') ארוכים וגולשים לכמה
+   שורות; משבצת בגובה-קבוע 58px לא הייתה יכולה להכיל אותם בכלל. גם
+   border-radius תוקן מ-10px ל-12px, לפי אותו צומת בדיוק. */
+.s2-eq-target {
+  width: 172px;
+  min-height: 64px;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f5;
+  border: 1px dashed rgba(0, 0, 0, 0.6);
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+.s2-eq-target.drag-over { border-style: dashed; border-color: var(--subject-500); background: #fff; }
+/* ⚠️ עודכן (18.08.2026) — מצב-ביניים "הונח אך טרם נבדק": bg #d4f3ff
+   (היה var(--subject-100)) + border-width מפורש 1.5px (היה 1px, מ-
+   .s2-eq-target הבסיסי) — SELF-QA-lomda.md §"transient occupied
+   state" דורש הבחנה ברורה בין המצב הזה לבין idle/correct/wrong.
+   טקסט-הכרטיס עצמו (.s2-eq-placed-card) גדל ל-22px/#222 באותו מצב —
+   ראו הכלל הממוקד למטה — לא נשאר ב-16px/#303030 האידל. */
+.s2-eq-target.occupied { border-width: 1.5px; border-style: solid; border-color: var(--subject-500); background: #d4f3ff; }
+.s2-eq-target.correct { border-style: solid; border-color: #609e12; background: #fff; }
+.s2-eq-target.wrong { border-style: solid; border-color: #b20010; background: #fff; }
+.s2-eq-placed-card {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  direction: rtl; /* ⚠️ נוסף (20.08.2026) — שורש-באג "התג בצד שמאל": .s2-eq-
+    formula (ההורה) הוא direction:ltr (בכוונה, בשביל סדר-הקריאה של
+    המשוואה עצמה: 4/7 · 70 = 40). אבל .s2-eq-placed-card עצמו יורש
+    את ה-ltr הזה, אז order:-1 על ה-::after (למטה) — שנועד להזיז את
+    התג ל"תחילת-הסדר-הפיזי" — זז ל-*שמאל* (תחילת-סדר תחת LTR), לא
+    ימין. תוקן ע"י שחזור direction:rtl כאן, בדיוק כמו הדפוס המתועד
+    ב-.oly-scroll-area/.s4-notebook (עוטף-חוץ ltr למטרה טכנית ספציפית
+    + עוטף-פנימי rtl לתוכן בפועל). ראו גם SELF-QA-lomda.md §3/§5 —
+    "התג חייב להיות בצד הפיזי-ימין" הוא כלל-פרויקטלי מוצק, לא הנחה
+    פתוחה. */
+  gap: 10px; /* ⚠️ תוקן (18.08.2026) — היה 4px, SELF-QA-lomda.md: רווח טקסט↔תג */
+  padding: 4px 8px; box-sizing: border-box;
+  font-family: 'Assistant', sans-serif; font-size: 20px; font-weight: 400; /* ⚠️ תוקן — 16px לא היה בטבלת-הטוקנים המאושרת */
+  color: #303030; text-align: center; line-height: 1.2;
+  white-space: normal; /* ⚠️ נוסף (20.08.2026) — קריטי: .s2-eq-formula
+    ההורה מגדיר white-space:nowrap לצורך טקסט-המשוואה עצמו, ותכונה זו
+    *עוברת בירושה*. בלעדי הדריסה הזו, תוית ארוכה כמו "הגודל של החלק
+    הידוע לפי היחס" לא הייתה יכולה לגלוש לשורה שנייה בשום מקרה, בלי
+    קשר לרוחב-המשבצת — זה כנראה שורש-הבאג המרכזי שגרם ל"שום דבר לא
+    נראה תקין". */
+  cursor: grab;
+}
+/* מצב-ביניים "הונח, טרם נבדק" — טקסט גדול/כהה יותר מהאידל, לפי
+   SELF-QA-lomda.md. ⚠️ נוסף (18.08.2026). */
+.s2-eq-target.occupied .s2-eq-placed-card { font-size: 22px; color: #222; }
+/* תג-סימון (✓/✕), לפי אותה מוסכמה בדיוק כמו .s17-zone.correct/.wrong
+   ::after במסך 18 — נכסים משלנו (icon-check-white.svg/icon-x-white.svg,
+   כבר בשימוש ב-.scq-opt.correct/.wrong), לא הנכסים הספציפיים למדעים.
+   ⚠️ עודכן (18.08.2026):
+   1. order:-1 — בלי זה, ה-::after (אחרון ב-DOM) נופל פיזית *משמאל*
+      לטקסט תחת RTL אמיתי (flex-row, main-end=שמאל ב-RTL) — בניגוד
+      למוסכמה הגלובלית (תג תמיד פיזית-ימין, ראו .scq-radio{order:-1}
+      למעלה). order:-1 מזיז אותו להיות ראשון בסדר-ה-visual, כלומר
+      פיזית-ימין, אותו תיקון בדיוק.
+   2. גודל-עיגול 22px (היה 18px — לא ברשימת-הגדלים המאושרת {32,22}),
+      גודל-האייקון-הפנימי הוגדל יחסית (×22/18). */
+/* ⚠️ תוקן (20.08.2026) — גודל-עיגול 26px (היה 22px), לפי בדיקה חיה
+   מול הצומת הקנוני (1249:32691): ה-badge בפועל שם הוא size-[26px],
+   לא 22px. גודל-האייקון-הפנימי הוגדל יחסית (×26/22). */
+.s2-eq-target.correct .s2-eq-placed-card::after,
+.s2-eq-target.wrong .s2-eq-placed-card::after {
+  content: '';
+  display: inline-block;
+  flex-shrink: 0;
+  order: -1;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.s2-eq-target.correct .s2-eq-placed-card::after {
+  background-color: #609e12;
+  background-image: url('assets/images/icon-check-white.svg');
+  background-size: 14px 12px;
+}
+.s2-eq-target.wrong .s2-eq-placed-card::after {
+  background-color: #b20010;
+  background-image: url('assets/images/icon-x-white.svg');
+  background-size: 13px 13px;
+}
+
+/* ⚠️ עודכן (17.08.2026) — justify-content:center לפי בקשה מפורשת:
+   "אלמנטי הגרירה צריכים להיות באמצע המסך" (היה flex-end קודם). */
+.s2-ddq-source {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+  width: 100%;
+  justify-content: center;
+}
+.s2-ddq-slot { width: 172px; min-height: 64px; }
+/* ⚠️ עודכן (17.08.2026) — גודל/פונט מוגדלים, לפי בקשה מפורשת שהגרירה
+   "תיראה כמו... הלומדת הרפרנס" (מסך 18, .s17-drag-item) — עדיין לא
+   מידות-זהות (min-width:260px/height:42px/nowrap של מסך 18, כי
+   הפריטים שלנו ארוכים משמעותית, "הגודל של החלק הידוע לפי היחס", וצריכים
+   לגלוש לשתיים-שלוש שורות), אבל קרובות משמעותית מקודם (15px→18px,
+   8/12→10/16 padding) כדי לצמצם את הפער החזותי. מסגרת/צבעים כבר
+   תואמים במדויק (border:1px solid rgba(174,174,174,.5), radius:10). */
+.s2-ddq-card {
+  width: 100%;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  box-sizing: border-box;
+  border: 1.5px solid #ececec; /* ⚠️ תוקן (18.08.2026) — היה rgba(174,174,174,.5), דפוס-ValueInputQuestion
+                                   שגוי כאן לפי SELF-QA-lomda.md §3/4: פילי word-bank של
+                                   DragAndDropQuestion צריכים את מסגרת-האידל הזו */
+  border-radius: 12px; /* ⚠️ תוקן (20.08.2026) — היה 10px; אומת מול הצומת
+                           הקנוני (1249:32691) — 12px בפועל, זהה ל-.s2-eq-target. */
+  background: #fff;
+  font-family: 'Assistant', sans-serif;
+  font-size: 20px; /* ⚠️ תוקן — 18px לא היה בטבלת-הטוקנים המאושרת */
+  font-weight: 400;
+  color: #303030;
+  text-align: center;
+  line-height: 1.25;
+  cursor: grab;
+  user-select: none;
+}
+/* ⚠️ תוקן (18.08.2026) — box-shadow היה rgba(1,157,229,.2) = Science
+   Subject/500 (דלף מהמנוע המשותף) — הוחלף בגזירה אמיתית מ-
+   var(--subject-500) של הפרויקט הזה (#3B2FC2 → rgb(59,47,194)). */
+.s2-ddq-card:hover { border-color: var(--subject-500); box-shadow: 0 2px 6px rgba(59, 47, 194, 0.2); }
+.s2-ddq-card.ghost { visibility: hidden; }
+.s2-ddq-card.dragging { opacity: 0.38; cursor: grabbing; }
+.s2-ddq-card.locked { cursor: default; }
+.s2-ddq-card.locked:hover { border-color: #ececec; box-shadow: none; }
+
+/* =========================================================
+   מסך 4 — מסך מעבר (TransitionScreen), data-screen="3", id="s3"
+   תוכן משקף 15. ראו ARCHITECTURE.md § "מסך 4" לפירוט + הנחת-העבודה על
+   הדמות הבודדת (לא "שתי דמויות אוחזות יד ביד" כמו בהערת המפיקה — אין
+   נכס כזה בפרויקט).
+   ========================================================= */
+.s3-content {
+  position: absolute;
+  top: 100px;
+  left: 240px;
+  width: 800px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 48px;
+}
+/* Heading/H-5 (40px Bold) — טוקן מאושר */
+.s3-line {
+  font-family: 'Assistant', sans-serif;
+  font-size: 40px;
+  font-weight: 400;
+  color: #303030;
+  text-align: center;
+  line-height: 1.3;
+}
+.s3-avatar-wrap { display: flex; align-items: center; justify-content: center; }
+.s3-avatar { width: 450px; height: 350px; object-fit: cover; display: block; }
+
+/* =========================================================
+   מסך 5 (מאוחד) — תרגול מונחה, data-screen="4", id="s4"
+   תוכן משקפים 16-22. ⚠️ נבנה מחדש (17.08.2026) לפי get_design_context
+   בפועל על fileKey eSbp4bKHgBky0rakDb8l9N (nodeId 3582:26297/26366/27941)
+   — הסבב הקודם נבנה מזיכרון-שיחה בלבד, בלי לקרוא בפועל ל-Figma באותו
+   סשן, וסטה במספר נקודות מהותיות מהעיצוב האמיתי (ראו ARCHITECTURE.md
+   § "מסך 5 — נבנה מחדש לפי Figma בפועל" לפירוט המלא של כל תיקון).
+   ⚠️ #5749C4 הוא Purple/900 בפועל בפיגמה (לא המצאה) — Selected pill
+   bg (#E1D9FF) הוא Purple/300, זהה בדיוק ל-var(--subject-300) הקיים.
+   ⚠️ קנבס-הרפרנס (נבדק ישירות: get_metadata) הוא 1280×720 — כמעט
+   זהה לקנבס שלנו (1280×710, הפרש 10px בלבד) — לכן משתמשים כאן
+   בערכי-מיקום/מרווח **כמעט-מדויקים** מהרפרנס, לא בערכים מכווצים
+   כמו שנעשה בטעות בסבב הקודם (מתוך הנחה שגויה שקנבס-הרפרנס גבוה
+   משמעותית משלנו).
+   ⚠️ RTL: align-items:flex-start (לא flex-end!) הוא הישור-ימני
+   הנכון בעמודת-flex תחת dir="rtl" — אותו gotcha מתועד שוב-ושוב בכל
+   הפרויקט הזה (_global-components.md). הרפרנס עצמו (קוד React/
+   Tailwind גולמי מ-Figma, לא RTL-aware) משתמש ב-items-end כדי להשיג
+   ישור-ימני כי הוא לא מוגדר dir="rtl" בכלל — **לא** לתרגם 1:1 ל-
+   flex-end אצלנו (שהיה באג שכמעט נכנס כאן בטעות). ========================================================= */
+/* ⚠️ נוסף/הובהר (18.08.2026, 720-design-guidelines audit) — הטוקן
+   שונה-שם ל-"--s4-card-bg-unconfirmed" בכוונה, כדי שאי-הוודאות הזו לא
+   תישאר שקופה למי שיגע בקובץ הבא. #5749C4 **אינו** אחד מ-12 טוקני-
+   ה-Subject המאושרים (הקרוב ביותר, Math Subject/900, הוא #2F2478 —
+   ראו var(--subject-900) ב-:root הראשי). ההערה למעלה טוענת ש-
+   get_design_context הראה #5749C4 בפועל כ"Purple/900" בפיגמה — לא
+   ניתן לאמת מחדש את זה כאן (אין גישה חוזרת לאותו session-context של
+   Figma). **לא שונה הצבע החזותי בפועל** — זו רק תיעוד-בעיה, לא תיקון-
+   צבע: אם התיעוד-בפיגמה שגוי, זה צריך אימות מפורש של מעצב/ת לפני
+   שינוי חזותי בפועל. ראו ARCHITECTURE.md § 18.08.2026 לפירוט. */
+:root { --s4-card-bg-unconfirmed: #5749C4; /* ⚠️ לא בטבלת-הטוקנים המאושרת — ראו הערה למעלה */ }
+
+/* עוטף title+text-block, gap:40 ביניהם (זהה לרפרנס: "Instruction Math
+   Section" gap-[40px]). */
+/* ⚠️ תוקן (17.08.2026, לפי שאלה מפורשת + get_design_context חוזר על
+   node 3582:26228) — top:64px זהה בדיוק לרפרנס ("Instruction Math
+   Section" → top-[64px]) — לא היה צריך לכווץ אותו ל-24px; הקנבסים
+   כמעט זהים (1280×720 מול 1280×710) כפי שכבר אומת. */
+.s4-content {
+  position: absolute;
+  top: 64px;
+  left: 40px;
+  right: 40px;
+  bottom: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* RTL: flex-start = פיזית ימין */
+  gap: 40px; /* ⚠️ תוקן — זהה בדיוק לרפרנס ("Instruction Math Section"
+               gap-[40px]); היה מכווץ ל-24px בטעות, בלי צורך אמיתי
+               (הקנבסים כמעט זהים). */
+}
+/* Heading/H-5 (40px Bold, #3b2fc2) — זהה בדיוק לרפרנס (Section Title) */
+.s4-title {
+  font-family: 'Assistant', sans-serif;
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--subject-500);
+  text-align: right;
+  width: 100%;
+  margin: 0;
+}
+/* עוטף instruction+row, gap:24 ביניהם (זהה לרפרנס: "Text" gap-[24px]). */
+.s4-text-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* RTL: flex-start = פיזית ימין */
+  gap: 24px;
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+}
+/* הנחיה מתמדת (Body/B-5, 24px Bold, #303030) — מוצגת בכל השלבים,
+   לא רק בפתיחה כמו שהיה בסבב הקודם — תואם למדויק לרפרנס. */
+.s4-instruction {
+  font-family: 'Assistant', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #303030;
+  text-align: right;
+  max-width: 900px;
+  width: 100%;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.s4-main {
+  display: flex;
+  flex-direction: row; /* RTL row: ראשון ב-DOM = פיזית ימין */
+  gap: 56px; /* ⚠️ תוקן — זהה בדיוק לרפרנס ("Img + Instruction" gap-[56px]).
+                461(כרטיס)+683(מחברת)+56(gap)=1200px, בדיוק הרוחב
+                הזמין (1280−40−40) — 40px היה מכווץ שלא לצורך, ופשוט
+                לא ממלא את הרוחב המלא כמו ברפרנס. */
+  align-items: flex-start;
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+}
+
+/* פאנל-מחברת לבן ("Instruction") — פיזית מימין (ראשון ב-DOM). border/
+   radius/padding תואמים למדויק לרפרנס (2px #3b2fc2, radius24, px32/py20).
+   ⚠️ תוקן (18.08.2026) — יש לו overflow-y:auto (רשת-ביטחון לתוכן ארוך),
+   אז חל עליו אותו כלל "גלילה תמיד בצד ימין" כמו שלושת אזורי-הגלילה
+   הראשיים (ראה ההערה המלאה ליד .oly-scroll-area) — direction:ltr כאן
+   רק למיקום-פס-הגלילה, .s4-notebook-inner מחזיר direction:rtl לתוכן
+   בפועל ומחזיק את ה-flex/gap שהיו כאן קודם. הריפוד הסימטרי (32px)
+   כבר משאיר מרווח מספיק לפס-גלילה 8px, אין צורך בהחלפת padding. */
+.s4-notebook {
+  flex: 1 1 683px;
+  max-width: 683px;
+  max-height: 100%;
+  border: 2px solid var(--subject-500);
+  border-radius: 24px;
+  background: #fff;
+  padding: 20px 32px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  direction: ltr;
+}
+.s4-notebook-inner {
+  direction: rtl;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* RTL column: flex-start = פיזית ימין */
+  gap: 10px;
+}
+/* הבעיה המקורית — Body/B-3 (24px Regular). מלאה-צבע בפתיחה (שלב 0,
+   תואם ל-State-01 ברפרנס — אין עדיין עמעום), מעומעמת (#d4d4d4, תואם
+   ל-State-03+ ברפרנס) מרגע שהאינטראקציה מתחילה — .s4-problem--dimmed
+   (script.js § s4ShowStep). */
+.s4-problem {
+  font-family: 'Assistant', sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: #303030;
+  text-align: right;
+  line-height: 1.4;
+  width: 100%;
+  margin: 0;
+}
+.s4-problem.s4-problem--dimmed { color: #d4d4d4; }
+/* שורת-סיכום דינמית — Body/B-3 24px, צבע Purple/500 ב-opacity:25%,
+   תואם למדויק לרפרנס (לא צבע-מלא כמו שהיה בסבב הקודם). */
+/* ⚠️ נוסף (20.08.2026) — תצוגה-מקדימה סטטית של 4 שאלות א'-ד', לפי
+   צילום-מסך מהתסריט (לא Figma הגנרי) — ר' ההערה המלאה ב-index.html
+   ליד .s4-preview-rows. */
+.s4-preview-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+.s4-preview-rows[hidden] { display: none; }
+.s4-preview-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+}
+.s4-preview-label {
+  font-family: 'Assistant', sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: #303030;
+  text-align: right;
+}
+/* ⚠️ נוסף (20.08.2026) — שורת השלב-הנוכחי מודגשת, לפי בקשה מפורשת. */
+.s4-preview-label.current { font-weight: 700; }
+.s4-preview-box {
+  flex-shrink: 0;
+  width: 150px;
+  height: 42px;
+  border: 1.5px solid var(--subject-350);
+  border-radius: 8px;
+  background: #fff;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Assistant', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--subject-500);
+}
+/* ⚠️ נוסף (20.08.2026) — כשהשלב נענה, התיבה מציגה בפועל את התשובה-
+   הנכונה (לא ריקה/pending יותר) — גבול עובר לצבע-נושא מלא. */
+.s4-preview-box.answered { border-color: var(--subject-500); }
+.s4-recap {
+  font-family: 'Assistant', sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--subject-500);
+  opacity: 0.25;
+  text-align: right;
+  width: 100%;
+  margin: 0;
+}
+.s4-recap[hidden] { display: none; }
+/* ⚠️ הוסר (20.08.2026, לפי בקשה מפורשת) — .s4-current-step-block
+   ("נעבוד שלב שלב:" + חזרה-על-הסעיף-הנוכחי) היה כפילות: הסעיפים
+   כבר כתובים ב-.s4-preview-rows, עם הנוכחי מודגש שם (.current). */
+
+/* "Custom Content Slot" — דיאגרמת-הגולות (שקף 22), 8 שורות × 7 גולות
+   (2 אדומות + 5 כחולות בכל שורה), בנוי HTML/CSS טהור (בלי asset תמונה
+   חסר) — נבנה דינמית ב-JS (s4RenderMarbles), ראו script.js. */
+.s4-marbles {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  align-items: flex-start; /* RTL: flex-start = פיזית ימין, השורות מתחילות מהימין */
+}
+.s4-marbles[hidden] { display: none; }
+.s4-marble-row { display: flex; flex-direction: row; gap: 6px; }
+.s4-marble {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.s4-marble--red { background: #c0392b; }
+.s4-marble--blue { background: #2f4ba0; }
+
+/* ⚠️ נוסף — דמות-מלווה בשלב הפתיחה (שקף 16), תופסת את אותו מקום-צד
+   (משמאל) שהכרטיס הסגול יתפוס משלב 1 ואילך — כדי שלא יישאר ריק/ארוך
+   מדי, וכדי להציג את הדמות שהתסריט דורש שם (שלא הייתה קודם כלל). */
+.s4-intro-char {
+  flex: 0 0 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 24px;
+}
+/* ⚠️ נוסף (17.08.2026) — תיקון באג אמיתי, זהה בדיוק לזה שכבר תוקן
+   ב-.char-bubble-wrap: בלי ה-override הזה, ה-attribute הילידי `hidden`
+   (JS: s4ShowStep) לא עושה כלום בפועל מול ה-display:flex למעלה —
+   הדמות נשארה גלויה-תמיד גם אחרי לחיצה על "בואו נתחיל", בניגוד גמור
+   למה שהתסריט/הלוגיקה דורשים (דמות נעלמת ← כרטיס סגול מופיע במקומה). */
+.s4-intro-char[hidden] { display: none; }
+
+/* כרטיס "שלב מודרך" סגול ("Guided Step") — פיזית משמאל (שני ב-DOM).
+   bg/radius/padding תואמים למדויק לרפרנס (#5749c4, radius24, padding26).
+   ⚠️ תוקן (18.08.2026) — אותה סיבה בדיוק כמו .s4-notebook למעלה: יש לו
+   overflow-y:auto, אז חל עליו כלל "גלילה תמיד בצד ימין". direction:ltr
+   כאן רק למיקום-פס-הגלילה; .s4-step-card-inner מחזיר direction:rtl
+   ומחזיק את ה-flex/gap. padding26 הסימטרי כבר משאיר מרווח מספיק. */
+.s4-step-card {
+  flex: 1 1 461px;
+  max-width: 461px;
+  max-height: 100%;
+  background: var(--s4-card-bg-unconfirmed);
+  border-radius: 24px;
+  padding: 26px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  position: relative;
+  direction: ltr;
+}
+.s4-step-card-inner {
+  direction: rtl;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* RTL column: flex-start = פיזית ימין */
+  gap: 20px; /* ⚠️ תוקן — זהה בדיוק לרפרנס ("Guided Step" gap-[20px]), היה 16px */
+}
+.s4-step-card[hidden] { display: none; }
+/* אייקון-נורה — נכס SVG אמיתי שיוצא מ-Figma (לא הומצא, ולא הושמט כמו
+   בסבב הקודם שגרס בטעות שאין נכס כזה). */
+.s4-bulb { width: 28px; height: 28px; flex-shrink: 0; }
+/* ⚠️ הוסר (20.08.2026, לפי בקשה מפורשת) — מונה "X מתוך 6" לא נחוץ. */
+
+/* gap:20 — זהה בדיוק לרפרנס ("Slot" gap-[20px] בתוך הכרטיס), היה 16px */
+.s4-step-block { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; width: 100%; }
+.s4-step-block[hidden] { display: none; }
+
+/* ⚠️ נוסף (17.08.2026) — Body/B-6 (20px Regular) — שורת-הקדמה, תואם
+   ל-per1 ברפרנס (regular, לפני השורה המודגשת). לא היה קיים קודם —
+   הכול הוטבע כמשפט-בודד מודגש, בניגוד להיררכיית-הטקסט האמיתית
+   ברפרנס (הקדמה רגילה → שאלה מודגשת). */
+.s4-step-setup {
+  font-family: 'Assistant', sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: #fff;
+  text-align: right;
+  line-height: 1.4;
+  width: 100%;
+  margin: 0;
+}
+/* Body/B-8 (20px Bold) — טוקן מאושר, השאלה עצמה (ברפרנס: השורה
+   המודגשת אחרי per1 הרגיל). */
+.s4-step-prompt {
+  font-family: 'Assistant', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  text-align: right;
+  line-height: 1.4;
+  width: 100%;
+  margin: 0;
+}
+.s4-step-explain {
+  font-family: 'Assistant', sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: #fff;
+  text-align: right;
+  line-height: 1.4;
+  width: 100%;
+  margin: 0;
+}
+.s4-step-explain[hidden] { display: none; }
+
+/* פילי-תשובה — תואם למדויק לרפרנס: 85×38px, radius:100, לא-נבחר=
+   לבן+טקסט סגול, נבחר=Purple/300 (#e1d9ff, זהה ל-var(--subject-300))
+   +SemiBold — לא ירוק/אדום כמו שהיה בסבב הקודם (זה היה הומצא, לא
+   מהרפרנס). תג-✓ נוסף רק במצב "נבדק ונכון" (לא קיים ברפרנס עצמו,
+   אין שם דוגמת "אחרי-בדיקה" — נשאר כמוסכמת-הפרויקט הגלובלית
+   ל"תשובה נכונה", כדי שהלומד יקבל אישור ויזואלי ברור). */
+.s4-pills {
+  display: flex;
+  flex-direction: row; /* RTL אמיתי: ראשון ב-DOM כבר פיזית ימין, בלי row-reverse */
+  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+  justify-content: flex-end;
+}
+.s4-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px; /* ⚠️ נוסף (20.08.2026) — מרווח טקסט↔תג, לפי SELF-QA-lomda.md,
+    זהה למוסכמה הגלובלית (ראה .s2-eq-placed-card וכו') */
+  min-width: 85px; /* ⚠️ תוקן — זהה בדיוק לרפרנס (w-[85px], היה 64px);
+                       min-width ולא width קבוע, כי חלק מהתוכן שלנו
+                       ("לא נכון", שברים) ארוך יותר מהדוגמאות הקצרות
+                       ברפרנס ("כן"/"לא"/מספר דו-ספרתי). */
+  height: 38px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--s4-card-bg-unconfirmed);
+  font-family: 'Assistant', sans-serif;
+  font-size: 20px; /* ⚠️ תוקן (18.08.2026) — 18px לא היה בטבלת-הטוקנים; זהו <button>, לכן חייב {26,20,22} */
+  font-weight: 400;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+.s4-pill:hover:not(:disabled) { opacity: 0.85; }
+.s4-pill:disabled { cursor: default; }
+/* ⚠️ נוסף (18.08.2026) — accessibility-baseline: רכיב אינטראקטיבי-
+   מקלדת (<button>) בלי שום :focus-visible קודם, בניגוד ל-.btn-continue/
+   .btn-back/.btn-hint/.option-card/.img-zoom-btn שכולם כבר כוללים
+   כלל כזה — אותו טיפול חזותי (var(--subject-500), 2px/2px). */
+.s4-pill:focus-visible { outline: 2px solid var(--subject-500); outline-offset: 2px; }
+.s4-pill.correct {
+  background: var(--subject-300);
+  color: var(--s4-card-bg-unconfirmed);
+  font-weight: 600;
+}
+/* ⚠️ תוקן שוב (20.08.2026, לפי בקשה מפורשת: "אותם אייקונים ואחידים
+   כמו בשאלות חד-ברירה, אייקון בצד ימין") — המימוש הקודם (position:
+   absolute; left:8px) היה תג-ייחודי-לרכיב-הזה, פיזית *שמאל* — לא
+   תואם למוסכמה הגלובלית ולא ל-SELF-QA-lomda.md §5 ("התג חייב להיות
+   בצד הפיזי-ימין"). הוחלף באותו דפוס-flex+order:-1 בדיוק כמו
+   .scq-radio (ר' למעלה) — התג הופך לילד-flex רגיל (לא absolute),
+   .s4-pills-inner יורש direction:rtl מ-.s4-step-card-inner, אז
+   order:-1 מזיז אותו לתחילת-הסדר-הפיזי = ימין. גם גודל-האייקון-
+   הפנימי (12px 9px / 10px 10px) הוחלף להיות זהה-בדיוק ל-.scq-radio
+   (היה 12px 10px / 11px 11px, שרירותי-קודם) — "אותם אייקונים" כפי
+   שהתבקש, לא רק "דומים". */
+.s4-pill.correct::after {
+  content: '';
+  order: -1;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #609e12 url('assets/images/icon-check-white.svg') no-repeat center;
+  background-size: 12px 9px;
+}
+.s4-pill.wrong {
+  background: rgba(178, 0, 16, 0.85);
+  color: #fff;
+}
+.s4-pill.wrong::after {
+  content: '';
+  order: -1;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #b20010 url('assets/images/icon-x-white.svg') no-repeat center;
+  background-size: 10px 10px;
+}
+
+/* ⚠️ נשאר מכוון flex-end לפי בקשה מפורשת וחוזרת של המשתמשת — לא
+   לשנות שוב. עקבי עם המוסכמה הגלובלית של "המשך" בבר התחתון (תמיד
+   פיזית שמאל בפרויקט הזה) — הכפתורים הפנימיים כאן (בואו נתחיל/המשך)
+   הולכים אחרי אותה מוסכמה, לא אחרי "flex-start=ימין" הכללי. */
+.s4-inline-btn { align-self: flex-end }
+/* ⚠️ נוסף (20.08.2026) — באג אמיתי, שורש-הבעיה של "המלבן הסגול חתוך,
+   סקרול לא-נחוץ": ל-.btn-continue ({display:flex}) אין כלל [hidden]
+   נלווה (בניגוד לכל האלמנטים האחרים בקובץ הזה שמוחלפים דינמית —
+   .btn-back[hidden]/.btn-hint[hidden]/.s4-step-block[hidden] וכו') —
+   התכונה hidden של #s4-next-1..4 לא הייתה עושה כלום בפועל, אז כפתור
+   "המשך" (+ ה-gap שלו) תפס מקום בכרטיס הסגול *לפני* שנענתה שאלה,
+   בדיוק כמו שנראה בצילום-המסך. */
+.s4-inline-btn[hidden] { display: none; }
+
+/* ════════════════════════════════════════════════════════
+   מסך 6 — מסך מעבר, data-screen="5", id="s5". שקף 23. משתמש
+   1:1 ב-.s3-content/.s3-text-group/.s3-line/.s3-avatar-wrap/.s3-avatar
+   הקיימים (הועתקו/הותאמו ממסך 4, לפי בקשה מפורשת) — אין כאן שום
+   class חדש.
+   ════════════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════════════
+   מסך 7 — ValueInputQuestion כפול, מסך גלילה, data-screen="6", id="s6".
+   שקפים 24-26. ראו ARCHITECTURE.md § "מסך 7".
+   ════════════════════════════════════════════════════════ */
+/* ⚠️ תוקן (18.08.2026) — עד כה .s6-scroll-area היה היחיד מבין שלושת
+   אזורי-הגלילה בפרויקט (.oly-scroll-area/.s2-scroll-area/.s6-scroll-area)
+   שלא יישם את דפוס "פס-גלילה בצד ימין" (עוטף-חיצוני direction:ltr
+   לצורך-מיקום-פס-גלילה-בלבד + עוטף-פנימי direction:rtl המשחזר RTL
+   לכל התוכן בפועל) — רק padding-left, שמשאיר את פס-הגלילה עצמו בצד
+   הפיזי-שמאל (ברירת-המחדל של הדפדפן תחת RTL אמיתי). תוקן לאותו דפוס
+   בדיוק כמו .s2-scroll-area: direction:ltr כאן (למיקום-פס-גלילה
+   בלבד) + .s6-scroll-inner (עוטף חדש ב-index.html, direction:rtl)
+   שעוטף את כל תוכן המסך בפועל. padding-left→padding-right כי הצד
+   שצריך את המרווח מפס-הגלילה התחלף. גם נוסף cursor:grab — היה חסר
+   כאן בניגוד לשני אזורי-הגלילה האחרים. */
+.s6-scroll-area {
+  position: absolute;
+  top: 110px; left: 40px; right: 40px; bottom: 74px;
+  /* ⚠️ תוקן (18.08.2026) — היה 14px (מרווח נראה בפועל 6px). בדיקה חיה
+     מול Figma (node-id 1038:18223) מדדה ~12px — עודכן ל-20px. */
+  padding-right: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+  cursor: grab;
+  direction: ltr;
+}
+.s6-scroll-inner { direction: rtl; width: 100%; }
+.s6-scroll-area::-webkit-scrollbar { width: 8px; }
+.s6-scroll-area::-webkit-scrollbar-track { background: rgba(201, 206, 216, 0.4); border-radius: 16px; }
+.s6-scroll-area::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.56); border-radius: 24px; }
+
+.s6-question { display: flex; flex-direction: column; width: 100%; padding: 20px 0; box-sizing: border-box; }
+.s6-question[hidden] { display: none; }
+
+.s6-q-row { display: flex; flex-direction: row; align-items: flex-start; gap: 24px; width: 100%; }
+.s6-q-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 24px; }
+
+/* פלייסהולדר-יישומון — זהה במדויק ל-.s2-sim-placeholder (הרפרנס
+   המאומת, dq-sim-placeholder), לפי בקשה מפורשת "פלייסהולדר ריק
+   במקום היישומון". class נפרד (לא שימוש-חוזר ב-.s2-sim-placeholder
+   עצמה) כדי לא לצמד שני מסכים לא-קשורים ל-selector משותף. */
+.s6-applet-placeholder {
+  flex-shrink: 0;
+  width: 460px;
+  max-width: 100%;
+  height: 460px; /* ⚠️ תוקן (20.08.2026, לפי בדיקה חיה מול Figma node
+    730:10393, fileKey eSbp4bKHgBky0rakDb8l9N — get_metadata מדד
+    625×628px, כלומר בקירוב מרובע (יחס 1:1.0048, כנראה סטיית-מדידה,
+    לא כוונה מפורשת ליחס לא-מרובע) — היה 320px, מוארך אופקית באופן
+    בולט, לא תואם. הרוחב (460px) הושאר כפי-שהוא (לא נדרש לתקן, לפי
+    בקשה מפורשת: "בעיקר הגובה"). */
+  background: #c4c4c4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+}
+.s6-applet-placeholder span {
+  font-family: 'Assistant', sans-serif;
+  font-size: 24px; /* ⚠️ תוקן (20.08.2026, לפי בקשה מפורשת) — היה 20px. */
+  font-weight: 700;
+  color: #ffffff;
+  padding: 0 20px;
+}
+/* ⚠️ נוסף (20.08.2026, לפי בקשה מפורשת: "כל הטקסט במסך 7 בגודל 24")
+   — .s2-qtext הוא class משותף (גם במסך 3), בלי font-size משלו (רק
+   font-weight/color) — במסך 7 הוא לא מלווה ב-.s2-body (בניגוד למסך 3),
+   אז ירש לגמרי מהקונטקסט. דריסה ממוקדת רק בתוך #s6, לא גלובלית. */
+#s6 .s2-qtext { font-size: 24px; }
+
+/* דיאגרמת-הזווית (שקף 26) — נכס אמיתי, יוצא מהשקף עצמו (PowerPoint
+   COM export + טרימינג-רקע), לא צויר ביד. */
+.s6-angle-diagram { flex-shrink: 0; width: 200px; height: auto; margin-top: 8px; }
+
+.s6-answer-row { display: flex; flex-direction: row; align-items: center; gap: 16px; width: 100%; }
+.s6-answer-label {
+  flex: 1;
+  font-family: 'Assistant', sans-serif;
+  font-size: 24px; /* ⚠️ תוקן (20.08.2026, לפי בקשה מפורשת: "כל הטקסט
+    במסך 7 בגודל 24") — היה 20px. */
+  font-weight: 400;
+  color: #303030;
+  text-align: right;
+}
+.s6-answer-unit { font-family: 'Assistant', sans-serif; font-size: 24px; color: #303030; }
+/* ⚠️ נוסף (20.08.2026, לפי בקשה מפורשת: "בשאלה 2, האינפוטים צריכים
+   להיות ליד הטקסט, לא רחוקים ממנו") — .s6-answer-label{flex:1} (בסיס
+   משותף לשתי השאלות) גורם לתיבה להתמתח על כל הרוחב הפנוי, כך שהטקסט
+   (מיושר-ימין *בתוך* התיבה הזו) נשאר צמוד לימין, אבל האינפוט שאחריו
+   (ילד-flex הבא) נדחק הרחק שמאלה מהטקסט עצמו — לא מהמלבן הריק. ממוקד
+   רק לשאלה 2 (לא שאלה 1, שלא דווחה) — שם ה-label לא נמתח, אז
+   האינפוט נדבק ישירות אחרי הטקסט (flex-start=ימין, בלי justify
+   נוסף). */
+#s6-q2 .s6-answer-label { flex: 0 0 auto; }
+/* align-self:flex-end על שניהם — .s6-check-btn ילד ישיר של
+   .oly-answer-block בשאלה 1 (בדיקה בודדת); .s6-answer-row-actions
+   ילד ישיר שלו בשאלה 2 (בדיקה+רמז יחד) — שני המקרים דוחפים פיזית
+   שמאלה, עקבי עם המוסכמה הגלובלית "כפתור-פעולה תמיד פיזית שמאל". */
+.s6-check-btn { align-self: flex-end; }
+.s6-answer-row-actions { display: flex; flex-direction: row; align-items: center; gap: 16px; align-self: flex-end; }
+
+/* קלט מספרי (ValueInputQuestion) — ⚠️ נבנה מחדש (18.08.2026) לפי
+   SELF-QA-lomda.md §1 audit + הדפוס האמיתי-המאומת שכבר קיים ב-
+   methodica-math-ratio-01-02 (.viq-input) — לא הדפוס הקודם כאן
+   (badge-עיגול נפרד .viq-badge, קופסה 100×42). תיקוני-מהות:
+   - קופסה 180×42 (הייתה 100×42), padding 0 16px (היה 0 10px) —
+     תואם למדויק לרפרנס.
+   - האייקון הוא background-image **ישירות על ה-<input> עצמו**
+     (לא span/badge נפרד עם עיגול-צבע — זה דפוס SingleChoiceQuestion,
+     לא ValueInputQuestion), נכסים שטוחים ירוק/אדום 16×16
+     (icon-check-green-16.svg/icon-x-red-16.svg, הועתקו בפועל מ-
+     methodica-math-ratio-01-02/assets/images/ — לא PNG/עיגול-צבע),
+     position "right 16px center", size 16×16 — .viq-input-wrap/
+     .viq-badge בוטלו לגמרי (מיותרים כש-input עצמו הוא הנושא
+     ויזואלית).
+   - ⚠️ תיקון-cascade קריטי: הכלל "מולא+לא-ממוקד"
+     (:not(:placeholder-shown):not(:focus), specificity 0-3-0) היה
+     תמיד מנצח את .correct/.wrong (specificity 0-2-0 בלבד) בקרב
+     source-order-בלתי-רלוונטי — כך שמסגרת-האדום/ירוק **מעולם לא
+     הוצגה בפועל** ברגע שה-input מאבד פוקוס (המצב הטיפוסי אחרי
+     "צדקתי?"). התיקון: :not(.correct):not(.wrong) נוסף לכלל
+     הנייטרלי עצמו — הכלל פשוט לא-תואם-בכלל על input עם class
+     correct/wrong, כך שאין כלל תחרות-specificity להפסיד בה (לא
+     "מנצחים אותה" ע"י הגברת-specificity נגדית — מסירים אותה
+     מהתמונה לגמרי עבור המצבים האלה). */
+.viq-input {
+  width: 180px;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid rgba(174, 174, 174, 0.5);
+  background-color: #fff;
+  font-family: 'Assistant', sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: #303030;
+  text-align: center;
+  box-sizing: border-box;
+  padding: 0 16px;
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 16px 16px;
+}
+.viq-input--sm { width: 90px; }
+.viq-input:focus { outline: none; border: 1.5px solid var(--subject-500); }
+.viq-input:not(:placeholder-shown):not(:focus):not(.correct):not(.wrong) { border: 1.5px solid #ececec; }
+.viq-input:disabled { color: #303030; -webkit-text-fill-color: #303030; opacity: 1; background-color: #fff; } /* לעולם לא אפור, גם כשנעול */
+.viq-input.correct {
+  border: 1.5px solid #609e12;
+  background-color: #fff;
+  background-image: url('assets/images/icon-check-green-16.svg');
+}
+.viq-input.wrong {
+  border: 1.5px solid #b20010;
+  background-color: #fff;
+  background-image: url('assets/images/icon-x-red-16.svg');
+}
+
+/* מיירוט ספינר-מספרים ילידי (SELF-QA-lomda.md §1 checklist) — הפרויקט
+   הזה (כל הסינים) לא כלל עד כה אף כלל-דיכוי; מוגדר גלובלית פעם אחת,
+   חל על כל input[type=number] בסין (לא רק .viq-input). */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
+
+/* סרגל התקדמות (qnav, 2 פריטים) — הותאם מ-updateQuestionNav/
+   מסכים 10-11 של methodica-science-mass-measure-03-01 (2-שאלות),
+   לא מ-updateQuestionNavB (6 שאלות, לא רלוונטי כאן). RTL אמיתי: סדר
+   ה-DOM עצמו הוא שאלה-1-קודם (flex-start=ימין), בלי direction:ltr
+   (המקור השתמש בטריק הזה — נפסל בפרויקט הזה, ראו ARCHITECTURE.md). */
+.qnav {
+  position: absolute;
+  top: 32px; left: 40px; right: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  z-index: 2;
+}
+.qnav-item { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 60px; }
+.qnav-icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.qnav-icon.qnav-future { border: 1.5px solid #ececec; background: #fff; }
+.qnav-icon.qnav-future::after { content: ''; width: 12px; height: 12px; border-radius: 50%; background: #ececec; display: block; }
+.qnav-icon.qnav-current { border: 2px solid var(--subject-500); background: #fff; }
+.qnav-icon.qnav-current::after { content: ''; width: 12px; height: 12px; border-radius: 50%; background: var(--subject-500); display: block; }
+/* ⚠️ תוקן (18.08.2026) — ::after השתמש בגליפים ליטרליים ('✓'/'✕',
+   font-size 13/12px) במקום נכס-אייקון אמיתי — "common pitfall" מתועד
+   ב-SELF-QA-lomda.md. הוחלף באותו דפוס בדיוק כמו .scq-opt.correct/
+   .wrong .scq-radio::after כמה מאות שורות מעלה: עיגול-רקע-צבע +
+   background-image (icon-check-white.svg/icon-x-white.svg), לא
+   font-size בכלל (הכוונה: הגודל נקבע ע"י background-size, לא ע"י
+   font-size של תו-טקסט). */
+/* ⚠️ תוקן (18.08.2026) — בדיקה ישירה מול ה-node החי בפיגמה (fileKey
+   eSbp4bKHgBky0rakDb8l9N, node-id 1731:45022) הראתה שגם "נכון" וגם
+   "שגוי" ברכיב Progress Question משתמשים באותו background:
+   var(--subject/500) — לא ירוק/אדום. ההבחנה היחידה בין המצבים היא
+   צורת-האייקון (✓/✕), לא צבע. תוקן מ-#609e12/#b20010 ל-var(--subject-500)
+   בשני המצבים (ראה אותו תיקון בסיין 2, .progress-question__icon). */
+.qnav-icon.qnav-success { background: var(--subject-500); border: 2px solid var(--subject-500); }
+.qnav-icon.qnav-success::after {
+  content: '';
+  width: 12px; height: 12px;
+  display: block;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url('assets/images/icon-check-white.svg');
+  background-size: 10px 8px;
+}
+.qnav-icon.qnav-fail { background: var(--subject-500); border: 2px solid var(--subject-500); }
+.qnav-icon.qnav-fail::after {
+  content: '';
+  width: 12px; height: 12px;
+  display: block;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url('assets/images/icon-x-white.svg');
+  background-size: 9px 9px;
+}
+/* ⚠️ תוקן (18.08.2026) — 15px לא היה בטבלת-הטוקנים המאושרת (→20px);
+   וגם #ececec על רקע-לבן היה כמעט בלתי-קריא (ניגודיות ~1.1:1,
+   accessibility-baseline audit) — הוחלף תחילה ל-#aeaeae, אך בדיקת-QA
+   עצמאית חישבה שגם זה נכשל ב-WCAG AA (ניגודיות בפועל ~2.22:1 על לבן,
+   מתחת לסף 4.5:1 לטקסט רגיל בגודל הזה) — עודכן שוב ל-#767676
+   (ניגודיות ~4.7:1, עובר AA), אותו גוון בדיוק בו נעשה שימוש בסיין 2
+   לאותה בעיה בדיוק (.progress-question__label), לשמירה על עקביות.
+   ⚠️ הוחזר שוב (18.08.2026) — בדיקה ישירה מול ה-node החי בפיגמה
+   (fileKey eSbp4bKHgBky0rakDb8l9N, node-id 1731:45022) הראתה ש-#ececec
+   הוא הצבע המפורש בעיצוב עצמו לטקסט "שאלה עתידית", לא ברירת-מחדל
+   שנשכחה — הוחזר בכוונה לפי בקשת-הלקוח המפורשת "להחזיר בדיוק לפי
+   הפיגמה", על אף ניגודיות-הנגישות הנמוכה (זו החלטת-מוצר/עיצוב מודעת). */
+.qnav-label { font-family: 'Assistant', sans-serif; font-size: 20px; color: #ececec; text-align: center; white-space: nowrap; }
+.qnav-label.qnav-label-active { color: #222; }
+.qnav-line { width: 64px; height: 1.5px; background: #ececec; margin-top: 11.5px; border-radius: 2px; flex-shrink: 0; }
+.qnav-line.line-done { background: rgba(0, 0, 0, 0.6); }
+
+/* ⚠️ הוסר כפילות (20.08.2026) — כלל .btn-hint .scq-hint-icon זהה
+   כבר מאוחד ליד .btn-hint הבסיסי, למעלה בקובץ. */
+
+/* ════════════════════════════════════════════════════════
+   GLOBAL — Feedback popup system (_global-components.md:
+   "Feedback popup system") — shared style/positioning/drag
+   behavior. Instantiated for real by מסך 2 (s1-q1/q2/q3-feedbox) —
+   see script.js § olySetFeedback/s1InitFeedbackDrag.
+   Question templates own their own feedback TEXT and box id
+   (id ends in "-feedbox", per this project's own popup-id
+   convention — see ARCHITECTURE.md), but must reuse this same
+   class contract: .scq-fb-box / .scq-fb-title / .scq-fb-title-text /
+   .scq-fb-body, toggled via .visible / .is-correct / .is-wrong.
+   Draggable from anywhere on the box (not just a title bar).
+   NO close button anywhere — see _global-components.md → "No manual
+   close". Feedback/correct/incorrect colors are theme-independent —
+   identical to the Science lomdot, per the design-guidelines rule
+   that only Subject/*-bound properties change between themes.
+   ════════════════════════════════════════════════════════ */
+.scq-fb-box {
+  display: none;
+  position: absolute;
+  left: 16px;
+  bottom: 87px;
+  width: 426px;
+  max-width: calc(100% - 32px);
+  border: 0.3px solid #aeaeae;
+  border-radius: 12px;
+  padding: 24px;
+  flex-direction: column;
+  gap: 12px;
+  background: #fff;
+  z-index: 25;
+  cursor: grab;
+  user-select: none;
+}
+.scq-fb-box.visible { display: flex; }
+.scq-fb-box.is-correct { background: #edf8ed; }
+.scq-fb-box.is-wrong { background: #ffdbdc; }
+.scq-fb-box.is-dragging { cursor: grabbing; }
+/* .is-static — QA 19.08.2026: במסכי-גלילה (s1/s2/s6), פופאפ-משוב
+   במיקום קבוע-לקנבס מתנתק חזותית מהשאלה כשגוללים. הוחזר לזרום בתוך
+   .oly-answer-block/כל "חלק", מיד אחרי כפתור-הבדיקה — לכן
+   position:static מספיק. הופך גם הדרישה הישנה (16.08.2026) "גרירים
+   מחוץ לאזור-הגלילה" — ראו הערה מלאה במסך 2. */
+.scq-fb-box.is-static {
+  position: static;
+  left: auto; right: auto; top: auto; bottom: auto;
+  width: 100%;
+  max-width: none;
+  cursor: default;
+}
+
+.scq-fb-title {
+  display: flex;
+  direction: rtl;
+  align-items: center;
+  gap: 16px;
+}
+.scq-fb-title-text {
+  flex: 1;
+  font-weight: 700;
+  font-size: 20px;
+  color: #222;
+  text-align: right;
+  white-space: pre-line;
+}
+.scq-fb-body {
+  font-weight: 400;
+  font-size: 20px;
+  color: #222;
+  text-align: right;
+  white-space: pre-line;
+}
+.scq-fb-reveal-btn {
+  align-self: flex-start;
+  background: #fff;
+  color: var(--subject-500);
+  border: 1.5px solid var(--subject-500);
+  border-radius: 1000px;
+  font-family: 'Assistant', sans-serif;
+  font-size: 20px; /* ⚠️ תוקן (18.08.2026) — <button>, מוגבל ל-{26,20,22}; 18px לא היה חוקי */
+  font-weight: 400;
+  padding: 10px 24px;
+  cursor: pointer;
+}
+.scq-fb-reveal-btn[hidden] { display: none; }
+.scq-fb-reveal-btn:hover { background: #f0f8ff; }
+
+/* ════════════════════════════════════════════════════════
+   GLOBAL — Hint overlay (_global-components.md — outside .screen,
+   direct child of #app, one instance per screen that needs it, e.g.
+   #s1-hint-overlay). CSS ready; no instance in this placeholder scene
+   (no question exists yet). Opened/closed per-screen via the native
+   `hidden` property (el.hidden = false/true) — this is exactly the
+   mechanism closeAllPopupsAndHints() in script.js relies on.
+   ════════════════════════════════════════════════════════ */
+.scq-hint-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* ⚠️ תוקן (18.08.2026) — rgba(0,32,96,.35) הוא Science Subject/900
+     (דלף מהמנוע המשותף). הוחלף בגזירה אמיתית מ-var(--subject-900) של
+     הפרויקט הזה (#2F2478 → rgb(47,36,120)), אותו alpha 0.35. */
+  background: rgba(47, 36, 120, 0.35);
+}
+.scq-hint-overlay[hidden] { display: none; }
+
+.scq-hint-popup {
+  position: relative;
+  width: 542px;
+  max-width: calc(100% - 64px);
+  background: var(--subject-500);
+  border-radius: 48px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  direction: rtl;
+}
+.scq-hint-title-row {
+  width: 100%;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+}
+.scq-hint-title {
+  flex: 1;
+  font-weight: 700;
+  font-size: 32px;
+  color: #fff;
+  text-align: right;
+}
+.scq-hint-bulb { width: 40px; height: 34px; flex-shrink: 0; }
+.scq-hint-body {
+  font-weight: 400;
+  font-size: 22px;
+  color: #fff;
+  text-align: right;
+  line-height: 1.5;
+}
+.scq-hint-close {
+  align-self: center;
+  width: 196px;
+  padding: 16px 40px;
+  border-radius: 999px;
+  background: #fff;
+  color: #303030;
+  font-size: 20px; /* ⚠️ תוקן (18.08.2026) — <button>, מוגבל ל-{26,20,22}; 24px לא היה חוקי (נבחר 20, לא 22, לפי הנחיה מפורשת) */
+  text-align: center;
+}
+
+/* ════════════════════════════════════════════════════════
+   GLOBAL — Image zoom (_global-components.md: "Image zoom")
+   Zoom button sits inside each image wrapper (position:relative,
+   no transform/filter/z-index on the wrapper itself); the modal
+   below is the ONE shared instance for the whole scene, outside all
+   .screen divs, directly in #app. Ready for use once a content
+   screen adds an image + .img-zoom-btn.
+   ════════════════════════════════════════════════════════ */
+.img-zoom-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: #fff;
+  border: 2px solid var(--subject-500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  z-index: 2;
+}
+.img-zoom-btn:hover { background: var(--subject-500); }
+.img-zoom-btn__icon { width: 20px; height: 20px; stroke: var(--subject-500); }
+.img-zoom-btn:hover .img-zoom-btn__icon { stroke: #fff; }
+.img-zoom-btn:focus-visible { outline: 2px solid var(--subject-500); outline-offset: 2px; }
+
+.img-zoom-modal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.78);
+  z-index: 1000;
+}
+.img-zoom-modal.hidden { display: none; }
+
+.img-zoom-modal__panel {
+  position: relative;
+  width: 660px;
+  height: 660px;
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.img-zoom-modal__stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.img-zoom-close {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: #fff;
+  border: 2px solid var(--subject-500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  z-index: 2;
+}
+.img-zoom-close:hover { background: var(--subject-500); }
+.img-zoom-close__icon { width: 15px; height: 15px; stroke: var(--subject-500); }
+.img-zoom-close:hover .img-zoom-close__icon { stroke: #fff; }
+.img-zoom-close:focus-visible { outline: 2px solid var(--subject-500); outline-offset: 2px; }
+
+/* ════════════════════════════════════════════════════════
+   GLOBAL — Report/Issue button (.flag-btn)
+   Lives outside all .screen divs, directly in #app. Visual only —
+   no click behavior defined yet (may connect to the LMS later).
+   ════════════════════════════════════════════════════════ */
+.flag-btn {
+  position: absolute;
+  top: 32px; /* ⚠️ תוקן (18.08.2026) — היה 16px; בדיקת-Figma חיה על סיין 2 (הרפרנס
+                האחות) מצאה שהערך הנכון הוא 32px/32px — אותו תיקון הוחל כאן */
+  left: 32px;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 4px;
+  width: 88px;
+}
+.flag-btn-icon { position: relative; display: block; width: 38px; height: 38px; }
+.flag-btn-icon-default,
+.flag-btn-icon-hover {
+  position: absolute;
+  inset: 0;
+  width: 38px;
+  height: 38px;
+}
+.flag-btn-icon-hover { opacity: 0; }
+.flag-btn-label {
+  font-weight: 600;
+  font-size: 20px; /* ⚠️ תוקן (18.08.2026) — 14px לא היה בטבלת-הטוקנים המאושרת; 20px הוא הקרוב ביותר */
+  color: var(--subject-500);
+  text-align: center;
+  width: 80px;
+  opacity: 0;
+}
+.flag-btn:hover .flag-btn-icon-default,
+.flag-btn:focus-visible .flag-btn-icon-default { opacity: 0; }
+.flag-btn:hover .flag-btn-icon-hover,
+.flag-btn:focus-visible .flag-btn-icon-hover { opacity: 1; }
+.flag-btn:hover .flag-btn-label,
+.flag-btn:focus-visible .flag-btn-label { opacity: 1; }
