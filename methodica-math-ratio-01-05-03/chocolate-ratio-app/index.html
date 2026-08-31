@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>יישומון יחס — תבנית שוקולד</title>
+<style>
+  @font-face {
+    font-family: 'Assistant';
+    src: url('../assets/fonts/assistant-hebrew.woff2') format('woff2');
+    font-weight: 400 800;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+  }
+  @font-face {
+    font-family: 'Assistant';
+    src: url('../assets/fonts/assistant-latin.woff2') format('woff2');
+    font-weight: 400 800;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    height: 100%;
+    font-family: 'Assistant', sans-serif;
+    background: transparent;
+  }
+
+  .choc-app {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    background: #ffffff;
+    border: 1px solid #CEC7FF;
+    border-radius: 12px;
+    overflow: hidden;
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .choc-app__tools {
+    flex-shrink: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .choc-tool {
+    font-family: 'Assistant', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 8px 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1;
+  }
+  .choc-tool:focus-visible { outline: 2px solid #3B2FC2; outline-offset: 2px; }
+
+  .choc-tool--reset {
+    background: #F1EEEE;
+    border: 1px solid #D8D2D2;
+    color: #B3261E;
+  }
+  .choc-tool--reset:hover { background: #E8E3E3; }
+
+  .choc-tool--color {
+    border: 2px solid transparent;
+  }
+  .choc-tool--color .choc-tool-swatch {
+    width: 14px; height: 14px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    border: 1px solid rgba(0,0,0,0.15);
+  }
+  .choc-tool--white {
+    background: #FBF7EE;
+    color: #6B5B3E;
+    border-color: #E4D9BE;
+  }
+  .choc-tool--white .choc-tool-swatch { background: #FBF7EE; }
+  .choc-tool--dark {
+    background: #3B2417;
+    color: #F5EFE0;
+    border-color: #3B2417;
+  }
+  .choc-tool--dark .choc-tool-swatch { background: #3B2417; border-color: rgba(255,255,255,0.3); }
+
+  .choc-tool--color[aria-pressed="true"] {
+    border-color: #3B2FC2;
+    box-shadow: 0 0 0 2px #EAD9FF;
+  }
+
+  .choc-app__grid-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+    min-height: 0;
+    /* ⚠️ נוסף (31.08.2026, דיווח: "הסקרול בתוך היישומון צריך גם להיות
+       בצד ימני") — כלל הפרויקט: כל פס-גלילה תמיד בצד ימין. תחת
+       direction:rtl (יורש מ-<html dir="rtl">), פס-גלילה טבעי של
+       overflow:auto יושב בצד שמאל; direction:ltr כאן הופך אותו לימין
+       — אותה טכניקה בדיוק כמו .s1-scroll-area/.oly-scroll-area בשאר
+       הפרויקט. direction:rtl מוחזר על .choc-app__grid הפנימי כדי
+       שסדר-התאים עצמו לא יתהפך. */
+    direction: ltr;
+  }
+
+  .choc-app__grid {
+    direction: rtl;
+    display: grid;
+    grid-template-columns: repeat(5, 44px);
+    grid-auto-rows: 44px;
+    gap: 4px;
+  }
+
+  .choc-cell {
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+    /* ⚠️ תוקן (31.08.2026, דיווח: "הצבע ההתחלתי צריך להיות בהיר יותר
+       וקרוב יותר לאפור") — היה גוון-קרם/בז' חם (#EFEAE1 + border
+       #D9D2C6); הוחלף לאפור-בהיר ניטרלי. */
+    border: 1px solid #DCDCDC;
+    background: #F2F2F2;
+    cursor: pointer;
+    padding: 0;
+    transition: background-color 0.1s ease;
+  }
+  .choc-cell:hover { filter: brightness(0.96); }
+  .choc-cell:focus-visible { outline: 2px solid #3B2FC2; outline-offset: 2px; }
+  .choc-cell[data-state="white"] { background: #FBF7EE; border-color: #E4D9BE; }
+  .choc-cell[data-state="dark"] { background: #3B2417; border-color: #2A1810; }
+
+  .choc-app__counts {
+    flex-shrink: 0;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .choc-count {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #2F2478;
+    background: #F7F5FF;
+    border: 1px solid #CEC7FF;
+    border-radius: 999px;
+    padding: 5px 10px;
+  }
+
+  .choc-swatch {
+    width: 12px; height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    border: 1px solid rgba(0,0,0,0.15);
+  }
+  .choc-swatch--white { background: #FBF7EE; }
+  .choc-swatch--dark { background: #3B2417; border-color: rgba(0,0,0,0.3); }
+  .choc-swatch--empty { background: #F2F2F2; }
+</style>
+</head>
+<body>
+  <div class="choc-app">
+    <div class="choc-app__tools" role="group" aria-label="בחירת כלי צביעה">
+      <button type="button" class="choc-tool choc-tool--reset" id="resetBtn">מחק</button>
+      <button type="button" class="choc-tool choc-tool--color choc-tool--dark" id="darkBtn" data-color="dark" aria-pressed="false">
+        <span class="choc-tool-swatch" aria-hidden="true"></span>שוקולד מריר
+      </button>
+      <button type="button" class="choc-tool choc-tool--color choc-tool--white" id="whiteBtn" data-color="white" aria-pressed="true">
+        <span class="choc-tool-swatch" aria-hidden="true"></span>שוקולד לבן
+      </button>
+    </div>
+
+    <div class="choc-app__grid-wrap">
+      <div class="choc-app__grid" id="grid" role="group" aria-label="תבנית עם 50 משבצות"></div>
+    </div>
+
+    <div class="choc-app__counts" aria-live="polite">
+      <div class="choc-count"><span class="choc-swatch choc-swatch--white" aria-hidden="true"></span>לבן: <span id="countWhite">0</span></div>
+      <div class="choc-count"><span class="choc-swatch choc-swatch--dark" aria-hidden="true"></span>מריר: <span id="countDark">0</span></div>
+      <div class="choc-count"><span class="choc-swatch choc-swatch--empty" aria-hidden="true"></span>ריק: <span id="countEmpty">50</span></div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  var TOTAL_CELLS = 50;
+  var cellStates = new Array(TOTAL_CELLS).fill(null); // null | 'white' | 'dark'
+  var currentColor = 'white';
+
+  var grid = document.getElementById('grid');
+  var whiteBtn = document.getElementById('whiteBtn');
+  var darkBtn = document.getElementById('darkBtn');
+  var resetBtn = document.getElementById('resetBtn');
+  var countWhiteEl = document.getElementById('countWhite');
+  var countDarkEl = document.getElementById('countDark');
+  var countEmptyEl = document.getElementById('countEmpty');
+
+  var cellButtons = [];
+
+  function cellLabel(state) {
+    if (state === 'white') return 'שוקולד לבן';
+    if (state === 'dark') return 'שוקולד מריר';
+    return 'ריק';
+  }
+
+  function buildGrid() {
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < TOTAL_CELLS; i++) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'choc-cell';
+      btn.dataset.index = String(i);
+      (function (index) {
+        btn.addEventListener('click', function () { paintCell(index); });
+      })(i);
+      frag.appendChild(btn);
+      cellButtons.push(btn);
+    }
+    grid.appendChild(frag);
+  }
+
+  function paintCell(index) {
+    cellStates[index] = currentColor;
+    var btn = cellButtons[index];
+    btn.dataset.state = currentColor || '';
+    btn.setAttribute('aria-label', 'משבצת ' + (index + 1) + ', ' + cellLabel(currentColor));
+    updateCounts();
+  }
+
+  function updateCounts() {
+    var white = 0, dark = 0;
+    for (var i = 0; i < cellStates.length; i++) {
+      if (cellStates[i] === 'white') white++;
+      else if (cellStates[i] === 'dark') dark++;
+    }
+    countWhiteEl.textContent = String(white);
+    countDarkEl.textContent = String(dark);
+    countEmptyEl.textContent = String(TOTAL_CELLS - white - dark);
+  }
+
+  function setActiveColor(color) {
+    currentColor = color;
+    whiteBtn.setAttribute('aria-pressed', color === 'white' ? 'true' : 'false');
+    darkBtn.setAttribute('aria-pressed', color === 'dark' ? 'true' : 'false');
+  }
+
+  function resetGrid() {
+    for (var i = 0; i < cellStates.length; i++) {
+      cellStates[i] = null;
+      var btn = cellButtons[i];
+      delete btn.dataset.state;
+      btn.setAttribute('aria-label', 'משבצת ' + (i + 1) + ', ריק');
+    }
+    updateCounts();
+  }
+
+  whiteBtn.addEventListener('click', function () { setActiveColor('white'); });
+  darkBtn.addEventListener('click', function () { setActiveColor('dark'); });
+  resetBtn.addEventListener('click', resetGrid);
+
+  buildGrid();
+  resetGrid();
+  setActiveColor('white');
+})();
+</script>
+</body>
+</html>
