@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>יישומון יחס — סידור בקבוקים במכולת</title>
+<style>
+  @font-face {
+    font-family: 'Assistant';
+    src: url('../assets/fonts/assistant-hebrew.woff2') format('woff2');
+    font-weight: 400 800;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+  }
+  @font-face {
+    font-family: 'Assistant';
+    src: url('../assets/fonts/assistant-latin.woff2') format('woff2');
+    font-weight: 400 800;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0;
+    height: 100%;
+    font-family: 'Assistant', sans-serif;
+    background: transparent;
+    overflow: hidden;
+  }
+
+  .juice-app {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-height: 380px;
+    background: #F7F5FF;
+    border: 1px solid #CEC7FF;
+    border-radius: 12px;
+    overflow: hidden;
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .juice-app__crates {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 22px;
+  }
+
+  .crate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+  }
+  .crate img { width: 84px; height: auto; display: block; pointer-events: none; }
+  .crate:active { cursor: grabbing; }
+  .crate-hint {
+    font-size: 10px;
+    font-weight: 700;
+    color: #5656CC;
+  }
+
+  .juice-app__counts {
+    flex-shrink: 0;
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .juice-count {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #2F2478;
+    background: #ffffff;
+    border: 1px solid #CEC7FF;
+    border-radius: 999px;
+    padding: 4px 10px;
+  }
+  .juice-swatch { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .juice-swatch--mango { background: #F5A623; }
+  .juice-swatch--strawberry { background: #D0312D; }
+  .juice-swatch--empty { background: #9C97C7; }
+
+  .juice-app__shelves-wrap {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: #ffffff;
+    border: 1px solid #E5E1F5;
+    border-radius: 10px;
+    padding: 8px 6px 4px;
+    touch-action: pan-y;
+  }
+
+  .shelf-row {
+    position: relative;
+    height: 74px;
+    margin-bottom: 8px;
+  }
+  .shelf-row:last-child { margin-bottom: 0; }
+
+  .shelf-items {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    height: 62px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .shelf-plank {
+    position: absolute;
+    bottom: 0;
+    left: 4px;
+    right: 4px;
+    height: 11px;
+    border-radius: 3px;
+    background: linear-gradient(180deg, #D9A15C 0%, #B97F3C 100%);
+    box-shadow: 0 3px 0 rgba(59, 47, 194, 0.12), inset 0 -2px 0 rgba(0,0,0,0.1);
+  }
+
+  .shelf-bottle {
+    width: 21px;
+    height: 60px;
+    object-fit: contain;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+  }
+  .shelf-bottle:active { cursor: grabbing; }
+  .shelf-bottle.is-dragging-source { visibility: hidden; }
+
+  .drag-ghost {
+    position: fixed;
+    width: 26px;
+    height: 74px;
+    object-fit: contain;
+    pointer-events: none;
+    z-index: 999;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.35));
+    transform: translate(-50%, -50%);
+  }
+
+  .juice-app__hint {
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 11px;
+    color: #5656CC;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+  <div class="juice-app">
+    <div class="juice-app__crates">
+      <div class="crate" id="crateMango" data-flavor="mango">
+        <img src="crate-mango.png" alt="ארגז בקבוקי מנגו" draggable="false">
+      </div>
+      <div class="crate" id="crateStrawberry" data-flavor="strawberry">
+        <img src="crate-strawberry.png" alt="ארגז בקבוקי תות" draggable="false">
+      </div>
+    </div>
+
+    <div class="juice-app__counts" aria-live="polite">
+      <div class="juice-count"><span class="juice-swatch juice-swatch--strawberry" aria-hidden="true"></span>תות: <span id="countStrawberry">0</span></div>
+      <div class="juice-count"><span class="juice-swatch juice-swatch--mango" aria-hidden="true"></span>מנגו: <span id="countMango">0</span></div>
+      <div class="juice-count"><span class="juice-swatch juice-swatch--empty" aria-hidden="true"></span>נשאר: <span id="countRemaining">60</span></div>
+    </div>
+
+    <div class="juice-app__shelves-wrap" id="shelvesWrap">
+      <div id="shelvesContainer"></div>
+    </div>
+
+    <div class="juice-app__hint">גררו בקבוקים מהארגזים אל המדפים</div>
+  </div>
+
+<script>
+(function () {
+  var BUDGET = 60;
+  var SHELF_CAPACITY = 5;
+  var BOTTLE_SRC = { mango: 'bottle-mango.png', strawberry: 'bottle-strawberry.png' };
+  var BOTTLE_ALT = { mango: 'בקבוק מנגו', strawberry: 'בקבוק תות' };
+
+  var shelves = [[]]; // array of rows; each row is array of {flavor}
+
+  var shelvesContainer = document.getElementById('shelvesContainer');
+  var shelvesWrap = document.getElementById('shelvesWrap');
+  var countMangoEl = document.getElementById('countMango');
+  var countStrawberryEl = document.getElementById('countStrawberry');
+  var countRemainingEl = document.getElementById('countRemaining');
+  var crateMango = document.getElementById('crateMango');
+  var crateStrawberry = document.getElementById('crateStrawberry');
+
+  var dragState = null; // {flavor, fromRow, fromIndex, el, ghost, pointerId}
+
+  function totalDragged() {
+    var total = 0;
+    for (var i = 0; i < shelves.length; i++) total += shelves[i].length;
+    return total;
+  }
+
+  function updateCounts() {
+    var mango = 0, strawberry = 0;
+    for (var i = 0; i < shelves.length; i++) {
+      for (var j = 0; j < shelves[i].length; j++) {
+        if (shelves[i][j].flavor === 'mango') mango++;
+        else strawberry++;
+      }
+    }
+    countMangoEl.textContent = String(mango);
+    countStrawberryEl.textContent = String(strawberry);
+    countRemainingEl.textContent = String(BUDGET - mango - strawberry);
+  }
+
+  function rebalanceShelves() {
+    while (shelves.length > 1 &&
+           shelves[shelves.length - 1].length === 0 &&
+           shelves[shelves.length - 2].length === 0) {
+      shelves.pop();
+    }
+    if (shelves[shelves.length - 1].length >= SHELF_CAPACITY) {
+      shelves.push([]);
+    }
+  }
+
+  function render() {
+    shelvesContainer.innerHTML = '';
+    var frag = document.createDocumentFragment();
+    for (var r = 0; r < shelves.length; r++) {
+      var row = document.createElement('div');
+      row.className = 'shelf-row';
+      row.dataset.rowIndex = String(r);
+
+      var items = document.createElement('div');
+      items.className = 'shelf-items';
+      for (var i = 0; i < shelves[r].length; i++) {
+        var item = shelves[r][i];
+        var img = document.createElement('img');
+        img.className = 'shelf-bottle';
+        img.src = BOTTLE_SRC[item.flavor];
+        img.alt = BOTTLE_ALT[item.flavor];
+        img.draggable = false;
+        img.dataset.rowIndex = String(r);
+        img.dataset.itemIndex = String(i);
+        img.dataset.flavor = item.flavor;
+        attachBottleDrag(img);
+        items.appendChild(img);
+      }
+      row.appendChild(items);
+
+      var plank = document.createElement('div');
+      plank.className = 'shelf-plank';
+      row.appendChild(plank);
+
+      frag.appendChild(row);
+    }
+    shelvesContainer.appendChild(frag);
+    updateCounts();
+  }
+
+  function rowEffectiveCapacityOk(rowEl, excludeSameRow) {
+    if (!rowEl) return false;
+    var rowIndex = parseInt(rowEl.dataset.rowIndex, 10);
+    var count = shelves[rowIndex].length;
+    if (excludeSameRow && dragState && dragState.fromRow === rowIndex) count -= 1;
+    return count < SHELF_CAPACITY ? rowIndex : -1;
+  }
+
+  function createGhost(flavor, x, y) {
+    var ghost = document.createElement('img');
+    ghost.className = 'drag-ghost';
+    ghost.src = BOTTLE_SRC[flavor];
+    ghost.alt = '';
+    ghost.style.left = x + 'px';
+    ghost.style.top = y + 'px';
+    document.body.appendChild(ghost);
+    return ghost;
+  }
+
+  function moveGhost(x, y) {
+    if (dragState && dragState.ghost) {
+      dragState.ghost.style.left = x + 'px';
+      dragState.ghost.style.top = y + 'px';
+    }
+  }
+
+  function endDrag(clientX, clientY) {
+    if (!dragState) return;
+    if (dragState.ghost) dragState.ghost.style.display = 'none';
+    var targetEl = document.elementFromPoint(clientX, clientY);
+    if (dragState.ghost) dragState.ghost.remove();
+
+    var handled = false;
+
+    if (targetEl) {
+      var shelfRow = targetEl.closest('.shelf-row');
+      if (shelfRow) {
+        var destRowIndex = rowEffectiveCapacityOk(shelfRow, true);
+        if (destRowIndex >= 0) {
+          if (dragState.fromRow !== null) {
+            shelves[dragState.fromRow].splice(dragState.fromIndex, 1);
+          }
+          shelves[destRowIndex].push({ flavor: dragState.flavor });
+          handled = true;
+        }
+      } else {
+        var crateEl = targetEl.closest('.crate');
+        if (crateEl && dragState.fromRow !== null && crateEl.dataset.flavor === dragState.flavor) {
+          shelves[dragState.fromRow].splice(dragState.fromIndex, 1);
+          handled = true;
+        }
+      }
+    }
+
+    if (!handled && dragState.sourceBottleEl) {
+      dragState.sourceBottleEl.classList.remove('is-dragging-source');
+    }
+
+    rebalanceShelves();
+    render();
+    dragState = null;
+  }
+
+  function onPointerMove(e) {
+    if (!dragState || e.pointerId !== dragState.pointerId) return;
+    moveGhost(e.clientX, e.clientY);
+  }
+
+  function onPointerUp(e) {
+    if (!dragState || e.pointerId !== dragState.pointerId) return;
+    document.removeEventListener('pointermove', onPointerMove);
+    document.removeEventListener('pointerup', onPointerUp);
+    document.removeEventListener('pointercancel', onPointerUp);
+    endDrag(e.clientX, e.clientY);
+  }
+
+  function startDrag(flavor, pointerId, x, y, sourceBottleEl, fromRow, fromIndex) {
+    if (dragState) return;
+    dragState = {
+      flavor: flavor,
+      pointerId: pointerId,
+      fromRow: fromRow === undefined ? null : fromRow,
+      fromIndex: fromIndex === undefined ? null : fromIndex,
+      sourceBottleEl: sourceBottleEl || null,
+      ghost: createGhost(flavor, x, y)
+    };
+    if (sourceBottleEl) sourceBottleEl.classList.add('is-dragging-source');
+    document.addEventListener('pointermove', onPointerMove);
+    document.addEventListener('pointerup', onPointerUp);
+    document.addEventListener('pointercancel', onPointerUp);
+  }
+
+  function attachCrateDrag(crateEl, flavor) {
+    crateEl.addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      if (BUDGET - totalDragged() <= 0) return;
+      startDrag(flavor, e.pointerId, e.clientX, e.clientY, null, null, null);
+    });
+  }
+
+  function attachBottleDrag(img) {
+    img.addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var rowIndex = parseInt(img.dataset.rowIndex, 10);
+      var itemIndex = parseInt(img.dataset.itemIndex, 10);
+      startDrag(img.dataset.flavor, e.pointerId, e.clientX, e.clientY, img, rowIndex, itemIndex);
+    });
+  }
+
+  attachCrateDrag(crateMango, 'mango');
+  attachCrateDrag(crateStrawberry, 'strawberry');
+
+  render();
+})();
+</script>
+</body>
+</html>
