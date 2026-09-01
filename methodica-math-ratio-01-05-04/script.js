@@ -139,6 +139,8 @@ const S1_CHAR_ASSETS = {
    מנגנון show-once-if-scrollable, בלי הסיבוך המיותר. */
 let s1GestureShown = false;
 function s1MaybeShowScrollGesture() {
+  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
+  requestAnimationFrame(function () {
   if (s1GestureShown) return;
   const gesture = document.getElementById('s1-scroll-gesture');
   const scrollArea = document.getElementById('s1-scroll-area');
@@ -147,7 +149,8 @@ function s1MaybeShowScrollGesture() {
   s1GestureShown = true;
   gesture.hidden = false;
   scrollArea.addEventListener('scroll', s1HideGestureOnScroll, { once: true });
-}
+
+  });}
 function s1HideGestureOnScroll() {
   const gesture = document.getElementById('s1-scroll-gesture');
   if (gesture) gesture.hidden = true;
@@ -182,6 +185,8 @@ const S2_CHAR_ASSETS = {
    ליד s1MaybeShowScrollGesture (מסך 2) — אותו מנגנון בדיוק. */
 let s2GestureShown = false;
 function s2MaybeShowScrollGesture() {
+  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
+  requestAnimationFrame(function () {
   if (s2GestureShown) return;
   const gesture = document.getElementById('s2-scroll-gesture');
   const scrollArea = document.getElementById('s2-scroll-area');
@@ -190,7 +195,8 @@ function s2MaybeShowScrollGesture() {
   s2GestureShown = true;
   gesture.hidden = false;
   scrollArea.addEventListener('scroll', s2HideGestureOnScroll, { once: true });
-}
+
+  });}
 function s2HideGestureOnScroll() {
   const gesture = document.getElementById('s2-scroll-gesture');
   if (gesture) gesture.hidden = true;

@@ -540,6 +540,8 @@ function s1HideGestureOnScroll() {
    בפועל עולה על הגובה הפנוי). נקראת שוב מתוך s1ShowPart בכל חשיפת-חלק
    חדש, כך שאם לא הוצג בכניסה, הוא עדיין יכול להופיע ברגע שבאמת נדרש. */
 function s1MaybeShowScrollGesture() {
+  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
+  requestAnimationFrame(function () {
   if (s1GestureShown) return;
   const gesture = document.getElementById('s1-scroll-gesture');
   const scrollArea = document.getElementById('s1-scroll-area');
@@ -548,7 +550,8 @@ function s1MaybeShowScrollGesture() {
   s1GestureShown = true;
   gesture.hidden = false;
   scrollArea.addEventListener('scroll', s1HideGestureOnScroll, { once: true });
-}
+
+  });}
 
 function resetScreenState1() {
   setCurrentQuestion(0);
@@ -649,6 +652,8 @@ function s3HideGestureOnScroll() {
 /* QA 19.08.2026: אותו תיקון בדיוק כמו s1MaybeShowScrollGesture —
    נבדק בפועל אם יש מה לגלול לפני הצגת הרמז. */
 function s3MaybeShowScrollGesture() {
+  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
+  requestAnimationFrame(function () {
   if (s3GestureShown) return;
   const gesture = document.getElementById('s3-scroll-gesture');
   const scrollArea = document.getElementById('s3-scroll-area');
@@ -657,7 +662,8 @@ function s3MaybeShowScrollGesture() {
   s3GestureShown = true;
   gesture.hidden = false;
   scrollArea.addEventListener('scroll', s3HideGestureOnScroll, { once: true });
-}
+
+  });}
 
 function resetScreenState3() {
   setCurrentQuestion(2);

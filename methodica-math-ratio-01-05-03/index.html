@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 3</title>
-<link rel="stylesheet" href="styles.css?v=20260831m">
+<link rel="stylesheet" href="styles.css?v=20260901e">
 </head>
 <body>
 <div id="app">
@@ -221,6 +221,18 @@
         <span class="progress-question__label">שאלה 3</span>
       </div>
     </nav>
+
+    <!-- ⚠️ נוסף (01.09.2026, דיווח: "אין כף יד" — היה חסר לגמרי, לא
+         רק מוסתר: זה המסך היחיד בפרויקט עם overflow-y:auto בלי שום
+         gesture-hint נלווה. אותה מוסכמה בדיוק כמו s1-scroll-gesture/
+         s3-scroll-gesture באותה תיקייה. -->
+    <div class="gesture-hint-scroll-wrap" id="s2-scroll-gesture" hidden>
+      <div class="gesture-hint">
+        <div class="gesture-hint-ring gesture-hint-ring--big"></div>
+        <div class="gesture-hint-ring gesture-hint-ring--small"></div>
+        <img class="gesture-hint-hand" src="assets/images/gesture-hand-cursor.svg" alt="">
+      </div>
+    </div>
 
     <div class="s2-static-wrap">
       <div class="scq-question">
@@ -636,6 +648,6 @@
   </div>
 
 </div>
-<script src="script.js?v=20260831m"></script>
+<script src="script.js?v=20260901e"></script>
 </body>
 </html>

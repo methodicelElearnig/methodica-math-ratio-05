@@ -1883,6 +1883,7 @@ img { display: block; max-width: none; }
    (2 אדומות + 5 כחולות בכל שורה), בנוי HTML/CSS טהור (בלי asset תמונה
    חסר) — נבנה דינמית ב-JS (s4RenderMarbles), ראו script.js. */
 .s4-marbles {
+  bsckground-color: white;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -1894,7 +1895,7 @@ img { display: block; max-width: none; }
      מתועד באותו קובץ (ליד .s4-step-card-inner, flex-start=פיזית-ימין)
      ש-flex-end = פיזית-שמאל בקונטיינר-עמודה תחת RTL. גם גודל-הגולות/
      המרווחים נשארו כמו שהוקטנו (16px→11px, 6px→4px). */
-  align-items: flex-end;
+  align-items: center;
 }
 .s4-marbles[hidden] { display: none; }
 /* ⚠️ תוקן (31.08.2026, לפי בקשה מפורשת: "תקטין את העיגולים הוא יכנס")

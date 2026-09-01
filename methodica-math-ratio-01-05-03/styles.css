@@ -886,7 +886,14 @@ img { display: block; max-width: none; }
    ════════════════════════════════════════════════════════ */
 .s2-static-wrap {
   position: absolute;
-  top: 139px; left: 40px; right: 40px; bottom: 74px;
+  /* ⚠️ תוקן (01.09.2026, דיווח: "אתה משנה את מיקום הסקרול-בר על דעת
+     עצמך... צריך להיות קבוע ואחיד בכל המסכים") — right היה 40px, בעוד
+     שכל שאר אזורי-הגלילה בפרויקט (מאומתים מול Figma חי, ראו למשל
+     .s2-content ב-methodica-math-ratio-01-05-04) הם 16px בדיוק. גם
+     padding-right (המרווח החזותי בין התוכן לפס) היה חסר לגמרי כאן —
+     נוסף 24px, אותה מוסכמה בדיוק כמו כל אזור-גלילה אחר. */
+  top: 139px; left: 40px; right: 16px; bottom: 74px;
+  padding-right: 24px;
   /* ⚠️ תוקן (20.08.2026, לפי דיווח: "אין כפתור צדקתי אחרי שעניתי על
      כל הסעיפים") — overflow:hidden על מיכל בגובה-קבוע: 4 שורות-נכון/
      לא-נכון + טקסט-שאלה + דיאגרמה עלולים לחרוג מהגובה הפנוי (497px),
@@ -904,6 +911,12 @@ img { display: block; max-width: none; }
      אז התוכן לא ישתנה — רק פס-הגלילה עובר לימין. */
   direction: ltr;
 }
+/* ⚠️ נוסף (01.09.2026) — פס-גלילה מעוצב היה חסר כאן לגמרי (ברירת-
+   המחדל הרחבה של הדפדפן), בניגוד לכל אזור-גלילה אחר בפרויקט. אותה
+   מוסכמה בדיוק כמו .s1-scroll-area/.s3-scroll-area. */
+.s2-static-wrap::-webkit-scrollbar { width: 12px; }
+.s2-static-wrap::-webkit-scrollbar-track { background: rgba(201, 206, 216, 0.4); border-radius: 16px; }
+.s2-static-wrap::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.56); border-radius: 24px; }
 .scq-img--wide-diagram { width: 460px; height: 235px; }
 /* ⚠️ תוקן (20.08.2026, לפי דיווח: "התמונה לא מוקפת במסגרת כמו שאר
    התמונות, ויש לה רקע אפור שגוי") — background:#fafafa+padding:12px
@@ -1072,6 +1085,9 @@ img { display: block; max-width: none; }
   z-index: 20;
 }
 .gesture-hint-scroll-wrap[hidden] { display: none; }
+/* ⚠️ נוסף (01.09.2026, דיווח: "אין כף יד" במסך 3, s2) — קואורדינטות
+   זהות ל-.s2-static-wrap עצמה (ראו שם). */
+#s2-scroll-gesture { top: 139px; left: 40px; right: 16px; bottom: 74px; }
 #s1-scroll-gesture { top: 139px; left: 467px; right: 16px; bottom: 74px; } /* right עודכן 31.08.2026, ראו .s1-scroll-area */
 #s3-scroll-gesture { top: 139px; left: 360px; right: 16px; bottom: 74px; } /* right עודכן 31.08.2026, ראו .s3-scroll-area */
 #s5-scroll-gesture { top: 139px; left: 360px; right: 16px; bottom: 74px; } /* right עודכן 31.08.2026, ראו .s3-scroll-area */

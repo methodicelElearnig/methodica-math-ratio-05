@@ -659,6 +659,11 @@ function s1MixSelectYN(key, val) {
   st.yn = val;
   const yesEl = document.getElementById(cfg.ynYesId);
   const noEl = document.getElementById(cfg.ynNoId);
+  /* ⚠️ תוקן (01.09.2026, דיווח: "נכון/לא נכון לא תוקן כאן" — אותו באג
+     בדיוק כמו scqSelect/s2P1Select/s3P3Select: .correct/.wrong לא נוקו
+     כשבוחרים מחדש לפני הניסיון האחרון, רק .selected. */
+  yesEl.classList.remove('correct', 'wrong');
+  noEl.classList.remove('correct', 'wrong');
   yesEl.classList.toggle('selected', val === 'yes');
   yesEl.setAttribute('aria-checked', val === 'yes' ? 'true' : 'false');
   noEl.classList.toggle('selected', val === 'no');
@@ -836,6 +841,8 @@ function s1HideGestureOnScroll() {
 /* QA 19.08.2026: לא מוצג עוד ללא-תנאי — רק אם יש בפועל מה לגלול
    (scrollHeight>clientHeight) באותו רגע. */
 function s1MaybeShowScrollGesture() {
+  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
+  requestAnimationFrame(function () {
   if (s1GestureShown) return;
   const gesture = document.getElementById('s1-scroll-gesture');
   const scrollArea = document.getElementById('s1-scroll-area');
@@ -844,7 +851,8 @@ function s1MaybeShowScrollGesture() {
   s1GestureShown = true;
   gesture.hidden = false;
   scrollArea.addEventListener('scroll', s1HideGestureOnScroll, { once: true });
-}
+
+  });}
 
 function resetScreenState1() {
   setCurrentQuestion(practiceProgress, 0);
@@ -867,6 +875,12 @@ const s2TfState = { selected: { 1: null, 2: null, 3: null, 4: null }, attempts: 
 function s2P1Select(row, val) {
   if (s2TfState.outcome !== null) return;
   s2TfState.selected[row] = val;
+  /* ⚠️ תוקן (01.09.2026, דיווח: "אם אני רוצה לשנות את התשובה הראשונה
+     שלי אחרי SUBMIT, התשובה הקודמת תישאר בסימון החיווי") — אותו באג
+     בדיוק כמו scqSelect (ראו הערה שם): .correct/.wrong לא נוקו כשבוחרים
+     מחדש, רק .selected. */
+  document.getElementById('s2-r' + row + '-true').classList.remove('correct', 'wrong');
+  document.getElementById('s2-r' + row + '-false').classList.remove('correct', 'wrong');
   document.getElementById('s2-r' + row + '-true').classList.toggle('selected', val === 'true');
   document.getElementById('s2-r' + row + '-false').classList.toggle('selected', val === 'false');
   const allSelected = [1, 2, 3, 4].every(function (r) { return s2TfState.selected[r] !== null; });
@@ -955,9 +969,32 @@ function equalizeTfBtnWidths() {
   });
 }
 
+/* ⚠️ נוסף (01.09.2026, דיווח: "אין כף יד" — .s2-static-wrap היה
+   האזור-גלילה היחיד בפרויקט בלי gesture-hint נלווה בכלל). אותו דפוס
+   פשוט (בלי דגל ProgrammaticScroll — אין כאן שום scrollTo יזום-קוד)
+   כמו s4-notebook/s4-step-card בסיין 1. */
+let s2GestureShown = false;
+function s2HideGestureOnScroll() {
+  const gesture = document.getElementById('s2-scroll-gesture');
+  if (gesture) gesture.hidden = true;
+}
+function s2MaybeShowScrollGesture() {
+  requestAnimationFrame(function () {
+    if (s2GestureShown) return;
+    const gesture = document.getElementById('s2-scroll-gesture');
+    const scrollArea = document.querySelector('.s2-static-wrap');
+    if (!gesture || !scrollArea) return;
+    if (scrollArea.scrollHeight <= scrollArea.clientHeight) return;
+    s2GestureShown = true;
+    gesture.hidden = false;
+    scrollArea.addEventListener('scroll', s2HideGestureOnScroll, { once: true });
+  });
+}
+
 function resetScreenState2() {
   setCurrentQuestion(practiceProgress, 1);
   syncPracticeProgressNav(document.getElementById('s2'));
+  s2MaybeShowScrollGesture();
   /* ⚠️ נדחה ל-requestAnimationFrame — המסך עדיין display:none בשלב הזה. */
   requestAnimationFrame(equalizeTfBtnWidths);
 }
@@ -1062,6 +1099,8 @@ function s3HideGestureOnScroll() {
 }
 /* QA 19.08.2026: אותו תיקון בדיוק כמו s1MaybeShowScrollGesture. */
 function s3MaybeShowScrollGesture() {
+  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
+  requestAnimationFrame(function () {
   if (s3GestureShown) return;
   const gesture = document.getElementById('s3-scroll-gesture');
   const scrollArea = document.getElementById('s3-scroll-area');
@@ -1070,7 +1109,8 @@ function s3MaybeShowScrollGesture() {
   s3GestureShown = true;
   gesture.hidden = false;
   scrollArea.addEventListener('scroll', s3HideGestureOnScroll, { once: true });
-}
+
+  });}
 
 function resetScreenState3() {
   setCurrentQuestion(practiceProgress, 2);
@@ -1239,6 +1279,8 @@ function s5HideGestureOnScroll() {
 }
 /* QA 19.08.2026: אותו תיקון בדיוק כמו s1MaybeShowScrollGesture. */
 function s5MaybeShowScrollGesture() {
+  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
+  requestAnimationFrame(function () {
   if (s5GestureShown) return;
   const gesture = document.getElementById('s5-scroll-gesture');
   const scrollArea = document.getElementById('s5-scroll-area');
@@ -1247,7 +1289,8 @@ function s5MaybeShowScrollGesture() {
   s5GestureShown = true;
   gesture.hidden = false;
   scrollArea.addEventListener('scroll', s5HideGestureOnScroll, { once: true });
-}
+
+  });}
 
 function resetScreenState5() {
   const q1Done = practiceProgress2.questions[0].state === 'correct' || practiceProgress2.questions[0].state === 'incorrect';
