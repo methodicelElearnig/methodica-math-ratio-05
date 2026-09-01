@@ -615,6 +615,8 @@ function s2HideGestureOnScroll() {
    (scrollHeight>clientHeight) באותו רגע. נקראת שוב מתוך s2ShowPart
    בכל חשיפת-חלק חדש. */
 function s2MaybeShowScrollGesture() {
+  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
+  requestAnimationFrame(function () {
   if (s2GestureShown) return;
   const gesture = document.getElementById('s2-scroll-gesture');
   const scrollArea = document.getElementById('s2-scroll-area');
@@ -623,7 +625,8 @@ function s2MaybeShowScrollGesture() {
   s2GestureShown = true;
   gesture.hidden = false;
   scrollArea.addEventListener('scroll', s2HideGestureOnScroll, { once: true });
-}
+
+  });}
 
 /* resetScreenState2 — מחשב איזו שאלה (0-3) צריכה להיות "נוכחית" בעת
    חזרה למסך (למשל דרך "חזרה" ממסך 2), על סמך אילו שאלות כבר נפתרו —

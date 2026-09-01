@@ -728,6 +728,12 @@ img { display: block; max-width: none; }
    (methodica-math-ratio-01-01), שם גנרי-יותר כאן כי הוא בשימוש חוזר
    בכל השאלות המספריות של הסיין הזה, לא רק שאלה אחת. */
 .viq-answer-unit { font-family: 'Assistant', sans-serif; font-size: 20px; color: #303030; }
+/* ⚠️ נוסף (01.09.2026, דיווח: "לפי הניסוח בתסריט: 45° = ∡A" — סימן ה-"="
+   היה מוצמד לתווית (∢A =) במקום לערך, כך שהסדר החזותי יצא "45°  ∢A ="
+   במקום "45° = ∢A" כמו בתסריט. הועבר ל-.viq-answer-value (צד-הערך,
+   LTR) כילד אחרון — כך הוא נופל צמוד לערך משמאלו, לפני ה-gap של
+   .viq-answer-row שמפריד בינו לבין התווית עצמה. */
+.viq-answer-eq { font-family: 'Assistant', sans-serif; font-size: 20px; font-weight: 700; color: #303030; margin-inline-start: 4px; }
 /* ⚠️ נוסף (31.08.2026, לפי דיווח: "סימן הזווית צריך להיות בצד השמאלי
    של המספר") — עוטף input+° משלו, gap:2px צמוד — נפרד מ-gap:16px של
    .viq-answer-row עצמה (שם ה-° היה מרוחק מהקלט כמו אלמנט-שורה נפרד). */
@@ -1013,6 +1019,7 @@ img { display: block; max-width: none; }
   font-weight: 400;
   color: #303030;
   text-align: center;
+  
   white-space: nowrap;
 }
 /* ⚠️ תוקן (31.08.2026, דיווח: "גודל הכפתור של 'צדקתי?' לא תקין, הוא

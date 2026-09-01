@@ -569,6 +569,11 @@ const s3TfState = { selected: { 1: null, 2: null, 3: null }, attempts: 0, outcom
 function s3P3Select(row, val) {
   if (s3TfState.outcome !== null) return;
   s3TfState.selected[row] = val;
+  /* ⚠️ תוקן (01.09.2026, דיווח: "אם רוצה לשנות תשובה אחרי SUBMIT,
+     התשובה הקודמת נשארת בסימון החיווי") — ראו הערה מלאה זהה ב-
+     methodica-math-ratio-01-05-03/script.js § s2P1Select. */
+  document.getElementById('s3-p3-r' + row + '-true').classList.remove('correct', 'wrong');
+  document.getElementById('s3-p3-r' + row + '-false').classList.remove('correct', 'wrong');
   document.getElementById('s3-p3-r' + row + '-true').classList.toggle('selected', val === 'true');
   document.getElementById('s3-p3-r' + row + '-false').classList.toggle('selected', val === 'false');
   const allSelected = [1, 2, 3].every(function (r) { return s3TfState.selected[r] !== null; });
@@ -686,6 +691,8 @@ function s3HideGestureOnScroll() {
    מה לגלול (scrollHeight>clientHeight) באותו רגע. נקראת שוב מתוך
    s3ShowPart בכל חשיפת-חלק חדש. */
 function s3MaybeShowScrollGesture() {
+  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
+  requestAnimationFrame(function () {
   if (s3GestureShown) return;
   const gesture = document.getElementById('s3-scroll-gesture');
   const scrollArea = document.getElementById('s3-scroll-area');
@@ -694,7 +701,8 @@ function s3MaybeShowScrollGesture() {
   s3GestureShown = true;
   gesture.hidden = false;
   scrollArea.addEventListener('scroll', s3HideGestureOnScroll, { once: true });
-}
+
+  });}
 
 /* ⚠️ נוסף (31.08.2026, לפי דיווח: "אורך המלבן של המסיחים צריך להיות
    לפי אורך המסיח הארוך ביותר בכל שאלה") — .tf-btn לא היה שום מנגנון-
@@ -757,6 +765,8 @@ function s4HideGestureOnScroll() {
 }
 /* QA 19.08.2026: אותו תיקון בדיוק כמו s3MaybeShowScrollGesture. */
 function s4MaybeShowScrollGesture() {
+  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
+  requestAnimationFrame(function () {
   if (s4GestureShown) return;
   const gesture = document.getElementById('s4-scroll-gesture');
   const scrollArea = document.getElementById('s4-scroll-area');
@@ -765,7 +775,8 @@ function s4MaybeShowScrollGesture() {
   s4GestureShown = true;
   gesture.hidden = false;
   scrollArea.addEventListener('scroll', s4HideGestureOnScroll, { once: true });
-}
+
+  });}
 
 function resetScreenState4() {
   setCurrentQuestion(3);

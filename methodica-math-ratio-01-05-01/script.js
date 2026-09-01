@@ -265,6 +265,8 @@ let s1GestureShown = false;
    `scrollTo` יזום-קוד (ראו s1GoToPage), ומאופס אוטומטית אחרי 700ms. */
 let s1GestureProgrammaticScroll = false;
 function s1MaybeShowScrollGesture() {
+  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
+  requestAnimationFrame(function () {
   if (s1GestureShown) return;
   const gesture = document.getElementById('s1-scroll-gesture');
   const scrollArea = document.getElementById('s1-scroll-area');
@@ -273,7 +275,8 @@ function s1MaybeShowScrollGesture() {
   s1GestureShown = true;
   gesture.hidden = false;
   scrollArea.addEventListener('scroll', s1HideGestureOnScroll, { once: true });
-}
+
+  });}
 function s1HideGestureOnScroll() {
   const scrollArea = document.getElementById('s1-scroll-area');
   const gesture = document.getElementById('s1-scroll-gesture');
@@ -588,6 +591,8 @@ let s2GestureProgrammaticScroll = false;
    בינו לבין גלילה אמיתית של הלומד/ת — מסתיר את הרמז לפני שהוא נראה
    בכלל. אותו דפוס-דגל בדיוק כמו s1/s6MaybeShowScrollGesture. */
 function s2MaybeShowScrollGesture() {
+  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
+  requestAnimationFrame(function () {
   if (s2GestureShown) return;
   const gesture = document.getElementById('s2-scroll-gesture');
   const scrollArea = document.getElementById('s2-scroll-area');
@@ -596,7 +601,8 @@ function s2MaybeShowScrollGesture() {
   s2GestureShown = true;
   gesture.hidden = false;
   scrollArea.addEventListener('scroll', s2HideGestureOnScroll, { once: true });
-}
+
+  });}
 function s2HideGestureOnScroll() {
   const scrollArea = document.getElementById('s2-scroll-area');
   const gesture = document.getElementById('s2-scroll-gesture');
@@ -617,12 +623,15 @@ function s2HideGestureOnScroll() {
    s1/s2/s6MaybeShowScrollGesture, רק שה-trigger-להסתרה הוא גרירה. */
 let s2DragGestureShown = false;
 function s2MaybeShowDragGesture() {
+  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
+  requestAnimationFrame(function () {
   if (s2DragGestureShown) return;
   s2DragGestureShown = true;
   const gesture = document.getElementById('s2-drag-gesture');
   if (!gesture) return;
   gesture.hidden = false;
-}
+
+  });}
 function s2HideDragGesture() {
   const gesture = document.getElementById('s2-drag-gesture');
   if (gesture) gesture.hidden = true;
@@ -1162,6 +1171,8 @@ function s4RefreshPreviewRows(currentStep) {
    בשלב מאוחר יותר). */
 let s4NotebookGestureShown = false;
 function s4MaybeShowNotebookGesture() {
+  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
+  requestAnimationFrame(function () {
   if (s4NotebookGestureShown) return;
   const gesture = document.getElementById('s4-notebook-gesture');
   // ⚠️ תוקן (31.08.2026) — הגלילה עצמה עברה מ-#s4-notebook (המסגרת
@@ -1174,9 +1185,12 @@ function s4MaybeShowNotebookGesture() {
   s4NotebookGestureShown = true;
   gesture.hidden = false;
   scrollArea.addEventListener('scroll', function () { gesture.hidden = true; }, { once: true });
-}
+
+  });}
 let s4StepCardGestureShown = false;
 function s4MaybeShowStepCardGesture() {
+  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
+  requestAnimationFrame(function () {
   if (s4StepCardGestureShown) return;
   const gesture = document.getElementById('s4-step-card-gesture');
   const scrollArea = document.getElementById('s4-step-card');
@@ -1185,7 +1199,8 @@ function s4MaybeShowStepCardGesture() {
   s4StepCardGestureShown = true;
   gesture.hidden = false;
   scrollArea.addEventListener('scroll', function () { gesture.hidden = true; }, { once: true });
-}
+
+  });}
 
 /* ⚠️ נוסף (31.08.2026, לפי דיווח: "אורך המלבן של המסיחים צריך להיות
    לפי אורך המסיח הארוך ביותר בכל שאלה") — .s4-pill היה min-width:85px
@@ -1630,6 +1645,8 @@ let s6GestureShown = false;
    באג ואותו תיקון כמו s1MaybeShowScrollGesture. */
 let s6GestureProgrammaticScroll = false;
 function s6MaybeShowScrollGesture() {
+  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
+  requestAnimationFrame(function () {
   if (s6GestureShown) return;
   const gesture = document.getElementById('s6-scroll-gesture');
   const scrollArea = document.getElementById('s6-scroll-area');
@@ -1638,7 +1655,8 @@ function s6MaybeShowScrollGesture() {
   s6GestureShown = true;
   gesture.hidden = false;
   scrollArea.addEventListener('scroll', s6HideGestureOnScroll, { once: true });
-}
+
+  });}
 function s6HideGestureOnScroll() {
   const scrollArea = document.getElementById('s6-scroll-area');
   const gesture = document.getElementById('s6-scroll-gesture');
