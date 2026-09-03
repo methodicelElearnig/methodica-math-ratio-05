@@ -214,7 +214,7 @@ img { display: block; max-width: none; }
 .btn-hint[hidden] { display: none; }
 /* ⚠️ תוקן (31.08.2026, לפי דיווח: "חסר האייקון... פשוט לקחת אותו אייקון
    כמו בלומדות במדעים ולצבוע אותו בסגול") — ראו הערה מלאה זהה ב-
-   methodica-math-ratio-01-05-01/styles.css. הוחלף mask+currentColor
+   methodica-math-ratio-05-01/styles.css. הוחלף mask+currentColor
    ב-img סטטי (icon-hint-purple.svg), אותה טכניקה כמו methodica-science-
    mass-measure-02-01. */
 .btn-hint .scq-hint-icon {
@@ -224,7 +224,7 @@ img { display: block; max-width: none; }
 }
 /* ⚠️ נוסף (31.08.2026, לפי בקשה מפורשת: "כשהכפתור דיסאבל גם האייקון
    צריך להיות אפור") — ראו הערה מלאה זהה ב-
-   methodica-math-ratio-01-05-01/styles.css. */
+   methodica-math-ratio-05-01/styles.css. */
 .btn-hint:disabled .scq-hint-icon { filter: grayscale(1) opacity(0.45); }
 .btn-hint:disabled { color: #aeaeae; border-color: #aeaeae; cursor: not-allowed; }
 .btn-hint:hover { background: #f0f8ff; }
@@ -550,7 +550,7 @@ img { display: block; max-width: none; }
    המעבר שיהיה אחיד עם שאר מסכי המעבר") — היה 304×293 (aspect-ratio),
    הוגדל ל-450×350: הגודל האחיד שכבר קיים בפועל בשאר מסכי-המעבר/וידאו-
    הדמות של הפרויקט הזה (methodica-math-ratio-01-01 .s3-avatar/.s5-avatar,
-   ואומת גם מפורשות ב-methodica-math-ratio-01-05-02/styles.css: "המשתמשת
+   ואומת גם מפורשות ב-methodica-math-ratio-05-02/styles.css: "המשתמשת
    ביקשה התאמה מדויקת לגודל הווידאו במסך 6 בסיין 1 דווקא — 450×350px,
    לא 304×293"). */
 .transition-avatar-wrap {
@@ -717,7 +717,7 @@ img { display: block; max-width: none; }
    ════════════════════════════════════════════════════════ */
 .scq-qtext-em { font-family: 'Assistant', sans-serif; font-size: 24px; font-weight: 700; color: var(--subject-500); text-align: right; margin: 0; }
 
-.viq-answers { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; width: 100%; }
+.viq-answers { display: flex; flex-direction: column; align-items: flex-start; gap: 16px;}
 .viq-answer-row { display: flex; flex-direction: row; align-items: center; gap: 16px; width: 100%; }
 .viq-answer-label { font-family: 'Assistant', sans-serif; font-size: 24px; font-weight: 400; color: #303030; text-align: right; }
 /* תווית-נוסחה מוטבעת (LTR) — בשימוש הן לזוגות-קואורדינטות (סיין 2)
@@ -750,6 +750,19 @@ img { display: block; max-width: none; }
    כבר נמצאות בגלל text-align:right) — "67.5°" צמוד, קריא נכון. */
 .viq-answer-value { display: flex; flex-direction: row; direction: ltr; align-items: center; gap: 2px; }
 
+/* שבר מוצג (2/7 וכו') */
+.frac {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: middle;
+  font-size: 0.75em;
+  line-height: 1.2;
+  margin: 0 4px;
+}
+.frac-num { border-bottom: 1.5px solid currentColor; padding: 0 6px 2px; }
+.frac-den { padding: 2px 6px 0; }
+
 .viq-input {
   width: 180px;
   height: 42px;
@@ -773,7 +786,7 @@ img { display: block; max-width: none; }
    ב-s1-part-1 (∢A/∢B/∢C, מקבלים גם עשרוניים כמו 67.5 וגם שליליים),
    לא ל-.viq-input--sm הבסיסי (עדיין 92px בכל שימוש אחר בקובץ — s2-cd/
    s2-db, וריאנט-קואורדינטות צר-במכוון, ראו התיעוד ב-
-   methodica-math-ratio-01-05-02/styles.css). 92px היה צר מדי לערכים
+   methodica-math-ratio-05-02/styles.css). 92px היה צר מדי לערכים
    כמו "127.5"/"-67.5" (רק ~60px רוחב-תוכן בפועל אחרי padding+border) —
    הוגדל ל-130px, מספיק לשלוש-ספרות+נקודה-עשרונית+מינוס בלי חיתוך. */
 #s1-part-1 .viq-input--sm { width: 130px; }

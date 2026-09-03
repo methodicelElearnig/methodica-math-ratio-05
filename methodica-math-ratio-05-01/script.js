@@ -14,16 +14,14 @@
 const TOTAL_SCREENS = 7;
 let currentScreen = 0;
 
-/* ⚠️ נוסף (30.08.2026) — ניווט בין-סיינים: כפתור "המשך" במסך האחרון
-   של סיין קודם מוביל הנה בלי פרמטר, ופותח כרגיל במסך הראשון (ברירת-
-   המחדל הקיימת ב-HTML, "class active" על data-screen="0"). כפתור
-   "חזרה" מהסיין הבא (methodica-math-ratio-01-02) מוביל הנה עם
-   ?screen=last — נפתח ישר במסך האחרון במקום. script.js נטען בסוף
-   ה-body (אחרי כל ה-.screen sections), אז אפשר לקרוא ל-goTo באופן
-   סינכררוני כאן, בלי לחכות ל-DOMContentLoaded/load. */
-if (new URLSearchParams(location.search).get('screen') === 'last') {
-  goTo(TOTAL_SCREENS - 1);
-}
+/* ⚠️ תוקן (03.09.2026, דיווח: "לחיצה על חזרה מהסיין הבא מעבירה למסך
+   ריק") — קריאת ה-goTo(TOTAL_SCREENS-1) בשביל ?screen=last הייתה כאן,
+   ממש בתחילת הקובץ, ורצה סינכררונית לפני שקבועים כמו S6_Q/s6Outcome
+   (מוגדרים הרבה יותר למטה, ב-const) הוגדרו בכלל — resetScreenState6()
+   שנקראת מתוכה נכשלת עם "Cannot access 'S6_Q' before initialization",
+   וה-exception קוטע את goTo() *לפני* ההוראה שמדליקה class="active"
+   על המסך היעד. תוצאה: אף מסך לא active, הדף כולו ריק. הועבר ל-IIFE
+   בסוף הקובץ (ראו שם) — שם כל הקבועים כבר מוגדרים. */
 
 /* ---------- Companion character system — state + storage key ----------
    ID לוגי (character-1/character-2), לא צבע/שם, לפי Companion character
@@ -378,11 +376,11 @@ function olyQ1Check() {
 const S1_Q2_FEEDBACK = {
   correct: {
     title: 'נכון!',
-    body: 'במשלחת ב\' יש 40 משתתפות ומשתתפים — כי על כל מדליה יש בה פי 2 יותר אנשים: 5 מדליות זהב פי 2 שווה 40.'
+    body: 'במשלחת ב\' יש 40 משתתפות ומשתתפים - כמות המדליות זהות בין המשלחות ועל כל מדליה יש בה לפי היחס הנתון פי 8 יותר משתתפים ממדליות - כלומר 5 כפול 8 שהם 40.'
   },
   wrong: {
     title: 'אופס, לא בדיוק, בואו נסביר',
-    body: 'במשלחת ב\' יש 40 משתתפות ומשתתפים — כי על כל מדליה יש בה פי 2 יותר אנשים: 5 מדליות זהב פי 2 שווה 40.'
+    body: 'במשלחת ב\' יש 40 משתתפות ומשתתפים - כמות המדליות זהות בין המשלחות ועל כל מדליה יש בה לפי היחס הנתון פי 8 יותר משתתפים ממדליות - כלומר 5 כפול 8 שהם 40.'
   }
 };
 
@@ -642,11 +640,11 @@ function s2HideDragGesture() {
 const S2_C_FEEDBACK = {
   correct: {
     title: 'כל הכבוד!',
-    body: 'קיבלנו 10 שורות, אם בכל שורה יש 3 צנוניות ו-4 ראשי חסה אז נקבל: 3∙10=30 צנוניות, 4∙10=40 ראשי חסה.'
+    body: 'קיבלנו 10 שורות, אם בכל שורה יש 3 צנוניות ו-4 ראשי חסה אז נקבל:<br><span dir="ltr">3 · 10 = 30</span> צנוניות<br><span dir="ltr">4 · 10 = 40</span> ראשי חסה'
   },
   wrong: {
     title: 'זה לא מדויק',
-    body: 'קיבלנו 10 שורות, אם בכל שורה יש 3 צנוניות ו-4 ראשי חסה אז נקבל: 3∙10=30 צנוניות, 4∙10=40 ראשי חסה.'
+    body: 'קיבלנו 10 שורות, אם בכל שורה יש 3 צנוניות ו-4 ראשי חסה אז נקבל:<br><span dir="ltr">3 · 10 = 30</span> צנוניות<br><span dir="ltr">4 · 10 = 40</span> ראשי חסה'
   }
 };
 
@@ -820,8 +818,8 @@ function s2EDrop(e, targetId) {
    לא מדויק, התשובה הנכונה מוצגת" — אותה פסקת-הסבר לשני המצבים, רק
    שורת הפתיחה שונה, כמו כל משוב אחר בפרויקט הזה. */
 const S2_E_FEEDBACK = {
-  correct: { title: 'כל הכבוד!', body: 'כשגודל הקבוצה והיחס בין החלקים בה ידועים לנו, זוהי הדרך בה נחשב את גדלי חלקים השונים.' },
-  wrong:   { title: 'זה לא מדויק, התשובה הנכונה מוצגת', body: 'כשגודל הקבוצה והיחס בין החלקים בה ידועים לנו, זוהי הדרך בה נחשב את גדלי חלקים השונים.' }
+  correct: { title: 'כל הכבוד!', body: 'כשגודל הקבוצה והיחס בין החלקים בה ידועים לנו, זוהי הדרך בה נחשב את גדלי החלקים השונים.' },
+  wrong:   { title: 'זה לא מדויק, התשובה הנכונה מוצגת', body: 'כשגודל הקבוצה והיחס בין החלקים בה ידועים לנו, זוהי הדרך בה נחשב את גדלי החלקים השונים.' }
 };
 /* ⚠️ נוסף (31.08.2026, לפי הנחיות-כפתור-התשובה-הנכונה.md) — עד כה
    הניסיון-האחרון-השגוי קרא ל-s2ERevealCorrect() אוטומטית וזהו (בדיוק
@@ -1046,8 +1044,8 @@ const S4_STEPS = {
      למטה) צריכה להציג את *הערך* שהתשובה מייצגת (2/7, בדיוק כמו שלב 2
      מציג 5/7), לא את ה-id הטכני. display אופציונלי — כשלא קיים,
      נופל-חזרה ל-correct (שלבים 2-4, שם ה-id כבר זהה לערך התצוגה). */
-  1: { correct: 'true', display: '2/7' },
-  2: { correct: '5/7' },
+  1: { correct: 'true', display: '<span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span>' },
+  2: { correct: '5/7', display: '<span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span>' },
   3: { correct: '16' },
   4: { correct: '40' }
 };
@@ -1055,8 +1053,8 @@ const S4_STEPS = {
 /* ⚠️ טקסט מדויק מהתסריט (שקפים 17-22, AlternateContent) — כל שורת
    סיכום היא ציטוט/גזירה ישירה של המסקנה שכל שקף עצמו קובע במפורש. */
 const S4_RECAP = {
-  1: 'אורי קיבל 2/7 מהגולות.',
-  2: 'דן קיבל 5/7 מהגולות.',
+  1: 'אורי קיבל <span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span> מהגולות.',
+  2: 'דן קיבל <span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> מהגולות.',
   3: 'אורי קיבל 16 גולות.',
   4: 'דן קיבל 40 גולות.',
   5: 'דן קיבל 40 גולות.',
@@ -1109,7 +1107,7 @@ function s4CheckStep(stepNum) {
   const explainEl = document.getElementById('s4-explain-' + stepNum);
   if (explainEl) explainEl.hidden = false;
   document.getElementById('s4-recap').hidden = false;
-  document.getElementById('s4-recap').textContent = S4_RECAP[stepNum];
+  document.getElementById('s4-recap').innerHTML = S4_RECAP[stepNum];
   s4RefreshPreviewRows(stepNum);
   const btn = document.getElementById('s4-next-' + stepNum);
   if (btn) btn.textContent = 'המשך';
@@ -1153,7 +1151,7 @@ function s4RefreshPreviewRows(currentStep) {
     if (!label || !box) continue;
     label.classList.toggle('current', i === currentStep);
     if (s4State.answers[i]) {
-      box.textContent = S4_STEPS[i].display || S4_STEPS[i].correct;
+      box.innerHTML = S4_STEPS[i].display || S4_STEPS[i].correct;
       box.classList.add('answered');
     } else {
       box.textContent = '';
@@ -1237,7 +1235,7 @@ function s4ShowStep(n) {
      *לפני* target.classList.add('active') (ראו goTo) — באותו רגע
      המסך עדיין display:none, אז offsetWidth של כל פיל נמדד כ-0, וכל
      הפילים קיבלו width:0px מפורש בפועל. נדחה ל-requestAnimationFrame,
-     בדיוק כמו equalizeTfBtnWidths ב-methodica-math-ratio-01-05-02/-03. */
+     בדיוק כמו equalizeTfBtnWidths ב-methodica-math-ratio-05-02/-03. */
   requestAnimationFrame(function () { s4EqualizePillWidths(n); });
 
   s4RefreshPreviewRows(n);
@@ -1252,12 +1250,12 @@ function s4ShowStep(n) {
   } else if (s4State.answers[n] || n === 5 || n === 6) {
     // השלב הנוכחי כבר נענה, או שהוא לא-אינטראקטיבי (5/6) — מציגים את הסיכום שלו עצמו
     recapEl.hidden = false;
-    recapEl.textContent = S4_RECAP[n];
+    recapEl.innerHTML = S4_RECAP[n];
   } else if (S4_RECAP[n - 1]) {
     // השלב הנוכחי עדיין לא נענה — מציגים את הסיכום של השלב הקודם שהושלם
     // (עקבי עם התסריט: תיבת א' נשארת מלאה כשעונים על ב', וכו')
     recapEl.hidden = false;
-    recapEl.textContent = S4_RECAP[n - 1];
+    recapEl.innerHTML = S4_RECAP[n - 1];
   } else {
     recapEl.hidden = true;
   }
@@ -1426,11 +1424,11 @@ const S6_Q = {
     wrongOnce: { title: 'התשובה אינה נכונה.', body: 'נסו שוב.' },
     correctMsg: {
       title: 'כל הכבוד, צדקתם!',
-      body: 'א. בכל מדף נסדר 2 בקבוקי תות ו-3 בקבוקי מנגו, כלומר 5 בקבוקים בסך הכול. נחלק את סך כל הבקבוקים במספר הבקבוקים בכל מדף ונקבל: 60 : 5 = 12.\nב. סידרנו את הבקבוקים ב-12 מדפים, ובכל מדף יש 2 בקבוקי תות. לכן מספר הבקבוקים בטעם תות הוא: 12⋅2=24.\nג. בכל מדף יש 3 בקבוקים בטעם מנגו, לכן: 12⋅3=36.'
+      body: 'א. בכל מדף נסדר 2 בקבוקי תות ו-3 בקבוקי מנגו, כלומר 5 בקבוקים בסך הכול. נחלק את סך כל הבקבוקים במספר הבקבוקים בכל מדף \n ונקבל:\n <span dir="ltr">60 : 5 = 12</span>.\nב. סידרנו את הבקבוקים ב-12 מדפים, ובכל מדף יש 2 בקבוקי תות.\nלכן מספר הבקבוקים בטעם תות הוא:\n<span dir="ltr">12 ⋅ 2 = 24</span>.\nג. בכל מדף יש 3 בקבוקים בטעם מנגו, לכן: <span dir="ltr">12 ⋅ 3 = 36</span>.'
     },
     wrongFinal: {
       title: 'טעיתם. לא נורא, מטעויות לומדים',
-      body: 'א. בכל מדף נסדר 2 בקבוקי תות ו-3 בקבוקי מנגו, כלומר 5 בקבוקים בסך הכול. נחלק את סך כל הבקבוקים במספר הבקבוקים בכל מדף ונקבל: 60 : 5 = 12.\nב. סידרנו את הבקבוקים ב-12 מדפים, ובכל מדף יש 2 בקבוקי תות. לכן מספר הבקבוקים בטעם תות הוא: 12⋅2=24.\nג. בכל מדף יש 3 בקבוקים בטעם מנגו, לכן: 12⋅3=36.'
+      body: 'א. בכל מדף נסדר 2 בקבוקי תות ו-3 בקבוקי מנגו, כלומר 5 בקבוקים בסך הכול. נחלק את סך כל הבקבוקים במספר הבקבוקים בכל מדף \n ונקבל: <span dir="ltr">60 : 5 = 12</span>.\nב. סידרנו את הבקבוקים ב-12 מדפים, ובכל מדף יש 2 בקבוקי תות.\nלכן מספר הבקבוקים בטעם תות הוא:\n<span dir="ltr">12 ⋅ 2 = 24</span>.\nג. בכל מדף יש 3 בקבוקים בטעם מנגו, לכן: <span dir="ltr">12 ⋅ 3 = 36</span>.'
     }
   },
   2: {
@@ -1444,11 +1442,11 @@ const S6_Q = {
     wrongOnce: { title: 'התשובה אינה נכונה.', body: 'נסו שוב.' },
     correctMsg: {
       title: 'כל הכבוד, צדקתם!',
-      body: 'ידוע כי זווית ABC=90°, והיחס בין זווית α לזווית β הוא 1:4. ה"שלם" שלנו הוא 1+4=5 חלקים, לכן: גודלה של α הוא 1/5⋅90°=18°, וגודלה של β הוא 4/5⋅90°=72°.'
+      body: 'ידוע כי זווית <span dir="ltr">∢∢ABC = 90°</span>, והיחס בין זווית α לזווית β הוא 1:4.<br>ה"שלם" שלנו הוא <span dir="ltr">1 + 4 = 5</span> חלקים, לכן:<br>גודלה של α הוא <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">5</span></span> ⋅ 90° = 18°</span>,<br>וגודלה של β הוא <span dir="ltr"><span class="frac"><span class="frac-num">4</span><span class="frac-den">5</span></span> ⋅ 90° = 72°</span>.'
     },
     wrongFinal: {
       title: 'טעיתם. לא נורא, מטעויות לומדים',
-      body: 'ידוע כי זווית ABC=90°, והיחס בין זווית α לזווית β הוא 1:4. ה"שלם" שלנו הוא 1+4=5 חלקים, לכן: גודלה של α הוא 1/5⋅90°=18°, וגודלה של β הוא 4/5⋅90°=72°.'
+      body: 'ידוע כי זווית <span dir="ltr">∢ABC = 90°</span>, והיחס בין זווית α לזווית β הוא 1:4.<br>ה"שלם" שלנו הוא <span dir="ltr">1 + 4 = 5</span> חלקים, לכן:<br>גודלה של α הוא <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">5</span></span> ⋅ 90° = 18°</span>,<br>וגודלה של β הוא <span dir="ltr"><span class="frac"><span class="frac-num">4</span><span class="frac-den">5</span></span> ⋅ 90° = 72°</span>.'
     }
   }
 };
@@ -1507,8 +1505,8 @@ function s6Check(n) {
       input.disabled = true;
     });
     fb.classList.remove('is-wrong'); fb.classList.add('is-correct');
-    titleEl.textContent = cfg.correctMsg.title;
-    bodyEl.textContent = cfg.correctMsg.body;
+    titleEl.innerHTML = cfg.correctMsg.title;
+    bodyEl.innerHTML = cfg.correctMsg.body;
     s6Outcome[n] = 'success';
     s6Finish(n);
   } else if (s6Attempts[n] < 2) {
@@ -1516,8 +1514,8 @@ function s6Check(n) {
       input.classList.toggle('wrong', Number(input.value) !== cfg.correct[i]);
     });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = cfg.wrongOnce.title;
-    bodyEl.textContent = cfg.wrongOnce.body;
+    titleEl.innerHTML = cfg.wrongOnce.title;
+    bodyEl.innerHTML = cfg.wrongOnce.body;
     document.getElementById(cfg.checkBtn).disabled = true; // נעול עד ש-s6OnInput יופעל מחדש ע"י שינוי ערך
     if (cfg.hintBtn) document.getElementById(cfg.hintBtn).disabled = false;
   } else {
@@ -1537,8 +1535,8 @@ function s6Check(n) {
     s6AnswerSnapshot[n] = inputs.map(function (input) { return input.value; });
     s6Revealed[n] = false;
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = S6_PENDING_FEEDBACK.title;
-    bodyEl.textContent = S6_PENDING_FEEDBACK.body;
+    titleEl.innerHTML = S6_PENDING_FEEDBACK.title;
+    bodyEl.innerHTML = S6_PENDING_FEEDBACK.body;
     if (cfg.revealBtn) {
       const revealBtn = document.getElementById(cfg.revealBtn);
       if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
@@ -1567,8 +1565,8 @@ function s6ToggleReveal(n) {
       input.classList.add('correct');
     });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = cfg.wrongFinal.title;
-    bodyEl.textContent = cfg.wrongFinal.body;
+    titleEl.innerHTML = cfg.wrongFinal.title;
+    bodyEl.innerHTML = cfg.wrongFinal.body;
     s6Revealed[n] = true;
     if (revealBtn) revealBtn.textContent = 'התשובה שלי';
   } else {
@@ -1579,8 +1577,8 @@ function s6ToggleReveal(n) {
       input.classList.toggle('wrong', Number(snapshot[i]) !== cfg.correct[i]);
     });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = S6_PENDING_FEEDBACK.title;
-    bodyEl.textContent = S6_PENDING_FEEDBACK.body;
+    titleEl.innerHTML = S6_PENDING_FEEDBACK.title;
+    bodyEl.innerHTML = S6_PENDING_FEEDBACK.body;
     s6Revealed[n] = false;
     if (revealBtn) revealBtn.textContent = 'התשובה הנכונה';
   }
@@ -1830,6 +1828,7 @@ scaleApp();
    בקובץ הזה בכלל — כל שבעת ה-id-ים הוסרו. */
 (function () {
   const m = /^#screen=(\d+)$/.exec(location.hash);
-  if (m) goTo(parseInt(m[1], 10));
+  if (new URLSearchParams(location.search).get('screen') === 'last') goTo(TOTAL_SCREENS - 1);
+  else if (m) goTo(parseInt(m[1], 10));
   else resetScreenState(0);
 })();

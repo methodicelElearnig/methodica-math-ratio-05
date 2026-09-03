@@ -241,7 +241,7 @@
         </div>
         <div class="char-bubble-wrap">
           <div class="char-speech-bubble">
-            <p>נשמע מאתגר ממש! בא לי!</p>
+            <p>נשמע מאתגר ממש!<br>בא לי!</p>
           </div>
           <div class="char-bubble-avatar">
             <video id="s1-outro-avatar" autoplay loop muted playsinline></video>
@@ -323,7 +323,7 @@
         <div class="s2-flow-row">
           <div class="s2-flow-text">
             <p class="s2-body s2-qtext">איך נשתמש ביחס לחישוב גודל החלקים בקבוצה?</p>
-            <p class="s2-body">יהב ויעל שתלו בגינת הירק של סבתא 70 זרעים של צנוניות וחסה ביחס של 4:3.</p>
+            <p class="s2-body">יהב ויעל שתלו בגינת הירק של סבתא 70 זרעים של צנוניות וחסה ביחס של 3:4.</p>
           </div>
           <!-- QA 20.08.2026, לפי בקשה מפורשת: הבועית עברה מעל-התמונה
                (עמודה) לצד-התמונה, פיזית מימין לה (זנב פונה שמאלה,
@@ -467,29 +467,24 @@
            ה-hidden שהיה כאן (וב-s2-sec-e למטה), וכן כל קוד ב-script.js
            שהחביא/חשף אותם דינמית. -->
       <div class="s2-section" id="s2-sec-d">
-        <!-- ⚠️ תוקן שוב (20.08.2026, לפי בקשה מפורשת) — הבועה-הגדולה
-             (הפסקה+2 שורות-הנוסחה) עברה מעמודת-טקסט נפרדת להיות ליד
-             התמונה, *באותו מיקום* כמו בועת-סעיף-א' (וריאנט-זנב שמאלה,
-             s2-hook-bubble). הבועה-הקטנה ("טווווב את גאונה!") עברה
-             מ"לצד התמונה" ל"מעל התמונה, מעל הילד" — .s2-hook-img-col
-             עוטף חדש (flex-column: בועה-קטנה למעלה, מסגרת-תמונה
-             למטה), הבועה משתמשת בזנב-הבסיס הפונה-למטה (.char-speech-
-             bubble הרגילה, בלי s2-hook-bubble) — פונה ישירות אל
-             התמונה שמתחתיה. -->
+        <!-- ⚠️ תוקן (03.09.2026, לפי בקשה מפורשת + רפרנס-תסריט מצולם):
+             רק שני המשפטים החיצוניים (הפתיחה "יעל מציעה..." והסיכום
+             "ניתן לראות...") הוצאו מהבועה, אל מעל ומתחת לשורת התמונה
+             בהתאמה. תוכן-האמצע (ההסבר עם השברים + שתי שורות-הנוסחה)
+             נשאר בתוך הבועה הגדולה (s2-hook-bubble/s2-flow-bubble),
+             ליד התמונה, בדיוק כפי שהיה. -->
+        <p class="s2-body">יעל מציעה דרך קלה יותר לחישוב:</p>
         <div class="s2-flow-row">
           <div class="s2-hook-visual">
             <div class="char-speech-bubble s2-hook-bubble s2-flow-bubble">
-              <p class="s2-body">יעל מציעה דרך קלה יותר לחישוב:</p>
-              <p class="s2-body">בגלל שהיחס הוא 4:3, אז ה"שלם" שלנו הוא 7 (3+4). עוד ידוע לנו שזרעי הצנוניות מהווים <span class="frac"><span class="frac-num">3</span><span class="frac-den">7</span></span> מכלל הזרעים. יש לנו 70 זרעים, לכן נוכל לחשב לפי החלק שמצאנו:</p>
+              <p class="s2-body">
+                בגלל שהיחס הוא 3:4, אז ה"שלם" שלנו הוא 7 (<span dir="ltr">3+4</span>). עוד ידוע לנו שזרעי הצנוניות מהווים <span class="frac"><span class="frac-num">3</span><span class="frac-den">7</span></span> מכלל הזרעים.<br>יש לנו 70 זרעים, לכן נוכל לחשב לפי החלק שמצאנו:</p>
               <p class="s2-formula-line">
-                <span class="frac"><span class="frac-num">3</span><span class="frac-den">7</span></span>
-                <span>· 70 = 30 זרעי צנוניות</span>
+                <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">7</span></span> · 70 = 30</span> זרעי צנוניות
               </p>
               <p class="s2-formula-line">
-                <span class="frac"><span class="frac-num">4</span><span class="frac-den">7</span></span>
-                <span>· 70 = 40 זרעי חסה</span>
+                <span dir="ltr"><span class="frac"><span class="frac-num">4</span><span class="frac-den">7</span></span> · 70 = 40</span> זרעי חסה
               </p>
-              <p class="s2-body">ניתן לראות שהדרך של יעל מובילה אותנו לאותה תוצאה, וזו בעצם הנוסחה בה נשתמש לחישוב הגודל של כל חלק בקבוצה.</p>
             </div>
             <div class="s2-hook-img-col">
               <div class="char-speech-bubble">
@@ -510,6 +505,7 @@
             </div>
           </div>
         </div>
+        <p class="s2-body">ניתן לראות שהדרך של יעל מובילה אותנו לאותה תוצאה, וזו בעצם הנוסחה בה נשתמש לחישוב הגודל של כל חלק בקבוצה.</p>
       </div>
 
       <!-- סעיף ה (שקף 14) — שאלת גרירה-להתאמה: מה מייצג כל מספר במשוואה,
@@ -689,7 +685,7 @@
              ראו ההערה המלאה ב-styles.css § .s4-notebook. -->
         <div class="s4-notebook-scroll">
         <div class="s4-notebook-inner">
-        <p class="s4-problem" id="s4-problem">לאורי ודן יש 56 גולות. היחס בין כמות הגולות האדומות לבין כמות הגולות הכחולות הוא 5:2. אורי קיבל את הגולות האדומות ודן קיבל את הגולות הכחולות.</p>
+        <p class="s4-problem" id="s4-problem">לאורי ודן יש 56 גולות. היחס בין כמות הגולות האדומות לבין כמות הגולות הכחולות הוא 2:5. אורי קיבל את הגולות האדומות ודן קיבל את הגולות הכחולות.</p>
         <!-- ⚠️ נוסף (20.08.2026, לפי בקשה מפורשת + צילום-מסך מהתסריט
              בפועל) — 4 שורות א'-ד', עם תיבת-קלט לצד כל שאלה.
              ⚠️ עודכן (20.08.2026, לפי בקשה מפורשת נוספת) — לא עוד
@@ -770,33 +766,33 @@
 
         <!-- שלב 1 — א' (שקף 17): בינארי נכון/לא נכון -->
         <div class="s4-step-block" id="s4-step-1" hidden>
-          <p class="s4-step-setup">היחס בין כמות הגולות האדומות לכמות הגולות הכחולות הוא 5:2. לכן ה"שלם" שלנו הוא 5+2=7.</p>
+          <p class="s4-step-setup">היחס בין כמות הגולות האדומות לכמות הגולות הכחולות הוא 2:5. לכן ה"שלם" שלנו הוא <span dir="ltr">2 + 5 = 7</span>.</p>
           <p class="s4-step-prompt">א. האם נכון שיש לאורי <span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span> מהגולות?</p>
           <div class="s4-pills" id="s4-pills-1">
             <button class="s4-pill" data-id="true" onclick="s4Choose(1,'true',this)">נכון</button>
             <button class="s4-pill" data-id="false" onclick="s4Choose(1,'false',this)">לא נכון</button>
           </div>
-          <p class="s4-step-explain" id="s4-explain-1" hidden>אורי קיבל את הגולות האדומות, כלומר יש לו 2/7 מהגולות.</p>
+          <p class="s4-step-explain" id="s4-explain-1" hidden>אורי קיבל את הגולות האדומות, כלומר יש לו <span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span> מהגולות.</p>
           <button class="btn-continue s4-inline-btn" id="s4-next-1" disabled onclick="s4CheckStep(1)">צדקתי?</button>
         </div>
 
         <!-- שלב 2 — ב' (שקף 18): 3 פילים שבר -->
         <div class="s4-step-block" id="s4-step-2" hidden>
-          <p class="s4-step-setup">דן קיבל את הגולות הכחולות. אם היחס הוא 5:2, ואורי קיבל 2/7,</p>
+          <p class="s4-step-setup">דן קיבל את הגולות הכחולות. אם היחס הוא 2:5, ואורי קיבל <span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span>,</p>
           <p class="s4-step-prompt">ב. איזה חלק קיבל דן?</p>
           <div class="s4-pills" id="s4-pills-2">
             <button class="s4-pill" data-id="5/7" onclick="s4Choose(2,'5/7',this)"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span></button>
             <button class="s4-pill" data-id="4/7" onclick="s4Choose(2,'4/7',this)"><span class="frac"><span class="frac-num">4</span><span class="frac-den">7</span></span></button>
             <button class="s4-pill" data-id="2/5" onclick="s4Choose(2,'2/5',this)"><span class="frac"><span class="frac-num">2</span><span class="frac-den">5</span></span></button>
           </div>
-          <p class="s4-step-explain" id="s4-explain-2" hidden>דן קיבל 5/7 מהגולות.</p>
+          <p class="s4-step-explain" id="s4-explain-2" hidden>דן קיבל <span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> מהגולות.</p>
           <button class="btn-continue s4-inline-btn" id="s4-next-2" disabled onclick="s4CheckStep(2)">צדקתי?</button>
         </div>
 
         <!-- שלב 3 — ג' (שקף 19): 3 פילים מספר -->
         <div class="s4-step-block" id="s4-step-3" hidden>
-          <p class="s4-step-setup">אם לאורי יש <span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span> מהגולות, ויש סה"כ 56 גולות, נוכל לחשב:</p>
-          <p class="s4-step-prompt">ג. 2/7⋅56 = ?</p>
+          <p class="s4-step-setup">דן קיבל <span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> מהגולות.<br>אם לאורי יש <span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span> מהגולות, ויש סה"כ 56 גולות, נוכל לחשב:</p>
+          <p class="s4-step-prompt">ג. <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span>⋅56 = ?</span></p>
           <div class="s4-pills" id="s4-pills-3">
             <button class="s4-pill" data-id="18" onclick="s4Choose(3,'18',this)">18</button>
             <button class="s4-pill" data-id="20" onclick="s4Choose(3,'20',this)">20</button>
@@ -808,8 +804,8 @@
 
         <!-- שלב 4 — ד' (שקף 20): 3 פילים מספר -->
         <div class="s4-step-block" id="s4-step-4" hidden>
-          <p class="s4-step-setup">אם לדן יש <span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> מהגולות, ויש סה"כ 56 גולות, אז נוכל לחשב:</p>
-          <p class="s4-step-prompt">ד. 5/7⋅56 = ?</p>
+          <p class="s4-step-setup">אורי קיבל 16 גולות.<br>אם לדן יש <span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> מהגולות, ויש סה"כ 56 גולות, אז נוכל לחשב:</p>
+          <p class="s4-step-prompt">ד. <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span>⋅56 = ?</span></p>
           <div class="s4-pills" id="s4-pills-4">
             <button class="s4-pill" data-id="45" onclick="s4Choose(4,'45',this)">45</button>
             <button class="s4-pill" data-id="40" onclick="s4Choose(4,'40',this)">40</button>
@@ -821,8 +817,11 @@
 
         <!-- שלב 5 — ד' דרך נוספת (שקף 21): לא אינטראקטיבי -->
         <div class="s4-step-block" id="s4-step-5" hidden>
-          <p class="s4-step-prompt">ד. דרך נוספת:</p>
-          <p class="s4-step-explain">סך כל הגולות הוא 56. אורי קיבל 16 גולות. לכן, דן קיבל: 56−16=40 גולות.</p>
+          <p class="s4-step-prompt"><span style="font-weight:400">ד. </span>דרך נוספת:</p>
+          <p class="s4-step-explain">סך כל הגולות הוא 56.<br>אורי קיבל 16 גולות.<br>לכן, דן קיבל:<br><span dir="ltr"> 
+ 56 − 16 = גולות 40
+          
+          </span></p>
           <button class="btn-continue s4-inline-btn" id="s4-next-5" onclick="s4Next(5)">המשך</button>
         </div>
 
@@ -834,7 +833,7 @@
                קוראת ל-s4Finish() ישירות ברגע שהשלב הזה מוצג (ראו
                script.js), מדליקה את #s4-continue הכללי בסרגל התחתון
                ישירות, בלי לחיצת-אישור נוספת בתוך הכרטיס. -->
-          <p class="s4-step-explain">דן קיבל 40 גולות. נוכל גם לסדר את הגולות בקבוצות של 7. בכל קבוצה יהיו 2 גולות אדומות ו-5 גולות כחולות. מכיוון ש-8=7÷56, נוצרו 8 קבוצות (בתמונה כל קבוצה מסודרת בשורה). לכן, יהיו 8⋅2=16 גולות אדומות, ו-8⋅5=40 גולות כחולות.</p>
+          <p class="s4-step-explain">דן קיבל 40 גולות.<br>נוכל גם לסדר את הגולות בקבוצות של <strong>7</strong>.<br>בכל קבוצה יהיו <strong>2 גולות אדומות</strong> ו-<strong>5 גולות כחולות</strong>.<br>מכיוון ש- <span dir="">8 = 7 ÷ 56</span>, <br>נוצרו <strong>8 קבוצות (בתמונה כל קבוצה מסודרת בשורה)</strong>.<br>לכן, יהיו <span dir="ltr">8 · <bdi>שורות</bdi> 2 = 16</span> גולות אדומות,<br>ו- <span dir="ltr">8 · <bdi>שורות</bdi> 5 = 40</span> גולות כחולות.</p>
           <!-- ⚠️ הועבר לכאן (31.08.2026) מפאנל-המחברת הלבן — ראו ההערה
                שם. אותו אלמנט/id/JS בדיוק (s4RenderMarbles וכו'), רק
                מיקום-DOM שונה. -->
@@ -940,7 +939,7 @@
       <div class="s6-question" id="s6-q1">
         <div class="s6-q-row">
           <div class="s6-q-col">
-            <p class="s2-body">במכולת של שלומי יש 60 בקבוקי שתייה מוגזים, חלקם בטעם תות וחלקם בטעם מנגו. היחס בין מספר בקבוקי השתייה בטעם תות למספר בקבוקי השתייה בטעם מנגו הוא 3:2.</p>
+            <p class="s2-body">במכולת של שלומי יש 60 בקבוקי שתייה מוגזים, חלקם בטעם תות וחלקם בטעם מנגו. היחס בין מספר בקבוקי השתייה בטעם תות למספר בקבוקי השתייה בטעם מנגו הוא 2:3.</p>
             <p class="s2-qtext">השתמשו ביישומון ועזרו לשלומי לסדר את הבקבוקים על המדפים, לפי היחס שצוין.</p>
             <div class="oly-answer-block">
               <div class="s6-answer-row">
@@ -1062,7 +1061,7 @@
              בסיין 1, אז "המשך" עובר לסיין הבא (methodica-math-ratio-01-02),
              לא ל-goTo(7) שהיה no-op (מחוץ לתחום TOTAL_SCREENS). נפתח שם
              כרגיל במסך הראשון (ברירת-המחדל, בלי פרמטר-query). -->
-        <div class="bar-actions"><button class="btn-continue" id="s6-continue" disabled onclick="location.href='../methodica-math-ratio-01-05-02/index.html'">המשך</button></div>
+        <div class="bar-actions"><button class="btn-continue" id="s6-continue" disabled onclick="location.href='../methodica-math-ratio-05-02/index.html'">המשך</button></div>
       </div>
     </div>
   </section>

@@ -19,9 +19,10 @@ let currentScreen = 0;
    (methodica-math-ratio-01-05) מוביל הנה עם ?screen=last — נפתח ישר
    במסך האחרון כאן במקום. script.js נטען בסוף ה-body (אחרי כל ה-.screen
    sections), אז אפשר לקרוא ל-goTo באופן סינכררוני כאן. */
-if (new URLSearchParams(location.search).get('screen') === 'last') {
-  goTo(TOTAL_SCREENS - 1);
-}
+/* ⚠️ תוקן (03.09.2026, דיווח: "חזרה מהסיין הבא מעבירה למסך ריק") — קריאת ה-goTo כאן רצה
+   סינכררונית לפני שקבועים המוגדרים למטה בקובץ (const) מאותחלים; אם resetScreenState
+   של המסך האחרון תלוי באחד מהם, נזרקת שגיאה שקוטעת את goTo() לפני שהמסך היעד מסומן
+   active, ואז שום מסך לא נשאר גלוי. הועבר לסוף הקובץ (ראו §אתחול), אחרי שהכל מוגדר. */
 
 /* ---------- Companion character system — state + storage key ----------
    ID לוגי (character-1/character-2), לא צבע/שם, לפי Companion character
@@ -375,4 +376,5 @@ document.addEventListener('keydown', function (e) {
 
 /* אתחול */
 scaleApp();
-resetScreenState(0);
+if (new URLSearchParams(location.search).get('screen') === 'last') goTo(TOTAL_SCREENS - 1);
+else resetScreenState(0);

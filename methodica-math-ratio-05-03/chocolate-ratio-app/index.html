@@ -37,10 +37,10 @@
     min-height: 400px;
     background: #ffffff;
     border: 1px solid #CEC7FF;
-    border-radius: 12px;
+    border-radius: 14px;
     overflow: hidden;
-    padding: 14px;
-    gap: 12px;
+    padding: 18px;
+    gap: 16px;
   }
 
   .choc-app__tools {
@@ -53,14 +53,14 @@
 
   .choc-tool {
     font-family: 'Assistant', sans-serif;
-    font-size: 14px;
+    font-size: 18px;
     font-weight: 700;
     border-radius: 999px;
-    padding: 8px 14px;
+    padding: 10px 18px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     line-height: 1;
   }
   .choc-tool:focus-visible { outline: 2px solid #3B2FC2; outline-offset: 2px; }
@@ -76,8 +76,8 @@
     border: 2px solid transparent;
   }
   .choc-tool--color .choc-tool-swatch {
-    width: 14px; height: 14px;
-    border-radius: 4px;
+    width: 18px; height: 18px;
+    border-radius: 5px;
     flex-shrink: 0;
     border: 1px solid rgba(0,0,0,0.15);
   }
@@ -119,15 +119,15 @@
   .choc-app__grid {
     direction: rtl;
     display: grid;
-    grid-template-columns: repeat(5, 44px);
-    grid-auto-rows: 44px;
-    gap: 4px;
+    grid-template-columns: repeat(5, 58px);
+    grid-auto-rows: 58px;
+    gap: 6px;
   }
 
   .choc-cell {
-    width: 44px;
-    height: 44px;
-    border-radius: 6px;
+    width: 58px;
+    height: 58px;
+    border-radius: 8px;
     /* ⚠️ תוקן (31.08.2026, דיווח: "הצבע ההתחלתי צריך להיות בהיר יותר
        וקרוב יותר לאפור") — היה גוון-קרם/בז' חם (#EFEAE1 + border
        #D9D2C6); הוחלף לאפור-בהיר ניטרלי. */
@@ -153,19 +153,19 @@
   .choc-count {
     display: flex;
     align-items: center;
-    gap: 5px;
-    font-size: 13px;
+    gap: 7px;
+    font-size: 16px;
     font-weight: 700;
     color: #2F2478;
     background: #F7F5FF;
     border: 1px solid #CEC7FF;
     border-radius: 999px;
-    padding: 5px 10px;
+    padding: 6px 12px;
   }
 
   .choc-swatch {
-    width: 12px; height: 12px;
-    border-radius: 3px;
+    width: 15px; height: 15px;
+    border-radius: 4px;
     flex-shrink: 0;
     border: 1px solid rgba(0,0,0,0.15);
   }

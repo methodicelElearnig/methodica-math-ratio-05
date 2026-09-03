@@ -20,9 +20,10 @@ let currentScreen = 0;
    (methodica-math-ratio-01-03) מוביל הנה עם ?screen=last — נפתח ישר
    במסך האחרון כאן במקום. script.js נטען בסוף ה-body (אחרי כל ה-.screen
    sections), אז אפשר לקרוא ל-goTo באופן סינכררוני כאן. */
-if (new URLSearchParams(location.search).get('screen') === 'last') {
-  goTo(TOTAL_SCREENS - 1);
-}
+/* ⚠️ תוקן (03.09.2026, דיווח: "חזרה מהסיין הבא מעבירה למסך ריק") — קריאת ה-goTo כאן רצה
+   סינכררונית לפני שקבועים המוגדרים למטה בקובץ (const) מאותחלים; אם resetScreenState
+   של המסך האחרון תלוי באחד מהם, נזרקת שגיאה שקוטעת את goTo() לפני שהמסך היעד מסומן
+   active, ואז שום מסך לא נשאר גלוי. הועבר ל-IIFE בסוף הקובץ, אחרי שהכל כבר מוגדר. */
 
 /* ---------- Companion character system — state + storage key ----------
    ID לוגי (character-1/character-2), לא צבע/שם, לפי Companion character
@@ -231,7 +232,7 @@ function scqSelect(key, id) {
   if (st.outcome !== null) return;
   /* ⚠️ תוקן (31.08.2026, דיווח: "למה מסומנות שתי תשובות לא נכונות
      בשאלה חד-ברירה?") — ראו הערה מלאה זהה ב-
-     methodica-math-ratio-01-05-03/script.js. */
+     methodica-math-ratio-05-03/script.js. */
   document.querySelectorAll(cfg.containerSel + ' .scq-opt').forEach(function (el) {
     el.classList.remove('selected', 'correct', 'wrong');
     el.setAttribute('aria-checked', 'false');
@@ -257,7 +258,7 @@ function scqCheck(key) {
   const st = scqState[key];
   if (!st || st.outcome !== null) return;
   /* ⚠️ נוסף (31.08.2026, דיווח: "המשוב עולה על הפופ-אפ של הרמז") —
-     ראו הערה מלאה זהה ב-methodica-math-ratio-01-05-05/script.js. */
+     ראו הערה מלאה זהה ב-methodica-math-ratio-05-05/script.js. */
   document.querySelectorAll('[id$="-hint-overlay"]').forEach(function (el) { el.hidden = true; });
 
   const isCorrect = st.selected === cfg.correctId;
@@ -276,23 +277,23 @@ function scqCheck(key) {
     if (chosenEl) chosenEl.classList.add('correct');
     scqLockOptions(cfg.containerSel);
     fb.classList.remove('is-wrong'); fb.classList.add('is-correct');
-    titleEl.textContent = cfg.correctMsg.title;
-    bodyEl.textContent = cfg.correctMsg.body;
+    titleEl.innerHTML = cfg.correctMsg.title;
+    bodyEl.innerHTML = cfg.correctMsg.body;
     st.outcome = 'success';
     scqFinish(key);
   } else if (st.attempts < 2) {
     if (chosenEl) chosenEl.classList.add('wrong');
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = cfg.wrongOnce.title;
-    bodyEl.textContent = cfg.wrongOnce.body;
+    titleEl.innerHTML = cfg.wrongOnce.title;
+    bodyEl.innerHTML = cfg.wrongOnce.body;
     document.getElementById(cfg.checkBtnId).disabled = true;
   } else {
     if (chosenEl) chosenEl.classList.add('wrong');
     if (correctEl) correctEl.classList.add('correct');
     scqLockOptions(cfg.containerSel);
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = cfg.wrongFinal.title;
-    bodyEl.textContent = cfg.wrongFinal.body;
+    titleEl.innerHTML = cfg.wrongFinal.title;
+    bodyEl.innerHTML = cfg.wrongFinal.body;
     st.outcome = 'fail';
     scqFinish(key);
   }
@@ -310,27 +311,27 @@ const SCQ_CFG = {
     correctId: 'b',
     checkBtnId: 's3-p2-check',
     feedboxId: 's3-p2-feedbox',
-    correctMsg: { title: 'נכון!', body: 'שתי הזוויות האחרות הן 45° ו-75° — 120° הנותרים (180°−60°) מתחלקים ביחס 5:3.' },
+    correctMsg: { title: 'נכון!', body: 'ידוע כי <span dir="ltr">∢BAC=60°</span> .<br>סכום הזוויות במשולש הוא <span dir="ltr">180°</span><br>לכן גודל שתי הזוויות האחרות של המשולש הוא<br><span dir="ltr">180° − 60° = 120°</span><br>היחס בין שתי הזוויות הוא 5 : 3 .<br>נחשב כל אחת מהזוויות: <br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> · 120 = 45°</span><br><span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">8</span></span> · 120 = 75°</span><br>גודלן של שתי הזוויות האחרות במשולש הוא <span dir="">45°, 75°</span>.' },
     wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-    wrongFinal: { title: 'לא נכון.', body: 'התשובה הנכונה: 45°,75° — 120° הנותרים (180°−60°) מתחלקים ביחס 5:3.' }
+    wrongFinal: { title: 'לא נכון.', body: 'ידוע כי <span dir="ltr">∢BAC=60°</span> .<br>סכום הזוויות במשולש הוא <span dir="ltr">180°</span><br>לכן גודל שתי הזוויות האחרות של המשולש הוא<br><span dir="ltr">180° − 60° = 120°</span><br>היחס בין שתי הזוויות הוא 5 : 3 .<br>נחשב כל אחת מהזוויות: <br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> · 120 = 45°</span><br><span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">8</span></span> · 120 = 75°</span><br>גודלן של שתי הזוויות האחרות במשולש הוא <span dir="">45°, 75°</span>.' }
   },
   s4p1: {
     containerSel: '#s4-part-1',
     correctId: 'b',
     checkBtnId: 's4-p1-check',
     feedboxId: 's4-p1-feedbox',
-    correctMsg: { title: 'נכון מאוד!', body: 'נופר השתתפה ביותר משחים - לשניהם אותו מספר ניצחונות, אך נופר נדרשה ל-8 משחים על כל 3 ניצחונות (לעומת 5 בלבד אצל דניאל), ולכן עשתה יותר מישחים בסך הכל.' },
+    correctMsg: { title: 'נכון מאוד!', body: '<strong>נופר השתתפה ביותר משחים - </strong>לשניהם אותו מספר ניצחונות, אך נופר נדרשה ל-8 משחים על כל 3 ניצחונות (לעומת 5 בלבד אצל דניאל), ולכן עשתה יותר מישחים בסך הכל.' },
     wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-    wrongFinal: { title: 'טעיתם, בואו נסביר:', body: 'נופר השתתפה ביותר משחים - לשניהם אותו מספר ניצחונות, אך נופר נדרשה ל-8 משחים על כל 3 ניצחונות (לעומת 5 בלבד אצל דניאל), ולכן עשתה יותר מישחים בסך הכל.' }
+    wrongFinal: { title: 'טעיתם, בואו נסביר:', body: '<strong>נופר השתתפה ביותר משחים - </strong>לשניהם אותו מספר ניצחונות, אך נופר נדרשה ל-8 משחים על כל 3 ניצחונות (לעומת 5 בלבד אצל דניאל), ולכן עשתה יותר מישחים בסך הכל.' }
   },
   s4p2: {
     containerSel: '#s4-part-2',
     correctId: 'a',
     checkBtnId: 's4-p2-check',
     feedboxId: 's4-p2-feedbox',
-    correctMsg: { title: 'נכון מאוד!', body: 'דניאל ניצח ביותר מישחים – דניאל מנצח ב-3 מתוך 5 מישחים (יותר ממחצית מסך המישחים שלו), לעומת נופר שמנצחת ב-3 מתוך 8 (פחות מחצי).' },
+    correctMsg: { title: 'נכון מאוד!', body: '<strong>דניאל</strong> <strong>ניצח ביותר מישחים</strong> – דניאל מנצח ב-3 מתוך 5 מישחים (יותר ממחצית מסך המישחים שלו), לעומת נופר שמנצחת ב-3 מתוך 8 (פחות מחצי).' },
     wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-    wrongFinal: { title: 'טעיתם, בואו נסביר:', body: 'דניאל ניצח ביותר מישחים – דניאל מנצח ב-3 מתוך 5 מישחים (יותר ממחצית מסך המישחים שלו), לעומת נופר שמנצחת ב-3 מתוך 8 (פחות מחצי).' }
+    wrongFinal: { title: 'טעיתם, בואו נסביר:', body: '<strong>דניאל</strong> <strong>ניצח ביותר מישחים</strong> – דניאל מנצח ב-3 מתוך 5 מישחים (יותר ממחצית מסך המישחים שלו), לעומת נופר שמנצחת ב-3 מתוך 8 (פחות מחצי).' }
   }
 };
 
@@ -381,7 +382,7 @@ function viqCheck(key) {
   const st = viqState[key];
   if (st.outcome !== null) { if (cfg.nextScreen != null) goTo(cfg.nextScreen); return; }
   /* ⚠️ נוסף (31.08.2026, דיווח: "המשוב עולה על הפופ-אפ של הרמז") —
-     ראו הערה מלאה זהה ב-methodica-math-ratio-01-05-05/script.js. */
+     ראו הערה מלאה זהה ב-methodica-math-ratio-05-05/script.js. */
   document.querySelectorAll('[id$="-hint-overlay"]').forEach(function (el) { el.hidden = true; });
 
   const inputs = cfg.inputs.map(function (id) { return document.getElementById(id); });
@@ -402,8 +403,8 @@ function viqCheck(key) {
       input.disabled = true;
     });
     fb.classList.remove('is-wrong'); fb.classList.add('is-correct');
-    titleEl.textContent = cfg.correctMsg.title;
-    bodyEl.textContent = cfg.correctMsg.body;
+    titleEl.innerHTML = cfg.correctMsg.title;
+    bodyEl.innerHTML = cfg.correctMsg.body;
     st.outcome = 'success';
     viqFinish(key);
   } else if (st.attempts < 2) {
@@ -412,8 +413,8 @@ function viqCheck(key) {
       input.classList.toggle('wrong', !correctFlags[i]);
     });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = cfg.wrongOnce.title;
-    bodyEl.textContent = cfg.wrongOnce.body;
+    titleEl.innerHTML = cfg.wrongOnce.title;
+    bodyEl.innerHTML = cfg.wrongOnce.body;
     document.getElementById(cfg.checkBtn).disabled = true;
   } else {
     /* ⚠️ תוקן (31.08.2026, לפי דיווח: "כשמוצגת התשובה הנכונה עדיין יש
@@ -430,8 +431,8 @@ function viqCheck(key) {
     st.snapshot = inputs.map(function (input) { return input.value; });
     st.revealed = false;
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = VIQ_PENDING_FEEDBACK.title;
-    bodyEl.textContent = VIQ_PENDING_FEEDBACK.body;
+    titleEl.innerHTML = VIQ_PENDING_FEEDBACK.title;
+    bodyEl.innerHTML = VIQ_PENDING_FEEDBACK.body;
     if (cfg.revealBtn) {
       const revealBtn = document.getElementById(cfg.revealBtn);
       if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
@@ -459,8 +460,8 @@ function viqToggleReveal(key) {
       input.classList.add('correct');
     });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = cfg.wrongFinal.title;
-    bodyEl.textContent = cfg.wrongFinal.body;
+    titleEl.innerHTML = cfg.wrongFinal.title;
+    bodyEl.innerHTML = cfg.wrongFinal.body;
     st.revealed = true;
     if (revealBtn) revealBtn.textContent = 'התשובה שלי';
   } else {
@@ -472,8 +473,8 @@ function viqToggleReveal(key) {
       input.classList.toggle('wrong', !ok);
     });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = VIQ_PENDING_FEEDBACK.title;
-    bodyEl.textContent = VIQ_PENDING_FEEDBACK.body;
+    titleEl.innerHTML = VIQ_PENDING_FEEDBACK.title;
+    bodyEl.innerHTML = VIQ_PENDING_FEEDBACK.body;
     st.revealed = false;
     if (revealBtn) revealBtn.textContent = 'התשובה הנכונה';
   }
@@ -490,9 +491,9 @@ function viqFinish(key) {
 const VIQ_CFG = {
   s1: {
     inputs: ['s1-a', 's1-b'], correct: [21, 9], checkBtn: 's1-check', feedbox: 's1-feedbox', revealBtn: 's1-reveal-btn', nextScreen: 2,
-    correctMsg: { title: 'נכון!', body: 'על כל 3 עורכי וידאו יש 7 שחקנים, כלומר כל קבוצה בת 10 תלמידים (3+7). מתוך 30 תלמידים יש 3 קבוצות כאלה: 7⋅3=21 שחקנים ו-3⋅3=9 עורכי וידאו.' },
+    correctMsg: { title: 'נכון!', body: 'א. היחס בין מספר העורכים למספר השחקנים בערוץ הוא 7 : 3 .<br>מספר החלקים ה"שלם" הוא: <span dir="">10 = 3 + 7</span>.<br>נחשב את מספר השחקנים : <span dir="ltr"><span class="frac"><span class="frac-num">7</span><span class="frac-den">10</span></span> · 30 = 21</span><br><br>ב. נחשב את מספר העורכים : <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">10</span></span> · 30 = 9</span>' },
     wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-    wrongFinal: { title: 'לא נכון.', body: 'על כל 3 עורכי וידאו יש 7 שחקנים, כלומר כל קבוצה בת 10 תלמידים (3+7). מתוך 30 תלמידים יש 3 קבוצות כאלה: 7⋅3=21 שחקנים ו-3⋅3=9 עורכי וידאו.' },
+    wrongFinal: { title: 'לא נכון.', body: 'א. היחס בין מספר העורכים למספר השחקנים בערוץ הוא 7 : 3 .<br>מספר החלקים ה"שלם" הוא: <span dir="">10 = 3 + 7</span>.<br>נחשב את מספר השחקנים : <span dir="ltr"><span class="frac"><span class="frac-num">7</span><span class="frac-den">10</span></span> · 30 = 21</span><br><br>ב. נחשב את מספר העורכים : <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">10</span></span> · 30 = 9</span>' },
     onDone: function () {
       practiceProgress.questions[0].state = viqState.s1.outcome === 'success' ? 'correct' : 'incorrect';
       syncPracticeProgressNav(document.getElementById('s1'));
@@ -500,9 +501,9 @@ const VIQ_CFG = {
   },
   s2: {
     inputs: ['s2-a-x', 's2-a-y', 's2-b-x', 's2-b-y'], correct: [5, 25, 25, 25], checkBtn: 's2-check', feedbox: 's2-feedbox', revealBtn: 's2-reveal-btn', nextScreen: 3,
-    correctMsg: { title: 'נכון!', body: 'ביחס ההתחלתי 5:1 מתוך 30 משתתפים: 5 חלקים בנים, חלק אחד בנות — A(5,25). בחצי השני היחס 1:1 מתוך אותם 30: B(25,25).' },
+    correctMsg: { title: 'נכון!', body: 'א. היחס בין מספר הבנים למספר הבנות הוא 5 : 1.<br>נחשב את מספר הבנים: <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">6</span></span> · 30 = 5</span><br>נחשב את מספר הבנות: <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">6</span></span> · 30 = 25</span><br>שיעורי נקודה A הם (5,25).<br><br>ב. בחצי השעה השנייה התווספו רק בנים, והיחס החדש הוא 1 : 1. מספר הבנות לא השתנה, לכן מספר הבנים החדש הוא 25.<br>שיעורי נקודה B הם (25,25).' },
     wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-    wrongFinal: { title: 'לא נכון.', body: 'ביחס ההתחלתי 5:1 מתוך 30 משתתפים: 5 חלקים בנים, חלק אחד בנות — A(5,25). בחצי השני היחס 1:1 מתוך אותם 30: B(25,25).' },
+    wrongFinal: { title: 'לא נכון.', body: 'א. היחס בין מספר הבנים למספר הבנות הוא 5 : 1.<br>נחשב את מספר הבנים: <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">6</span></span> · 30 = 5</span><br>נחשב את מספר הבנות: <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">6</span></span> · 30 = 25</span><br>שיעורי נקודה A הם (5,25).<br><br>ב. בחצי השעה השנייה התווספו רק בנים, והיחס החדש הוא 1 : 1. מספר הבנות לא השתנה, לכן מספר הבנים החדש הוא 25.<br>שיעורי נקודה B הם (25,25).' },
     onDone: function () {
       practiceProgress.questions[1].state = viqState.s2.outcome === 'success' ? 'correct' : 'incorrect';
       syncPracticeProgressNav(document.getElementById('s2'));
@@ -510,9 +511,9 @@ const VIQ_CFG = {
   },
   s4p3: {
     inputs: ['s4-p3-a', 's4-p3-b'], correct: [20, 32], checkBtn: 's4-p3-check', feedbox: 's4-p3-feedbox', revealBtn: 's4-p3-reveal-btn', nextScreen: null,
-    correctMsg: { title: 'נכון!', body: 'דניאל: 3/5 ⋅ x = 12 ⟹ x = 20 משחקים. נופר: 3/8 ⋅ y = 12 ⟹ y = 32 משחקים.' },
+    correctMsg: { title: 'נכון!', body: 'ג. נתון כי דניאל ניצח ב-12 מישחים שהם <span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> מכלל המישחים שהוא השתתף בהם.<br>נסמן את כלל המשחים ב-x ונבנה את המשוואה: <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> · x = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> ונקבל: <span dir="ltr">x = 20</span>.<br><strong>לכן, דניאל שחה 20 משחים בכל העונה.</strong><br>נתון כי נופר ודניאל השיגו את אותו מספר ניצחונות לכן נופר ניצחה ב-12 משחים שהם <span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> מכלל המישחים בהם השתתפה.<br>נסמן את כלל המישחים ששחתה נופר ב-y ונבנה את המשוואה:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> · y = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> ונקבל: <span dir="ltr">y = 32</span>.<br><strong>לכן, נופר שחתה 32 מישחים בכל העונה.</strong>' },
     wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-    wrongFinal: { title: 'לא נכון.', body: 'דניאל: 3/5 ⋅ x = 12 ⟹ x = 20 משחקים. נופר: 3/8 ⋅ y = 12 ⟹ y = 32 משחקים.' },
+    wrongFinal: { title: 'לא נכון.', body: 'ג. נתון כי דניאל ניצח ב-12 מישחים שהם <span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> מכלל המישחים שהוא השתתף בהם.<br>נסמן את כלל המשחים ב-x ונבנה את המשוואה: <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> · x = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> ונקבל: <span dir="ltr">x = 20</span>.<br><strong>לכן, דניאל שחה 20 משחים בכל העונה.</strong><br>נתון כי נופר ודניאל השיגו את אותו מספר ניצחונות לכן נופר ניצחה ב-12 משחים שהם <span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> מכלל המישחים בהם השתתפה.<br>נסמן את כלל המישחים ששחתה נופר ב-y ונבנה את המשוואה:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> · y = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> ונקבל: <span dir="ltr">y = 32</span>.<br><strong>לכן, נופר שחתה 32 מישחים בכל העונה.</strong>' },
     onDone: function () { s4UpdateAggregate(); }
   }
 };
@@ -571,7 +572,7 @@ function s3P3Select(row, val) {
   s3TfState.selected[row] = val;
   /* ⚠️ תוקן (01.09.2026, דיווח: "אם רוצה לשנות תשובה אחרי SUBMIT,
      התשובה הקודמת נשארת בסימון החיווי") — ראו הערה מלאה זהה ב-
-     methodica-math-ratio-01-05-03/script.js § s2P1Select. */
+     methodica-math-ratio-05-03/script.js § s2P1Select. */
   document.getElementById('s3-p3-r' + row + '-true').classList.remove('correct', 'wrong');
   document.getElementById('s3-p3-r' + row + '-false').classList.remove('correct', 'wrong');
   document.getElementById('s3-p3-r' + row + '-true').classList.toggle('selected', val === 'true');
@@ -597,7 +598,7 @@ function s3P3Check() {
   fb.classList.add('visible');
 
   const allCorrect = [1, 2, 3].every(function (r) { return s3TfState.selected[r] === s3TfCorrect[r]; });
-  const explain = 'שלוש הטענות נבדקות מול חלוקת 120° (180°−60°) ביחס 3:5 — כל שינוי בזווית ∢BAC משנה את 180°−∢BAC בהתאם, אבל היחס בין שתי הזוויות האחרות (3:5) נשאר קבוע.';
+  const explain = '1. אם זווית <span dir="ltr">∢BAC</span> תהיה בת 100°, אז סכום שתי האחרות יהיה <span dir="ltr">180° − 100° = 80°</span>.<br>אם היחס הוא 3 : 5, אז גודל הזווית הקטנה מבין השתיים הוא : <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> · 80 = 30°</span>.<br><br>2. מאחר והיחס הוא 3 : 5, כדי לקבל זוויות שלמות עלינו לקבל שסכום שתי הזוויות האחרות מתחלק ב-8 (8 = 3 + 5).<br><br>3. אם <span dir="ltr">∢BAC</span> תהיה בת 20°, אז גודלן של שתי האחרות הוא <span dir="">160° = 20 - 180</span>. מכיוון שהיחס הוא 5 : 3, אז נקבל:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> · 160 = 60°</span> או <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">8</span></span> · 160 = 100°</span><br>ולא זווית ישרה (90°).';
 
   if (allCorrect) {
     [1, 2, 3].forEach(function (r) {
@@ -606,12 +607,12 @@ function s3P3Check() {
     });
     fb.classList.remove('is-wrong'); fb.classList.add('is-correct');
     titleEl.textContent = 'נכון!';
-    bodyEl.textContent = explain;
+    bodyEl.innerHTML = explain;
     s3TfState.outcome = 'success';
     s3P3Finish();
   } else if (s3TfState.attempts < 2) {
     /* ⚠️ תוקן (31.08.2026, דיווח: "אין חיווי אחרי ניסיון ראשון") —
-     ראו הערה מלאה זהה ב-methodica-math-ratio-01-05-03/script.js §
+     ראו הערה מלאה זהה ב-methodica-math-ratio-05-03/script.js §
      s2P1Check. */
     [1, 2, 3].forEach(function (r) {
       const correctVal = s3TfCorrect[r];
@@ -633,7 +634,7 @@ function s3P3Check() {
     });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
     titleEl.textContent = 'לא נכון.';
-    bodyEl.textContent = explain;
+    bodyEl.innerHTML = explain;
     s3TfState.outcome = 'fail';
     s3P3Finish();
   }
@@ -913,6 +914,7 @@ scaleApp();
 ['s1-feedbox', 's2-feedbox'].forEach(scqFbMakeDraggable);
 (function () {
   const m = /^#screen=(\d+)$/.exec(location.hash);
-  if (m) goTo(parseInt(m[1], 10));
+  if (new URLSearchParams(location.search).get('screen') === 'last') goTo(TOTAL_SCREENS - 1);
+  else if (m) goTo(parseInt(m[1], 10));
   else resetScreenState(0);
 })();

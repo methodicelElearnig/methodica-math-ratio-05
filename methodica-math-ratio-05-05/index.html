@@ -35,7 +35,7 @@
         <!-- ⚠️ עודכן (30.08.2026) — ניווט בין-סיינים: הוסר hidden, נוסף
              onclick. מוביל לסיין הקודם (methodica-math-ratio-01-04) עם
              ?screen=last, כדי שהוא ייפתח שם במסך האחרון-שלו ולא בראשון. -->
-        <div class="bar-back"><button class="btn-back" id="s0-back" onclick="location.href='../methodica-math-ratio-01-05-04/index.html?screen=last'">חזרה</button></div>
+        <div class="bar-back"><button class="btn-back" id="s0-back" onclick="location.href='../methodica-math-ratio-05-04/index.html?screen=last'">חזרה</button></div>
         <div class="bar-actions"><button class="btn-continue" id="s0-continue" onclick="goTo(1)">המשך</button></div>
       </div>
     </div>
@@ -89,35 +89,40 @@
     <div class="s1-scroll-area" id="s1-scroll-area">
     <div class="s1-scroll-inner">
       <div class="s1-part" id="s1-part-1">
-        <p class="s3-body">1. משרד אדריכלים מתכנן אלמנט הצללה עבור מדרחוב עירוני. חזית האלמנט מעוצבת בצורה של משולש שווה-שוקיים (AB = AC). המהנדס הראשי הגדיר תנאי גיאומטרי: היחס בין זווית הראש לסכום שתי זוויות הבסיס הוא 3 : 1.</p>
-        <p class="scq-qtext-em">א. חשבו את שלוש זוויות המשולש ABC.</p>
+        <p class="s3-body">1. משרד אדריכלים מתכנן אלמנט הצללה עבור מדרחוב עירוני. <br>חזית האלמנט מעוצבת בצורה של משולש שווה-שוקיים (<span dir="ltr">AB = AC</span>). <br>המהנדס הראשי הגדיר תנאי גיאומטרי: <br>היחס בין זווית הראש לסכום שתי זוויות הבסיס הוא 3 : 1.</p>
+        <p class="scq-qtext-em" style="font-weight:400">א. חשבו את שלוש זוויות המשולש ABC.</p>
         <div class="viq-answers">
           <!-- ⚠️ תוקן (31.08.2026, לפי דיווח: "סימן הזווית צריך להיות
                בצד השמאלי של המספר") — עוטף חדש (.viq-answer-value) מצמיד
                את ה-° ישירות לספרות, נפרד מ-gap של השורה עצמה — ראו הערה
-               מלאה זהה ב-methodica-math-ratio-01-05-01/index.html § מסך 7. -->
-          <div class="viq-answer-row">
-            <span class="viq-coord" dir="ltr">&#8736;A</span>
+               מלאה זהה ב-methodica-math-ratio-05-01/index.html § מסך 7.
+               ⚠️ הסדר הוהפך שוב (03.09.2026, לפי בקשה מפורשת אחרונה,
+               דורסת את התיקון הקודם מ-01.09.2026 שביקש "ערך = תווית") —
+               עכשיו "∢A = ערך°" (תווית קודם), כל השורה dir="ltr" כדי
+               שסדר-ה-DOM (תווית, "=", ערך) ייצא משמאל-לימין כמשוואה
+               רגילה. -->
+          <div class="viq-answer-row" dir="ltr">
+            <span class="viq-coord">∢A</span>
+            <span class="viq-answer-eq">=</span>
             <span class="viq-answer-value">
               <input class="viq-input viq-input--sm" id="s1-a" type="number" step="any" inputmode="decimal" dir="ltr" placeholder=" " aria-label="גודל זווית A, במעלות" oninput="s1P1OnInput()">
               <span class="viq-answer-unit">°</span>
-              <span class="viq-answer-eq">=</span>
             </span>
           </div>
-          <div class="viq-answer-row">
-            <span class="viq-coord" dir="ltr">&#8736;B</span>
+          <div class="viq-answer-row" dir="ltr">
+            <span class="viq-coord">∢B</span>
+            <span class="viq-answer-eq">=</span>
             <span class="viq-answer-value">
               <input class="viq-input viq-input--sm" id="s1-b" type="number" step="any" inputmode="decimal" dir="ltr" placeholder=" " aria-label="גודל זווית B, במעלות" oninput="s1P1OnInput()">
               <span class="viq-answer-unit">°</span>
-              <span class="viq-answer-eq">=</span>
             </span>
           </div>
-          <div class="viq-answer-row">
-            <span class="viq-coord" dir="ltr">&#8736;C</span>
+          <div class="viq-answer-row" dir="ltr">
+            <span class="viq-coord">∢C</span>
+            <span class="viq-answer-eq">=</span>
             <span class="viq-answer-value">
               <input class="viq-input viq-input--sm" id="s1-c" type="number" step="any" inputmode="decimal" dir="ltr" placeholder=" " aria-label="גודל זווית C, במעלות" oninput="s1P1OnInput()">
               <span class="viq-answer-unit">°</span>
-              <span class="viq-answer-eq">=</span>
             </span>
           </div>
         </div>
@@ -224,12 +229,14 @@
     <div class="s2-content">
       <p class="s3-body s2-text">2. הנקודה D נמצאת על צלע CB במשולש ABC. 
         <br/>
-        נתון: היחס בין שטח משולש ACD לשטח משולש ADB הוא 3:1. שטח משולש ABC הוא 64 סמ"ר. 
+        נתון: היחס בין שטח משולש ACD לשטח משולש ADB הוא 3:1.
         <br/>
-        AE = 8 ס"מ (גובה המשולש).
+        שטח משולש ABC הוא 64 סמ"ר.
+        <br/>
+        <span dir="ltr">AE = 8  ס"מ</span> (גובה המשולש).
       
       <br/></p>
-      <p class="scq-qtext-em">השלימו:</p>
+      <p class="scq-qtext-em" style="font-weight:400">השלימו:</p>
 
       <div class="s2-diagram-wrap">
         <img class="s2-diagram-img" src="assets/images/triangle-acd-adb.png" alt="משולש ABC: קודקוד A למעלה, C משמאל-למטה, B מימין-למטה, עם נקודות E ו-D על הבסיס, בסדר משמאל לימין: C, E, D, B">
@@ -324,7 +331,7 @@
     <div class="s3-scroll-area" id="s3-scroll-area">
     <div class="s3-scroll-inner">
       <div class="s3-part" id="s3-part-1">
-        <p class="s3-body">3. משה וניסים עובדים במפעל לצבעים. כדי ליצור גוון מיוחד של "ירוק-זית", הם מערבבים שלושה צבעים: <strong>צהוב, כחול ושחור</strong> ביחס של 2 : 3 : 5 (בהתאמה). ביום ראשון, הם הכינו כמות גדולה של צבע והשתמשו ב-<strong>12 ליטרים של צבע שחור</strong>.</p>
+        <p class="s3-body">3. משה וניסים עובדים במפעל לצבעים. <br>כדי ליצור גוון מיוחד של "ירוק-זית", הם מערבבים שלושה צבעים: <br><strong>צהוב, כחול ושחור</strong> ביחס של 2 : 3 : 5 (בהתאמה). <br>ביום ראשון, הם הכינו כמות גדולה של צבע והשתמשו ב-<strong>12 ליטרים של צבע שחור</strong>.</p>
         <p class="scq-qtext-em">א. השלימו את הכמויות:</p>
         <div class="viq-answers">
           <div class="viq-answer-row">
@@ -360,19 +367,19 @@
       <!-- ⚠️ תוקן (20.08.2026, לפי בקשה מפורשת) — הוסר hidden, שני
            החלקים גלויים תמיד. -->
       <div class="s3-part" id="s3-part-2">
-        <p class="s3-body">רותי, עובדת נוספת במפעל, רצתה ליצור גוון <strong>כהה יותר</strong> של אותו הצבע. כדי להגיע לגוון הרצוי, היא החליטה להכפיל פי 2 את כמות הצבע <strong>השחור</strong> בלבד, בעוד שכמויות הצהוב והכחול נשארו כפי שהיו ביום ראשון.</p>
+        <p class="s3-body">רותי, עובדת נוספת במפעל, רצתה ליצור גוון <strong>כהה יותר</strong> של אותו הצבע. <br>כדי להגיע לגוון הרצוי, היא החליטה להכפיל פי 2 את כמות הצבע <strong>השחור</strong> בלבד, <br>בעוד שכמויות הצהוב והכחול נשארו כפי שהיו ביום ראשון.</p>
         <p class="scq-qtext-em">ב. איזה מהמשפטים הבאים מתאר נכונה את היחס החדש בין המרכיבים (צהוב, כחול, שחור)?</p>
         <div class="scq-answers" role="radiogroup" aria-label="אפשרויות תשובה">
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="a" onclick="s3P2Select('a')">
-            <span class="scq-opt-text">היחס החדש הוא 4:6:10, ולכן הגוון נשאר בדיוק אותו הדבר</span>
+            <span class="scq-opt-text">היחס החדש הוא 10 : 6 : 4, ולכן הגוון נשאר בדיוק אותו הדבר</span>
             <span class="scq-radio"></span>
           </div>
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="b" onclick="s3P2Select('b')">
-            <span class="scq-opt-text">היחס החדש הוא 4:3:5, ולכן חלקו של הצבע השחור בתערובת גדל.</span>
+            <span class="scq-opt-text">היחס החדש הוא 5 : 3 : 4, ולכן חלקו של הצבע השחור בתערובת גדל.</span>
             <span class="scq-radio"></span>
           </div>
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="c" onclick="s3P2Select('c')">
-            <span class="scq-opt-text">היחס החדש הוא 4:5:7, כי הוספנו 2 יחידות לכל צבע כדי לשמור על איזון.</span>
+            <span class="scq-opt-text">היחס החדש הוא 7 : 5 : 4, כי הוספנו 2 יחידות לכל צבע כדי לשמור על איזון.</span>
             <span class="scq-radio"></span>
           </div>
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="d" onclick="s3P2Select('d')">
@@ -395,7 +402,7 @@
           <p class="scq-hint-title">רמז</p>
           <img class="scq-hint-bulb" src="assets/images/icon-bulb-outline-white.svg" alt="">
         </div>
-        <p class="scq-hint-body">שימו לב, הצהוב מהווה 2 חלקים מהיחס, הכחול מהווה 3 חלקים והשחור מהווה 5 חלקים.</p>
+        <p class="scq-hint-body">שימו לב, הצהוב מהווה 2 חלקים מהיחס, <br>הכחול מהווה 3 חלקים והשחור מהווה 5 חלקים.</p>
         <button class="scq-hint-close" type="button" onclick="s3P1HintClose()">הבנתי</button>
       </div>
     </div>
@@ -412,7 +419,7 @@
         <!-- ⚠️ עודכן (30.08.2026) — ניווט בין-סיינים: זהו המסך האחרון
              בסיין 5, אז "המשך" עובר לסיין הבא (methodica-math-ratio-01-06),
              לא ל-goTo(4) שהיה no-op. -->
-        <div class="bar-actions"><button class="btn-continue" id="s3-continue" disabled onclick="location.href='../methodica-math-ratio-01-05-06/index.html'">המשך</button></div>
+        <div class="bar-actions"><button class="btn-continue" id="s3-continue" disabled onclick="location.href='../methodica-math-ratio-05-06/index.html'">המשך</button></div>
       </div>
     </div>
   </section>

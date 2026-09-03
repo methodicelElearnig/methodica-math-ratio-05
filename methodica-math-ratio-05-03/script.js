@@ -19,9 +19,10 @@ let currentScreen = 0;
    (methodica-math-ratio-01-04) מוביל הנה עם ?screen=last — נפתח ישר
    במסך האחרון כאן במקום. script.js נטען בסוף ה-body (אחרי כל ה-.screen
    sections), אז אפשר לקרוא ל-goTo באופן סינכררוני כאן. */
-if (new URLSearchParams(location.search).get('screen') === 'last') {
-  goTo(TOTAL_SCREENS - 1);
-}
+/* ⚠️ תוקן (03.09.2026, דיווח: "חזרה מהסיין הבא מעבירה למסך ריק") — קריאת ה-goTo כאן רצה
+   סינכררונית לפני שקבועים המוגדרים למטה בקובץ (const) מאותחלים; אם resetScreenState
+   של המסך האחרון תלוי באחד מהם, נזרקת שגיאה שקוטעת את goTo() לפני שהמסך היעד מסומן
+   active, ואז שום מסך לא נשאר גלוי. הועבר ל-IIFE בסוף הקובץ, אחרי שהכל כבר מוגדר. */
 
 /* ---------- Config registries — SCQ_CFG/VIQ_CFG/MCQ_CFG ----------
    מוגדרים כאן, מוקדם מאוד בקובץ (לפני כל שימוש), כדי למנוע
@@ -270,7 +271,7 @@ function scqCheck(key) {
   const st = scqState[key];
   if (!st || st.outcome !== null) return;
   /* ⚠️ נוסף (31.08.2026, דיווח: "המשוב עולה על הפופ-אפ של הרמז") —
-     ראו הערה מלאה זהה ב-methodica-math-ratio-01-05-05/script.js. */
+     ראו הערה מלאה זהה ב-methodica-math-ratio-05-05/script.js. */
   document.querySelectorAll('[id$="-hint-overlay"]').forEach(function (el) { el.hidden = true; });
 
   const isCorrect = st.selected === cfg.correctId;
@@ -289,23 +290,23 @@ function scqCheck(key) {
     if (chosenEl) chosenEl.classList.add('correct');
     scqLockOptions(cfg.containerSel);
     fb.classList.remove('is-wrong'); fb.classList.add('is-correct');
-    titleEl.textContent = cfg.correctMsg.title;
-    bodyEl.textContent = cfg.correctMsg.body;
+    titleEl.innerHTML = cfg.correctMsg.title;
+    bodyEl.innerHTML = cfg.correctMsg.body;
     st.outcome = 'success';
     scqFinish(key);
   } else if (st.attempts < 2) {
     if (chosenEl) chosenEl.classList.add('wrong');
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = cfg.wrongOnce.title;
-    bodyEl.textContent = cfg.wrongOnce.body;
+    titleEl.innerHTML = cfg.wrongOnce.title;
+    bodyEl.innerHTML = cfg.wrongOnce.body;
     document.getElementById(cfg.checkBtnId).disabled = true;
   } else {
     if (chosenEl) chosenEl.classList.add('wrong');
     if (correctEl) correctEl.classList.add('correct');
     scqLockOptions(cfg.containerSel);
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = cfg.wrongFinal.title;
-    bodyEl.textContent = cfg.wrongFinal.body;
+    titleEl.innerHTML = cfg.wrongFinal.title;
+    bodyEl.innerHTML = cfg.wrongFinal.body;
     st.outcome = 'fail';
     scqFinish(key);
   }
@@ -378,7 +379,7 @@ function mcqCheck(key) {
   const st = mcqState[key];
   if (!st || st.outcome !== null) return;
   /* ⚠️ נוסף (31.08.2026, דיווח: "המשוב עולה על הפופ-אפ של הרמז") —
-     ראו הערה מלאה זהה ב-methodica-math-ratio-01-05-05/script.js. */
+     ראו הערה מלאה זהה ב-methodica-math-ratio-05-05/script.js. */
   document.querySelectorAll('[id$="-hint-overlay"]').forEach(function (el) { el.hidden = true; });
 
   const correctSet = new Set(cfg.correctIds);
@@ -398,8 +399,8 @@ function mcqCheck(key) {
     });
     mcqLockOptions(cfg.containerSel);
     fb.classList.remove('is-wrong'); fb.classList.add('is-correct');
-    titleEl.textContent = cfg.correctMsg.title;
-    bodyEl.textContent = cfg.correctMsg.body;
+    titleEl.innerHTML = cfg.correctMsg.title;
+    bodyEl.innerHTML = cfg.correctMsg.body;
     st.outcome = 'success';
     mcqFinish(key);
   } else if (st.attempts < 2) {
@@ -418,8 +419,8 @@ function mcqCheck(key) {
       if (el) el.classList.toggle('wrong', !correctSet.has(id));
     });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = cfg.wrongOnce.title;
-    bodyEl.textContent = cfg.wrongOnce.body;
+    titleEl.innerHTML = cfg.wrongOnce.title;
+    bodyEl.innerHTML = cfg.wrongOnce.body;
     document.getElementById(cfg.checkBtnId).disabled = true;
   } else {
     cfg.correctIds.forEach(function (id) {
@@ -434,8 +435,8 @@ function mcqCheck(key) {
     });
     mcqLockOptions(cfg.containerSel);
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = cfg.wrongFinal.title;
-    bodyEl.textContent = cfg.wrongFinal.body;
+    titleEl.innerHTML = cfg.wrongFinal.title;
+    bodyEl.innerHTML = cfg.wrongFinal.body;
     st.outcome = 'fail';
     mcqFinish(key);
   }
@@ -477,7 +478,7 @@ function viqCheck(key) {
   const st = viqState[key];
   if (st.outcome !== null) { if (cfg.nextScreen != null) goTo(cfg.nextScreen); return; }
   /* ⚠️ נוסף (31.08.2026, דיווח: "המשוב עולה על הפופ-אפ של הרמז") —
-     ראו הערה מלאה זהה ב-methodica-math-ratio-01-05-05/script.js. */
+     ראו הערה מלאה זהה ב-methodica-math-ratio-05-05/script.js. */
   document.querySelectorAll('[id$="-hint-overlay"]').forEach(function (el) { el.hidden = true; });
 
   const inputs = cfg.inputs.map(function (id) { return document.getElementById(id); });
@@ -498,8 +499,8 @@ function viqCheck(key) {
       input.disabled = true;
     });
     fb.classList.remove('is-wrong'); fb.classList.add('is-correct');
-    titleEl.textContent = cfg.correctMsg.title;
-    bodyEl.textContent = cfg.correctMsg.body;
+    titleEl.innerHTML = cfg.correctMsg.title;
+    bodyEl.innerHTML = cfg.correctMsg.body;
     st.outcome = 'success';
     viqFinish(key);
   } else if (st.attempts < 2) {
@@ -508,8 +509,8 @@ function viqCheck(key) {
       input.classList.toggle('wrong', !correctFlags[i]);
     });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = cfg.wrongOnce.title;
-    bodyEl.textContent = cfg.wrongOnce.body;
+    titleEl.innerHTML = cfg.wrongOnce.title;
+    bodyEl.innerHTML = cfg.wrongOnce.body;
     document.getElementById(cfg.checkBtn).disabled = true;
   } else {
     /* ⚠️ תוקן (31.08.2026, לפי דיווח: "כשמוצגת התשובה הנכונה עדיין יש
@@ -526,8 +527,8 @@ function viqCheck(key) {
     st.snapshot = inputs.map(function (input) { return input.value; });
     st.revealed = false;
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = VIQ_PENDING_FEEDBACK.title;
-    bodyEl.textContent = VIQ_PENDING_FEEDBACK.body;
+    titleEl.innerHTML = VIQ_PENDING_FEEDBACK.title;
+    bodyEl.innerHTML = VIQ_PENDING_FEEDBACK.body;
     if (cfg.revealBtn) {
       const revealBtn = document.getElementById(cfg.revealBtn);
       if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
@@ -555,8 +556,8 @@ function viqToggleReveal(key) {
       input.classList.add('correct');
     });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = cfg.wrongFinal.title;
-    bodyEl.textContent = cfg.wrongFinal.body;
+    titleEl.innerHTML = cfg.wrongFinal.title;
+    bodyEl.innerHTML = cfg.wrongFinal.body;
     st.revealed = true;
     if (revealBtn) revealBtn.textContent = 'התשובה שלי';
   } else {
@@ -568,8 +569,8 @@ function viqToggleReveal(key) {
       input.classList.toggle('wrong', !ok);
     });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = VIQ_PENDING_FEEDBACK.title;
-    bodyEl.textContent = VIQ_PENDING_FEEDBACK.body;
+    titleEl.innerHTML = VIQ_PENDING_FEEDBACK.title;
+    bodyEl.innerHTML = VIQ_PENDING_FEEDBACK.body;
     st.revealed = false;
     if (revealBtn) revealBtn.textContent = 'התשובה הנכונה';
   }
@@ -615,9 +616,9 @@ const S1MIX_CFG = {
     whiteId: 's1-p1-white', darkId: 's1-p1-dark', ynYesId: 's1-p1-yes', ynNoId: 's1-p1-no',
     checkBtn: 's1-p1-check', feedbox: 's1-p1-feedbox', revealBtn: 's1-p1-reveal-btn',
     correct: { white: 5, dark: 45, yn: 'no' },
-    correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'בכל שורה נשים פרח שוקולד לבן אחד, ו-9 פרחי שוקולד מריר, סה"כ 10 פרחים בשורה. נקבל 5 שורות מכיוון ש: 5 = 10 : 50. מספר פרחי שוקולד לבן בכל התבנית הוא: 5, מספר פרחי שוקולד המריר בכל התבנית הוא: 45. מאחר ו- 50 = 5 + 45, אז לא נשארו שקעים ריקים.' },
+    correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'בכל שורה נשים פרח שוקולד לבן אחד, ו-9 פרחי שוקולד מריר,\nסה"כ 10 פרחים בשורה. נקבל 5 שורות מכיוון ש: <span dir="">5 = 10 : 50</span>.\nמספר פרחי שוקולד לבן בכל התבנית הוא: 5,\nמספר פרחי שוקולד המריר בכל התבנית הוא: 45.\nמאחר ו- <span dir="">50 = 5 + 45</span>, אז לא נשארו שקעים ריקים.' },
     wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-    wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'בכל שורה נשים פרח שוקולד לבן אחד, ו-9 פרחי שוקולד מריר, סה"כ 10 פרחים בשורה. נקבל 5 שורות מכיוון ש: 5 = 10 : 50. מספר פרחי שוקולד לבן בכל התבנית הוא: 5, מספר פרחי שוקולד המריר בכל התבנית הוא: 45. מאחר ו- 50 = 5 + 45, אז לא נשארו שקעים ריקים.' }
+    wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'בכל שורה נשים פרח שוקולד לבן אחד, ו-9 פרחי שוקולד מריר,\nסה"כ 10 פרחים בשורה. נקבל 5 שורות מכיוון ש: <span dir="">5 = 10 : 50</span>.\nמספר פרחי שוקולד לבן בכל התבנית הוא: 5,\nמספר פרחי שוקולד המריר בכל התבנית הוא: 45.\nמאחר ו- <span dir="">50 = 5 + 45</span>, אז לא נשארו שקעים ריקים.' }
   },
   p2: {
     whiteId: 's1-p2-white', darkId: 's1-p2-dark', ynYesId: 's1-p2-yes', ynNoId: 's1-p2-no',
@@ -713,8 +714,8 @@ function s1MixCheck(key) {
     correctYNEl.classList.add('correct');
     s1MixLock(key);
     fb.classList.remove('is-wrong'); fb.classList.add('is-correct');
-    titleEl.textContent = cfg.correctMsg.title;
-    bodyEl.textContent = cfg.correctMsg.body;
+    titleEl.innerHTML = cfg.correctMsg.title;
+    bodyEl.innerHTML = cfg.correctMsg.body;
     st.outcome = 'success';
     s1MixFinish(key);
   } else if (st.attempts < 2) {
@@ -723,8 +724,8 @@ function s1MixCheck(key) {
     chosenEl.classList.toggle('wrong', !ynOk);
     chosenEl.classList.toggle('correct', ynOk);
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = cfg.wrongOnce.title;
-    bodyEl.textContent = cfg.wrongOnce.body;
+    titleEl.innerHTML = cfg.wrongOnce.title;
+    bodyEl.innerHTML = cfg.wrongOnce.body;
     document.getElementById(cfg.checkBtn).disabled = true;
   } else {
     /* ⚠️ תוקן (31.08.2026, לפי דיווח: "כשמוצגת התשובה הנכונה עדיין יש
@@ -745,8 +746,8 @@ function s1MixCheck(key) {
     st.snapshot = { white: whiteInput.value, dark: darkInput.value };
     st.revealed = false;
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = VIQ_PENDING_FEEDBACK.title;
-    bodyEl.textContent = VIQ_PENDING_FEEDBACK.body;
+    titleEl.innerHTML = VIQ_PENDING_FEEDBACK.title;
+    bodyEl.innerHTML = VIQ_PENDING_FEEDBACK.body;
     if (cfg.revealBtn) {
       const revealBtn = document.getElementById(cfg.revealBtn);
       if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
@@ -773,8 +774,8 @@ function s1MixToggleReveal(key) {
     darkInput.value = cfg.correct.dark;
     darkInput.classList.remove('wrong'); darkInput.classList.add('correct');
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = cfg.wrongFinal.title;
-    bodyEl.textContent = cfg.wrongFinal.body;
+    titleEl.innerHTML = cfg.wrongFinal.title;
+    bodyEl.innerHTML = cfg.wrongFinal.body;
     st.revealed = true;
     if (revealBtn) revealBtn.textContent = 'התשובה שלי';
   } else {
@@ -786,8 +787,8 @@ function s1MixToggleReveal(key) {
     const darkOk = Number(snap.dark) === cfg.correct.dark;
     darkInput.classList.toggle('correct', darkOk); darkInput.classList.toggle('wrong', !darkOk);
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = VIQ_PENDING_FEEDBACK.title;
-    bodyEl.textContent = VIQ_PENDING_FEEDBACK.body;
+    titleEl.innerHTML = VIQ_PENDING_FEEDBACK.title;
+    bodyEl.innerHTML = VIQ_PENDING_FEEDBACK.body;
     st.revealed = false;
     if (revealBtn) revealBtn.textContent = 'התשובה הנכונה';
   }
@@ -904,7 +905,7 @@ function s2P1Check() {
   fb.classList.add('visible');
 
   const allCorrect = [1, 2, 3, 4].every(function (r) { return s2TfState.selected[r] === s2TfCorrect[r]; });
-  const explain = 'זוויות α ו-β הן זוויות צמודות ולכן סכומן הוא 180°, היחס בין α ל-β הוא 7 : 2. לכן, גודלה של זווית β הוא 140° = 180 · 7/9. גודלה של זווית α הוא 40°, מכיוון ש: 180° − 40° = 140°.';
+  const explain = 'זוויות α ו-β הן זוויות צמודות ולכן סכומן הוא 180°, היחס בין α ל-β הוא 7 : 2.<br>לכן, גודלה של זווית β הוא <span dir="">140° = 180 · <span class="frac"><span class="frac-num">7</span><span class="frac-den">9</span></span></span>.<br>גודלה של זווית α הוא 40°, מכיוון ש:<br><span dir="ltr">180° − 40° = 140°</span>.';
 
   if (allCorrect) {
     [1, 2, 3, 4].forEach(function (r) {
@@ -913,7 +914,7 @@ function s2P1Check() {
     });
     fb.classList.remove('is-wrong'); fb.classList.add('is-correct');
     titleEl.textContent = 'כל הכבוד, צדקתם!';
-    bodyEl.textContent = explain;
+    bodyEl.innerHTML = explain;
     s2TfState.outcome = 'success';
     s2P1Finish();
   } else if (s2TfState.attempts < 2) {
@@ -943,7 +944,7 @@ function s2P1Check() {
     });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
     titleEl.textContent = 'טעיתם. לא נורא, מטעויות לומדים';
-    bodyEl.textContent = explain;
+    bodyEl.innerHTML = explain;
     s2TfState.outcome = 'fail';
     s2P1Finish();
   }
@@ -958,7 +959,7 @@ function s2P1Finish() {
 
 /* ⚠️ נוסף (31.08.2026, לפי דיווח: "אורך המלבן של המסיחים צריך להיות
    לפי אורך המסיח הארוך ביותר בכל שאלה") — ראו הערה מלאה זהה ב-
-   methodica-math-ratio-01-05-02/script.js. */
+   methodica-math-ratio-05-02/script.js. */
 function equalizeTfBtnWidths() {
   document.querySelectorAll('.tf-btns').forEach(function (group) {
     const btns = Array.prototype.slice.call(group.querySelectorAll('.tf-btn'));
@@ -1012,9 +1013,9 @@ function resetScreenState2() {
    ========================================================= */
 VIQ_CFG_REGISTER('s3p1', {
   inputs: ['s3-p1-a', 's3-p1-b'], correct: [5, 7], checkBtn: 's3-p1-check', feedbox: 's3-p1-feedbox', revealBtn: 's3-p1-reveal-btn', nextScreen: null,
-  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'רועי שילם 5 ש"ח ועינת שילמה 7 ש"ח, לכן יחס ההשקעה הוא 5 : 7.' },
+  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'רועי שילם 5 ש"ח ועינת שילמה 7 ש"ח, לכן יחס ההשקעה הוא 7 : 5.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'רועי שילם 5 ש"ח ועינת שילמה 7 ש"ח, לכן יחס ההשקעה הוא 5 : 7.' },
+  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'רועי שילם 5 ש"ח ועינת שילמה 7 ש"ח, לכן יחס ההשקעה הוא 7 : 5.' },
   onDone: function () { s3ShowPart(2); }
 });
 function s3P1OnInput() { viqOnInput('s3p1'); }
@@ -1025,9 +1026,9 @@ SCQ_CFG_REGISTER('s3p2', {
   correctId: 'a',
   checkBtnId: 's3-p2-check',
   feedboxId: 's3-p2-feedbox',
-  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'רועי ועינת זכו ב-120 ש"ח ועליהם לחלק את הסכום ביחס של 5 : 7. נחשב כמה רועי יקבל: (5/12)·120=50, וכמה עינת תקבל: (7/12)·120=70.' },
+  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'רועי ועינת זכו ב-120 ש"ח ועליהם לחלק את הסכום ביחס של 7 : 5.<br>נחשב כמה רועי יקבל: <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">12</span></span> · 120 = 50</span>,<br>וכמה עינת תקבל: <span dir="ltr"><span class="frac"><span class="frac-num">7</span><span class="frac-den">12</span></span> · 120 = 70</span>.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'רועי ועינת זכו ב-120 ש"ח ועליהם לחלק את הסכום ביחס של 5 : 7. נחשב כמה רועי יקבל: (5/12)·120=50, וכמה עינת תקבל: (7/12)·120=70.' },
+  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'רועי ועינת זכו ב-120 ש"ח ועליהם לחלק את הסכום ביחס של 7 : 5.<br>נחשב כמה רועי יקבל: <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">12</span></span> · 120 = 50</span>,<br>וכמה עינת תקבל: <span dir="ltr"><span class="frac"><span class="frac-num">7</span><span class="frac-den">12</span></span> · 120 = 70 </span>.' },
   onDone: null
 });
 function s3P2Select(id) { scqSelect('s3p2', id); }
@@ -1038,9 +1039,9 @@ MCQ_CFG_REGISTER('s3p3', {
   correctIds: ['a', 'c'],
   checkBtnId: 's3-p3-check',
   feedboxId: 's3-p3-feedbox',
-  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'ההצעה לא הוגנת כי עינת שילמה יותר כסף בקנייה, ולכן היא צריכה לקבל נתח גדול יותר מכספי הזכייה — היחס בין הכספים שהם שילמו הוא 5 : 7, והסכומים 60 ו-60 מייצגים יחס שונה של 1 : 1.' },
+  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'ההצעה לא הוגנת כי עינת שילמה יותר כסף בקנייה, ולכן היא צריכה לקבל נתח גדול יותר מכספי הזכייה — היחס בין הכספים שהם שילמו הוא 7 : 5, והסכומים 60 ו-60 מייצגים יחס שונה של 1 : 1.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'ההצעה לא הוגנת כי עינת שילמה יותר כסף בקנייה, ולכן היא צריכה לקבל נתח גדול יותר מכספי הזכייה — היחס בין הכספים שהם שילמו הוא 5 : 7, והסכומים 60 ו-60 מייצגים יחס שונה של 1 : 1.' },
+  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'ההצעה לא הוגנת כי עינת שילמה יותר כסף בקנייה, ולכן היא צריכה לקבל נתח גדול יותר מכספי הזכייה — היחס בין הכספים שהם שילמו הוא 7 : 5, והסכומים 60 ו-60 מייצגים יחס שונה של 1 : 1.' },
   onDone: function () { s3FinishAggregate(); }
 });
 
@@ -1050,7 +1051,7 @@ MCQ_CFG_REGISTER('s3p3', {
    בזה-אחר-זה): ברגע שחלק ב' נענה פעם אחת, התמונה נעלמת *לצמיתות*,
    גם כשחלקים א'/ב' עדיין גלויים על המסך וצריכים אותה. אותה בעיה
    בדיוק כמו s5SetPhoto (ראו שם) ו-s2RestoreDiagram ב-
-   methodica-math-ratio-01-05-06. הוחלף במנגנון-גלילה
+   methodica-math-ratio-05-06. הוחלף במנגנון-גלילה
    (s3UpdatePhotoVisibilityByScroll): התמונה גלויה כל עוד חלק ג' לא
    הגיע לאמצע אזור-הגלילה, מוסתרת אחרי זה — עוקב אחרי מה שבאמת גלוי,
    לא אחרי סטטוס-סיום. */
@@ -1121,7 +1122,7 @@ function resetScreenState3() {
      (goTo קוראת ל-resetScreenState *לפני* target.classList.add('active')),
      אז getBoundingClientRect היה מחזיר הכל 0. אותה גותצ'ה כמו
      s5UpdatePhotoByScroll (סיין 3 עצמו, מסך 6) ו-s2MaybeRestoreDiagram
-     (methodica-math-ratio-01-05-06). */
+     (methodica-math-ratio-05-06). */
   requestAnimationFrame(s3UpdatePhotoVisibilityByScroll);
 }
 
@@ -1174,9 +1175,9 @@ function resetScreenState4() {
    ========================================================= */
 VIQ_CFG_REGISTER('s5p1', {
   inputs: ['s5-p1-a', 's5-p1-b'], correct: [60, 150], checkBtn: 's5-p1-check', feedbox: 's5-p1-feedbox', revealBtn: 's5-p1-reveal-btn', nextScreen: null,
-  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'היחס בין מספר השעות שעבדה נעמי למספר השעות שעבד יוני הוא 2:5. מספר החלקים הוא 7=2+5. אם נועה ויוני הרוויחו 210 ₪ והם מתכוונים לחלק את הכסף לפי מספר השעות היחסי אז: נועה תקבל (2/7)·210=60, ויוני יקבל (5/7)·210=150.' },
+  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'היחס בין מספר השעות שעבדה נעמי למספר השעות שעבד יוני הוא 2:5.<br>מספר החלקים הוא <span dir="">2 + 5 = 7</span>.<br>אם נועה ויוני הרוויחו 210 ₪ והם מתכוונים לחלק את הכסף לפי מספר השעות היחסי אז:<br>נועה תקבל <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span> · 210 = 60</span>,<br>ויוני יקבל <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> · 210 = 150</span>.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'היחס בין מספר השעות שעבדה נעמי למספר השעות שעבד יוני הוא 2:5. מספר החלקים הוא 7=2+5. אם נועה ויוני הרוויחו 210 ₪ והם מתכוונים לחלק את הכסף לפי מספר השעות היחסי אז: נועה תקבל (2/7)·210=60, ויוני יקבל (5/7)·210=150.' },
+  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'היחס בין מספר השעות שעבדה נעמי למספר השעות שעבד יוני הוא 2:5.<br>מספר החלקים הוא <span dir=""> 7 = 2 + 5</span>.<br>אם נועה ויוני הרוויחו 210 ₪ והם מתכוונים לחלק את הכסף לפי מספר השעות היחסי אז:<br>נועה תקבל <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span> · 210 = 60</span>,<br>ויוני יקבל <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> · 210 = 150</span>.' },
   onDone: null
 });
 function s5P1OnInput() { viqOnInput('s5p1'); }
@@ -1187,9 +1188,9 @@ SCQ_CFG_REGISTER('s5p2', {
   correctId: 'a',
   checkBtnId: 's5-p2-check',
   feedboxId: 's5-p2-feedbox',
-  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'נסמן את סכום הכסף שנועה ויוני הרוויחו ב-x. יוני הרוויח: (5/7)·x, ואם נחלק ב-100 נקבל x=140. מסקנה: נועה ויוני הרוויחו יחד 140 ₪. יוני הרוויח 100 ₪ לכן נועה הרוויחה 40 ₪.' },
+  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'נסמן את סכום הכסף שנועה ויוני הרוויחו ב-x.<br>יוני הרוויח: <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> · x = 100  ש"ח</span><br>ואם נחלק ב-<span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> נקבל <span dir="ltr">x = 140</span>.<br>מסקנה: נועה ויוני הרוויחו יחד 140 ₪.<br>יוני הרוויח 100 ₪ לכן נועה הרוויחה 40 ₪.<br><br>תשובה א׳ נכונה.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'נסמן את סכום הכסף שנועה ויוני הרוויחו ב-x. יוני הרוויח: (5/7)·x, ואם נחלק ב-100 נקבל x=140. מסקנה: נועה ויוני הרוויחו יחד 140 ₪. יוני הרוויח 100 ₪ לכן נועה הרוויחה 40 ₪.' },
+  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'נסמן את סכום הכסף שנועה ויוני הרוויחו ב-x.<br>יוני הרוויח: <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> · x = 100  ש"ח</span><br>ואם נחלק ב-<span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> נקבל <span dir="ltr">x = 140</span>.<br>מסקנה: נועה ויוני הרוויחו יחד 140 ₪.<br>יוני הרוויח 100 ₪ לכן נועה הרוויחה 40 ₪.<br><br>תשובה א׳ נכונה.' },
   onDone: function () {
     const anyFail = (viqState.s5p1 && viqState.s5p1.outcome === 'fail') || (scqState.s5p2 && scqState.s5p2.outcome === 'fail');
     practiceProgress2.questions[0].state = anyFail ? 'incorrect' : 'correct';
@@ -1205,9 +1206,9 @@ SCQ_CFG_REGISTER('s5p3', {
   correctId: 'b',
   checkBtnId: 's5-p3-check',
   feedboxId: 's5-p3-feedbox',
-  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'מיה ועומר לא יוכלו לחלק את הכסף ביניהם ביחס הנתון כך שיקבלו רק שטרות. אם הם זכו ב-90 ש"ח, ויחס הזכייה הוא 2:5, אז מיה אמורה לקבל (2/7)·90, כלומר שטר של 20, מטבע של 5 ש"ח, ועוד כמה אגורות, ועומר אמור לקבל (5/7)·90, כלומר שטר של 50, 4 מטבעות של 1 ש"ח ועוד כמה אגורות.' },
+  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'מיה ועומר לא יוכלו לחלק את הכסף ביניהם ביחס הנתון כך שיקבלו רק שטרות.<br>אם הם זכו ב-90 ש"ח, ויחס הזכייה הוא 2:5, אז מיה אמורה לקבל <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span> · 90 = 25<span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span></span>, כלומר שטר של 20, מטבע של 5 ש"ח, ועוד כמה אגורות, ועומר אמור לקבל <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> · 90 = 64<span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span></span>, כלומר שטר של 50, 4 מטבעות של 1 ש"ח ועוד כמה אגורות.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'מיה ועומר לא יוכלו לחלק את הכסף ביניהם ביחס הנתון כך שיקבלו רק שטרות. אם הם זכו ב-90 ש"ח, ויחס הזכייה הוא 2:5, אז מיה אמורה לקבל (2/7)·90, כלומר שטר של 20, מטבע של 5 ש"ח, ועוד כמה אגורות, ועומר אמור לקבל (5/7)·90, כלומר שטר של 50, 4 מטבעות של 1 ש"ח ועוד כמה אגורות.' },
+  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'מיה ועומר לא יוכלו לחלק את הכסף ביניהם ביחס הנתון כך שיקבלו רק שטרות.<br>אם הם זכו ב-90 ש"ח, ויחס הזכייה הוא 2:5, אז מיה אמורה לקבל <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span> · 90 = 25<span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span></span>, כלומר שטר של 20, מטבע של 5 ש"ח, ועוד כמה אגורות, ועומר אמור לקבל <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> · 90 = 64<span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span></span>, כלומר שטר של 50, 4 מטבעות של 1 ש"ח ועוד כמה אגורות.' },
   onDone: function () {
     practiceProgress2.questions[1].state = (scqState.s5p3 && scqState.s5p3.outcome === 'fail') ? 'incorrect' : 'correct';
     document.getElementById('s5-continue').disabled = false;
@@ -1424,6 +1425,7 @@ scaleApp();
 ['s2-feedbox'].forEach(scqFbMakeDraggable);
 (function () {
   const m = /^#screen=(\d+)$/.exec(location.hash);
-  if (m) goTo(parseInt(m[1], 10));
+  if (new URLSearchParams(location.search).get('screen') === 'last') goTo(TOTAL_SCREENS - 1);
+  else if (m) goTo(parseInt(m[1], 10));
   else resetScreenState(0);
 })();

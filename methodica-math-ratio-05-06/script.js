@@ -245,8 +245,8 @@ function viqCheck(key) {
       input.disabled = true;
     });
     fb.classList.remove('is-wrong'); fb.classList.add('is-correct');
-    titleEl.textContent = cfg.correctMsg.title;
-    bodyEl.textContent = cfg.correctMsg.body;
+    titleEl.innerHTML = cfg.correctMsg.title;
+    bodyEl.innerHTML = cfg.correctMsg.body;
     st.outcome = 'success';
     viqFinish(key);
   } else if (st.attempts < 2) {
@@ -255,8 +255,8 @@ function viqCheck(key) {
       input.classList.toggle('wrong', !correctFlags[i]);
     });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = cfg.wrongOnce.title;
-    bodyEl.textContent = cfg.wrongOnce.body;
+    titleEl.innerHTML = cfg.wrongOnce.title;
+    bodyEl.innerHTML = cfg.wrongOnce.body;
     document.getElementById(cfg.checkBtn).disabled = true;
   } else {
     /* ⚠️ תוקן (31.08.2026, לפי דיווח: "כשמוצגת התשובה הנכונה עדיין יש
@@ -273,8 +273,8 @@ function viqCheck(key) {
     st.snapshot = inputs.map(function (input) { return input.value; });
     st.revealed = false;
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = VIQ_PENDING_FEEDBACK.title;
-    bodyEl.textContent = VIQ_PENDING_FEEDBACK.body;
+    titleEl.innerHTML = VIQ_PENDING_FEEDBACK.title;
+    bodyEl.innerHTML = VIQ_PENDING_FEEDBACK.body;
     if (cfg.revealBtn) {
       const revealBtn = document.getElementById(cfg.revealBtn);
       if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
@@ -304,8 +304,8 @@ function viqToggleReveal(key) {
       input.classList.add('correct');
     });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = cfg.wrongFinal.title;
-    bodyEl.textContent = cfg.wrongFinal.body;
+    titleEl.innerHTML = cfg.wrongFinal.title;
+    bodyEl.innerHTML = cfg.wrongFinal.body;
     st.revealed = true;
     if (revealBtn) revealBtn.textContent = 'התשובה שלי';
   } else {
@@ -317,8 +317,8 @@ function viqToggleReveal(key) {
       input.classList.toggle('wrong', !ok);
     });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = VIQ_PENDING_FEEDBACK.title;
-    bodyEl.textContent = VIQ_PENDING_FEEDBACK.body;
+    titleEl.innerHTML = VIQ_PENDING_FEEDBACK.title;
+    bodyEl.innerHTML = VIQ_PENDING_FEEDBACK.body;
     st.revealed = false;
     if (revealBtn) revealBtn.textContent = 'התשובה הנכונה';
   }
@@ -478,9 +478,9 @@ function resetScreenState1() {
    ========================================================= */
 VIQ_CFG_REGISTER('s2p1', {
   inputs: ['s2-p1-input'], correct: [216], checkBtn: 's2-p1-check', feedbox: 's2-p1-feedbox', revealBtn: 's2-p1-reveal-btn', nextScreen: null,
-  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'היחס בין AB ל-AE הוא 2 : 1, לכן AE = 10. נחשב את שטח המלבן AEDB: 20⋅10 = 200. נחשב את שטח הריבוע GHCD: 4⋅4 = 16. שטח החלקה כולה הוא 200 + 16 = 216 מ"ר.' },
+  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'היחס בין AB ל-AE הוא 2 : 1, לכן <span dir="ltr">AE = 10</span>.<br>נחשב את שטח המלבן AEDB:<br><span dir="ltr"> 20 ⋅ 10 = 200</span>.<br>נחשב את שטח הריבוע GHCD:<br><span dir="ltr"> 4 ⋅ 4 = 16</span>.<br>שטח החלקה כולה הוא <span dir="ltr">200 + 16 = 216</span> מ"ר.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'היחס בין AB ל-AE הוא 2 : 1, לכן AE = 10. נחשב את שטח המלבן AEDB: 20⋅10 = 200. נחשב את שטח הריבוע GHCD: 4⋅4 = 16. שטח החלקה כולה הוא 200 + 16 = 216 מ"ר.' },
+  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'היחס בין AB ל-AE הוא 2 : 1, לכן <span dir="ltr">AE = 10</span>.<br>נחשב את שטח המלבן AEDB:<br><span dir="ltr"> 20  ⋅10 = 200</span>.<br>נחשב את שטח הריבוע GHCD:<br><span dir="ltr"> 4 ⋅ 4 = 16</span>.<br>שטח החלקה כולה הוא <span dir="ltr">200 + 16 = 216</span> מ"ר.' },
   onDone: function () {
     practiceProgress.questions[0].state = (viqState.s2p1 && viqState.s2p1.outcome === 'fail') ? 'incorrect' : 'correct';
     setCurrentQuestion(practiceProgress, 1);
@@ -500,9 +500,9 @@ function s2P1HintClose() { document.getElementById('s2-p1-hint-overlay').hidden 
    הנתון מילה-במילה ולא "מתקנים" אותו. */
 VIQ_CFG_REGISTER('s2p2', {
   inputs: ['s2-p2-input'], correct: [80], checkBtn: 's2-p2-check', feedbox: 's2-p2-feedbox', revealBtn: 's2-p2-reveal-btn', nextScreen: null,
-  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'ידוע כי מ\' AB = 20. היחס בין AT ל-TB הוא 3 : 2. נחשב את AT: 2/5⋅20=8, לכן שטח הגינה הוא 10⋅8=80.' },
+  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'ידוע כי מ\' <span dir="ltr">AB = 20</span>. היחס בין AT ל-TB הוא 3 : 2.<br>נחשב את AT: <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">5</span></span> ⋅ 20 = 8</span>,<br>לכן שטח הגינה הוא <span dir="ltr"> 10 ⋅ 8 = 80</span>.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'ידוע כי מ\' AB = 20. היחס בין AT ל-TB הוא 3 : 2. נחשב את AT: 2/5⋅20=8, לכן שטח הגינה הוא 10⋅8=80.' },
+  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'ידוע כי מ\' <span dir="ltr">AB = 20</span>. היחס בין AT ל-TB הוא 3 : 2.<br>נחשב את AT: <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">5</span></span> ⋅ 20 = 8</span>,<br>לכן שטח הגינה הוא <span dir="ltr"> 10 ⋅ 8 = 80</span>.' },
   onDone: function () {
     practiceProgress.questions[1].state = (viqState.s2p2 && viqState.s2p2.outcome === 'fail') ? 'incorrect' : 'correct';
     setCurrentQuestion(practiceProgress, 2);
@@ -520,7 +520,7 @@ function s2P2HintClose() { document.getElementById('s2-p2-hint-overlay').hidden 
    הייתה הטריגר היחיד ל-s2RestoreDiagram. הוחלף בבדיקת-גלילה
    (s2MaybeRestoreDiagram): ברגע שחלק 4 (הסעיף שאחרי ה-interlude)
    חוצה את אמצע אזור-הגלילה, הדיאגרמה משוחזרת אוטומטית — אותה טכניקה
-   בדיוק כמו s5UpdatePhotoByScroll ב-methodica-math-ratio-01-05-03. */
+   בדיוק כמו s5UpdatePhotoByScroll ב-methodica-math-ratio-05-03. */
 let s2DiagramRestored = false;
 function s2MaybeRestoreDiagram() {
   if (s2DiagramRestored) return;
@@ -545,9 +545,9 @@ function s2WireDiagramScroll() {
 
 VIQ_CFG_REGISTER('s2p4', {
   inputs: ['s2-p4-input'], correct: [26], checkBtn: 's2-p4-check', feedbox: 's2-p4-feedbox', revealBtn: 's2-p4-reveal-btn', nextScreen: null,
-  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'שטח המגרש הוא 216 מ"ר. היחס המבוקש הוא 3 : 1. נחשב את השטח המיועד לבנייה לפי היחס המבוקש: 3/4⋅216=162 ואת השטח המיועד לגינה: 1/4⋅216=54. שטח הגינה שמצאנו בסעיף ב\' הוא 80 מ"ר. לכן, עלינו להעביר 80 - 54 = 26 מ"ר לשטח המיועד לבנייה.' },
+  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'שטח המגרש הוא 216 מ"ר. היחס המבוקש הוא 3 : 1.<br>נחשב את השטח המיועד לבנייה לפי היחס המבוקש:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">4</span></span> ⋅ 216 = 162</span><br>ואת השטח המיועד לגינה: <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">4</span></span>  ⋅216 = 54</span>.<br>שטח הגינה שמצאנו בסעיף ב\' הוא 80 מ"ר.<br>לכן, עלינו להעביר <span dir="ltr">80 - 54 = 26</span> מ"ר לשטח המיועד לבנייה.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'שטח המגרש הוא 216 מ"ר. היחס המבוקש הוא 3 : 1. נחשב את השטח המיועד לבנייה לפי היחס המבוקש: 3/4⋅216=162 ואת השטח המיועד לגינה: 1/4⋅216=54. שטח הגינה שמצאנו בסעיף ב\' הוא 80 מ"ר. לכן, עלינו להעביר 80 - 54 = 26 מ"ר לשטח המיועד לבנייה.' },
+  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'שטח המגרש הוא 216 מ"ר. היחס המבוקש הוא 3 : 1.<br>נחשב את השטח המיועד לבנייה לפי היחס המבוקש:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">4</span></span> ⋅ 216 = 162</span><br>ואת השטח המיועד לגינה: <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">4</span></span> ⋅ 216 = 54</span>.<br>שטח הגינה שמצאנו בסעיף ב\' הוא 80 מ"ר.<br>לכן, עלינו להעביר <span dir="ltr">80 - 54 = 26</span> מ"ר לשטח המיועד לבנייה.' },
   onDone: function () {
     practiceProgress.questions[2].state = (viqState.s2p4 && viqState.s2p4.outcome === 'fail') ? 'incorrect' : 'correct';
     setCurrentQuestion(practiceProgress, 3);
@@ -561,9 +561,9 @@ function s2P4HintClose() { document.getElementById('s2-p4-hint-overlay').hidden 
 
 VIQ_CFG_REGISTER('s2p5', {
   inputs: ['s2-p5-input'], correct: [28], checkBtn: 's2-p5-check', feedbox: 's2-p5-feedbox', revealBtn: 's2-p5-reveal-btn', nextScreen: null,
-  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'שטח הגינה כולה הוא 216 מ"ר. אם נרצה לחלק את השטחים ביחס של 1:1, בעצם נרצה ששני השטחים יהיו שווים. לכן, שטח הבנייה ושטח הגינה יהיו: 216:2=108 מ"ר. שטח הגינה הוא 80 מ"ר, לכן נרצה להעביר 108 - 80 = 28 מ"ר משטח הבנייה לשטח הגינה.' },
+  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'שטח הגינה כולה הוא 216 מ"ר.<br>אם נרצה לחלק את השטחים ביחס של 1:1, בעצם נרצה ששני השטחים יהיו שווים.<br>לכן, שטח הבנייה ושטח הגינה יהיו:<br><span dir="ltr">216 : 2 = 108</span> מ"ר.<br>שטח הגינה הוא 80 מ"ר, לכן נרצה להעביר <span dir="ltr">108 - 80 = 28</span> מ"ר משטח הבנייה לשטח הגינה.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'שטח הגינה כולה הוא 216 מ"ר. אם נרצה לחלק את השטחים ביחס של 1:1, בעצם נרצה ששני השטחים יהיו שווים. לכן, שטח הבנייה ושטח הגינה יהיו: 216:2=108 מ"ר. שטח הגינה הוא 80 מ"ר, לכן נרצה להעביר 108 - 80 = 28 מ"ר משטח הבנייה לשטח הגינה.' },
+  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'שטח הגינה כולה הוא 216 מ"ר.<br>אם נרצה לחלק את השטחים ביחס של 1:1, בעצם נרצה ששני השטחים יהיו שווים.<br>לכן, שטח הבנייה ושטח הגינה יהיו:<br><span dir="ltr">216 : 2 = 108</span> מ"ר.<br>שטח הגינה הוא 80 מ"ר, לכן נרצה להעביר <span dir="ltr">108 - 80 = 28</span> מ"ר משטח הבנייה לשטח הגינה.' },
   onDone: function () {
     practiceProgress.questions[3].state = (viqState.s2p5 && viqState.s2p5.outcome === 'fail') ? 'incorrect' : 'correct';
     syncPracticeProgressNav(document.getElementById('s2'));
@@ -652,7 +652,7 @@ function resetScreenState2() {
   /* ⚠️ נדחה ל-requestAnimationFrame — בשלב הזה המסך עדיין display:none
      (goTo קוראת ל-resetScreenState *לפני* target.classList.add('active')),
      אז getBoundingClientRect היה מחזיר הכל 0. אותה גותצ'ה כמו
-     s5UpdatePhotoByScroll ב-methodica-math-ratio-01-05-03. */
+     s5UpdatePhotoByScroll ב-methodica-math-ratio-05-03. */
   requestAnimationFrame(s2MaybeRestoreDiagram);
 }
 

@@ -19,9 +19,10 @@ let currentScreen = 0;
    (methodica-math-ratio-01-06) מוביל הנה עם ?screen=last — נפתח ישר
    במסך האחרון כאן במקום. script.js נטען בסוף ה-body (אחרי כל ה-.screen
    sections), אז אפשר לקרוא ל-goTo באופן סינכררוני כאן. */
-if (new URLSearchParams(location.search).get('screen') === 'last') {
-  goTo(TOTAL_SCREENS - 1);
-}
+/* ⚠️ תוקן (03.09.2026, דיווח: "חזרה מהסיין הבא מעבירה למסך ריק") — קריאת ה-goTo כאן רצה
+   סינכררונית לפני שקבועים המוגדרים למטה בקובץ (const) מאותחלים; אם resetScreenState
+   של המסך האחרון תלוי באחד מהם, נזרקת שגיאה שקוטעת את goTo() לפני שהמסך היעד מסומן
+   active, ואז שום מסך לא נשאר גלוי. הועבר ל-IIFE בסוף הקובץ, אחרי שהכל כבר מוגדר. */
 
 /* ---------- Companion character system — state + storage key ----------
    ID לוגי (character-1/character-2), לא צבע/שם, לפי Companion character
@@ -227,7 +228,7 @@ function scqSelect(key, id) {
   if (st.outcome !== null) return;
   /* ⚠️ תוקן (31.08.2026, דיווח: "למה מסומנות שתי תשובות לא נכונות
      בשאלה חד-ברירה?") — ראו הערה מלאה זהה ב-
-     methodica-math-ratio-01-05-03/script.js. */
+     methodica-math-ratio-05-03/script.js. */
   document.querySelectorAll(cfg.containerSel + ' .scq-opt').forEach(function (el) {
     el.classList.remove('selected', 'correct', 'wrong');
     el.setAttribute('aria-checked', 'false');
@@ -274,14 +275,14 @@ function scqCheck(key) {
     scqLockOptions(cfg.containerSel);
     fb.classList.remove('is-wrong'); fb.classList.add('is-correct');
     titleEl.textContent = cfg.correctMsg.title;
-    bodyEl.textContent = cfg.correctMsg.body;
+    bodyEl.innerHTML = cfg.correctMsg.body;
     st.outcome = 'success';
     scqFinish(key);
   } else if (st.attempts < 2) {
     if (chosenEl) chosenEl.classList.add('wrong');
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
     titleEl.textContent = cfg.wrongOnce.title;
-    bodyEl.textContent = cfg.wrongOnce.body;
+    bodyEl.innerHTML = cfg.wrongOnce.body;
     document.getElementById(cfg.checkBtnId).disabled = true;
   } else {
     if (chosenEl) chosenEl.classList.add('wrong');
@@ -289,7 +290,7 @@ function scqCheck(key) {
     scqLockOptions(cfg.containerSel);
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
     titleEl.textContent = cfg.wrongFinal.title;
-    bodyEl.textContent = cfg.wrongFinal.body;
+    bodyEl.innerHTML = cfg.wrongFinal.body;
     st.outcome = 'fail';
     scqFinish(key);
   }
@@ -361,7 +362,7 @@ function viqCheck(key) {
     });
     fb.classList.remove('is-wrong'); fb.classList.add('is-correct');
     titleEl.textContent = cfg.correctMsg.title;
-    bodyEl.textContent = cfg.correctMsg.body;
+    bodyEl.innerHTML = cfg.correctMsg.body;
     st.outcome = 'success';
     viqFinish(key);
   } else if (st.attempts < 2) {
@@ -371,7 +372,7 @@ function viqCheck(key) {
     });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
     titleEl.textContent = cfg.wrongOnce.title;
-    bodyEl.textContent = cfg.wrongOnce.body;
+    bodyEl.innerHTML = cfg.wrongOnce.body;
     document.getElementById(cfg.checkBtn).disabled = true;
   } else {
     /* ⚠️ תוקן (31.08.2026, לפי דיווח: "כשמוצגת התשובה הנכונה עדיין יש
@@ -389,7 +390,7 @@ function viqCheck(key) {
     st.revealed = false;
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
     titleEl.textContent = VIQ_PENDING_FEEDBACK.title;
-    bodyEl.textContent = VIQ_PENDING_FEEDBACK.body;
+    bodyEl.innerHTML = VIQ_PENDING_FEEDBACK.body;
     if (cfg.revealBtn) {
       const revealBtn = document.getElementById(cfg.revealBtn);
       if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
@@ -418,7 +419,7 @@ function viqToggleReveal(key) {
     });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
     titleEl.textContent = cfg.wrongFinal.title;
-    bodyEl.textContent = cfg.wrongFinal.body;
+    bodyEl.innerHTML = cfg.wrongFinal.body;
     st.revealed = true;
     if (revealBtn) revealBtn.textContent = 'התשובה שלי';
   } else {
@@ -431,7 +432,7 @@ function viqToggleReveal(key) {
     });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
     titleEl.textContent = VIQ_PENDING_FEEDBACK.title;
-    bodyEl.textContent = VIQ_PENDING_FEEDBACK.body;
+    bodyEl.innerHTML = VIQ_PENDING_FEEDBACK.body;
     st.revealed = false;
     if (revealBtn) revealBtn.textContent = 'התשובה הנכונה';
   }
@@ -470,7 +471,7 @@ function resetScreenState0() {
    (משולש שווה-שוקיים ABC). חלק א' (VIQ, 3 קלטים) → חלק ב' (SCQ, 3
    אפשרויות). תמונת המשולש קבועה בצד שמאל לכל אורך שני החלקים.
    ========================================================= */
-const VIQ_CFG_S1P1_BODY = 'סכום זוויות במשולש הוא 180°. המשולש ABC הוא שווה שוקיים. היחס בין זווית הראש לסכום זוויות הבסיס הוא 3 : 1. נוכל למצוא את גודלה של זווית הראש (A), לכן A=45°. מכיוון שזוויות הבסיס שוות (משולש שווה שוקיים), B=C=67.5° כל אחת.';
+const VIQ_CFG_S1P1_BODY = 'א. סכום זוויות במשולש הוא <span dir="ltr">180°</span>.<br>המשולש ABC הוא שווה שוקיים. היחס בין זווית הראש לסכום זוויות הבסיס הוא 3 : 1.<br>נוכל למצוא את גודלה של זווית הראש <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">4</span></span> · 180 = 45°</span><br>לכן <span dir="ltr"> ∢A = 45°</span>.';
 
 /* ⚠️ הוסרה s1ShowPart (20.08.2026, לפי בקשה מפורשת: "התוכן לא יעלה
    בהדרגתיות") — שני החלקים גלויים תמיד (index.html, hidden הוסר).
@@ -486,7 +487,7 @@ const VIQ_CFG_S1P1 = {
 function s1P1OnInput() { viqOnInput('s1p1'); }
 function s1P1Check() { viqCheck('s1p1'); }
 
-const SCQ_CFG_S1P2_BODY = 'נמצא את סכום שתי זוויות הבסיס. מכיוון שהן שוות, גודלה של כל זווית הוא 67.5°, לכן שתיהן חדות (קטנות מ-90°). האדריכל הצעיר אינו צודק.';
+const SCQ_CFG_S1P2_BODY = 'ב. נמצא את סכום שתי זוויות הבסיס <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">4</span></span> · 180 = 135°</span><br>מכיוון שהן שוות, גודלה של כל זווית הוא <span dir="ltr">135 ÷ 2 = 67.5°</span>, לכן <span dir="ltr">67.5° = ∢B</span>.<br>האדריכל הצעיר אינו צודק.';
 const SCQ_CFG_S1P2 = {
   containerSel: '#s1-part-2',
   correctId: 'b',
@@ -566,7 +567,7 @@ function resetScreenState1() {
    (28%/67% מרוחב-הדיאגרמה — נמדד ישירות מהשקף המעובד, ראו CSS/
    ARCHITECTURE.md). אין רמז — לא נמצא טקסט-רמז מפורש בתסריט.
    ========================================================= */
-const VIQ_CFG_S2_BODY = 'היחס בין שטח משולש ABD לשטח משולש ACD הוא 3 : 1, ושטח ABC = 64 סמ"ר. נחשב את שטחי המשולשים: שטח ACD הוא 48 סמ"ר ושטח ABD הוא 16 סמ"ר. AE שווה 8 ס"מ, והוא גובה במשולש ACD, לכן: CD = 12 ס"מ. לשני המשולשים (ACD ו-ABD) יש אותו גובה, ולכן יחס הצלעות הנפגשות עם הגובה יהיה כמו יחס השטחים (3:1), לכן DB = 4 ס"מ.';
+const VIQ_CFG_S2_BODY = 'היחס בין שטח משולש ABD לשטח משולש ACD הוא<br>3 : 1. שטח <span dir="ltr">ABC = 64</span> סמ"ר.<br>נחשב את שטחי המשולשים:<br>שטח ACD הוא <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">4</span></span> · 64 = 48</span><br>ושטח ABD הוא <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">4</span></span> · 64 = 16</span>.<br>AE שווה 8 ס"מ, והוא גובה במשולש ACD, לכן:<br><span dir="ltr"><span class="frac"><span class="frac-num">8·CD</span><span class="frac-den">2</span></span> = 48</span>, <span dir="ltr">4CD = 48</span>, לכן <span dir="ltr">CD = 12</span> ס"מ.<br>לשני המשולשים (ACD ו-ABD) יש אותו גובה.<br>יחס הצלעות הנפגשות עם הגובה יהיה כמו יחס השטחים (3 : 1).<br>לכן – <bdi>BD = 12 : 3 = 4</bdi>.';
 /* ⚠️ תוקן (31.08.2026, לפי בקשה מפורשת: "אין צורך בשני כפתורים,
    ה'המשך' בסרגל התחתון צריך להיות 'צדקתי?' לפני המענה ו'המשך' אחריו")
    — checkBtn מצביע עכשיו על #s2-continue (כפתור הסרגל התחתון) במקום
@@ -599,7 +600,7 @@ function resetScreenState2() {
    אפשרויות). תמונת פחיות-הצבע קבועה בצד שמאל לכל אורך שני החלקים.
    זהו המסך האחרון בסיין.
    ========================================================= */
-const VIQ_CFG_S3P1_BODY = 'הצהוב מהווה 2 חלקים מהיחס, הכחול מהווה 3 חלקים והשחור מהווה 5 חלקים — סך הכל 10 חלקים. הצבע השחור מהווה מחצית מהתערובת (5 מתוך 10 חלקים), ומאחר שיש 12 ליטרים ממנו, סך הכל יש 60 ליטרים של צבע ירוק-זית. הצבע הצהוב מהווה 2 מתוך 10 חלקים מהתערובת, כלומר 30 ליטרים. הצבע הכחול מהווה 3 מתוך 10 חלקים, כלומר 18 ליטרים.';
+const VIQ_CFG_S3P1_BODY = 'א. נסמן ב-x את סך הליטרים של הצבע "ירוק זית" שהתקבל.<br>סכום חלקי היחס הוא: <span dir="ltr">5 + 3 + 2 = 10</span><br>לכן הצבע השחור מהווה <span class="frac"><span class="frac-num">2</span><span class="frac-den">10</span></span> מהתערובת.<br>נסמן ב-x את כמות הליטרים של התערובת ונבנה משוואה: <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">10</span></span> · x = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">2</span><span class="frac-den">10</span></span> ונקבל: <span dir="ltr">x = 60</span>.<br>לכן, יש 60 ליטרים של צבע ירוק זית.<br>הצבע הצהוב מהווה <span class="frac"><span class="frac-num">5</span><span class="frac-den">10</span></span> מהתערובת. מדובר במחצית מהתערובת לכן יש 30 ליטרים של צבע צהוב בתערובת.<br>מסקנה: יש <span dir="ltr">60 − 12 − 30 = 18</span> ליטרים<br>של צבע כחול בתערובת.';
 
 /* ⚠️ הוסרה s3ShowPart (20.08.2026, לפי בקשה מפורשת) — שני החלקים
    גלויים תמיד. resetScreenState3 כבר קורא ל-s3MaybeShowScrollGesture
@@ -617,7 +618,7 @@ function s3P1Check() { viqCheck('s3p1'); }
 function s3P1HintOpen() { document.getElementById('s3-p1-hint-overlay').hidden = false; }
 function s3P1HintClose() { document.getElementById('s3-p1-hint-overlay').hidden = true; }
 
-const SCQ_CFG_S3P2_BODY = 'תשובה ב׳ נכונה כי רק חלקו של הצבע השחור גדל.';
+const SCQ_CFG_S3P2_BODY = 'ב. תשובה ב׳ נכונה כי רק חלקו של הצבע השחור גדל.';
 const SCQ_CFG_S3P2 = {
   containerSel: '#s3-part-2',
   correctId: 'b',
@@ -813,6 +814,7 @@ scaleApp();
 ['s2-feedbox'].forEach(scqFbMakeDraggable);
 (function () {
   const m = /^#screen=(\d+)$/.exec(location.hash);
-  if (m) goTo(parseInt(m[1], 10));
+  if (new URLSearchParams(location.search).get('screen') === 'last') goTo(TOTAL_SCREENS - 1);
+  else if (m) goTo(parseInt(m[1], 10));
   else resetScreenState(0);
 })();
