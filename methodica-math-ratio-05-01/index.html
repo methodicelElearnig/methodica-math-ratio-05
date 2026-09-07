@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>לומדה 720 | מתמטיקה יעד 1.5 | יחס | סיין 1</title>
-<link rel="stylesheet" href="styles.css?v=20260901b">
+<link rel="stylesheet" href="styles.css?v=20260907d">
 </head>
 <body>
 <div id="app">
@@ -382,8 +382,32 @@
               השתמשו ביישומון, הגדילו את מספר השורות בעזרת הסליידר עד למספר שורות המתאים ל-70 חסות וצנוניות יחד.
             </b>
             </p>
+            
           </div>
-          <iframe class="s2-sim-applet" title="יישומון יחס — חסות וצנוניות" src="geogbra-app/index.html?lettuce=4&amp;radish=3&amp;rows=1&amp;maxRows=18" loading="lazy"></iframe>
+          <!-- ⚠️ נוסף (07.09.2026, לפי בקשה מפורשת: "גם היישומון כאן
+               צריך אפשרות הגדלה כמו היישומון של השוקולד") — אותו מנגנון
+               בדיוק כמו .s1-widget-wrap/.s1-widget-panel ב-methodica-
+               math-ratio-05-03: מגדיל/ממרכז את אותו iframe ממש (לא
+               משכפל/טוען-מחדש, כדי לא לאבד את מצב-הסליידר), חלון
+               80%×75% מהקנבס, כפתור-הגדלה/סגירה זהים (.img-zoom-btn/
+               .img-zoom-close, אותו class/אייקון). s2SimExpandToggle
+               (script.js) היא הפונקציה המקבילה. -->
+          <div class="s2-sim-wrap" id="s2-sim-wrap">
+            <div class="s2-sim-panel">
+              <iframe class="s2-sim-applet" title="יישומון יחס — חסות וצנוניות" src="geogbra-app/index.html?lettuce=4&amp;radish=3&amp;rows=1&amp;maxRows=18" loading="lazy"></iframe>
+              <button class="img-zoom-btn" type="button" aria-label="הגדלת היישומון" onclick="s2SimExpandToggle(true)">
+                <svg class="img-zoom-btn__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.6"/>
+                  <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+              </button>
+              <button class="img-zoom-close" type="button" aria-label="סגירת הגדלת היישומון" onclick="s2SimExpandToggle(false)">
+                <svg class="img-zoom-close__icon" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 1L14 14M14 1L1 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -714,7 +738,7 @@
             <span class="s4-preview-box" id="s4-preview-box-4"></span>
           </div>
         </div>
-        <p class="s4-recap" id="s4-recap" hidden></p>
+    
         <!-- ⚠️ הוסר (20.08.2026, לפי בקשה מפורשת: "'נעבוד שלב שלב:' לא
              כתוב בשום מקום בתסריט, ולא צריך לכתוב את הסעיף הנוכחי עוד
              פעם למטה") — #s4-current-step-block היה כפילות מיותרת:
@@ -792,7 +816,7 @@
         <!-- שלב 3 — ג' (שקף 19): 3 פילים מספר -->
         <div class="s4-step-block" id="s4-step-3" hidden>
           <p class="s4-step-setup">דן קיבל <span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> מהגולות.<br>אם לאורי יש <span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span> מהגולות, ויש סה"כ 56 גולות, נוכל לחשב:</p>
-          <p class="s4-step-prompt">ג. <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span>⋅56 = ?</span></p>
+          <p class="s4-step-prompt">ג. <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span>⋅ 56 = ?</span></p>
           <div class="s4-pills" id="s4-pills-3">
             <button class="s4-pill" data-id="18" onclick="s4Choose(3,'18',this)">18</button>
             <button class="s4-pill" data-id="20" onclick="s4Choose(3,'20',this)">20</button>
@@ -805,7 +829,7 @@
         <!-- שלב 4 — ד' (שקף 20): 3 פילים מספר -->
         <div class="s4-step-block" id="s4-step-4" hidden>
           <p class="s4-step-setup">אורי קיבל 16 גולות.<br>אם לדן יש <span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> מהגולות, ויש סה"כ 56 גולות, אז נוכל לחשב:</p>
-          <p class="s4-step-prompt">ד. <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span>⋅56 = ?</span></p>
+          <p class="s4-step-prompt">ד. <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span>⋅ 56 = ?</span></p>
           <div class="s4-pills" id="s4-pills-4">
             <button class="s4-pill" data-id="45" onclick="s4Choose(4,'45',this)">45</button>
             <button class="s4-pill" data-id="40" onclick="s4Choose(4,'40',this)">40</button>
@@ -855,7 +879,10 @@
 
     <div class="bottom-bar">
       <div class="bottom-bar-inner">
-        <div class="bar-back"><button class="btn-back" id="s4-back" onclick="goTo(3)">חזרה</button></div>
+        <!-- ⚠️ עודכן (07.09.2026, לפי בקשה מפורשת) — היה goTo(3) ישיר-
+             תמיד; s4BackOrPrevScreen() (script.js) מדרג-לאחור דרך שלבי
+             התרגול-המודרך קודם, וניווט-מסך-רגיל רק משלב 1 והלאה. -->
+        <div class="bar-back"><button class="btn-back" id="s4-back" onclick="s4BackOrPrevScreen()">חזרה</button></div>
         <div class="bar-actions"><button class="btn-continue" id="s4-continue" disabled onclick="advanceFromS4()">המשך</button></div>
       </div>
     </div>
@@ -940,7 +967,12 @@
         <div class="s6-q-row">
           <div class="s6-q-col">
             <p class="s2-body">במכולת של שלומי יש 60 בקבוקי שתייה מוגזים, חלקם בטעם תות וחלקם בטעם מנגו. היחס בין מספר בקבוקי השתייה בטעם תות למספר בקבוקי השתייה בטעם מנגו הוא 2:3.</p>
-            <p class="s2-qtext">השתמשו ביישומון ועזרו לשלומי לסדר את הבקבוקים על המדפים, לפי היחס שצוין.</p>
+            <p class="s2-qtext">השתמשו ביישומון ועזרו לשלומי לסדר את הבקבוקים על המדפים,
+              <br/>
+              לפי היחס שצוין.</p>
+
+            
+            
             <div class="oly-answer-block">
               <div class="s6-answer-row">
                 <span class="s6-answer-label">א. בכמה מדפים סידרתם את בקבוקי השתייה?</span>
@@ -978,12 +1010,44 @@
                3 החלטות-העיצוב שאושרו מראש. class ייעודי חדש
                (.s6-applet-frame) באותם מידות/מיקום בדיוק כמו
                .s6-applet-placeholder שהוחלף. -->
-          <iframe class="s6-applet-frame" title="יישומון יחס — סידור בקבוקים במכולת" src="juice-store-app/index.html" loading="lazy"></iframe>
+          <!-- ⚠️ נוסף ?v= (07.09.2026) — לפי הלקח מ-methodica-math-ratio-05-05:
+               בלי query-string-ייחודי, דפדפן שכבר טען את ה-iframe פעם
+               אחת עשוי להמשיך להגיש עותק-מטמון ישן גם אחרי עריכות
+               בפועל בקובץ. יש לעדכן את המספר בכל פעם שמעדכנים תוכן
+               בתוך juice-store-app/. -->
+          <!-- ⚠️ נוסף (07.09.2026, לפי בקשה מפורשת: "תוסיף אייקון הגדלת
+               יישומון בדומה למה שעשיתה ביישומון אחרים בלומדה שלנו") —
+               אותו מנגנון בדיוק כמו .s2-sim-wrap/.s2-sim-panel (סעיף ב,
+               מסך 3): עוטף חדש (.s6-applet-wrap/.s6-applet-panel) מגדיל/
+               ממרכז את אותו iframe ממש (לא משכפל/טוען-מחדש, כדי לא
+               לאבד את מצב-הגרירה), חלון 80%×75% מהקנבס, כפתורי
+               .img-zoom-btn/.img-zoom-close זהים. s6AppletExpandToggle
+               (script.js) היא הפונקציה המקבילה ל-s2SimExpandToggle. -->
+          <div class="s6-applet-wrap" id="s6-applet-wrap">
+            <div class="s6-applet-panel">
+              <iframe class="s6-applet-frame" title="יישומון יחס — סידור בקבוקים במכולת" src="juice-store-app/index.html?v=20260907d" loading="lazy"></iframe>
+              <button class="img-zoom-btn" type="button" aria-label="הגדלת היישומון" onclick="s6AppletExpandToggle(true)">
+                <svg class="img-zoom-btn__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.6"/>
+                  <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+              </button>
+              <button class="img-zoom-close" type="button" aria-label="סגירת הגדלת היישומון" onclick="s6AppletExpandToggle(false)">
+                <svg class="img-zoom-close__icon" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 1L14 14M14 1L1 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- שאלה 2 מתוך 2 (שקף 26) — זוויות -->
-      <div class="s6-question" id="s6-q2" hidden>
+      <!-- ⚠️ תוקן (07.09.2026, לפי בקשה מפורשת: "התוכן לא צריך לעלות
+             בהדרגה, אפשר שהכול יהיה מההתחלה, והלומד יגלול למטה") —
+             הוסר hidden, אותו תיקון בדיוק כמו s1/s3/s4-part בסיינים
+             אחרים בפרויקט. -->
+        <div class="s6-question" id="s6-q2">
         <div class="s6-q-row">
           <div class="s6-q-col">
             <!-- ⚠️ תוקן (31.08.2026, לפי בקשה מפורשת: "סימן הזווית ∢
@@ -1037,7 +1101,16 @@
               </div>
             </div>
           </div>
-          <img class="s6-angle-diagram" src="assets/images/angle-diagram-ratio.png" alt="שרטוט זווית ABC בת 90 מעלות, המחולקת לזווית אלפא (העליונה) וזווית בטא (התחתונה)">
+          <div class="s6-angle-diagram-frame">
+            <button class="img-zoom-btn" type="button" aria-label="הגדלת התמונה"
+                    data-zoom-src="assets/images/angle-diagram-ratio.png" data-zoom-alt="שרטוט זווית ABC בת 90 מעלות, המחולקת לזווית אלפא (העליונה) וזווית בטא (התחתונה)">
+              <svg class="img-zoom-btn__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <img class="s6-angle-diagram" src="assets/images/angle-diagram-ratio.png" alt="שרטוט זווית ABC בת 90 מעלות, המחולקת לזווית אלפא (העליונה) וזווית בטא (התחתונה)">
+          </div>
         </div>
       </div>
     </div>
@@ -1103,6 +1176,6 @@
        בדיוק כמו בפרויקטי המדעים. -->
 
 </div>
-<script src="script.js?v=20260901b"></script>
+<script src="script.js?v=20260907d"></script>
 </body>
 </html>

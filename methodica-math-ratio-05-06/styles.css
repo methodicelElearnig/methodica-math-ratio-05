@@ -320,6 +320,13 @@ img { display: block; max-width: none; }
   overflow: hidden;
 }
 .img-zoom-modal__stage { position: relative; width: 100%; height: 100%; }
+/* ⚠️ נוסף (06.09.2026) — .s3-img-frame הוא wrapper ברוחב-קבוע (300px,
+   גובה-auto לפי יחס-התמונה, לא ריבועי כמו .s1-photo-img-frame/
+   .s2-interlude-img-frame) — בלי הכלל הזה, השכפול למודל היה נשאר
+   ב-300px (לא מוגדל) בתוך הפאנל 660×660. ממוקד ל-.img-zoom-modal__stage
+   בלבד — לא משפיע על התצוגה הרגילה במסך. */
+.img-zoom-modal__stage .s3-img-frame { width: 100%; height: 100%; }
+.img-zoom-modal__stage .s3-img-frame img { width: 100%; height: 100%; object-fit: contain; }
 .img-zoom-close {
   position: absolute;
   top: 16px;
@@ -600,6 +607,11 @@ img { display: block; max-width: none; }
   top: 0; left: 0; right: 0; bottom: 74px;
   overflow: hidden;
 }
+.s1-photo-img-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
 .s1-photo-img {
   width: 100%;
   height: 100%;
@@ -759,23 +771,33 @@ img { display: block; max-width: none; }
 .btn-hint-row { display: flex; flex-direction: row; align-items: center; gap: 16px; align-self: flex-end; }
 
 /* ════════════════════════════════════════════════════════
-   מסך 3 (id="s2") — מסך גלילה עם דיאגרמה קבועה. מועתק כפי-שהוא
-   מסיין 3 (.s3-fixed-images/.s3-img-frame/.s3-scroll-area/
-   .s3-scroll-inner/.s3-part/.s3-body/.s3-inline-btn), בלי שום שינוי
-   ערך — עמודת-הגלילה מתרחבת זמנית ל-.s2-full-width בזמן חלק-הביניים
-   התמונתי (ראו למטה).
+   מסכים 3+5 (id="s2"/"s4") — מסכי-גלילה עם דיאגרמה קבועה, כל אחד
+   מופע-עצמאי משלו. מועתק כפי-שהוא מסיין 3 (.s3-fixed-images/
+   .s3-img-frame/.s3-scroll-area/.s3-scroll-inner/.s3-part/.s3-body/
+   .s3-inline-btn), בלי שום שינוי ערך.
    ════════════════════════════════════════════════════════ */
+/* ⚠️ תוקן (07.09.2026, דיווח: "מסכים 3+5 צריך להגדיל את התמונה
+   המלווה") — .s3-fixed-images/.s3-img-frame (משמשים אך ורק את שני
+   הדיאגרמות ב-#s2-fixed-images/#s4-fixed-images, שני המקומות היחידים
+   בקובץ הזה, אומת) הוגדלו 300px→400px; .s3-scroll-area/#s2-scroll-
+   gesture/#s4-scroll-gesture הוזזו left:360px→460px בהתאם (40+400+20
+   רווח), כדי שאזור-הגלילה הסמוך לא ייחתך/יחפוף. */
 .s3-fixed-images {
   position: absolute;
   top: 139px;
   left: 40px;
-  width: 300px;
+  width: 400px;
   display: flex;
   flex-direction: column;
   gap: 20px;
   z-index: 1;
 }
-.s3-img-frame { width: 300px; border-radius: 16px; overflow: hidden; }
+/* ⚠️ תוקן (06.09.2026, דיווח: "אין מסגרת לתמונה בכל הלומדה, חוץ מסיין 1
+   מסכים ראשונים") — נוסף border, אותו ערך המאומת-מול-Figma
+   ב-.s2-hook-img-frame-inner/.s2-fb-img-frame-inner (methodica-math-
+   ratio-05-01/styles.css) — מאומץ כתקן האחיד לכל מסגרות-תמונת-התוכן
+   בפרויקט (לפי בקשה מפורשת "על כל תמונות התוכן"). */
+.s3-img-frame { position: relative; width: 400px; border: 1px solid rgba(174, 174, 174, 0.5); border-radius: 16px; overflow: hidden; box-sizing: border-box; }
 .s3-img-frame img { width: 100%; height: auto; display: block; }
 .s3-img-frame--diagram { background: #fafafa; padding: 16px; box-sizing: border-box; }
 .s3-img-frame--diagram img { width: 100%; height: auto; }
@@ -783,7 +805,7 @@ img { display: block; max-width: none; }
 .s3-scroll-area {
   position: absolute;
   top: 139px;
-  left: 360px;
+  left: 460px;
   right: 16px;
   bottom: 74px;
   /* ⚠️ תוקן (31.08.2026, בדיקה חיה מול Figma דרך MCP) — right/padding-right/
@@ -802,15 +824,6 @@ img { display: block; max-width: none; }
 .s3-scroll-area::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.56); border-radius: 24px; }
 .s3-scroll-inner { direction: rtl; width: 100%; }
 
-/* מורחב זמנית בזמן חלק-הביניים התמונתי (חלק 3 מתוך 5) — הדיאגרמה
-   הקבועה מוסתרת אז ממילא (s2HideDiagramForInterlude), כך שהעמודה
-   יכולה "לרשת" את השטח הפנוי שלה, בלי לגלוש מעבר לגבולות הקנבס ובלי
-   לסכן גלילה אופקית (left/right בלבד, לא width/margin שלילי — ראו
-   ARCHITECTURE.md § "מסך 3" לתיעוד השיקול המלא). אין השפעה על מבנה
-   ה-DOM של החלקים האחרים (א/ב/ד) — רק עמודת-הגלילה המשותפת מתרחבת
-   זמנית, כל עוד היא כוללת גם אותם (טרייד-אוף מתועד). */
-.s3-scroll-area.s2-full-width { left: 40px; }
-
 /* #s2-p1/p2/p4/p5-feedbox left:360px הוסר (19.08.2026) — כולם הפכו
    ל-.is-static, אין להם יותר position:absolute. */
 
@@ -819,30 +832,15 @@ img { display: block; max-width: none; }
 .s3-body { font-family: 'Assistant', sans-serif; font-size: 24px; font-weight: 400; color: #303030; text-align: right; line-height: 1.4; width: 100%; margin: 0; }
 .s3-inline-btn { align-self: flex-end; }
 
-/* חלק-הביניים התמונתי (חלק 3 מתוך 5) — תמונה רחבה עם רצועת-מידע
-   overlay בתחתיתה (משתמשת ב-.info-banner-card הגנרי מלמעלה, רק
-   ממוקמת/מורחבת אחרת מ-.s1-info-banner). */
-/* ⚠️ תוקן (20.08.2026, לפי דיווח: "התמונה חתוכה לגמרי, צריכה להיות
-   בדיוק בגודל התמונה במסך 2") — height:280px קבוע היה שרירותי, לא
-   קשור לממדי הנכס בפועל (engineers.jpg הוא 1281×639, יחס 2.005 —
-   זהה ל-family-home.jpg שבמסך 2!). בגובה-קבוע 280px, ברוחב-העמודה
-   בפועל (~860px), object-fit:cover קיצץ יותר מחצי מהתמונה. הוחלף
-   ל-aspect-ratio התואם את הנכס בדיוק (כמו במסך 2, ששם הקונטיינר כבר
-   כמעט-מדויק תואם ליחס הזה) — אין יותר קיצוץ. */
-.s2-interlude-frame {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1281 / 639;
-  border-radius: 16px;
-  overflow: hidden;
-}
-.s2-interlude-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.s2-interlude-banner {
-  position: absolute;
-  left: 24px;
-  right: 24px;
-  bottom: 16px;
-}
+/* ⚠️ הוסרו (07.09.2026, לפי בקשה מפורשת לפצל את מסך 3 ל-3 מסכים
+   נפרדים) — .s3-scroll-area.s2-full-width/.s2-interlude-frame/
+   .s2-interlude-img-frame/.s2-interlude-img/.s2-interlude-banner:
+   חלק-הביניים התמונתי (engineers.jpg) עבר למסך עצמאי משלו (מסך 4,
+   id="s3"), שם הוא משתמש ב-.s1-photo-wrap/.s1-photo-img-frame/
+   .s1-photo-img/.s1-info-banner הקיימים (אותו דפוס בדיוק כמו מסך 2)
+   — לא נזקק יותר לקלאסים הייעודיים-לחלק-בתוך-עמודת-גלילה האלה, ולא
+   להרחבת-העמודה הזמנית (שהייתה קיימת רק כי הדיאגרמה-הקבועה והתמונה
+   חלקו את אותה עמודת-גלילה — כבר לא המצב). */
 
 /* ════════════════════════════════════════════════════════
    GLOBAL — Gesture Hint (Cursor Scroll), SELF-QA-lomda.md §7. מועתק
@@ -854,7 +852,11 @@ img { display: block; max-width: none; }
   z-index: 20;
 }
 .gesture-hint-scroll-wrap[hidden] { display: none; }
-#s2-scroll-gesture { top: 139px; left: 360px; right: 16px; bottom: 74px; } /* right עודכן 31.08.2026, ראו .s3-scroll-area */
+#s2-scroll-gesture { top: 139px; left: 460px; right: 16px; bottom: 74px; } /* right עודכן 31.08.2026, ראו .s3-scroll-area; left עודכן 07.09.2026 יחד עם הגדלת-התמונה */
+/* ⚠️ נוסף (07.09.2026) — מסך 5 (id="s4", ג+ד) הוא עמודת-גלילה עצמאית
+   משלו, עם אותה דיאגרמה-קבועה/פריסה בדיוק כמו מסך 3 (s2) — אותן
+   קואורדינטות. */
+#s4-scroll-gesture { top: 139px; left: 460px; right: 16px; bottom: 74px; } /* left עודכן 07.09.2026 יחד עם הגדלת-התמונה */
 .gesture-hint {
   position: absolute;
   left: 50%; top: 62%;
@@ -921,3 +923,7 @@ img { display: block; max-width: none; }
 }
 .frac-num { border-bottom: 1.5px solid currentColor; padding: 0 6px 2px; }
 .frac-den { padding: 2px 6px 0; }
+
+/* ⚠️ הוסר .s5-placeholder-box (07.09.2026) — מסך 6 (id="s5") הפך למסך-
+   מעבר אמיתי (ראו index.html/script.js), הפלייסהולדר-הריק כבר לא
+   בשימוש בקובץ הזה. */

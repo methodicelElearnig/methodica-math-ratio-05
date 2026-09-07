@@ -97,8 +97,13 @@ Math בפועל (ראו סיין 1/2 ARCHITECTURE.md § "ביקורת התאמה
   מיקום `top:32/left:32` — כבר מתוקן לפי Figma (לא 16/16 הישן).
 - **`.img-zoom-btn`/`#img-zoom-modal`** — מופע-משותף יחיד, מחוץ לכל
   `.screen`. CSS+JS (`imgZoomOpen`/`imgZoomClose`, delegated click
-  handler, `Escape`-to-close) זהים לסיינים 1+2. אין עדיין שום תמונת-תוכן
-  שמפעילה אותו.
+  handler, `Escape`-to-close) זהים לסיינים 1+2. **עדכון 06.09.2026** —
+  הופעל בפועל על שלוש תמונות-התוכן (`angle-diagram-cd.png`,
+  `purim-gold-tickets.jpg`, `boy/girl-washing-car`/`lottery-kiosk-siblings`),
+  לפי בקשה מפורשת ("על כל תמונה בלומדה חוץ מדמויות"). התמונה המתחלפת
+  במסך 6 (`s5-fixed-img`, מוחלפת ב-`s5SetPhoto()`) מסנכרנת גם את
+  `data-zoom-src`/`data-zoom-alt` של הכפתור הצמוד (`#s5-fixed-img-zoom-btn`)
+  בכל החלפה, כדי שהזום תמיד יציג את התמונה הנוכחית, לא את ברירת-המחדל.
 - **`.scq-fb-box`** (Feedback popup) — CSS + JS (`clampPopupPosition`/
   `scqFbResetPosition`/`scqFbMakeDraggable`) מוכנים, בלי מופע HTML —
   `scqFbMakeDraggable(boxId)` no-ops בבטחה אם ה-id לא קיים עדיין.
@@ -518,3 +523,48 @@ no-op — מחוץ לתחום `goTo`) ל-`location.href='../methodica-math-ratio
 נתיב יחסי תקף גם בהפקה, לא רק מקומית — עקבי עם המוסכמה הקיימת
 כבר לפריסת-חלקי-לומדה (ראו `_global-components.md` → Companion
 character system → Cross-part persistence).
+
+## עדכון (07.09.2026) — `s5p2`: יחידה-לפני-מספר בתוך משוואת-שבר `dir="ltr"`
+
+דיווח: "הש"ח כתובה לימין ה-100, המצב התקין שתהיה כתובה בצד השמאלי
+של ה-100". "100  ש"ח" ישב כטקסט-רגיל *בתוך* ה-`dir="ltr"` הגדול שעוטף
+את כל משוואת-השבר (`5/7 · x = 100 ש"ח`), כך שהיחידה יצאה בסוף-הרצף
+(קצה-ימין של הביטוי). לפי בקשה מפורשת ("ללא קשר לדירקשן של כל
+הביטוי של הנוסחה") — ה-`dir="ltr"` החיצוני *נשאר* (משוואת-שבר מתמטית
+חייבת לקרוא שמאל-לימין), אבל נוסף `dir="rtl"` **מקונן** רק סביב
+"100 ש"ח" עצמם (בסדר-מקור: מספר ואז יחידה — לא הפוך), מה שגורם
+ליחידה "לזרום" שמאלה מהמספר גם בתוך הקשר-ltr חיצוני. אותו דפוס נקודתי
+בדיוק כמו ב-`methodica-math-ratio-05-05/script.js` § `VIQ_CFG_S2_BODY`
+(עדכון-מקביל, אותו יום — ראו שם להסבר bidi המלא).
+
+## עדכון (07.09.2026, המשך) — יישור כפתורי "צדקתי?" ב-4 מקומות (בדיקה מקיפה)
+
+בעקבות בדיקה מקיפה על כל הסיינים (דיווח: "כפתור צדקתי במסכי הגלילה לא
+מיושר אחיד לשמאל"), נמצא ש-`methodica-math-ratio-05-03/script.js` הוא
+היחיד שמעולם לא קיבל שום פונקציית-יישור לכפתור, בניגוד לסיינים 02/05
+(`equalizeScqOptWidths`/`s3AlignHintRow`). כל `.viq-answer-row` בפרויקט
+הזה הוא `flex-row` בלי `justify-content`, כך שהתוכן (תווית+קלט[+יחידה],
+או `.viq-coord`, או `.s1-yn-group`) נדחס לימין ומשאיר שוליים-ריקים
+בצד שמאל — `.s3-inline-btn{align-self:flex-end}` נשאר דבוק לקצה-
+השמאלי של *כל הסעיף* (רוחב-מלא), לא לקצה-השמאלי בפועל של התוכן הצר.
+
+נוספו: `currentCanvasScale()` (מועתק מ-05-05) ו-`alignInlineCheckBtn
+(containerId, btnId)` — פונקציה **כללית** (לא ad-hoc לכל מבנה-שורה
+בנפרד): `row.lastElementChild` הוא תמיד האלמנט הכי-שמאלי בפועל בתוך
+`.viq-answer-row` (RTL, ריצה-ימנית), ללא-תלות אם זה `.viq-input`/
+`.viq-answer-unit`/`.viq-coord`/`.s1-yn-group`. נקראת מ-3 מסכים:
+
+- `resetScreenState1()` → `alignInlineCheckBtn('s1-part-1', 's1-p1-check')`
+  + `alignInlineCheckBtn('s1-part-2', 's1-p2-check')` — מסך 2, סעיפים א'+ב'.
+- `resetScreenState3()` → `alignInlineCheckBtn('s3-part-1', 's3-p1-check')`
+  — מסך 4, סעיף א' (שני קלטי `.viq-input--sm` בתוך `.viq-coord`).
+- `resetScreenState5()` → `alignInlineCheckBtn('s5-part-1', 's5-p1-check')`
+  — מסך 6, סעיף א'.
+
+לא נגעתי בשום מקום אחר בקובץ הזה (`s1-p3-check`, `s2-check`, `s3-p2/3-
+check`, `s5-p2/3-check`) — הם כבר תקינים (`.scq-answers`/`.tf-rows`
+ברוחב-מלא, בלי צורך ביישור).
+
+**מקבילה בסיין 1**: `methodica-math-ratio-05-01/script.js` § `s2-e-check`
+תוקנה בנפרד (סיבה שונה — תוכן ממורכז, לא נדחס-ימינה) — ראו ARCHITECTURE.md
+של אותו סיין.

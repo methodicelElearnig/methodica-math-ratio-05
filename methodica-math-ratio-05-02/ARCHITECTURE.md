@@ -112,8 +112,10 @@ currentColor` — פותר שני מצבי-צבע (מנוטרל/מופעל) מנ
   `btn-flag-hover.png` — הועתקו מסיין 1 (ניטרליים, ללא צבע-נושא אפוי).
 - **`.img-zoom-btn`/`#img-zoom-modal`** — מופע-משותף יחיד, מחוץ לכל
   `.screen`. CSS+JS (`imgZoomOpen`/`imgZoomClose`, delegated click
-  handler, `Escape`-to-close) זהים לסיין 1. אין עדיין שום תמונת-תוכן
-  שמפעילה זום.
+  handler, `Escape`-to-close) זהים לסיין 1. **עדכון 06.09.2026** —
+  הופעל בפועל על ארבע תמונות-התוכן (`פון.jpg`, `גרף מסך 3.png`,
+  `triangle-roof-building.jpg`, `triangle-diagram-roof.png`), לפי בקשה
+  מפורשת ("על כל תמונה בלומדה חוץ מדמויות").
 - **פופ-אפ משוב** (`.scq-fb-box`) — CSS+JS מוכנים
   (`scqFbMakeDraggable`/`scqFbResetPosition`/`clampPopupPosition`), אין
   מופע HTML בפועל עדיין. גרירה כוללת גבולות-קנבס וגם אי-חפיפה עם הבר
@@ -934,4 +936,24 @@ no-op — מחוץ לתחום `goTo`) ל-`location.href='../methodica-math-ratio
 (deploy כתיקיות-שכנות), כך ש-`../<תיקיית-סיין>/index.html` הוא
 נתיב יחסי תקף גם בהפקה, לא רק מקומית — עקבי עם המוסכמה הקיימת
 כבר לפריסת-חלקי-לומדה (ראו `_global-components.md` → Companion
+
+## עדכון (07.09.2026) — מסך 4 (`s3`): מלבני-המסיחים של סעיף א' נשכחו מ-scq-answers--fit
+
+דיווח: "גודל המלבנים של המסיחים לא תקין, הוא גדול יותר מדי" על
+ה-SCQ בסעיף א' של `s3-part-2` (זוגות-מעלות כמו "30°, 50°"). כש-
+`.scq-answers--fit`/`equalizeScqOptWidths()` נוספו (06-07.09.2026,
+ראו §למעלה) הם הופעלו רק על שני חלקי-השאלה במסך 5 (`s4-part-1`/
+`s4-part-2`) — ה-SCQ המקביל במסך 4 (`s3-part-2`) נשאר עם `.scq-answers`
+רגיל (ללא `--fit`), כך שה-`.scq-opt` שלו נשאר ברוחב הגלובלי (100%,
+מתוח על כל רוחב המסך) במקום להתכווץ לרוחב-תוכן. תוקן:
+
+1. נוסף `scq-answers--fit` ל-`<div class="scq-answers">` של `s3-part-2`
+   (`index.html`).
+2. נוסף `requestAnimationFrame(equalizeScqOptWidths)` ל-`resetScreenState3`
+   (`script.js`) — היה חסר שם (רק `equalizeTfBtnWidths` נקרא), בניגוד
+   ל-`resetScreenState4` שכבר קרא לשתי הפונקציות.
+
+כפתור "צדקתי?" (`#s3-p2-check`, כבר `.s3-inline-btn`) מיושר אוטומטית
+דרך אותה לוגיקת-מדידה שכבר קיימת בתוך `equalizeScqOptWidths()` —
+לא נדרש שינוי נוסף שם.
 character system → Cross-part persistence).

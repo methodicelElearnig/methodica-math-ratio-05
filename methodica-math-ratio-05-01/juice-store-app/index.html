@@ -30,6 +30,15 @@
     overflow: hidden;
   }
 
+  /* ⚠️ נבנה-מחדש (07.09.2026, לפי בקשה מפורשת + תמונת-רפרנס שסופקה
+     חוזרת) — הגרסה הקודמת הייתה מדף מצויר-CSS טהור + 3 עיגולי-ספירה
+     פשוטים, בלי כרטיס-הנחיות. הפעם: המדף האמיתי מגיליון-הנכסים המקורי
+     (images.png, נחתך/הוסר-רקע ב-Pillow/NumPy, אותה טכניקה כמו בקבוקים/
+     ארגזים), כרטיס-הנחיות, וכרטיס-ספירה עשיר עם אייקונים — כל אלה
+     מהתמונה-הממחישה. הפריסה עצמה (עמודה-אחת-מעל-השנייה, לא 3 טורים
+     רחבים כמו ברפרנס) הותאמה לקונטיינר הריבועי-בקירוב בפועל (~460×460,
+     .s6-applet-frame ב-index.html הראשי) — רפרנס עצמו רחב-מדי לא-יתאים
+     שם בלי לשנות את גודל-האייפריים (לא התבקש). */
   .juice-app {
     display: flex;
     flex-direction: column;
@@ -40,104 +49,119 @@
     border: 1px solid #CEC7FF;
     border-radius: 12px;
     overflow: hidden;
-    padding: 12px;
+    padding: 10px;
     gap: 8px;
   }
 
-  .juice-app__crates {
+  /* כרטיס-הנחיות — לבן/קרם, פינות מעוגלות, לפי התמונה-הממחישה. */
+  /* ⚠️ תוקן (07.09.2026, לפי בקשה מפורשת: "טקסט ההנחיות ליישומון, צריך
+     להיות בגודל 20") — כותרת ו-li היו 13px/11.5px, עלו ל-20px. */
+  .juice-app__instructions {
     flex-shrink: 0;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    gap: 22px;
+    background: #FFFDF3;
+    border: 1px solid #F0E6B8;
+    border-radius: 10px;
+    padding: 8px 10px;
   }
-
-  .crate {
+  .juice-app__instructions-title {
+    margin: 0 0 4px;
+    font-size: 20px;
+    font-weight: 800;
+    color: #2F2478;
+  }
+  .juice-app__instructions ol {
+    margin: 0;
+    padding-inline-start: 16px;
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 2px;
-    cursor: grab;
-    user-select: none;
-    touch-action: none;
   }
-  .crate img { width: 84px; height: auto; display: block; pointer-events: none; }
-  .crate:active { cursor: grabbing; }
-  .crate-hint {
-    font-size: 10px;
-    font-weight: 700;
-    color: #5656CC;
+  .juice-app__instructions li {
+    font-size: 18px;
+    line-height: 1.35;
+    color: #3A3A3A;
   }
 
-  .juice-app__counts {
-    flex-shrink: 0;
+  .juice-app__body {
+    flex: 1;
+    min-height: 0;
     display: flex;
-    gap: 6px;
-    justify-content: center;
-    flex-wrap: wrap;
+    gap: 10px;
   }
-  .juice-count {
+
+  /* --- עמודת המדף (התמונה האמיתית, לא CSS) --- */
+  .juice-app__shelf-col {
+    flex: 1.3;
+    min-width: 0;
     display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 12px;
-    font-weight: 700;
-    color: #2F2478;
+    flex-direction: column;
     background: #ffffff;
-    border: 1px solid #CEC7FF;
-    border-radius: 999px;
-    padding: 4px 10px;
+    border: 1px solid #E5E1F5;
+    border-radius: 10px;
+    overflow: hidden;
   }
-  .juice-swatch { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .juice-swatch--mango { background: #F5A623; }
-  .juice-swatch--strawberry { background: #D0312D; }
-  .juice-swatch--empty { background: #9C97C7; }
-
+  /* ⚠️ תוקן (07.09.2026, דיווח: "למה למדף העליון לא מתאפשרת הוספת
+     בקבוקים??") — .shelf-cap הוא <img> דקורטיבי-בלבד (הכיסוי/מסגרת
+     העליונה של יחידת-המדף, מ-shelf-top.png), יושב מחוץ ל-#shelvesWrap
+     ולכן אינו .shelf-row בכלל — אין שם שום היגיון-גרירה. בגודל height:auto
+     המקורי (יחס-רוחב-גובה טבעי, ~448:104) הוא תפס נתח גדול-מדי מהגובה
+     ונראה בדיוק כמו תא-מדף ריק נוסף (אותו טקסטורת-קיר כחולה) — הלומד/ת
+     ניסו לגרור לשם בקבוק וזה לא עבד. צומצם לרצועה דקורטיבית דקה
+     (18px, object-fit:cover חותך לפס-המסגרת העליון בלבד, לא לקיר
+     הריק שמתחתיו) כדי שלא ייראה כמו מדף פונקציונלי. */
+  .shelf-cap {
+    flex-shrink: 0;
+    width: 100%;
+    height: 18px;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+  }
   .juice-app__shelves-wrap {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
-    background: #ffffff;
-    border: 1px solid #E5E1F5;
-    border-radius: 10px;
-    padding: 8px 6px 4px;
     touch-action: pan-y;
   }
+  .juice-app__shelves-wrap::-webkit-scrollbar { width: 8px; }
+  .juice-app__shelves-wrap::-webkit-scrollbar-track { background: rgba(201, 206, 216, 0.4); }
+  .juice-app__shelves-wrap::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.45); border-radius: 8px; }
 
+  /* כל שורה = אריח-מדף אמיתי אחד (shelf-tile.png) כרקע — לא עוד .shelf-plank
+     מצויר. הקרש נמצא בקצה-התחתון של האריח (ראו הערת-חיתוך בפייתון);
+     .shelf-items מיושר ל-bottom כדי שהבקבוקים "יעמדו" עליו. */
   .shelf-row {
     position: relative;
-    height: 74px;
-    margin-bottom: 8px;
+    width: 100%;
+    aspect-ratio: 448 / 95;
+    background-image: url('shelf-tile.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
   }
-  .shelf-row:last-child { margin-bottom: 0; }
-
+  /* ⚠️ 26% = בדיוק קצה-העליון של הקרש בתוך האריח (מדידה בפייתון בזמן
+     החיתוך: הקרש תופס את ה-26.3% התחתונים של shelf-tile.png) — הבקבוקים
+     "עומדים" בדיוק על פני הקרש, לא שוקעים לתוכו. */
+  /* ⚠️ תוקן (07.09.2026, דיווח: "אפשר להכניס יותר בקבוקים במדף? הם
+     נראים די רחוקים אחד מהשני") — קיבולת-המדף (5, קבוע ל-.shelf-row
+     אחד = קבוצת-יחס אחת של 2:3, אושר מפורשות קודם) לא שונתה; זה תיקון
+     חזותי-בלבד: gap 5%→1.5% ורוחב-בקבוק 15%→18%, כך שחמשת הבקבוקים
+     ממלאים את המדף בצפיפות במקום "לצוף" מרווחים. */
   .shelf-items {
     position: absolute;
-    bottom: 10px;
+    bottom: 26%;
     left: 0;
     right: 0;
-    height: 62px;
+    height: 68%;
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    gap: 6px;
-  }
-
-  .shelf-plank {
-    position: absolute;
-    bottom: 0;
-    left: 4px;
-    right: 4px;
-    height: 11px;
-    border-radius: 3px;
-    background: linear-gradient(180deg, #D9A15C 0%, #B97F3C 100%);
-    box-shadow: 0 3px 0 rgba(59, 47, 194, 0.12), inset 0 -2px 0 rgba(0,0,0,0.1);
+    gap: 1.5%;
   }
 
   .shelf-bottle {
-    width: 21px;
-    height: 60px;
+    width: 18%;
+    height: 100%;
     object-fit: contain;
     cursor: grab;
     touch-action: none;
@@ -157,37 +181,169 @@
     transform: translate(-50%, -50%);
   }
 
-  .juice-app__hint {
-    flex-shrink: 0;
-    text-align: center;
-    font-size: 11px;
-    color: #5656CC;
-    font-weight: 600;
+  /* --- עמודה ימנית: ארגזים + כרטיס-ספירה --- */
+  .juice-app__side-col {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
+
+  .juice-app__crates {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 10px;
+  }
+  .crate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    flex: 1;
+    min-width: 0;
+  }
+  .crate img { width: 100%; max-width: 84px; height: auto; display: block; pointer-events: none; }
+  .crate:active { cursor: grabbing; }
+
+  /* כרטיס-ספירה — כחול-בהיר, פינות מעוגלות, שורה לכל מדד + אייקון,
+     לפי התמונה-הממחישה ("ספירה:"). */
+  .juice-app__stats {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: #F0F4FF;
+    border: 1px solid #CEC7FF;
+    border-radius: 10px;
+    padding: 8px 10px;
+    gap: 5px;
+    overflow-y: auto;
+  }
+  .juice-app__stats-title {
+    margin: 0 0 2px;
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #2F2478;
+  }
+  .stat-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #2F2478;
+  }
+  .stat-row img { width: 16px; height: 16px; object-fit: contain; flex-shrink: 0; }
+  .stat-icon-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .stat-icon-dot--total { background: linear-gradient(90deg, #D0312D 50%, #F5A623 50%); }
+  .stat-icon-dot--remaining { background: #9C97C7; }
+  .stat-row .stat-label { flex: 1; min-width: 0; }
+  .stat-row .stat-val { font-weight: 800; flex-shrink: 0; }
+
+  .juice-app__actions {
+    flex-shrink: 0;
+    display: flex;
+    gap: 8px;
+  }
+  .juice-app__action-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 32px;
+    border-radius: 999px;
+    border: none;
+    font-family: 'Assistant', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .juice-app__action-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+  .juice-app__action-btn--reset {
+    background: #3B2FC2;
+    color: #fff;
+  }
+  .juice-app__action-btn--reset:hover { background: #2F2478; }
+  .juice-app__action-btn:focus-visible { outline: 2px solid #3B2FC2; outline-offset: 2px; }
 </style>
 </head>
 <body>
   <div class="juice-app">
-    <div class="juice-app__crates">
-      <div class="crate" id="crateMango" data-flavor="mango">
-        <img src="crate-mango.png" alt="ארגז בקבוקי מנגו" draggable="false">
+    <div class="juice-app__instructions">
+      <p class="juice-app__instructions-title">הנחיות:</p>
+      <ol>
+        <li>גררו בקבוקי שתייה אל המדפים.</li>
+        <li>בכל מדף סדרו קבוצה אחת של היחס: 2 בקבוקי תות ו-3 בקבוקי מנגו.</li>
+        <li>המשיכו עד שתסדרו את כל 60 הבקבוקים.</li>
+      </ol>
+    </div>
+
+    <div class="juice-app__body">
+      <div class="juice-app__shelf-col">
+        <img class="shelf-cap" src="shelf-top.png" alt="" aria-hidden="true">
+        <div class="juice-app__shelves-wrap" id="shelvesWrap">
+          <div id="shelvesContainer"></div>
+        </div>
       </div>
-      <div class="crate" id="crateStrawberry" data-flavor="strawberry">
-        <img src="crate-strawberry.png" alt="ארגז בקבוקי תות" draggable="false">
+
+      <div class="juice-app__side-col">
+        <div class="juice-app__crates">
+          <div class="crate" id="crateStrawberry" data-flavor="strawberry">
+            <img src="crate-strawberry.png" alt="ארגז בקבוקי תות" draggable="false">
+          </div>
+          <div class="crate" id="crateMango" data-flavor="mango">
+            <img src="crate-mango.png" alt="ארגז בקבוקי מנגו" draggable="false">
+          </div>
+        </div>
+
+        <div class="juice-app__stats" aria-live="polite">
+          <p class="juice-app__stats-title">ספירה:</p>
+          <div class="stat-row">
+            <img src="bottle-strawberry.png" alt="">
+            <span class="stat-label">בקבוקי תות שנגררו:</span>
+            <span class="stat-val" id="countStrawberry">0</span>
+          </div>
+          <div class="stat-row">
+            <img src="bottle-mango.png" alt="">
+            <span class="stat-label">בקבוקי מנגו שנגררו:</span>
+            <span class="stat-val" id="countMango">0</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-icon-dot stat-icon-dot--total" aria-hidden="true"></span>
+            <span class="stat-label">סה"כ נגררו:</span>
+            <span class="stat-val" id="countTotal">0</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-icon-dot stat-icon-dot--remaining" aria-hidden="true"></span>
+            <span class="stat-label">נשארו לסידור:</span>
+            <span class="stat-val" id="countRemaining">60</span>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="juice-app__counts" aria-live="polite">
-      <div class="juice-count"><span class="juice-swatch juice-swatch--strawberry" aria-hidden="true"></span>תות: <span id="countStrawberry">0</span></div>
-      <div class="juice-count"><span class="juice-swatch juice-swatch--mango" aria-hidden="true"></span>מנגו: <span id="countMango">0</span></div>
-      <div class="juice-count"><span class="juice-swatch juice-swatch--empty" aria-hidden="true"></span>נשאר: <span id="countRemaining">60</span></div>
+    <div class="juice-app__actions">
+      <!-- ⚠️ תוקן (07.09.2026, דיווח: "למה יש שני כפתורים ששניהם עושים
+           איפוס, הייתי מורידה את 'נקה מדפים' כדי לפנות מקום למדפים")
+           — הוסר כפתור "נקה את המדפים" (היה מפעיל בדיוק את אותה
+           פונקציית-איפוס-מלאה (clearAll) כמו "איפוס", ללא הבדל-בפועל
+           — תועד קודם כפישוט-מכוון, ראו ARCHITECTURE.md; עכשיו הוסר
+           לגמרי לפי בקשה מפורשת, לא רק תועד). נשאר כפתור "איפוס" יחיד. -->
+      <button type="button" class="juice-app__action-btn juice-app__action-btn--reset" id="resetBtn" aria-label="איפוס ליישומון">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 12a8 8 0 1 1-2.34-5.66" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M20 4v5h-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        איפוס
+      </button>
     </div>
-
-    <div class="juice-app__shelves-wrap" id="shelvesWrap">
-      <div id="shelvesContainer"></div>
-    </div>
-
-    <div class="juice-app__hint">גררו בקבוקים מהארגזים אל המדפים</div>
   </div>
 
 <script>
@@ -203,9 +359,11 @@
   var shelvesWrap = document.getElementById('shelvesWrap');
   var countMangoEl = document.getElementById('countMango');
   var countStrawberryEl = document.getElementById('countStrawberry');
+  var countTotalEl = document.getElementById('countTotal');
   var countRemainingEl = document.getElementById('countRemaining');
   var crateMango = document.getElementById('crateMango');
   var crateStrawberry = document.getElementById('crateStrawberry');
+  var resetBtn = document.getElementById('resetBtn');
 
   var dragState = null; // {flavor, fromRow, fromIndex, el, ghost, pointerId}
 
@@ -225,6 +383,7 @@
     }
     countMangoEl.textContent = String(mango);
     countStrawberryEl.textContent = String(strawberry);
+    countTotalEl.textContent = String(mango + strawberry);
     countRemainingEl.textContent = String(BUDGET - mango - strawberry);
   }
 
@@ -263,10 +422,6 @@
         items.appendChild(img);
       }
       row.appendChild(items);
-
-      var plank = document.createElement('div');
-      plank.className = 'shelf-plank';
-      row.appendChild(plank);
 
       frag.appendChild(row);
     }
@@ -384,8 +539,14 @@
     });
   }
 
+  function clearAll() {
+    shelves = [[]];
+    render();
+  }
+
   attachCrateDrag(crateMango, 'mango');
   attachCrateDrag(crateStrawberry, 'strawberry');
+  resetBtn.addEventListener('click', clearAll);
 
   render();
 })();

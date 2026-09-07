@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 5</title>
-<link rel="stylesheet" href="styles.css?v=20260901d">
+<link rel="stylesheet" href="styles.css?v=20260907c">
 </head>
 <body>
 <div id="app">
@@ -82,6 +82,13 @@
          (יחס-רוחב-גובה נשמר, height:auto). -->
     <div class="s1-fixed-images">
       <div class="s1-img-frame">
+        <button class="img-zoom-btn" type="button" aria-label="הגדלת התמונה"
+                data-zoom-src="assets/images/triangle-isoceles-abc.png" data-zoom-alt="משולש שווה שוקיים ABC: קודקוד A למעלה, B משמאל-למטה, C מימין-למטה, עם סימוני שוויון על הצלעות AB ו-AC">
+          <svg class="img-zoom-btn__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </button>
         <img src="assets/images/triangle-isoceles-abc.png" alt="משולש שווה שוקיים ABC: קודקוד A למעלה, B משמאל-למטה, C מימין-למטה, עם סימוני שוויון על הצלעות AB ו-AC">
       </div>
     </div>
@@ -140,9 +147,16 @@
       <!-- ⚠️ תוקן (20.08.2026, לפי בקשה מפורשת: "התוכן לא יעלה
            בהדרגתיות") — הוסר hidden, שני החלקים גלויים תמיד. -->
       <div class="s1-part" id="s1-part-2">
-        <p class="s1-p2-bold">אדריכל צעיר טען כי לא ניתן ליצר משולש כזה, מכיוון שזוויות הבסיס יצאו קהות (גדולות מ-90 מעלות), דבר שיגרום לכך שלא תיווצר צורת משולש.</p>
+        <p class="s1-p2-bold">אדריכל צעיר טען כי לא ניתן ליצר משולש כזה, מכיוון שזוויות הבסיס יצאו קהות 
+          <br/>
+          (גדולות מ-90 מעלות), דבר שיגרום לכך שלא תיווצר צורת משולש.</p>
         <p class="s1-p2-bold">ב. האם טענת האדריכל הצעיר נכונה?</p>
-        <div class="scq-answers" role="radiogroup" aria-label="אפשרויות תשובה">
+        <!-- ⚠️ נוסף (07.09.2026, דיווח: "המלבנים של המסיחים מאוד
+             גדולים") — אותו תיקון בדיוק כמו methodica-math-ratio-05-02
+             (מסך 5): .scq-opt הגלובלי (width:100%) הוא רפרנס-משותף,
+             לא שונה; modifier ממוקד כאן בלבד + equalizeScqOptWidths
+             (script.js) מצמצם לרוחב-התוכן הטבעי (המסיח הרחב ביותר). -->
+        <div class="scq-answers scq-answers--fit" role="radiogroup" aria-label="אפשרויות תשובה">
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="a" onclick="s1P2Select('a')">
             <span class="scq-opt-text">כן</span>
             <span class="scq-radio"></span>
@@ -233,13 +247,25 @@
         <br/>
         שטח משולש ABC הוא 64 סמ"ר.
         <br/>
-        <span dir="ltr">AE = 8  ס"מ</span> (גובה המשולש).
+        <span dir="ltr">
+          AE = <span dir="rtl">8 ס"מ</span> 
+        </span> 
+        &nbsp;(גובה המשולש).
       
       <br/></p>
       <p class="scq-qtext-em" style="font-weight:400">השלימו:</p>
 
       <div class="s2-diagram-wrap">
-        <img class="s2-diagram-img" src="assets/images/triangle-acd-adb.png" alt="משולש ABC: קודקוד A למעלה, C משמאל-למטה, B מימין-למטה, עם נקודות E ו-D על הבסיס, בסדר משמאל לימין: C, E, D, B">
+        <div class="s2-diagram-img-frame">
+          <button class="img-zoom-btn" type="button" aria-label="הגדלת התמונה"
+                  data-zoom-src="assets/images/triangle-acd-adb.png" data-zoom-alt="משולש ABC: קודקוד A למעלה, C משמאל-למטה, B מימין-למטה, עם נקודות E ו-D על הבסיס, בסדר משמאל לימין: C, E, D, B">
+            <svg class="img-zoom-btn__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <img class="s2-diagram-img" src="assets/images/triangle-acd-adb.png" alt="משולש ABC: קודקוד A למעלה, C משמאל-למטה, B מימין-למטה, עם נקודות E ו-D על הבסיס, בסדר משמאל לימין: C, E, D, B">
+        </div>
         <!-- 28% ≈ מיקומה האופקי של נקודה E (בתוך קטע CD); 67% ≈ מיקומה
              האופקי של נקודה D (בתוך קטע DB) — נמדדו ישירות מהשקף
              המעובד, לא נגזרו-מחדש כאן. -->
@@ -324,6 +350,13 @@
          נשמר במלואו (height:auto, בלי crop). -->
     <div class="s3-fixed-images">
       <div class="s3-img-frame">
+        <button class="img-zoom-btn" type="button" aria-label="הגדלת התמונה"
+                data-zoom-src="assets/images/paint-factory-cans.jpeg" data-zoom-alt="פחיות צבע במפעל לצבעים">
+          <svg class="img-zoom-btn__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </button>
         <img src="assets/images/paint-factory-cans.jpeg" alt="פחיות צבע במפעל לצבעים">
       </div>
     </div>
@@ -371,15 +404,18 @@
         <p class="scq-qtext-em">ב. איזה מהמשפטים הבאים מתאר נכונה את היחס החדש בין המרכיבים (צהוב, כחול, שחור)?</p>
         <div class="scq-answers" role="radiogroup" aria-label="אפשרויות תשובה">
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="a" onclick="s3P2Select('a')">
-            <span class="scq-opt-text">היחס החדש הוא 10 : 6 : 4, ולכן הגוון נשאר בדיוק אותו הדבר</span>
+            <span class="scq-opt-text">היחס החדש הוא 
+              4 : 6 : 10, ולכן הגוון נשאר בדיוק אותו הדבר</span>
             <span class="scq-radio"></span>
           </div>
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="b" onclick="s3P2Select('b')">
-            <span class="scq-opt-text">היחס החדש הוא 5 : 3 : 4, ולכן חלקו של הצבע השחור בתערובת גדל.</span>
+            <span class="scq-opt-text">היחס החדש הוא 
+              4 : 3 : 5, ולכן חלקו של הצבע השחור בתערובת גדל.</span>
             <span class="scq-radio"></span>
           </div>
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="c" onclick="s3P2Select('c')">
-            <span class="scq-opt-text">היחס החדש הוא 7 : 5 : 4, כי הוספנו 2 יחידות לכל צבע כדי לשמור על איזון.</span>
+            <span class="scq-opt-text">היחס החדש הוא 
+              4 : 5 : 7, כי הוספנו 2 יחידות לכל צבע כדי לשמור על איזון.</span>
             <span class="scq-radio"></span>
           </div>
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="d" onclick="s3P2Select('d')">
@@ -439,9 +475,11 @@
 
   <!-- ============ GLOBAL — Image zoom modal ============
        מופע-משותף יחיד לכל היחידה, מחוץ לכל .screen, ישירות ב-#app, לפי
-       מפרט 720-templates _global-components.md ("Image zoom"). לא הופעל
-       על אף תמונה בסיין הזה (ראו ARCHITECTURE.md § "זום-תמונה") —
-       ה-markup נשאר מוכן-לשימוש למסכי-תוכן עתידיים. -->
+       מפרט 720-templates _global-components.md ("Image zoom"). הופעל
+       (06.09.2026, לפי בקשה מפורשת "על כל תמונה בלומדה חוץ מדמויות")
+       על שלוש תמונות-התוכן במסך 1/3/4 (triangle-isoceles-abc.png,
+       triangle-acd-adb.png, paint-factory-cans.jpeg) — ראו ARCHITECTURE.md
+       § "זום-תמונה". -->
   <div id="img-zoom-modal" class="img-zoom-modal hidden" aria-hidden="true" data-zoom-close="true">
     <div class="img-zoom-modal__panel" role="dialog" aria-modal="true" aria-label="הגדלת תמונה">
       <button class="img-zoom-close" type="button" data-zoom-close="true" aria-label="סגירת הגדלת תמונה">
@@ -454,6 +492,6 @@
   </div>
 
 </div>
-<script src="script.js?v=20260901d"></script>
+<script src="script.js?v=20260907f"></script>
 </body>
 </html>

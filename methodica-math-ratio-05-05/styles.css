@@ -325,6 +325,21 @@ img { display: block; max-width: none; }
   overflow: hidden;
 }
 .img-zoom-modal__stage { position: relative; width: 100%; height: 100%; }
+/* ⚠️ נוסף (06.09.2026) — .s3-img-frame/.s2-diagram-img-frame הם
+   wrapper-ים ברוחב-קבוע (260/480px, גובה-auto לפי יחס-התמונה, לא
+   ריבועיים כמו .scq-img-inner) — בלי הכלל הזה, השכפול למודל היה נשאר
+   בגודל המקורי (לא מוגדל) בתוך הפאנל 660×660. ממוקד ל-
+   .img-zoom-modal__stage בלבד — לא משפיע על התצוגה הרגילה במסך. */
+/* ⚠️ תוקן (07.09.2026, דיווח: "הגדלת התמונה לא ממש תקינה" על משולש
+   מסך 2/s1) — .s1-img-frame (500×350 קבוע, ראו §למטה) נשכח מהרשימה
+   הזו באותה סיבה בדיוק: השכפול נשאר בגודל-המקור הקטן בתוך פאנל
+   660×660, המון רקע-לבן ריק מסביב. */
+.img-zoom-modal__stage .s3-img-frame,
+.img-zoom-modal__stage .s2-diagram-img-frame,
+.img-zoom-modal__stage .s1-img-frame { width: 100%; height: 100%; }
+.img-zoom-modal__stage .s3-img-frame img,
+.img-zoom-modal__stage .s2-diagram-img-frame img,
+.img-zoom-modal__stage .s1-img-frame img { width: 100%; height: 100%; object-fit: contain; }
 .img-zoom-close {
   position: absolute;
   top: 16px;
@@ -655,6 +670,20 @@ img { display: block; max-width: none; }
    מועתק מילה-במילה מ-methodica-math-ratio-01-02.
    ════════════════════════════════════════════════════════ */
 .scq-answers { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; }
+/* ⚠️ נוסף (07.09.2026, דיווח: "המלבנים של המסיחים מאוד גדולים") —
+   אותו תיקון בדיוק כמו methodica-math-ratio-05-02: .scq-opt הגלובלי
+   (width:100%, למטה) הוא רפרנס-משותף לכל שאלות ה-SCQ בפרויקט, לא
+   שונה. modifier ממוקד: מבטל את הרוחב הקבוע כדי ש-equalizeScqOptWidths
+   (script.js) יוכל להחיל רוחב-תוכן טבעי (JS דורס עם style.width
+   inline). */
+.scq-answers--fit .scq-opt { width: auto; }
+/* ⚠️ תוקן (07.09.2026, לפי בקשה מפורשת: "הרוחב שלהם צריך להיות
+   350px") — מסך 2 (s1-part-2, "כן/לא/לא ניתן לדעת") מקבל רוחב-קבוע
+   מפורש במקום רוחב-לפי-תוכן-אוטומטי (הרפרנס הכללי, ראו הכלל
+   למעלה) — יותר ספציפי (id+class) אז דורס אותו. equalizeScqOptWidths
+   (script.js) עדיין רץ ומיישר את שורת-הכפתור, אבל מודד עכשיו 350
+   (הרוחב הקבוע), לא רוחב-תוכן-משתנה. */
+#s1-part-2 .scq-opt { width: 480px; } /* עודכן 07.09.2026, לפי בקשה מפורשת: "450-500" */
 .scq-opt {
   width: 100%;
   display: flex;
@@ -823,13 +852,13 @@ img { display: block; max-width: none; }
   z-index: 20;
 }
 .gesture-hint-scroll-wrap[hidden] { display: none; }
-#s1-scroll-gesture { top: 139px; left: 360px; right: 16px; bottom: 74px; } /* right עודכן 31.08.2026, ראו .s1-scroll-area */
+#s1-scroll-gesture { top: 139px; left: 580px; right: 16px; bottom: 74px; } /* left עודכן 07.09.2026, ראו .s1-scroll-area */
 /* ⚠️ תוקן (31.08.2026, בדיקה מקיפה של כל מסכי-הגלילה) — left:360px היה
    מועתק מ-#s1-scroll-gesture, אבל .s3-scroll-area (מסך s3) ממוקם ב-
    left:320px (עמודת-תמונה צרה יותר ממסך s1) — היד התיישרה 40px מדי
    ימינה, לא מעל פס-הגלילה בפועל. תוקן ל-left:320px, תואם ל-
    .s3-scroll-area. */
-#s3-scroll-gesture { top: 139px; left: 320px; right: 16px; bottom: 74px; } /* right עודכן 31.08.2026, ראו .s3-scroll-area */
+#s3-scroll-gesture { top: 139px; left: 338px; right: 16px; bottom: 74px; } /* left עודכן 07.09.2026, ראו .s3-scroll-area */
 .gesture-hint {
   position: absolute;
   left: 50%; top: 62%;
@@ -890,25 +919,43 @@ img { display: block; max-width: none; }
    מסך 2 — מסך גלילה, שאלה 1 מתוך 3, data-screen="1", id="s1".
    תמונת המשולש קבועה בצד שמאל, זהה בשני החלקים (א'/ב').
    ════════════════════════════════════════════════════════ */
+/* ⚠️ עודכן (07.09.2026) — הרוחב הועלה מ-300 ל-500px, בעקבות הגדלת
+   .s1-img-frame (ראו שם). */
 .s1-fixed-images {
   position: absolute;
   top: 139px;
   left: 40px;
-  width: 300px;
+  width: 500px;
   display: flex;
   flex-direction: column;
   gap: 20px;
   z-index: 1;
 }
-.s1-img-frame { width: 300px; border-radius: 16px; overflow: hidden; }
-.s1-img-frame img { width: 100%; height: auto; display: block; }
+/* ⚠️ תוקן (06.09.2026, דיווח: "אין מסגרת לתמונה בכל הלומדה, חוץ מסיין 1
+   מסכים ראשונים") — נוסף border, אותו ערך המאומת-מול-Figma
+   ב-.s2-hook-img-frame-inner/.s2-fb-img-frame-inner (methodica-math-
+   ratio-05-01/styles.css) — מאומץ כתקן האחיד לכל מסגרות-תמונת-התוכן
+   בפרויקט (לפי בקשה מפורשת "על כל תמונות התוכן"). */
+/* ⚠️ תוקן (07.09.2026, לפי בקשה מפורשת: "התמונה צריכה להיות בגודל
+   500*350") — היה 300px (height:auto, יחס-רוחב-גובה טבעי ~1.96:1,
+   530×270 מקורי). 500×350 המבוקש הוא יחס שונה (1.43:1) מהתמונה
+   המקורית — בלי object-fit:contain זה היה מותח/מעוות את השרטוט
+   (תוית-A/B/C ייצאו לא-פרופורציונליות). הפאנל עכשיו 500×350 קבוע,
+   התמונה object-fit:contain בתוכו (יחס-הרוחב-גובה האמיתי נשמר
+   במלואו, בלי שום עיוות — ריפוד-לבן טבעי מעל/מתחת בתוך המסגרת). */
+.s1-img-frame { position: relative; width: 500px; height: 350px; border: 1px solid rgba(174, 174, 174, 0.5); border-radius: 16px; overflow: hidden; box-sizing: border-box; }
+.s1-img-frame img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
 /* פס-גלילה תמיד בצד ימין — עוטף חיצוני direction:ltr, תוכן פנימי
    direction:rtl (.s1-scroll-inner), כלל-בל-יעבור של הפרויקט הזה. */
 .s1-scroll-area {
   position: absolute;
   top: 139px;
-  left: 360px;
+  /* ⚠️ עודכן (07.09.2026) — left הוזז מ-360 ל-580 (500+40+40, אותו
+     מרווח-40px כמו קודם) בעקבות הגדלת .s1-fixed-images ל-500px. תוכן-
+     הטקסט כאן הוא פסקאות זורמות (לא שדות-קלט ברוחב-קבוע) — מתגלגל-
+     שורות בבטחה לכל רוחב, אין סיכון-גלישה כמו בשורות-VIQ. */
+  left: 580px;
   right: 16px;
   bottom: 74px;
   /* ⚠️ תוקן (31.08.2026, בדיקה חיה מול Figma דרך MCP) — right/padding-right/
@@ -1013,6 +1060,9 @@ img { display: block; max-width: none; }
      מקרה אחרי תיקון-הגלישה של .s2-content (gap 20→12px, ראו שם). */
   padding-bottom: 90px;
 }
+/* ⚠️ תוקן (06.09.2026) — נוסף border+border-radius+overflow:hidden
+   (לא היה אף אחד מהם קודם), אותו ערך כמו .s1-img-frame למעלה. */
+.s2-diagram-img-frame { position: relative; border: 1px solid rgba(174, 174, 174, 0.5); border-radius: 16px; overflow: hidden; box-sizing: border-box; }
 .s2-diagram-img { width: 100%; height: auto; display: block; }
 .s2-input-overlay {
   position: absolute;
@@ -1051,23 +1101,33 @@ img { display: block; max-width: none; }
    מוצגת ב-260px רוחב (לא 300px, ראו ההערה ב-index.html) כדי להישאר
    בתוך תקציב-הגובה הפנוי בלי לחתוך את התמונה.
    ════════════════════════════════════════════════════════ */
+/* ⚠️ עודכן (07.09.2026, לפי בקשה מפורשת: "להגדיל טיפה את התמונה") —
+   260→278px. זה למעשה תקרת-הבטיחות המלאה: התמונה פורטרט קיצוני
+   (1387×2475, יחס 0.56:1), ותקציב-הגובה הפנוי כאן הוא 497px בלבד
+   (139px..636px, לפני הבר התחתון, בלי מנגנון-חיתוך). ב-278px רוחב
+   הגובה-הטבעי הוא ~496px — כמעט מדויק בתוך התקציב. הגדלה נוספת
+   מעבר לזה תגלוש מתחת לבר התחתון (ראו גם דיון קודם בשיחה). */
 .s3-fixed-images {
   position: absolute;
   top: 139px;
   left: 40px;
-  width: 260px;
+  width: 278px;
   display: flex;
   flex-direction: column;
   gap: 20px;
   z-index: 1;
 }
-.s3-img-frame { width: 260px; border-radius: 16px; overflow: hidden; }
+/* ⚠️ תוקן (06.09.2026) — נוסף border, אותו ערך כמו .s1-img-frame
+   למעלה. הרוחב (260px, לא 300px כמו שאר הסינים) נשאר ללא שינוי —
+   מתועד במפורש ב-index.html כמכוון (תמונת-פורטרט קיצונית, 300px היה
+   גולש מתקציב-הגובה של פאנל-הגלילה). */
+.s3-img-frame { position: relative; width: 278px; border: 1px solid rgba(174, 174, 174, 0.5); border-radius: 16px; overflow: hidden; box-sizing: border-box; }
 .s3-img-frame img { width: 100%; height: auto; display: block; }
 
 .s3-scroll-area {
   position: absolute;
   top: 139px;
-  left: 320px;
+  left: 338px; /* עודכן 07.09.2026: 40+278+20, ראו .s3-fixed-images */
   right: 16px;
   bottom: 74px;
   /* ⚠️ תוקן (31.08.2026, בדיקה חיה מול Figma — ראו ההערה המלאה ליד

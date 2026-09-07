@@ -319,6 +319,13 @@ img { display: block; max-width: none; }
   overflow: hidden;
 }
 .img-zoom-modal__stage { position: relative; width: 100%; height: 100%; }
+/* ⚠️ נוסף (06.09.2026) — .s3-img-frame הוא wrapper ברוחב-קבוע (300px,
+   גובה-auto לפי יחס-התמונה, לא ריבועי כמו .scq-img-inner) — בלי הכלל
+   הזה, השכפול למודל היה נשאר ב-300px (לא מוגדל) בתוך הפאנל 660×660.
+   ממוקד ל-.img-zoom-modal__stage בלבד — לא משפיע על תצוגת התמונות
+   הקבועות הרגילה במסך. */
+.img-zoom-modal__stage .s3-img-frame { width: 100%; height: 100%; }
+.img-zoom-modal__stage .s3-img-frame img { width: 100%; height: 100%; object-fit: contain; }
 .img-zoom-close {
   position: absolute;
   top: 16px;
@@ -651,7 +658,12 @@ img { display: block; max-width: none; }
   height: 380px;
   box-sizing: border-box;
 }
-.scq-img-inner { position: relative; width: 100%; height: 100%; border-radius: 16px; overflow: hidden; box-sizing: border-box; }
+/* ⚠️ תוקן (06.09.2026, דיווח: "אין מסגרת לתמונה בכל הלומדה, חוץ מסיין 1
+   מסכים ראשונים") — נוסף border, אותו ערך המאומת-מול-Figma
+   ב-.s2-hook-img-frame-inner/.s2-fb-img-frame-inner בסיין 1
+   (methodica-math-ratio-05-01/styles.css) — מאומץ כתקן האחיד לכל
+   מסגרות-תמונת-התוכן בפרויקט (לפי בקשה מפורשת "על כל תמונות התוכן"). */
+.scq-img-inner { position: relative; width: 100%; height: 100%; border: 1px solid rgba(174, 174, 174, 0.5); border-radius: 16px; overflow: hidden; box-sizing: border-box; }
 .scq-img-inner img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
 .scq-text-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 24px; }
@@ -917,7 +929,18 @@ img { display: block; max-width: none; }
 .s2-static-wrap::-webkit-scrollbar { width: 12px; }
 .s2-static-wrap::-webkit-scrollbar-track { background: rgba(201, 206, 216, 0.4); border-radius: 16px; }
 .s2-static-wrap::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.56); border-radius: 24px; }
-.scq-img--wide-diagram { width: 460px; height: 235px; }
+/* ⚠️ תוקן שוב (06.09.2026, דיווח חדש: "אין מסגרת לתמונה", "גודל/מיקום
+   תמונה לא אחיד, בעיקר דיאגרמות") — התיקון הקודם (20.08.2026, ראו
+   למטה) פתר תלונה על "אין מסגרת" בכך שהסיר את הרקע/הריפוד שכבר היו
+   כאן, כדי להשוות ל-.scq-img-inner ה"תקני" — אבל התקן עצמו (.scq-img-
+   inner) היה בלי מסגרת! זו הייתה טעות: "אין מסגרת" תוקן בכיוון ההפוך.
+   עכשיו .scq-img-inner קיבל מסגרת אמיתית (למעלה) וגם .scq-img-inner--
+   diagram מקבל אותה מסגרת + resize מ-460×235 ל-480×245 (יחוס-אחיד
+   עם .s2-diagram-wrap בסיין 5, 480px, אותה קטגוריית "דיאגרמה-רחבה
+   במסך סטטי" — .scq-text-col הסמוך הוא flex:1/min-width:0, סופג את
+   ה-20px הנוספים בלי לגלוש). */
+.scq-img--wide-diagram { width: 480px; height: 245px; }
+.scq-img-inner--diagram { border: 1px solid rgba(174, 174, 174, 0.5); border-radius: 16px; overflow: hidden; }
 /* ⚠️ תוקן (20.08.2026, לפי דיווח: "התמונה לא מוקפת במסגרת כמו שאר
    התמונות, ויש לה רקע אפור שגוי") — background:#fafafa+padding:12px
    היו סטייה מקומית מהדפוס הסטנדרטי (.scq-img-inner, בלי רקע/ריפוד —
@@ -964,23 +987,75 @@ img { display: block; max-width: none; }
    — גלובלי, מחוץ ל-.screen, אותו מקור-קואורדינטות בדיוק). הוזז מטה
    מספיק כדי לפנות מקום ל-flag-btn (עד ~y=118), עם שוליים; הגובה
    הוקטן בהתאם כדי שהקצה-התחתון יישאר באותו מקום (636, לא זז). */
+/* ⚠️ עודכן (06.09.2026, דיווח: "לתת ליישומון יותר מקום במסך") — הרוחב
+   הועלה מ-500px (הערך המפורש-הקודם, ראו היסטוריה למטה) ל-570px: המרווח
+   הקודם בין היישומון (500) לטקסט (540) היה 40px "מת" (לא-מנוצל) —
+   נוצל חלקו לרוחב הרשת (10 עמודות, ראו chocolate-ratio-app/index.html).
+   .s1-widget-applet הוחלף ל-.s1-widget-wrap/.s1-widget-panel (ראו
+   index.html) כדי לאפשר מצב-הגדלה (.is-expanded) בלי לגעת בפריסת-
+   הבסיס כשהיישומון לא מוגדל. */
+/* ⚠️ תוקן שוב (07.09.2026, דיווח: "האייפריים נוגע ממש בקצה השמאלי של
+   המסך") — left:0 (ירושה מ-.s1-widget-placeholder המקורי) לא היה
+   תואם למוסכמת-40px-שוליים שכל שאר הפאנלים הקבועים-בצד בקובץ הזה
+   כבר משתמשים בה (.s3-fixed-images/#s2-scroll-gesture, שניהם
+   left:40px) — הוזז ל-left:40px, הרוחב צומצם בהתאם מ-570 ל-530
+   (40 פחות) כדי שהקצה-הימני יישאר באותו מקום בדיוק (570, מרווח-40px
+   זהה לטקסט שמתחיל ב-610px, ראו .s1-scroll-area) — לא נגעתי בטקסט. */
+.s1-widget-wrap {
+  position: absolute;
+  left: 40px; top: 130px;
+  width: 530px; height: 506px;
+  z-index: 1;
+}
+.s1-widget-panel { position: relative; width: 100%; height: 100%; }
 .s1-widget-applet {
   position: absolute;
-  left: 0; top: 130px;
-  /* ⚠️ הוגדל (02.09.2026), ואז כוונן שוב (03.09.2026, לפי בקשה מפורשת:
-     "מספיק שיהיה כאן רוחב של 500px") — עבר מ-427px ל-768px (60% מ-1280)
-     ואז ל-500px הסופי. top/height נשארו כפי שהם (506px) — התיקון הקודם
-     למניעת התנגשות עם flag-btn (ראו הערה למעלה) לא תלוי ברוחב ונשאר תקף. */
-  width: 500px; height: 506px;
-  z-index: 1;
+  inset: 0;
+  width: 100%; height: 100%;
   border: none;
   box-sizing: border-box;
 }
+.s1-widget-panel .img-zoom-btn { display: flex; }
+.s1-widget-panel .img-zoom-close { display: none; }
+/* ⚠️ תוקן (07.09.2026, דיווח: "בכלל לא גדל, פשוט קפץ למעלה, נשאר
+   באותו גודל") — .s1-widget-wrap הבסיסי (למעלה) מגדיר width:530px/
+   height:506px *מפורשות*; .is-expanded הוסיף inset:0 בלי לבטל אותן —
+   position:absolute עם גם width/height מפורשים וגם inset:0 הוא מצב
+   over-constrained: הדפדפן משאיר את המידות הקבועות (530×506) ומתעלם
+   מ-right/bottom, כך שהקופסה רק "קפצה" ל-top:0/left:0 בלי לגדול
+   בכלל — בדיוק הבאג שדווח. width/height:auto מפורש כאן משחרר את
+   האילוץ, כדי ש-inset:0 באמת ימתח את ה-wrap למלוא #s1. */
+.s1-widget-wrap.is-expanded {
+  position: absolute;
+  inset: 0;
+  width: auto; height: auto;
+  z-index: 950;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.78);
+}
+/* ⚠️ תוקן (07.09.2026, לפי בקשה מפורשת: "שיגדל באמצע המסך, בתוך חלון
+   שהרוחב שלו 80% מרוחב המסך והגובה 75% מגובה המסך") — היה ריבוע קבוע
+   640×640px; הוחלף לאחוזים יחסית לקנבס (.s1-widget-wrap.is-expanded
+   הוא inset:0 על #s1, שעצמו מלוא-הקנבס 1280×710 — 80%×75% ⇒ 1024×532.5px
+   בפועל). .s1-widget-wrap עצמו (display:flex;align-items:center;
+   justify-content:center, למעלה) כבר ממרכז את הפאנל בתוך הקנבס. */
+.s1-widget-wrap.is-expanded .s1-widget-panel {
+  width: 80%; height: 75%;
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.s1-widget-wrap.is-expanded .s1-widget-panel .img-zoom-btn { display: none; }
+.s1-widget-wrap.is-expanded .s1-widget-panel .img-zoom-close { display: flex; }
 .s1-scroll-area {
   position: absolute;
-  /* left הוזז ל-540px (500+40 מרווח, אותו מרווח כמו קודם) בעקבות כיוונון
-     .s1-widget-applet ל-500px. */
-  top: 139px; left: 540px; right: 16px; bottom: 74px;
+  /* left הוזז ל-610px (570+40 מרווח, אותו מרווח כמו קודם) בעקבות הרחבת
+     .s1-widget-wrap ל-570px (06.09.2026). */
+  top: 139px; left: 610px; right: 16px; bottom: 74px;
   /* ⚠️ תוקן (31.08.2026, בדיקה חיה מול Figma דרך MCP) — right/padding-right/
      רוחב-הפס עודכנו ל-16px/24px/12px, תואם ל-node "scrolling"
      (1038:18222/1038:18219, fileKey eSbp4bKHgBky0rakDb8l9N). המרווח
@@ -1019,7 +1094,7 @@ img { display: block; max-width: none; }
   text-align: right;
   line-height: 1.5;
   width: 100%;
-  margin: 0 0 24px;
+  margin: 0 0 12px;
 }
 /* ⚠️ נוסף (20.08.2026, לפי בקשה מפורשת: "כל הטקסט במסך 2 סיין 3
    בגודל 24") — הועבר לבסיס-המשותף של .scroll-intro-text למעלה,
@@ -1043,7 +1118,20 @@ img { display: block; max-width: none; }
   gap: 20px;
   z-index: 1;
 }
-.s3-img-frame { width: 300px; border-radius: 16px; overflow: hidden; }
+/* ⚠️ נוסף (07.09.2026, לפי בקשה מפורשת: "מסך 4, להגדיל את התמונה
+   שתהיה ברוחב 400") — .s3-fixed-images/.s3-img-frame הם classes
+   משותפים עם מסך 6 (id="s5", car-wash) — לא שונו ישירות (זה היה מרחיב
+   גם את התמונה שם, שלא התבקש). דריסה ממוקדת ל-#s3-fixed-images בלבד
+   (id ייחודי למסך 4, כבר קיים לצורך s3HidePhoto()). purim-gold-
+   tickets.jpg הוא לרוחב (920×610, יחס 1.51:1) — ב-400px רוחב הגובה
+   הטבעי ~265px, בתוך תקציב-הגובה הפנוי (497px) בנוחות, בלי סיכון-
+   חיתוך. עמודת-הטקסט (#s3-scroll-area) הוזזה בהתאם, נשמר מרווח-40px
+   זהה (400+40+40=480). */
+#s3-fixed-images { width: 400px; }
+#s3-fixed-images .s3-img-frame { width: 400px; }
+/* ⚠️ תוקן (06.09.2026) — נוסף border, אותו ערך כמו .scq-img-inner
+   למעלה (ראו הערה שם). */
+.s3-img-frame { position: relative; width: 300px; border: 1px solid rgba(174, 174, 174, 0.5); border-radius: 16px; overflow: hidden; box-sizing: border-box; }
 .s3-img-frame img { width: 100%; height: auto; display: block; }
 .s3-img-frame--diagram { background: #fafafa; padding: 16px; box-sizing: border-box; }
 .s3-img-frame--diagram img { width: 100%; height: auto; }
@@ -1054,6 +1142,8 @@ img { display: block; max-width: none; }
   left: 360px;
   right: 16px;
   bottom: 74px;
+  /* ⚠️ #s3-scroll-area (מסך 4 בלבד) נדחס ל-480px למטה — ראו הערה ליד
+     #s3-fixed-images. #s5-scroll-area (מסך 6) נשאר 360px, לא שונה. */
   /* ⚠️ תוקן (31.08.2026, בדיקה חיה מול Figma — ראו ההערה המלאה ליד
      .s1-scroll-area למעלה) — right/padding-right/רוחב-הפס עודכנו
      ל-16px/24px/12px. */
@@ -1064,6 +1154,10 @@ img { display: block; max-width: none; }
   direction: ltr;
   cursor: grab;
 }
+/* ⚠️ נוסף (07.09.2026) — דריסה ממוקדת ל-#s3-scroll-area (מסך 4) בלבד,
+   בעקבות הגדלת #s3-fixed-images ל-400px (ראו הערה שם). #s5-scroll-area
+   (מסך 6, car-wash) לא נגוע, נשאר 360px. */
+#s3-scroll-area { left: 480px; }
 .s3-scroll-area::-webkit-scrollbar { width: 12px; }
 .s3-scroll-area::-webkit-scrollbar-track { background: rgba(201, 206, 216, 0.4); border-radius: 16px; }
 .s3-scroll-area::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.56); border-radius: 24px; }
@@ -1094,8 +1188,8 @@ img { display: block; max-width: none; }
 /* ⚠️ נוסף (01.09.2026, דיווח: "אין כף יד" במסך 3, s2) — קואורדינטות
    זהות ל-.s2-static-wrap עצמה (ראו שם). */
 #s2-scroll-gesture { top: 139px; left: 40px; right: 16px; bottom: 74px; }
-#s1-scroll-gesture { top: 139px; left: 467px; right: 16px; bottom: 74px; } /* right עודכן 31.08.2026, ראו .s1-scroll-area */
-#s3-scroll-gesture { top: 139px; left: 360px; right: 16px; bottom: 74px; } /* right עודכן 31.08.2026, ראו .s3-scroll-area */
+#s1-scroll-gesture { top: 139px; left: 610px; right: 16px; bottom: 74px; } /* left/right עודכנו 06.09.2026, ראו .s1-scroll-area */
+#s3-scroll-gesture { top: 139px; left: 480px; right: 16px; bottom: 74px; } /* left עודכן 07.09.2026, ראו #s3-scroll-area */
 #s5-scroll-gesture { top: 139px; left: 360px; right: 16px; bottom: 74px; } /* right עודכן 31.08.2026, ראו .s3-scroll-area */
 .gesture-hint {
   position: absolute;

@@ -321,6 +321,13 @@ img { display: block; max-width: none; }
   overflow: hidden;
 }
 .img-zoom-modal__stage { position: relative; width: 100%; height: 100%; }
+/* ⚠️ נוסף (06.09.2026) — .s3-img-frame הוא wrapper ברוחב-קבוע (300px,
+   גובה-auto לפי יחס-התמונה, לא ריבועי כמו .scq-img-inner) — בלי הכלל
+   הזה, השכפול למודל היה נשאר ב-300px (לא מוגדל) בתוך הפאנל 660×660.
+   ממוקד ל-.img-zoom-modal__stage בלבד — לא משפיע על תצוגת התמונות
+   הקבועות הרגילה במסך. */
+.img-zoom-modal__stage .s3-img-frame { width: 100%; height: 100%; }
+.img-zoom-modal__stage .s3-img-frame img { width: 100%; height: 100%; object-fit: contain; }
 .img-zoom-close {
   position: absolute;
   top: 16px;
@@ -694,7 +701,13 @@ img { display: block; max-width: none; }
   height: 380px;
   box-sizing: border-box;
 }
-.scq-img-inner { position: relative; width: 100%; height: 100%; border-radius: 16px; overflow: hidden; box-sizing: border-box; }
+/* ⚠️ תוקן (06.09.2026, דיווח: "אין מסגרת לתמונה בכל הלומדה, חוץ מסיין 1
+   מסכים ראשונים") — נוסף border, אותו ערך המאומת-מול-Figma
+   ב-.s2-hook-img-frame-inner/.s2-fb-img-frame-inner בסיין 1
+   (methodica-math-ratio-05-01/styles.css) — זה מתבסס על תקדים-Figma
+   מתועד, לא ניחוש; מאמצים אותו כתקן האחיד למסגרות-תמונת-תוכן בכל
+   הפרויקט (לפי בקשה מפורשת "על כל תמונות התוכן"). */
+.scq-img-inner { position: relative; width: 100%; height: 100%; border: 1px solid rgba(174, 174, 174, 0.5); border-radius: 16px; overflow: hidden; box-sizing: border-box; }
 .scq-img-inner img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .s1-img-placeholder {
   background: #c4c4c4;
@@ -778,6 +791,22 @@ img { display: block; max-width: none; }
 .scq-opt.wrong .scq-radio { border-color: #b20010; background: #b20010; }
 .scq-opt.wrong .scq-radio::after { background-image: url('assets/images/icon-x-white.svg'); background-size: 10px 10px; }
 .scq-opt.disabled { cursor: default; }
+/* ⚠️ נוסף (06.09.2026, דיווח: "המלבנים ממורחים על כל רוחב המסך") —
+   .scq-opt הבסיסי (width:100%, למעלה) הוא הרפרנס-הגלובלי המשותף לכל
+   שאלות ה-SCQ בפרויקט, לא שונה. modifier ממוקד: מבטל את הרוחב הקבוע
+   כדי ש-equalizeScqOptWidths (script.js) יוכל למדוד/להחיל רוחב-תוכן
+   טבעי (JS דורס עם style.width inline לאחר-מכן, לא CSS בלבד). */
+.scq-answers--fit .scq-opt { width: auto; min-width: 400px; }
+/* ⚠️ תוקן (07.09.2026, דיווח: מלבני "30°, 50°" נשברו לשתי שורות בתוך
+   מלבן צר-מדי) — הסיבה: `.scq-opt-text` הוא `flex:1` (flex-basis:0,
+   כלל-גלובלי), שמאפשר לו להתכווץ מתחת לרוחב-התוכן הטבעי שלו ברגע
+   שההורה `.scq-opt` צר (width:auto); על טקסט קצר עם פסיק+רווח
+   ("30°, 50°") זו נקודת-שבירה חוקית, אז equalizeScqOptWidths מדד/החיל
+   רוחב שכבר "שבור" בפועל. white-space:nowrap כאן מבטיח שורה אחת
+   תמיד בתוך הגרסה המצומצמת-לתוכן; min-width:400px (למעלה) מבטיח
+   שהמלבן לא ייראה צר מדי גם כשהתוכן עצמו קצר יותר מ-400px, לפי
+   בקשה מפורשת. */
+.scq-answers--fit .scq-opt-text { white-space: nowrap; }
 /* ⚠️ נוסף (18.08.2026, 720-design-guidelines audit — נגישות) — .scq-opt
    הוא role="radio" עם tabindex="0" (בר קליק-מקלדת אמיתי) אבל לא היה לו
    שום :focus-visible, בניגוד ל-.btn-continue/.btn-back בקובץ הזה עצמו.
@@ -871,7 +900,9 @@ img { display: block; max-width: none; }
   gap: 20px;
   z-index: 1;
 }
-.s3-img-frame { width: 300px; border-radius: 16px; overflow: hidden; }
+/* ⚠️ תוקן (06.09.2026) — נוסף border, אותו ערך כמו .scq-img-inner
+   למעלה (ראו הערה שם). */
+.s3-img-frame { position: relative; width: 300px; border: 1px solid rgba(174, 174, 174, 0.5); border-radius: 16px; overflow: hidden; box-sizing: border-box; }
 .s3-img-frame img { width: 100%; height: auto; display: block; }
 .s3-img-frame--diagram { background: #fafafa; padding: 16px; box-sizing: border-box; }
 .s3-img-frame--diagram img { width: 100%; height: auto; }

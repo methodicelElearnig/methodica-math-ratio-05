@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 2</title>
-<link rel="stylesheet" href="styles.css?v=20260901c">
+<link rel="stylesheet" href="styles.css?v=20260907b">
 </head>
 <body>
 <div id="app">
@@ -104,6 +104,13 @@
            לדיאגרמת-הזווית במסך 4) — לא הומצא וריאנט חדש. -->
       <div class="scq-img">
         <div class="scq-img-inner">
+          <button class="img-zoom-btn" type="button" aria-label="הגדלת התמונה"
+                  data-zoom-src="assets/images/פון.jpg" data-zoom-alt="צילום מסך של ערוץ הגיימינג">
+            <svg class="img-zoom-btn__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </button>
           <img src="assets/images/פון.jpg" alt="צילום מסך של ערוץ הגיימינג">
         </div>
       </div>
@@ -197,6 +204,13 @@
            3.png"), אותו דפוס בלתי-ממוסגר (.scq-img-inner) כמו s1. -->
       <div class="scq-img">
         <div class="scq-img-inner">
+          <button class="img-zoom-btn" type="button" aria-label="הגדלת התמונה"
+                  data-zoom-src="assets/images/גרף מסך 3.png" data-zoom-alt="ציר מספרים המציג את מספר הבנים (ציר X) ומספר הבנות (ציר Y) בצ'אט">
+            <svg class="img-zoom-btn__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </button>
           <img src="assets/images/גרף מסך 3.png" alt="ציר מספרים המציג את מספר הבנים (ציר X) ומספר הבנות (ציר Y) בצ'אט">
         </div>
       </div>
@@ -265,9 +279,23 @@
 
     <div class="s3-fixed-images">
       <div class="s3-img-frame">
+        <button class="img-zoom-btn" type="button" aria-label="הגדלת התמונה"
+                data-zoom-src="assets/images/triangle-roof-building.jpg" data-zoom-alt="מבנה ציבורי עם גג זכוכית בצורת משולש">
+          <svg class="img-zoom-btn__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </button>
         <img src="assets/images/triangle-roof-building.jpg" alt="מבנה ציבורי עם גג זכוכית בצורת משולש">
       </div>
       <div class="s3-img-frame s3-img-frame--diagram">
+        <button class="img-zoom-btn" type="button" aria-label="הגדלת התמונה"
+                data-zoom-src="assets/images/triangle-diagram-roof.png" data-zoom-alt="שרטוט משולש BAC, זווית A היא 60 מעלות">
+          <svg class="img-zoom-btn__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </button>
         <img src="assets/images/triangle-diagram-roof.png" alt="שרטוט משולש BAC, זווית A היא 60 מעלות">
       </div>
     </div>
@@ -288,7 +316,13 @@
            החלקים גלויים תמיד, הלומד/ת גולל/ת. -->
       <div class="s3-part" id="s3-part-2">
         <p class="scq-qtext-em">א. סמנו את הגודל המדויק של שתי הזוויות האחרות במבנה המתוכנן:</p>
-        <div class="scq-answers" role="radiogroup" aria-label="אפשרויות תשובה">
+        <!-- ⚠️ נוסף (07.09.2026, דיווח: "גודל המלבנים של המסיחים לא
+             תקין, הוא גדול יותר מדי") — .scq-answers--fit (אותו modifier
+             שכבר קיים במסך 5, s4-part-1/2) מפעיל equalizeScqOptWidths(),
+             שמצמצם את .scq-opt לרוחב-תוכן (זוגות המעלות קצרים, אין
+             סיבה שהמלבן ימתח על כל רוחב המסך) ומיישר בהתאם את כפתור
+             .s3-inline-btn שאחריו. -->
+        <div class="scq-answers scq-answers--fit" role="radiogroup" aria-label="אפשרויות תשובה">
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="a" onclick="s3P2Select('a')">
             <span class="scq-opt-text"><span dir="ltr">30°, 50°</span></span>
             <span class="scq-radio"></span>
@@ -417,7 +451,15 @@
 
       <div class="s4-part" id="s4-part-1">
         <p class="s4-body"><strong>א. דניאל ונופר השיגו אותו מספר ניצחונות.</strong><br>מבלי לחשב, מי מבינהם שחה ב<strong>יותר מישחים</strong> לאורך העונה?</p>
-        <div class="scq-answers" role="radiogroup" aria-label="אפשרויות תשובה">
+        <!-- ⚠️ נוסף (06.09.2026, דיווח: "המלבנים ממורחים על כל רוחב
+             המסך, צריך שיתאימו לאורך המסיח הגדול ביותר") — .scq-opt
+             הבסיסי (width:100%) הוא הרפרנס-הגלובלי המשותף לכל שאלות
+             ה-SCQ בפרויקט; לא שונה גלובלית. .scq-answers--fit הוא
+             modifier ממוקד רק לשני חלקי-השאלה כאן (מסיחים קצרים —
+             "דניאל"/"נופר" מול משפט שלם — נראה שבור כשנמתח לרוחב מלא),
+             מפעיל equalizeScqOptWidths() (script.js, אותה טכניקה בדיוק
+             כמו equalizeTfBtnWidths הקיימת). -->
+        <div class="scq-answers scq-answers--fit" role="radiogroup" aria-label="אפשרויות תשובה">
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="a" onclick="s4P1Select('a')">
             <span class="scq-opt-text">דניאל</span>
             <span class="scq-radio"></span>
@@ -441,8 +483,10 @@
       <!-- ⚠️ תוקן (20.08.2026, לפי בקשה מפורשת) — אותו תיקון בדיוק כמו
            מסך 4 (s3): הוסר hidden, כל שלושת החלקים גלויים תמיד. -->
       <div class="s4-part" id="s4-part-2">
-        <p class="s4-body"><strong>ב. מי </strong>ניצח ביותר מישחים העונה?</p>
-        <div class="scq-answers" role="radiogroup" aria-label="אפשרויות תשובה">
+        <p class="s4-body"><strong>ב. מי </strong>ניצח ביותר מישחים העונה?
+          <br/>
+         בהנחה ששניהם השתתפו באותו מספר מישחים.</p>
+        <div class="scq-answers scq-answers--fit" role="radiogroup" aria-label="אפשרויות תשובה">
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="a" onclick="s4P2Select('a')">
             <span class="scq-opt-text">דניאל</span>
             <span class="scq-radio"></span>
@@ -464,7 +508,8 @@
       </div>
 
       <div class="s4-part" id="s4-part-3">
-        <p class="s4-body">ג. ידוע כי <strong>דניאל ניצח ב-12 משחים</strong>.</p>
+        <p class="s4-body">ג. ידוע כי <strong>דניאל ניצח ב-12 משחים</strong> כל אחד במהלך העונה.
+</p>
         <p class="scq-qtext-em">השלימו:</p>
         <div class="viq-answers">
           <div class="viq-answer-row">
@@ -522,9 +567,10 @@
 
   <!-- ============ GLOBAL — Image zoom modal ============
        מופע-משותף יחיד לכל היחידה, מחוץ לכל .screen, ישירות ב-#app, לפי
-       מפרט 720-templates _global-components.md ("Image zoom"). כל תמונת
-       תוכן שתצטרך זום (במסכי תוכן עתידיים) תוסיף כפתור .img-zoom-btn
-       משלה בתוך ה-wrapper שלה (position:relative, בלי stacking context). -->
+       מפרט 720-templates _global-components.md ("Image zoom"). הופעל
+       (06.09.2026, לפי בקשה מפורשת "על כל תמונה בלומדה חוץ מדמויות") על
+       ארבע תמונות-התוכן במסך 2/4 (פון.jpg, גרף מסך 3.png,
+       triangle-roof-building.jpg, triangle-diagram-roof.png). -->
   <div id="img-zoom-modal" class="img-zoom-modal hidden" aria-hidden="true" data-zoom-close="true">
     <div class="img-zoom-modal__panel" role="dialog" aria-modal="true" aria-label="הגדלת תמונה">
       <button class="img-zoom-close" type="button" data-zoom-close="true" aria-label="סגירת הגדלת תמונה">
@@ -537,6 +583,6 @@
   </div>
 
 </div>
-<script src="script.js?v=20260901c"></script>
+<script src="script.js?v=20260907b"></script>
 </body>
 </html>

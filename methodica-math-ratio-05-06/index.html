@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 6</title>
-<link rel="stylesheet" href="styles.css?v=20260901b">
+<link rel="stylesheet" href="styles.css?v=20260907d">
 </head>
 <body>
 <div id="app">
@@ -56,8 +56,13 @@
        § "מסך 2".
        ========================================================= -->
   <section class="screen" data-screen="1" id="s1">
+    <!-- ⚠️ הוסר (07.09.2026, לפי בקשה מפורשת: "לא צריך הגדלת תמונה
+         לשתיהן [מסך 2+4], הן מאוד גדולות") — .img-zoom-btn הוסר; התמונה
+         כבר ממלאת-מסך-מלא, אין תועלת בכפתור-הגדלה נוסף. -->
     <div class="s1-photo-wrap">
-      <img class="s1-photo-img" src="assets/images/family-home.jpg" alt="משפחה מול בית מגורים, בהקשר של תכנון ובניית בית חדש">
+      <div class="s1-photo-img-frame">
+        <img class="s1-photo-img" src="assets/images/family-home.jpg" alt="משפחה מול בית מגורים, בהקשר של תכנון ובניית בית חדש">
+      </div>
       <div class="s1-info-banner info-banner-card">
         <p class="info-banner-label">עליכם לעזור לצוות בשטח לקבל החלטות מבוססות נתונים על סמך המפות וכלי המדידה.</p>
         <p class="info-banner-body">משפחת לוי רוצה לבנות את בית החלומות שלה. <br>כדי להגשים את החלום, הם נפגשו עם אורי האדריכל וביקשו ממנו לעזור להם לתכנן אותו.</p>
@@ -73,16 +78,24 @@
   </section>
 
   <!-- =========================================================
-       מסך 3 — מסך גלילה, "שאלת השיא" בת 4 סעיפים (א/ב/ג/ד) + חלק-ביניים
-       תמונתי לא-מנוקד (חלק 3 מתוך 5, בין סעיף ב' לסעיף ג'), data-screen="2",
-       id="s2". שקפים 64-68 בתסריט. פריסה מועתקת מ-methodica-math-ratio-01-03
+       מסך 3 — מסך גלילה, "שאלת השיא" סעיפים א+ב בלבד, data-screen="2",
+       id="s2". שקפים 64-65 בתסריט. פריסה מועתקת מ-methodica-math-ratio-01-03
        (.s3-fixed-images/.s3-scroll-area/.s3-scroll-inner/.s3-part) — דיאגרמת
-       המגרש (land-plot-diagram.png) קבועה וזהה בארבעת הסעיפים (לא מתחלפת
-       כמו ב-s5SetPhoto של סיין 3), ומוסתרת זמנית בחלק 3 (התמונה של
-       המהנדסים) לפי הנחיה מפורשת בתסריט — ראו s2HideDiagramForInterlude/
-       s2RestoreDiagram ב-script.js ו-ARCHITECTURE.md § "מסך 3".
-       ========================================================= -->
+       המגרש (land-plot-diagram.png) קבועה וזהה בשני הסעיפים.
+       ⚠️ עודכן (07.09.2026, לפי בקשה מפורשת) — פוצל מ-4 סעיפים (א/ב/ג/ד)
+       + חלק-ביניים תמונתי לתוך מסך אחד, לתוך 3 מסכים נפרדים: מסך זה
+       (א+ב בלבד), מסך 4 (id="s3", התמונה בלבד, ממלאת-מסך כמו מסך 2),
+       ומסך 5 (id="s4", ג+ד). s2HideDiagramForInterlude/s2RestoreDiagram/
+       s2MaybeRestoreDiagram/s2WireDiagramScroll הוסרו מ-script.js —
+       היו רלוונטיים רק כשחלק-הביניים חי באותו עמוד-גלילה כמו הדיאגרמה;
+       עכשיו שהתמונה מסך-נפרד משלה, אין יותר צורך בהם. ראו ARCHITECTURE.md
+       § "מסך 3" (עדכון 07.09.2026) לפירוט המלא. -->
   <section class="screen" data-screen="2" id="s2">
+    <!-- ⚠️ תוקן (07.09.2026, לפי בקשה מפורשת: "יש 4 סעיפים של שאלה, צריך
+         שיהיו 4 שאלות על סרגל ההתקדמות, לא משנה שיש שבירה במסך 4") —
+         חזרה ל-4 פריטים (א/ב/ג/ד), זהה למופע השני ב-#s4-progress (מסך 5)
+         — שני ה-nav-ים מציגים את אותו practiceProgress הגלובלי (4
+         שאלות), לא שני מונים-נפרדים-מתחילים-מחדש. ראו script.js. -->
     <nav class="progress-question" id="s2-progress" aria-label="ניווט שאלות">
       <div class="progress-question__item" data-question="1">
         <div class="progress-question__icon"></div>
@@ -113,11 +126,16 @@
       </div>
     </div>
 
-    <!-- דיאגרמת המגרש — קבועה וזהה לארבעת הסעיפים, מוסתרת זמנית בחלק 3
-         (חלק-הביניים התמונתי) דרך s2HideDiagramForInterlude() (visibility,
-         לא display — כדי לא להשפיע על פריסת ה-flex column). -->
+    <!-- דיאגרמת המגרש — קבועה וזהה לשני הסעיפים. -->
     <div class="s3-fixed-images" id="s2-fixed-images">
       <div class="s3-img-frame s3-img-frame--diagram">
+        <button class="img-zoom-btn" type="button" aria-label="הגדלת התמונה"
+                data-zoom-src="assets/images/land-plot-diagram.png" data-zoom-alt="שרטוט מגרש מלבני ABDE: A בפינה השמאלית-תחתונה, B בפינה הימנית-תחתונה, E בפינה השמאלית-עליונה, D בצד הימני, עם פינה חתוכה בצורת ריבוע GHCD בפינה הימנית-עליונה (כל צלע 4 מטר); קו מקווקו אנכי מנקודה T (על הבסיס AB) לנקודה R (על EG) מחלק את המגרש לחלקת הגינה משמאל ולחלקה המיועדת לבנייה מימין; אורך AB הוא 20 מטר">
+          <svg class="img-zoom-btn__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </button>
         <img src="assets/images/land-plot-diagram.png" alt="שרטוט מגרש מלבני ABDE: A בפינה השמאלית-תחתונה, B בפינה הימנית-תחתונה, E בפינה השמאלית-עליונה, D בצד הימני, עם פינה חתוכה בצורת ריבוע GHCD בפינה הימנית-עליונה (כל צלע 4 מטר); קו מקווקו אנכי מנקודה T (על הבסיס AB) לנקודה R (על EG) מחלק את המגרש לחלקת הגינה משמאל ולחלקה המיועדת לבנייה מימין; אורך AB הוא 20 מטר">
       </div>
     </div>
@@ -125,7 +143,7 @@
     <div class="s3-scroll-area" id="s2-scroll-area">
     <div class="s3-scroll-inner">
 
-      <!-- חלק 1 מתוך 5 — סעיף א (שאלה 1) -->
+      <!-- סעיף א (שאלה 1) -->
       <div class="s3-part" id="s2-part-1">
         <p class="s3-body">אורי הציע לחלק את המגרש לשני אזורים: <br>שטח לבניית הבית ושטח לגינה. הפס המקווקו בשרטוט מסמן את קו ההפרדה ביניהם.<br>נתון כי היחס בין אורך AB לאורך AE הוא 2 : 1.</p>
         <p class="scq-qtext-em">א. לפני שאורי יוכל להתחיל בתכנון, עליו לדעת מהו שטח המגרש כולו. חשבו את שטח המגרש.</p>
@@ -177,32 +195,133 @@
         </div>
       </div>
 
-      <!-- חלק 3 מתוך 5 — חלק-ביניים תמונתי, לא-מנוקד (בלי VIQ, בלי
-           progress-question slot). תמונת המהנדסים ממלאת את רוחב-עמודת-
-           הגלילה (מורחבת זמנית ל-40px/40px ע"י s2HideDiagramForInterlude,
-           לאחר שהדיאגרמה מוסתרת — ראו ARCHITECTURE.md § "מסך 3" לתיעוד
-           השיקול המלא מדוע לא בחרנו ב-bleed עם margin שלילי). -->
-      <div class="s3-part" id="s2-part-3">
-        <div class="s2-interlude-frame">
-          <img class="s2-interlude-img" src="assets/images/engineers.jpg" alt="צוות מהנדסים/אדריכלים בשטח, בוחן מפות וכלי מדידה">
-          <div class="s2-interlude-banner info-banner-card">
-            <p class="info-banner-label">עליכם לעזור לצוות בשטח לקבל החלטות מבוססות נתונים על סמך המפות וכלי המדידה.</p>
-            <p class="info-banner-body">כשראו את התוכנית, בני משפחת לוי אמרו שהבית נראה להם קטן מדי ביחס לגינה. הם ביקשו מאורי להקטין את הגינה כך שהיחס בין שטח הגינה לבין שטח הבנייה יהיה 3 : 1.</p>
-          </div>
-        </div>
-        <!-- ⚠️ כפתור "המשך" הוסר (31.08.2026, לפי בקשה מפורשת: "בחלק
-             השלישי איפה שיש את התמונה תוריד את כפתור 'המשך'") — היה
-             שריד מתקופת חשיפה-הדרגתית (progressive reveal) שכבר
-             בוטלה בכל חמשת החלקים (ראו ההערה ליד s2ShowPart שהוסרה,
-             script.js). מטרתו היחידה בפועל הייתה s2RestoreDiagram()
-             (משחזר את הדיאגרמה+פריסת-העמודה אחרי שה-interlude הסתיר
-             אותם) — לא חשיפת-תוכן. הוחלף בטריגר אוטומטי לפי גלילה
-             (s2MaybeRestoreDiagram, ראו script.js) שרץ כשחלק 4 (הסעיף
-             שאחרי ה-interlude) נכנס לתצוגה, כדי לא לאבד את ההתנהגות
-             הזו. -->
-      </div>
+    </div>
+    </div>
 
-      <!-- חלק 4 מתוך 5 — סעיף ג (שאלה 3) -->
+    <div id="s2-p1-hint-overlay" class="scq-hint-overlay" hidden>
+      <div class="scq-hint-popup">
+        <div class="scq-hint-title-row">
+          <p class="scq-hint-title">רמז</p>
+          <img class="scq-hint-bulb" src="assets/images/icon-bulb-outline-white.svg" alt="">
+        </div>
+        <p class="scq-hint-body">נתון אורך הקטע AB. <br>מצאו תחילה את אורך AE.</p>
+        <button class="scq-hint-close" type="button" onclick="s2P1HintClose()">הבנתי</button>
+      </div>
+    </div>
+    <div id="s2-p2-hint-overlay" class="scq-hint-overlay" hidden>
+      <div class="scq-hint-popup">
+        <div class="scq-hint-title-row">
+          <p class="scq-hint-title">רמז</p>
+          <img class="scq-hint-bulb" src="assets/images/icon-bulb-outline-white.svg" alt="">
+        </div>
+        <p class="scq-hint-body">חשבו תחילה את אורך AT.</p>
+        <button class="scq-hint-close" type="button" onclick="s2P2HintClose()">הבנתי</button>
+      </div>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="bottom-bar-inner">
+        <div class="bar-back"><button class="btn-back" id="s2-back" onclick="goTo(1)">חזרה</button></div>
+        <div class="bar-actions"><button class="btn-continue" id="s2-continue" disabled onclick="goTo(3)">המשך</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       מסך 4 — תמונה ממלאת-מסך (engineers.jpg) עם תגית-מידע, data-screen="3",
+       id="s3". ⚠️ נוסף (07.09.2026, לפי בקשה מפורשת) — חלק-הביניים
+       התמונתי שהיה קודם "חלק 3 מתוך 5" בתוך מסך 3 (s2) הוצא למסך עצמאי
+       משלו, גדול, באותו דפוס בדיוק כמו מסך 2 (id="s1", family-home.jpg) —
+       אותן classes ממש (.s1-photo-wrap/.s1-photo-img-frame/.s1-photo-img/
+       .s1-info-banner), לא class נפרד: זה בדיוק אותו סוג-מסך. טקסט-
+       הכרטיס (label+body) הועתק כלשונו מה-.s2-interlude-banner הישן.
+       ========================================================= -->
+  <section class="screen" data-screen="3" id="s3">
+    <!-- ⚠️ הוסר (07.09.2026, לפי בקשה מפורשת: "לא צריך הגדלת תמונה
+         לשתיהן [מסך 2+4], הן מאוד גדולות") — .img-zoom-btn הוסר; התמונה
+         כבר ממלאת-מסך-מלא, אין תועלת בכפתור-הגדלה נוסף. -->
+    <div class="s1-photo-wrap">
+      <div class="s1-photo-img-frame">
+        <img class="s1-photo-img" src="assets/images/engineers.jpg" alt="צוות מהנדסים/אדריכלים בשטח, בוחן מפות וכלי מדידה">
+      </div>
+      <div class="s1-info-banner info-banner-card">
+        <p class="info-banner-label">עליכם לעזור לצוות בשטח לקבל החלטות מבוססות נתונים על סמך המפות וכלי המדידה.</p>
+        <p class="info-banner-body">כשראו את התוכנית, בני משפחת לוי אמרו שהבית נראה להם קטן מדי ביחס לגינה. הם ביקשו מאורי להקטין את הגינה כך שהיחס בין שטח הגינה לבין שטח הבנייה יהיה 3 : 1.</p>
+      </div>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="bottom-bar-inner">
+        <div class="bar-back"><button class="btn-back" id="s3-back" onclick="goTo(2)">חזרה</button></div>
+        <div class="bar-actions"><button class="btn-continue" id="s3-continue" onclick="goTo(4)">המשך</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       מסך 5 — מסך גלילה, "שאלת השיא" סעיפים ג+ד, data-screen="4",
+       id="s4". ⚠️ נוסף (07.09.2026, לפי בקשה מפורשת) — הועברו כלשונם
+       (id-ים פנימיים לא שונו — s2-part-4/5, s2-p4/p5-*, כדי שכל
+       הפונקציות הקיימות ב-script.js — s2P4Check/s2P5Check וכו' —
+       ימשיכו לעבוד בלי שינוי) מתוך מסך 3 (s2) הישן. דיאגרמת המגרש
+       (אותו נכס, אותו alt) קבועה כאן גם-כן, מופע עצמאי משלה (לא
+       משותפת עם מסך 3 — כל מסך-גלילה בפרויקט הזה מחזיק את הדיאגרמה-
+       הקבועה-שלו בעצמו). ⚠️ תוקן (07.09.2026, לפי בקשה מפורשת: "יש 4
+       סעיפים של שאלה, צריך שיהיו 4 שאלות על סרגל ההתקדמות, לא משנה
+       שיש שבירה במסך 4") — ניווט-ההתקדמות **ממשיך** את המספור הגלובלי
+       של מסך 3 (לא מתחיל-מחדש): #s4-progress מציג את אותם 4 הפריטים
+       (א/ב/ג/ד) כמו #s2-progress במסך 3, שניהם מסונכרנים לאותו
+       practiceProgress הגלובלי (script.js) — לא practiceProgress2
+       נפרד. שבירת-המסך (מסך 4, התמונה) באמצע לא משנה את המונה.
+       ========================================================= -->
+  <section class="screen" data-screen="4" id="s4">
+    <nav class="progress-question" id="s4-progress" aria-label="ניווט שאלות">
+      <div class="progress-question__item" data-question="1">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 1</span>
+      </div>
+      <div class="progress-question__connector" data-connector="1"></div>
+      <div class="progress-question__item" data-question="2">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 2</span>
+      </div>
+      <div class="progress-question__connector" data-connector="2"></div>
+      <div class="progress-question__item" data-question="3">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 3</span>
+      </div>
+      <div class="progress-question__connector" data-connector="3"></div>
+      <div class="progress-question__item" data-question="4">
+        <div class="progress-question__icon"></div>
+        <span class="progress-question__label">שאלה 4</span>
+      </div>
+    </nav>
+
+    <div class="gesture-hint-scroll-wrap" id="s4-scroll-gesture" hidden>
+      <div class="gesture-hint">
+        <div class="gesture-hint-ring gesture-hint-ring--big"></div>
+        <div class="gesture-hint-ring gesture-hint-ring--small"></div>
+        <img class="gesture-hint-hand" src="assets/images/gesture-hand-cursor.svg" alt="">
+      </div>
+    </div>
+
+    <div class="s3-fixed-images" id="s4-fixed-images">
+      <div class="s3-img-frame s3-img-frame--diagram">
+        <button class="img-zoom-btn" type="button" aria-label="הגדלת התמונה"
+                data-zoom-src="assets/images/land-plot-diagram.png" data-zoom-alt="שרטוט מגרש מלבני ABDE: A בפינה השמאלית-תחתונה, B בפינה הימנית-תחתונה, E בפינה השמאלית-עליונה, D בצד הימני, עם פינה חתוכה בצורת ריבוע GHCD בפינה הימנית-עליונה (כל צלע 4 מטר); קו מקווקו אנכי מנקודה T (על הבסיס AB) לנקודה R (על EG) מחלק את המגרש לחלקת הגינה משמאל ולחלקה המיועדת לבנייה מימין; אורך AB הוא 20 מטר">
+          <svg class="img-zoom-btn__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <img src="assets/images/land-plot-diagram.png" alt="שרטוט מגרש מלבני ABDE: A בפינה השמאלית-תחתונה, B בפינה הימנית-תחתונה, E בפינה השמאלית-עליונה, D בצד הימני, עם פינה חתוכה בצורת ריבוע GHCD בפינה הימנית-עליונה (כל צלע 4 מטר); קו מקווקו אנכי מנקודה T (על הבסיס AB) לנקודה R (על EG) מחלק את המגרש לחלקת הגינה משמאל ולחלקה המיועדת לבנייה מימין; אורך AB הוא 20 מטר">
+      </div>
+    </div>
+
+    <div class="s3-scroll-area" id="s4-scroll-area">
+    <div class="s3-scroll-inner">
+
+      <!-- סעיף ג (שאלה 1 מקומית) -->
       <div class="s3-part" id="s2-part-4">
         <p class="scq-qtext-em">ג. כמה שטח צריך אורי להעביר מהשטח המיועד לגינה אל השטח המיועד לבנייה כדי לעמוד בבקשתם?</p>
         <div class="viq-answers">
@@ -226,7 +345,7 @@
         </div>
       </div>
 
-      <!-- חלק 5 מתוך 5 — סעיף ד (שאלה 4) -->
+      <!-- סעיף ד (שאלה 2 מקומית) -->
       <div class="s3-part" id="s2-part-5">
         <p class="s3-body">אחרי כמה ימים משפחת לוי התחרטה, והחליטה שהיא רוצה גינה גדולה יותר. הם ביקשו מאורי שהיחס בין שטח הגינה לשטח הבנייה יהיה 1 : 1.</p>
         <p class="scq-qtext-em">ד. בהנחה ששטח הגינה לפני השינוי הוא 80 מ"ר, כמה שטח צריך אורי להעביר מהשטח המיועד לבנייה, אל הגינה, כדי לעמוד בבקשה החדשה?</p>
@@ -254,26 +373,6 @@
     </div>
     </div>
 
-    <div id="s2-p1-hint-overlay" class="scq-hint-overlay" hidden>
-      <div class="scq-hint-popup">
-        <div class="scq-hint-title-row">
-          <p class="scq-hint-title">רמז</p>
-          <img class="scq-hint-bulb" src="assets/images/icon-bulb-outline-white.svg" alt="">
-        </div>
-        <p class="scq-hint-body">נתון אורך הקטע AB. <br>מצאו תחילה את אורך AE.</p>
-        <button class="scq-hint-close" type="button" onclick="s2P1HintClose()">הבנתי</button>
-      </div>
-    </div>
-    <div id="s2-p2-hint-overlay" class="scq-hint-overlay" hidden>
-      <div class="scq-hint-popup">
-        <div class="scq-hint-title-row">
-          <p class="scq-hint-title">רמז</p>
-          <img class="scq-hint-bulb" src="assets/images/icon-bulb-outline-white.svg" alt="">
-        </div>
-        <p class="scq-hint-body">חשבו תחילה את אורך AT.</p>
-        <button class="scq-hint-close" type="button" onclick="s2P2HintClose()">הבנתי</button>
-      </div>
-    </div>
     <div id="s2-p4-hint-overlay" class="scq-hint-overlay" hidden>
       <div class="scq-hint-popup">
         <div class="scq-hint-title-row">
@@ -297,13 +396,36 @@
 
     <div class="bottom-bar">
       <div class="bottom-bar-inner">
-        <div class="bar-back"><button class="btn-back" id="s2-back" onclick="goTo(1)">חזרה</button></div>
-        <!-- מסך אחרון בסיין (וביעד כולו) — כפתור "המשך" הראשי הוא no-op
-             בטוח (goTo(3), TOTAL_SCREENS=3 → אינדקסים תקפים 0-2 בלבד),
-             בדיוק לפי המוסכמה המתועדת כבר בסיינים 1/3 (#s6-continue→
-             goTo(7), #s5-continue→goTo(6)) — יעד-ניווט אמיתי לסוף-היחידה
-             דורש אישור-מוצר, לא הומצא כאן. -->
-        <div class="bar-actions"><button class="btn-continue" id="s2-continue" disabled onclick="goTo(3)">המשך</button></div>
+        <div class="bar-back"><button class="btn-back" id="s4-back" onclick="goTo(3)">חזרה</button></div>
+        <div class="bar-actions"><button class="btn-continue" id="s4-continue" disabled onclick="goTo(5)">המשך</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       מסך 6 — מסך-סיום, מסך מעבר (TransitionScreen), data-screen="5",
+       id="s5". ⚠️ תוקן (07.09.2026, לפי בקשה מפורשת: "מסך אחרון בסיין 6
+       צריך להיות מסך מעבר, אפשר להעתיק ממסך ראשון באותו סיין") — הוחלף
+       הפלייסהולדר-הריק (מ-07.09.2026 המוקדם יותר) במבנה זהה למסך 1
+       (`s0`, ראו למעלה: .transition-content/.transition-title-block/
+       .transition-avatar-wrap) — בלי .transition-bubble (לא סופק
+       טקסט-בועית). דמות-נלווית: אלמנט video יחיד + resolveCharBubbleVideo,
+       אותו דפוס בדיוק כמו s0-avatar (ראו S5_AVATAR_ASSETS, script.js). -->
+  <section class="screen" data-screen="5" id="s5">
+    <div class="transition-content">
+      <div class="transition-title-block">
+        <p class="transition-sub">כל הכבוד!</p>
+        <h2 class="transition-title">השלמת את היחידה בהצלחה!</h2>
+      </div>
+      <div class="transition-avatar-wrap">
+        <video class="transition-avatar" id="s5-avatar" autoplay loop muted playsinline></video>
+      </div>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="bottom-bar-inner">
+        <div class="bar-back"><button class="btn-back" id="s5-back" onclick="goTo(4)">חזרה</button></div>
+        <div class="bar-actions"><button class="btn-continue" id="s5-continue" onclick="goTo(6)">המשך</button></div>
       </div>
     </div>
   </section>
@@ -322,10 +444,15 @@
 
   <!-- ============ GLOBAL — Image zoom modal ============
        מופע-משותף יחיד לכל היחידה, מחוץ לכל .screen, ישירות ב-#app, לפי
-       מפרט 720-templates _global-components.md ("Image zoom"). לא הופעל
-       בפועל אצל אף תמונת-תוכן בסיין הזה — לפי-עקביות עם מסכי-גלילה עם
-       דיאגרמה-קבועה בסיינים 3+5 של הפרויקט הזה (שגם הם לא הוסיפו כפתור
-       זום לדיאגרמת-התוכן שלהם) — ראו ARCHITECTURE.md § "זום-תמונה". -->
+       מפרט 720-templates _global-components.md ("Image zoom"). הופעל
+       (06.09.2026, לפי בקשה מפורשת "על כל תמונה בלומדה חוץ מדמויות") על
+       land-plot-diagram.png (מסכים 3+5, מופע נפרד בכל אחד) — מבטל
+       את החלטת-העקביות הקודמת מול סיינים 3/5, ראו ARCHITECTURE.md
+       § "זום-תמונה". ⚠️ הוסר שוב (07.09.2026, לפי בקשה מפורשת) מ-
+       family-home.jpg (מסך 2) ו-engineers.jpg (מסך 4) — שתי תמונות
+       ממלאות-מסך-מלא, כפתור-הגדלה מיותר שם. -->
+  <!-- המודל הגלובלי (#img-zoom-modal) נשאר בשימוש עבור land-plot-
+       diagram.png בלבד. -->
   <div id="img-zoom-modal" class="img-zoom-modal hidden" aria-hidden="true" data-zoom-close="true">
     <div class="img-zoom-modal__panel" role="dialog" aria-modal="true" aria-label="הגדלת תמונה">
       <button class="img-zoom-close" type="button" data-zoom-close="true" aria-label="סגירת הגדלת תמונה">
@@ -338,6 +465,6 @@
   </div>
 
 </div>
-<script src="script.js?v=20260901b"></script>
+<script src="script.js?v=20260907f"></script>
 </body>
 </html>

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 3</title>
-<link rel="stylesheet" href="styles.css?v=20260901e">
+<link rel="stylesheet" href="styles.css?v=20260907b">
 </head>
 <body>
 <div id="app">
@@ -81,7 +81,32 @@
          בלבד, בלי ולידציה מובנית. class ייעודי חדש (.s1-widget-applet)
          באותם מידות/מיקום בדיוק כמו .s1-widget-placeholder שהוחלף.
          ראו ARCHITECTURE.md § "פלייסהולדר-יישומון" לפירוט המלא. -->
-    <iframe class="s1-widget-applet" title="יישומון יחס — תבנית שוקולד" src="chocolate-ratio-app/index.html" loading="lazy"></iframe>
+    <!-- ⚠️ עודכן (06.09.2026, דיווח: "להזניק אותו על מסך מלא", "לתת
+         ליישומון יותר מקום") — נוסף .s1-widget-wrap/.s1-widget-panel
+         סביב האייפריים כדי לאפשר מצב-הגדלה (toggling class
+         .is-expanded ב-s1WidgetExpandToggle, script.js), בלי לשכפל/
+         לטעון-מחדש את האייפריים (מצב הצביעה חייב להישמר) — אותו
+         אייפריים ממש רק גדל/מתמרכז דרך CSS. כפתור ההגדלה (.img-zoom-btn)
+         וכפתור הסגירה (.img-zoom-close) הם אותם class/אייקון בדיוק
+         כמו הגדלת-תמונה הגלובלית בפרויקט (עקבי חזותית), אבל מנגנון
+         עצמאי (s1WidgetExpandToggle, לא imgZoomOpen/Close) כי אלה
+         משכפלים DOM ("clone") — לא מתאים לאייפריים בעל state חי. -->
+    <div class="s1-widget-wrap" id="s1-widget-wrap">
+      <div class="s1-widget-panel">
+        <iframe class="s1-widget-applet" title="יישומון יחס — תבנית שוקולד" src="chocolate-ratio-app/index.html" loading="lazy"></iframe>
+        <button class="img-zoom-btn" type="button" aria-label="הגדלת היישומון" onclick="s1WidgetExpandToggle(true)">
+          <svg class="img-zoom-btn__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="img-zoom-close" type="button" aria-label="סגירת הגדלת היישומון" onclick="s1WidgetExpandToggle(false)">
+          <svg class="img-zoom-close__icon" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1L14 14M14 1L1 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
 
     <!-- Gesture Hint (Cursor Scroll) — SELF-QA-lomda.md §7, מוגבל לפאנל-
          הגלילה הימני בלבד (לא לכל רוחב המסך, כי הפלייסהולדר בצד שמאל
@@ -298,6 +323,13 @@
              לפי אותה מוסכמה בדיוק כמו scq-img בסיין 2. -->
         <div class="scq-img scq-img--wide-diagram">
           <div class="scq-img-inner scq-img-inner--diagram">
+            <button class="img-zoom-btn" type="button" aria-label="הגדלת התמונה"
+                    data-zoom-src="assets/images/angle-diagram-cd.png" data-zoom-alt="שרטוט זווית ACB עם קטע CD היוצא מקודקוד הזווית, מחלק אותה לזוויות α ו-β">
+              <svg class="img-zoom-btn__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </button>
             <img src="assets/images/angle-diagram-cd.png" alt="שרטוט זווית ACB עם קטע CD היוצא מקודקוד הזווית, מחלק אותה לזוויות α ו-β">
           </div>
         </div>
@@ -357,6 +389,13 @@
       <div class="s3-img-frame">
         <!-- ⚠️ תוקן (31.08.2026, דיווח: "לא מופיעה התמונה של מסך 4") —
              הקובץ בפועל בדיסק הוא .jpg, לא .jpeg. -->
+        <button class="img-zoom-btn" type="button" aria-label="הגדלת התמונה"
+                data-zoom-src="assets/images/purim-gold-tickets.jpg" data-zoom-alt="כרטיסי זהב של הגרלת פורים">
+          <svg class="img-zoom-btn__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </button>
         <img src="assets/images/purim-gold-tickets.jpg" alt="כרטיסי זהב של הגרלת פורים">
       </div>
     </div>
@@ -427,7 +466,7 @@
             <span class="scq-radio"></span>
           </div>
           <div class="scq-opt" role="checkbox" aria-checked="false" tabindex="0" data-id="c" onclick="mcqToggle('s3p3','c')">
-            <span class="scq-opt-text">ההצעה לא הוגנת, כי היחס בין הכספים שהם שילמו הוא 5 : 7, והסכומים 60 ו-60 מייצגים יחס שונה של 1 : 1.</span>
+            <span class="scq-opt-text">ההצעה לא הוגנת, כי היחס בין הכספים שהם שילמו הוא 7 : 5, והסכומים 60 ו-60 מייצגים יחס שונה של 1 : 1.</span>
             <span class="scq-radio"></span>
           </div>
         </div>
@@ -522,6 +561,13 @@
          נשארות קבועות; כאן מתחלפת תמונה אחת). -->
     <div class="s3-fixed-images" id="s5-fixed-images">
       <div class="s3-img-frame">
+        <button class="img-zoom-btn" type="button" aria-label="הגדלת התמונה" id="s5-fixed-img-zoom-btn"
+                data-zoom-src="assets/images/boy-washing-car.jpeg" data-zoom-alt="ילד שוטף מכונית">
+          <svg class="img-zoom-btn__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </button>
         <img id="s5-fixed-img" src="assets/images/boy-washing-car.jpeg" alt="ילד שוטף מכונית">
       </div>
     </div>
@@ -529,8 +575,8 @@
     <div class="s3-scroll-area" id="s5-scroll-area">
     <div class="s3-scroll-inner">
       <div class="s3-part" id="s5-part-1">
-        <p class="scroll-intro-text">נעמי ויוני עבדו יחד בשטיפת מכוניות בשכונה.<br>נעמי עבדה <strong>2 שעות </strong>ויוני עבד <strong>5 שעות.</strong><br>הם החליטו לחלק את הכסף שירוויחו לפי היחס<br>בין מספר השעות שעבד כל אחד (כלומר יחס של 2 : 5).</p>
-        <p class="scq-qtext-em">א. השלימו את המשפטים הבאים: <span style="font-weight:400">אם נועה ויוני ירוויחו יחד </span>210 ש"ח<span style="font-weight:400"> הם יחלקו את הכסף ביניהם בצורה הבאה:</span></p>
+        <p class="scroll-intro-text">נעמי ויוני עבדו יחד בשטיפת מכוניות בשכונה.<br>נעמי עבדה <strong>2 שעות </strong>ויוני עבד <strong>5 שעות.</strong><br>הם החליטו לחלק את הכסף שירוויחו לפי היחס<br>בין מספר השעות שעבד כל אחד (כלומר יחס של 5 : 2).</p>
+        <p class="scq-qtext-em">א. השלימו את המשפטים הבאים: <span style="font-weight:400">אם נעמי ויוני ירוויחו יחד </span>210 ש"ח<span style="font-weight:400"> הם יחלקו את הכסף ביניהם בצורה הבאה:</span></p>
         <!-- ⚠️ תוקן (31.08.2026, דיווח: "למה יש ____ וגם אחרי המסיח יש
              את האינפוט") — התווית הכילה "___" כטקסט מילולי *וגם* input
              נפרד מיד אחריה, כפילות-חזותית של "מקום-למילוי". הוסר ה-___
@@ -539,8 +585,8 @@
              methodica-math-ratio-05-06). -->
         <div class="viq-answers">
           <div class="viq-answer-row">
-            <span class="viq-answer-label">נועה תקבל</span>
-            <input class="viq-input" id="s5-p1-a" type="number" inputmode="numeric" dir="ltr" placeholder=" " aria-label="סכום שנועה תקבל" oninput="s5P1OnInput()">
+            <span class="viq-answer-label">נעמי תקבל</span>
+            <input class="viq-input" id="s5-p1-a" type="number" inputmode="numeric" dir="ltr" placeholder=" " aria-label="סכום שנעמי תקבל" oninput="s5P1OnInput()">
             <span class="viq-answer-unit">ש"ח</span>
           </div>
           <div class="viq-answer-row">
@@ -564,19 +610,19 @@
         <p class="scq-qtext-em">ב. איזה מהמשפטים הבאים מתאר נכונה את החלוקה ביניהם?</p>
         <div class="scq-answers" role="radiogroup" aria-label="אפשרויות תשובה">
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="a" onclick="s5P2Select('a')">
-            <span class="scq-opt-text">נועה ויוני הרוויחו יחד 140 ש"ח, ונועה קיבלה 40 ש"ח</span>
+            <span class="scq-opt-text">נעמי ויוני הרוויחו יחד 140 ש"ח, ונעמי קיבלה 40 ש"ח</span>
             <span class="scq-radio"></span>
           </div>
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="b" onclick="s5P2Select('b')">
-            <span class="scq-opt-text">נועה קיבלה 50 ש"ח, כי היא תמיד מקבלת מחצית מהסכום של יוני</span>
+            <span class="scq-opt-text">נעמי קיבלה 50 ש"ח, כי היא תמיד מקבלת מחצית מהסכום של יוני</span>
             <span class="scq-radio"></span>
           </div>
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="c" onclick="s5P2Select('c')">
-            <span class="scq-opt-text">נועה ויוני הרוויחו יחד 200 ש"ח, ויוני קיבל 100 ש"ח.</span>
+            <span class="scq-opt-text">נעמי ויוני הרוויחו יחד 200 ש"ח, ויוני קיבל 100 ש"ח.</span>
             <span class="scq-radio"></span>
           </div>
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="d" onclick="s5P2Select('d')">
-            <span class="scq-opt-text">נועה קיבלה 60 ש"ח, והסכום הכולל שהרוויחו יחד היה 210 ש"ח</span>
+            <span class="scq-opt-text">נעמי קיבלה 60 ש"ח, והסכום הכולל שהרוויחו יחד היה 210 ש"ח</span>
             <span class="scq-radio"></span>
           </div>
         </div>
@@ -638,8 +684,10 @@
 
   <!-- ============ GLOBAL — Image zoom modal ============
        מופע-משותף יחיד לכל היחידה, מחוץ לכל .screen, ישירות ב-#app, לפי
-       מפרט 720-templates _global-components.md ("Image zoom"). אין
-       עדיין תמונת-תוכן שמפעילה אותו בסיין הזה (לא נתבקש/לא נדרש). -->
+       מפרט 720-templates _global-components.md ("Image zoom"). הופעל
+       (06.09.2026, לפי בקשה מפורשת "על כל תמונה בלומדה חוץ מדמויות") על
+       שלוש תמונות-התוכן במסך 3/4/6 (angle-diagram-cd.png,
+       purim-gold-tickets.jpg, boy/girl-washing-car / lottery-kiosk-siblings). -->
   <div id="img-zoom-modal" class="img-zoom-modal hidden" aria-hidden="true" data-zoom-close="true">
     <div class="img-zoom-modal__panel" role="dialog" aria-modal="true" aria-label="הגדלת תמונה">
       <button class="img-zoom-close" type="button" data-zoom-close="true" aria-label="סגירת הגדלת תמונה">
@@ -652,6 +700,6 @@
   </div>
 
 </div>
-<script src="script.js?v=20260901e"></script>
+<script src="script.js?v=20260907d"></script>
 </body>
 </html>

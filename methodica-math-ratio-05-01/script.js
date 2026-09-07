@@ -68,6 +68,37 @@ function scaleApp() {
 }
 window.addEventListener('resize', scaleApp);
 
+/* ⚠️ נוסף (07.09.2026, בדיקה מקיפה: "כפתור 'צדקתי?' לא תמיד מיושר
+   לשמאל") — הועתק/הותאם מ-methodica-math-ratio-05-05/script.js
+   (currentCanvasScale). getBoundingClientRect() מחזיר פיקסלי-viewport
+   *אחרי* transform:scale() של #app (scaleApp() למעלה) — margin-left,
+   לעומת זאת, מתפרש *לפני* אותו transform ואז מוכפל ב-scale שוב בזמן
+   הרינדור, delta × scale² בפועל. מחלקים ב-scale הנוכחי (נמדד ישירות
+   מרוחב #app בפועל) כדי לקבל בחזרה יחידות מקומיות נכונות. */
+function currentCanvasScale() {
+  const appEl = document.getElementById('app');
+  return appEl ? (appEl.getBoundingClientRect().width / CANVAS_W) : 1;
+}
+
+/* ⚠️ נוסף (07.09.2026, בדיקה מקיפה) — #s2-e-check (.s2-check-btn,
+   align-self:flex-end גלובלי) הוא היחיד בקובץ הזה שהתוכן-שמעליו
+   *ממורכז* (לא נדחס-ימינה כמו שורות VIQ בסיינים אחרים): .s2-eq-diagram
+   הוא width:700px;margin:0 auto בתוך .s2-sec-e הרחב-יותר. align-self:
+   flex-end לבד מצמיד את הכפתור לקצה-השמאלי של *כל הסעיף*, לא לקצה-
+   השמאלי של הדיאגרמה הממורכזת שמעליו — נראה מנותק ממנה. מיישר לפי
+   קצה-שמאל בפועל של .s2-eq-diagram (אותה טכניקה, getBoundingClientRect
+   מחולק ב-currentCanvasScale). */
+function s2EAlignCheckBtn() {
+  const btn = document.getElementById('s2-e-check');
+  const diagram = document.getElementById('s2-eq-diagram');
+  const section = document.getElementById('s2-sec-e');
+  if (!btn || !diagram || !section) return;
+  const scale = currentCanvasScale();
+  const diagramRect = diagram.getBoundingClientRect();
+  const sectionRect = section.getBoundingClientRect();
+  btn.style.marginLeft = Math.max(0, (diagramRect.left - sectionRect.left) / scale) + 'px';
+}
+
 /* ---------- closeAllPopupsAndHints() — bug-fixed version ----------
    לפי סיכום-תהליך-בניית-הלומדה.md §0.3: קורא לפעולת-הסגירה האמיתית
    שכל רכיב-רכיב עצמו משתמש בה כדי להסתיר את עצמו —
@@ -89,6 +120,12 @@ function closeAllPopupsAndHints() {
   document.querySelectorAll('[id$="-hint-overlay"]').forEach(function (el) {
     el.hidden = true;
   });
+  /* ⚠️ נוסף (07.09.2026) — אם יוצאים מהמסך בזמן שהיישומון מוגדל,
+     s2SimExpandToggle(false) מחזיר אותו למקומו המקורי לפני שהמסך
+     מוסתר — כדי לא להשאיר אותו "תקוע" מוגדל/מועתק-במקום-לא-נכון
+     כשחוזרים למסך הזה בהמשך. */
+  if (typeof s2SimExpandToggle === 'function') s2SimExpandToggle(false);
+  if (typeof s6AppletExpandToggle === 'function') s6AppletExpandToggle(false);
 }
 
 function goTo(n) {
@@ -376,11 +413,11 @@ function olyQ1Check() {
 const S1_Q2_FEEDBACK = {
   correct: {
     title: 'נכון!',
-    body: 'במשלחת ב\' יש 40 משתתפות ומשתתפים - כמות המדליות זהות בין המשלחות ועל כל מדליה יש בה לפי היחס הנתון פי 8 יותר משתתפים ממדליות - כלומר 5 כפול 8 שהם 40.'
+    body: 'מכיוון ששתי המשלחות זכו באותו מספר מדליות - משפחת ב\' זכתה ב 5 מדליות ולפי היחס הנתון 1:8 יש בה פי 8 אנשים ממדליות, כלומר<span dir="rtl"> 40 = 5 * 8 </span></span></span>.'
   },
   wrong: {
     title: 'אופס, לא בדיוק, בואו נסביר',
-    body: 'במשלחת ב\' יש 40 משתתפות ומשתתפים - כמות המדליות זהות בין המשלחות ועל כל מדליה יש בה לפי היחס הנתון פי 8 יותר משתתפים ממדליות - כלומר 5 כפול 8 שהם 40.'
+    body: 'מכיוון ששתי המשלחות זכו באותו מספר מדליות - משפחת ב\' זכתה ב 5 מדליות ולפי היחס הנתון 1:8 יש בה פי 8 אנשים ממדליות, כלומר<span dir="rtl"> 40 = 5 * 8 </span></span></span>.'
   }
 };
 
@@ -640,11 +677,11 @@ function s2HideDragGesture() {
 const S2_C_FEEDBACK = {
   correct: {
     title: 'כל הכבוד!',
-    body: 'קיבלנו 10 שורות, אם בכל שורה יש 3 צנוניות ו-4 ראשי חסה אז נקבל:<br><span dir="ltr">3 · 10 = 30</span> צנוניות<br><span dir="ltr">4 · 10 = 40</span> ראשי חסה'
+    body: 'קיבלנו 10 שורות, אם בכל שורה יש 3 צנוניות ו-4 ראשי חסה אז נקבל:<br><span dir="ltr">3 · 10 = 30 צנוניות </span> <br><span dir="ltr">4 · 10 = 40  ראשי חסה</span>'
   },
   wrong: {
     title: 'זה לא מדויק',
-    body: 'קיבלנו 10 שורות, אם בכל שורה יש 3 צנוניות ו-4 ראשי חסה אז נקבל:<br><span dir="ltr">3 · 10 = 30</span> צנוניות<br><span dir="ltr">4 · 10 = 40</span> ראשי חסה'
+    body: 'קיבלנו 10 שורות, אם בכל שורה יש 3 צנוניות ו-4 ראשי חסה אז נקבל:<br><span dir="ltr">3 · 10 = 30 צנוניות </span> <br><span dir="ltr">4 · 10 = 40  ראשי חסה</span>'
   }
 };
 
@@ -935,6 +972,64 @@ const S2_C_AVATAR_ASSETS = {
   'character-2': 'assets/videos/yellow-avatr-asking.mp4'
 };
 
+/* ⚠️ נוסף (07.09.2026, לפי בקשה מפורשת: "אפשרות הגדלה כמו היישומון של
+   השוקולד") — בניגוד ל-.s1-widget-wrap בסיין 3 (שם ה-wrap כבר יושב
+   כילד-ישיר של המסך, לא בתוך אזור-גלילה), .s2-sim-wrap כאן מקונן
+   בתוך .s2-scroll-area (position:absolute + overflow-y:auto —
+   ראו styles.css). position:absolute;inset:0 לבד היה נחתך לגבולות
+   אזור-הגלילה (clipping מ-overflow, לא קשור ל-containing-block),
+   לא ממורכז בקנבס המלא. הפתרון: מזיז בפועל את ה-wrap (עם ה-iframe
+   בתוכו) להיות ילד-ישיר של #s2 בזמן ההגדלה (appendChild/insertBefore
+   רגילים — לא reload של ה-iframe בדפדפנים מודרניים כל עוד ה-src לא
+   נוגע), ומחזיר אותו למקומו המדויק (parent+nextSibling נשמרים)
+   בסגירה — שומר את מצב-הסליידר של היישומון. */
+let s2SimHomeParent = null;
+let s2SimHomeNext = null;
+function s2SimExpandToggle(expand) {
+  const wrap = document.getElementById('s2-sim-wrap');
+  const screen = document.getElementById('s2');
+  if (!wrap || !screen) return;
+  if (expand) {
+    if (wrap.classList.contains('is-expanded')) return;
+    s2SimHomeParent = wrap.parentElement;
+    s2SimHomeNext = wrap.nextSibling;
+    screen.appendChild(wrap);
+    wrap.classList.add('is-expanded');
+  } else {
+    if (!wrap.classList.contains('is-expanded')) return;
+    wrap.classList.remove('is-expanded');
+    if (s2SimHomeParent) s2SimHomeParent.insertBefore(wrap, s2SimHomeNext);
+    s2SimHomeParent = null;
+    s2SimHomeNext = null;
+  }
+}
+
+/* ⚠️ נוסף (07.09.2026, לפי בקשה מפורשת: "אייקון הגדלת יישומון בדומה
+   למה שעשיתה ביישומון אחרים") — אותו מנגנון בדיוק כמו s2SimExpandToggle
+   למעלה (.s6-applet-wrap מקונן בתוך .s6-scroll-area, position:absolute
+   בלבד היה נחתך ע"י overflow של אזור-הגלילה, לכן מזיזים אותו בפועל
+   להיות ילד-ישיר של #s6 בזמן ההגדלה ומחזירים למקומו המדויק בסגירה). */
+let s6AppletHomeParent = null;
+let s6AppletHomeNext = null;
+function s6AppletExpandToggle(expand) {
+  const wrap = document.getElementById('s6-applet-wrap');
+  const screen = document.getElementById('s6');
+  if (!wrap || !screen) return;
+  if (expand) {
+    if (wrap.classList.contains('is-expanded')) return;
+    s6AppletHomeParent = wrap.parentElement;
+    s6AppletHomeNext = wrap.nextSibling;
+    screen.appendChild(wrap);
+    wrap.classList.add('is-expanded');
+  } else {
+    if (!wrap.classList.contains('is-expanded')) return;
+    wrap.classList.remove('is-expanded');
+    if (s6AppletHomeParent) s6AppletHomeParent.insertBefore(wrap, s6AppletHomeNext);
+    s6AppletHomeParent = null;
+    s6AppletHomeNext = null;
+  }
+}
+
 function resetScreenState2() {
   s2MaybeShowScrollGesture();
   resolveCharBubbleVideo('s2-c-avatar', S2_C_AVATAR_ASSETS);
@@ -1003,6 +1098,11 @@ function resetScreenState2() {
     scrollArea.scrollTop = 0;
     setTimeout(function () { s2GestureProgrammaticScroll = false; }, 700);
   }
+
+  /* ⚠️ נוסף (07.09.2026, בדיקה מקיפה) — ראו s2EAlignCheckBtn למעלה.
+     נדחה ל-requestAnimationFrame — המסך עדיין display:none ברגע
+     ש-resetScreenState רץ, אז getBoundingClientRect היה מחזיר 0. */
+  requestAnimationFrame(s2EAlignCheckBtn);
 }
 
 function advanceFromS2() {
@@ -1050,17 +1150,6 @@ const S4_STEPS = {
   4: { correct: '40' }
 };
 
-/* ⚠️ טקסט מדויק מהתסריט (שקפים 17-22, AlternateContent) — כל שורת
-   סיכום היא ציטוט/גזירה ישירה של המסקנה שכל שקף עצמו קובע במפורש. */
-const S4_RECAP = {
-  1: 'אורי קיבל <span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span> מהגולות.',
-  2: 'דן קיבל <span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> מהגולות.',
-  3: 'אורי קיבל 16 גולות.',
-  4: 'דן קיבל 40 גולות.',
-  5: 'דן קיבל 40 גולות.',
-  6: 'דן קיבל 40 גולות.'
-};
-
 /* דמות-מלווה לשלב הפתיחה (שקף 16) — אותם נכסים כמו בשאר המסכים
    (Companion character system), לא נכסי-וידאו חדשים. */
 const S4_INTRO_AVATAR_ASSETS = {
@@ -1106,8 +1195,6 @@ function s4CheckStep(stepNum) {
   });
   const explainEl = document.getElementById('s4-explain-' + stepNum);
   if (explainEl) explainEl.hidden = false;
-  document.getElementById('s4-recap').hidden = false;
-  document.getElementById('s4-recap').innerHTML = S4_RECAP[stepNum];
   s4RefreshPreviewRows(stepNum);
   const btn = document.getElementById('s4-next-' + stepNum);
   if (btn) btn.textContent = 'המשך';
@@ -1244,22 +1331,6 @@ function s4ShowStep(n) {
   // מרגע שהאינטראקציה מתחילה (תואם State-03+ ברפרנס).
   document.getElementById('s4-problem').classList.toggle('s4-problem--dimmed', n >= 1);
 
-  const recapEl = document.getElementById('s4-recap');
-  if (n === 0) {
-    recapEl.hidden = true;
-  } else if (s4State.answers[n] || n === 5 || n === 6) {
-    // השלב הנוכחי כבר נענה, או שהוא לא-אינטראקטיבי (5/6) — מציגים את הסיכום שלו עצמו
-    recapEl.hidden = false;
-    recapEl.innerHTML = S4_RECAP[n];
-  } else if (S4_RECAP[n - 1]) {
-    // השלב הנוכחי עדיין לא נענה — מציגים את הסיכום של השלב הקודם שהושלם
-    // (עקבי עם התסריט: תיבת א' נשארת מלאה כשעונים על ב', וכו')
-    recapEl.hidden = false;
-    recapEl.innerHTML = S4_RECAP[n - 1];
-  } else {
-    recapEl.hidden = true;
-  }
-
   document.getElementById('s4-marbles').hidden = (n !== 6);
   if (n === 6) {
     s4RenderMarbles();
@@ -1284,6 +1355,22 @@ function s4Next(fromStep) {
   const n = fromStep + 1;
   if (n > 6) { s4Finish(); return; }
   s4ShowStep(n);
+}
+
+/* ⚠️ נוסף (07.09.2026, לפי בקשה מפורשת) — כפתור "חזרה" של המסך עצמו
+   (#s4-back, בסרגל התחתון) היה onclick="goTo(3)" ישיר-תמיד. עכשיו:
+   בזמן שהתרגול-המודרך באמצע (s4State.step 2-6), "חזרה" מציג מחדש רק
+   את השלב הקודם (s4ShowStep, אותה פונקציה ששולפת גם קדימה) — לא יוצא
+   מהמסך. רק כש-step===1 (הכרטיס הראשון) או step===0 (טרם התחיל),
+   "חזרה" מבצע ניווט-מסך רגיל. s4ShowStep לא נוגעת ב-s4State.answers/
+   נעילת-הפילים כלל — חזרה לשלב קודם רק *מציגה* אותו כפי-שהוא (כבר
+   נענה+נעול), לא פותחת-מחדש לענות שוב. */
+function s4BackOrPrevScreen() {
+  if (s4State.step > 1) {
+    s4ShowStep(s4State.step - 1);
+  } else {
+    goTo(3);
+  }
 }
 
 function s4Finish() {
@@ -1584,29 +1671,18 @@ function s6ToggleReveal(n) {
   }
 }
 
+/* ⚠️ תוקן (07.09.2026, לפי בקשה מפורשת: "התוכן לא צריך לעלות בהדרגה")
+   — s6-q2 גלויה תמיד מההתחלה עכשיו (index.html), אז הוסר החשיפה-
+   וגלילה-היזומה שהיו כאן (nextEl.hidden=false + scrollIntoView) —
+   אותו עיקרון בדיוק כמו s4 (ראו ההערה ליד s4MaybeShowNotebookGesture:
+   "אין כאן שום scrollTo/scrollIntoView יזום-קוד"). הלומד/ת גוללים
+   בעצמם. */
 function s6Finish(n) {
   const cfg = S6_Q[n];
   document.getElementById(cfg.checkBtn).disabled = true;
   if (cfg.hintBtn) document.getElementById(cfg.hintBtn).disabled = true;
   updateS6Qnav();
-  if (cfg.next) {
-    const nextEl = document.getElementById('s6-q' + cfg.next);
-    if (nextEl && nextEl.hidden) {
-      nextEl.hidden = false;
-      s6MaybeShowScrollGesture();
-      /* QA 19.08.2026: גוללים אל תיבת-המשוב-הגלויה של השאלה הקודמת
-         (אם קיימת), לא אל השאלה החדשה עצמה — אחרת תיבת-המשוב הסטטית
-         (יושבת בתחתית השאלה הקודמת) נדחפת מעל שולי-אזור-הראייה.
-         QA 20.08.2026: הדגל למטה מבדיל את הגלילה-היזומה-הזו מגלילה
-         אמיתית של הלומד/ת — ראו ההערה המלאה ליד s6MaybeShowScrollGesture. */
-      s6GestureProgrammaticScroll = true;
-      setTimeout(function () { s6GestureProgrammaticScroll = false; }, 700);
-      requestAnimationFrame(function () {
-        const prevFb = nextEl.previousElementSibling && nextEl.previousElementSibling.querySelector('.scq-fb-box.visible');
-        (prevFb || nextEl).scrollIntoView({ block: 'start', behavior: 'smooth' });
-      });
-    }
-  } else {
+  if (!cfg.next) {
     document.getElementById('s6-continue').disabled = false;
   }
 }
@@ -1634,14 +1710,11 @@ function s6HintClose() { document.getElementById('s6-q2-hint-overlay').hidden = 
 /* Gesture Hint — Cursor Scroll (SELF-QA-lomda.md §7), אותו מנגנון
    בדיוק כמו s1MaybeShowScrollGesture/s2MaybeShowScrollGesture. */
 let s6GestureShown = false;
-/* QA 19.08.2026: אותו תיקון בדיוק כמו s1MaybeShowScrollGesture — נבדק
-   בפועל אם יש מה לגלול לפני הצגת הרמז. נקראת שוב מתוך s6Finish בזמן
-   חשיפת שאלה 2.
-   QA 20.08.2026: תוקן שוב — המאזין החד-פעמי לא הבחין בין גלילה
-   אמיתית לגלילה **פרוגרמטית** שנגרמת מה-scrollIntoView שנוסף
-   ב-s6Finish (19.08.2026, לגלילה אל תיבת-המשוב הקודמת) — בדיוק אותו
-   באג ואותו תיקון כמו s1MaybeShowScrollGesture. */
-let s6GestureProgrammaticScroll = false;
+/* ⚠️ פושט (07.09.2026) — s6GestureProgrammaticScroll הוסר: הדגל שימש
+   רק להבחין בין גלילה-אמיתית לגלילה-היזומה שהייתה ב-s6Finish (חשיפת
+   שאלה 2 + scrollIntoView, הוסרו — ראו שם). אחרי ההסרה, אין עוד שום
+   scrollTo/scrollIntoView יזום-קוד במסך הזה — אותו מצב בדיוק כמו s4
+   (ראו ההערה ליד s4MaybeShowNotebookGesture), אז אין יותר צורך בדגל. */
 function s6MaybeShowScrollGesture() {
   /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
   requestAnimationFrame(function () {
@@ -1656,14 +1729,8 @@ function s6MaybeShowScrollGesture() {
 
   });}
 function s6HideGestureOnScroll() {
-  const scrollArea = document.getElementById('s6-scroll-area');
   const gesture = document.getElementById('s6-scroll-gesture');
-  if (!scrollArea || !gesture) return;
-  if (s6GestureProgrammaticScroll) {
-    scrollArea.addEventListener('scroll', s6HideGestureOnScroll, { once: true });
-    return;
-  }
-  gesture.hidden = true;
+  if (gesture) gesture.hidden = true;
 }
 
 function resetScreenState6() {
@@ -1692,7 +1759,6 @@ function resetScreenState6() {
       if (revealBtn) { revealBtn.hidden = true; revealBtn.textContent = 'התשובה הנכונה'; }
     }
   });
-  document.getElementById('s6-q2').hidden = (s6Outcome[1] === null);
   document.getElementById('s6-continue').disabled = (s6Outcome[2] === null);
   updateS6Qnav();
   s6MaybeShowScrollGesture();
@@ -1812,9 +1878,22 @@ document.addEventListener('click', function (e) {
   imgZoomClose();
 });
 
+/* ⚠️ נוסף (07.09.2026) — סגירת מצב-הגדלת-היישומון (s2-sim-wrap) בלחיצה
+   על הרקע (מחוץ ל-.s2-sim-panel המורחב), אותה מוסכמה כמו סגירת
+   img-zoom-modal בלחיצה מחוץ ל-panel. */
+document.addEventListener('click', function (e) {
+  const wrap = document.getElementById('s2-sim-wrap');
+  if (wrap && wrap.classList.contains('is-expanded') && e.target === wrap) {
+    s2SimExpandToggle(false);
+  }
+});
+
 document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Escape') return;
   const modal = document.getElementById('img-zoom-modal');
-  if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) imgZoomClose();
+  if (modal && !modal.classList.contains('hidden')) imgZoomClose();
+  const simWrap = document.getElementById('s2-sim-wrap');
+  if (simWrap && simWrap.classList.contains('is-expanded')) s2SimExpandToggle(false);
 });
 
 /* אתחול */

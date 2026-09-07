@@ -471,7 +471,7 @@ function resetScreenState0() {
    (משולש שווה-שוקיים ABC). חלק א' (VIQ, 3 קלטים) → חלק ב' (SCQ, 3
    אפשרויות). תמונת המשולש קבועה בצד שמאל לכל אורך שני החלקים.
    ========================================================= */
-const VIQ_CFG_S1P1_BODY = 'א. סכום זוויות במשולש הוא <span dir="ltr">180°</span>.<br>המשולש ABC הוא שווה שוקיים. היחס בין זווית הראש לסכום זוויות הבסיס הוא 3 : 1.<br>נוכל למצוא את גודלה של זווית הראש <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">4</span></span> · 180 = 45°</span><br>לכן <span dir="ltr"> ∢A = 45°</span>.';
+const VIQ_CFG_S1P1_BODY = 'א. סכום זוויות במשולש הוא <span dir="ltr">180°</span>.<br>המשולש ABC הוא שווה שוקיים. היחס בין זווית הראש לסכום זוויות הבסיס הוא 3 : 1.<br>נוכל למצוא את גודלה של זווית הראש <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">4</span></span> · 180 = 45°</span><br>לכן <span dir="ltr"> ∢A = 45°</span>.<br>מכיוון ששתי הזוויות הנותרות זהות, נחלק 135 מעלות ב-2 ונמצא שכל אחת מהן בת 67.5 מעלות.';
 
 /* ⚠️ הוסרה s1ShowPart (20.08.2026, לפי בקשה מפורשת: "התוכן לא יעלה
    בהדרגתיות") — שני החלקים גלויים תמיד (index.html, hidden הוסר).
@@ -487,7 +487,7 @@ const VIQ_CFG_S1P1 = {
 function s1P1OnInput() { viqOnInput('s1p1'); }
 function s1P1Check() { viqCheck('s1p1'); }
 
-const SCQ_CFG_S1P2_BODY = 'ב. נמצא את סכום שתי זוויות הבסיס <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">4</span></span> · 180 = 135°</span><br>מכיוון שהן שוות, גודלה של כל זווית הוא <span dir="ltr">135 ÷ 2 = 67.5°</span>, לכן <span dir="ltr">67.5° = ∢B</span>.<br>האדריכל הצעיר אינו צודק.';
+const SCQ_CFG_S1P2_BODY = 'ב. נמצא את סכום שתי זוויות הבסיס <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">4</span></span> · 180 = 135°</span><br>מכיוון שהן שוות, גודלה של כל זווית הוא <span dir="ltr">135 ÷ 2 = 67.5°</span>, לכן <span dir="ltr"><span dir="ltr">∢B = 67.5°</span></span>.<br>האדריכל הצעיר אינו צודק.';
 const SCQ_CFG_S1P2 = {
   containerSel: '#s1-part-2',
   correctId: 'b',
@@ -554,10 +554,31 @@ function s1MaybeShowScrollGesture() {
 
   });}
 
+/* ⚠️ נוסף (07.09.2026, דיווח: "למה הכפתור של 'צדקתי' זרוק כך?? כדאי
+   ליישר לכפתור 'צדקתי' של סעיף ב") — סעיף א' (#s1-part-1) בנוי
+   .viq-answers/.viq-answer-row (עמודת שורות-זווית צרה, לא .scq-answers
+   כמו סעיף ב'), ולא היה לו שום לוגיקת-יישור — .s3-inline-btn נשאר
+   ב-align-self:flex-end הגלובלי, שמצמיד אותו לקצה-שמאל של *כל* #s1-part-1
+   (רוחב-מלא), לא לקצה-שמאל הצר בפועל של עמודת-הקלטים. אותה טכניקה
+   בדיוק כמו s3AlignHintRow למטה (leftmost .viq-input, getBoundingClientRect,
+   מחולק ב-currentCanvasScale נגד באג ה-scale² המתועד שם). */
+function s1P1AlignCheckBtn() {
+  const btn = document.getElementById('s1-p1-check');
+  const inputs = document.querySelectorAll('#s1-part-1 .viq-input');
+  const part = document.getElementById('s1-part-1');
+  if (!btn || !inputs.length || !part) return;
+  const scale = currentCanvasScale();
+  const leftmost = Math.min.apply(null, Array.prototype.map.call(inputs, function (i) { return i.getBoundingClientRect().left; }));
+  const partRect = part.getBoundingClientRect();
+  btn.style.marginLeft = Math.max(0, (leftmost - partRect.left) / scale) + 'px';
+}
+
 function resetScreenState1() {
   setCurrentQuestion(0);
   syncPracticeProgressNav(document.getElementById('s1'));
   s1MaybeShowScrollGesture();
+  requestAnimationFrame(equalizeScqOptWidths);
+  requestAnimationFrame(s1P1AlignCheckBtn);
 }
 
 /* =========================================================
@@ -567,7 +588,7 @@ function resetScreenState1() {
    (28%/67% מרוחב-הדיאגרמה — נמדד ישירות מהשקף המעובד, ראו CSS/
    ARCHITECTURE.md). אין רמז — לא נמצא טקסט-רמז מפורש בתסריט.
    ========================================================= */
-const VIQ_CFG_S2_BODY = 'היחס בין שטח משולש ABD לשטח משולש ACD הוא<br>3 : 1. שטח <span dir="ltr">ABC = 64</span> סמ"ר.<br>נחשב את שטחי המשולשים:<br>שטח ACD הוא <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">4</span></span> · 64 = 48</span><br>ושטח ABD הוא <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">4</span></span> · 64 = 16</span>.<br>AE שווה 8 ס"מ, והוא גובה במשולש ACD, לכן:<br><span dir="ltr"><span class="frac"><span class="frac-num">8·CD</span><span class="frac-den">2</span></span> = 48</span>, <span dir="ltr">4CD = 48</span>, לכן <span dir="ltr">CD = 12</span> ס"מ.<br>לשני המשולשים (ACD ו-ABD) יש אותו גובה.<br>יחס הצלעות הנפגשות עם הגובה יהיה כמו יחס השטחים (3 : 1).<br>לכן – <bdi>BD = 12 : 3 = 4</bdi>.';
+const VIQ_CFG_S2_BODY = 'היחס בין שטח משולש ACD לשטח משולש ABD הוא<br>3 : 1. <br> שטח ABC הוא: <span dir="ltr">ABC = <span dir="rtl">64 סמ"ר</span></span>.<br>נחשב את שטחי המשולשים:<br>שטח ACD הוא <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">4</span></span> · 64 = 48</span><br>ושטח ABD הוא <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">4</span></span> · 64 = 16</span>.<br>AE שווה 8 ס"מ, והוא גובה במשולש ACD, לכן:<br><span dir="ltr"><span class="frac"><span class="frac-num">8·CD</span><span class="frac-den">2</span></span> = 48</span>, <span dir="ltr">4CD = 48</span>, <span dir="ltr">לכן CD = <span dir="rtl">12 ס"מ</span></span>.<br>לשני המשולשים (ACD ו-ABD) יש אותו גובה.<br>יחס הצלעות הנפגשות עם הגובה יהיה כמו יחס השטחים (3 : 1).<br>לכן – <span dir="ltr">BD = 12 : 3 = 4</span>.';
 /* ⚠️ תוקן (31.08.2026, לפי בקשה מפורשת: "אין צורך בשני כפתורים,
    ה'המשך' בסרגל התחתון צריך להיות 'צדקתי?' לפני המענה ו'המשך' אחריו")
    — checkBtn מצביע עכשיו על #s2-continue (כפתור הסרגל התחתון) במקום
@@ -600,7 +621,7 @@ function resetScreenState2() {
    אפשרויות). תמונת פחיות-הצבע קבועה בצד שמאל לכל אורך שני החלקים.
    זהו המסך האחרון בסיין.
    ========================================================= */
-const VIQ_CFG_S3P1_BODY = 'א. נסמן ב-x את סך הליטרים של הצבע "ירוק זית" שהתקבל.<br>סכום חלקי היחס הוא: <span dir="ltr">5 + 3 + 2 = 10</span><br>לכן הצבע השחור מהווה <span class="frac"><span class="frac-num">2</span><span class="frac-den">10</span></span> מהתערובת.<br>נסמן ב-x את כמות הליטרים של התערובת ונבנה משוואה: <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">10</span></span> · x = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">2</span><span class="frac-den">10</span></span> ונקבל: <span dir="ltr">x = 60</span>.<br>לכן, יש 60 ליטרים של צבע ירוק זית.<br>הצבע הצהוב מהווה <span class="frac"><span class="frac-num">5</span><span class="frac-den">10</span></span> מהתערובת. מדובר במחצית מהתערובת לכן יש 30 ליטרים של צבע צהוב בתערובת.<br>מסקנה: יש <span dir="ltr">60 − 12 − 30 = 18</span> ליטרים<br>של צבע כחול בתערובת.';
+const VIQ_CFG_S3P1_BODY = 'א. נסמן ב-x את סך הליטרים של הצבע "ירוק זית" שהתקבל.<br>סכום חלקי היחס הוא: <span dir="ltr">5 + 3 + 2 = 10</span><br>לכן הצבע השחור מהווה <span class="frac"><span class="frac-num">2</span><span class="frac-den">10</span></span> מהתערובת.<br>נסמן ב-x את כמות הליטרים של התערובת ונבנה משוואה: <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">10</span></span> · x = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">2</span><span class="frac-den">10</span></span> ונקבל: <span dir="ltr">x = 60</span>.<br>לכן, יש 60 ליטרים של צבע ירוק זית.<br>הצבע הצהוב מהווה <span class="frac"><span class="frac-num">5</span><span class="frac-den">10</span></span> מהתערובת. מדובר במחצית מהתערובת לכן יש 30 ליטרים של צבע צהוב בתערובת.<br>מסקנה: יש <span dir="ltr">60 − 12 − 30 = ליטרים 18</span><br>של צבע כחול בתערובת.';
 
 /* ⚠️ הוסרה s3ShowPart (20.08.2026, לפי בקשה מפורשת) — שני החלקים
    גלויים תמיד. resetScreenState3 כבר קורא ל-s3MaybeShowScrollGesture
@@ -666,10 +687,72 @@ function s3MaybeShowScrollGesture() {
 
   });}
 
+/* ⚠️ נוסף (07.09.2026, דיווח: "הכפתורים לא מיושרים לפינה השמאלית של
+   המלבנים של המסיחים") — .btn-hint-row מיושר ב-align-self:flex-end
+   (כלל גלובלי, לא שונה) שמצמיד אותו לשמאל *הכלל של .s3-part-1* —
+   שדות-הקלט (.viq-input, 180px קבוע) לא ממלאים את כל הרוחב הזה, כל
+   שורה נארזת לימין לפי אורך-התווית שלה (תוויות שונות = שדות בעומק-
+   שמאל שונה בין השורות). נמדד בפועל (getBoundingClientRect, אותה
+   טכניקה כמו ב-methodica-math-ratio-05-02) קצה-שמאל של שדה-הקלט
+   הרחוק-ביותר שמאלה (⚠️ תוקן 07.09.2026 שוב, לפי סימון-בתמונה מפורש —
+   היה שדה-הקלט *האחרון* בלבד, לא בהכרח הרחוק ביותר: שורה 1 ("מהו סך
+   כל...") עם התווית הארוכה ביותר דוחפת את השדה שלה רחוק יותר שמאלה
+   מהשורות הקצרות מתחתיה — Math.min על קצוות-שמאל *כל* השדות, לא רק
+   האחרון) ומוחל כ-margin-left. */
+/* ⚠️ תוקן (07.09.2026, דיווח: "שיבשת את הכול" — מסך אחר, אותו באג-
+   מקור) — getBoundingClientRect מחזיר פיקסלי-viewport, כלומר *אחרי*
+   ה-transform:scale() של #app (scaleApp(), למעלה בקובץ הזה) — כבר
+   מוכפלים ב-scale הנוכחי. margin-left מתפרש *לפני* אותו transform
+   ואז מוכפל ב-scale שוב בזמן הרינדור בפועל — delta × scale² בפועל,
+   לא delta. על מסך גדול (scale>1) זה יוצר margin ענק ושובר את
+   הפריסה. עוזר משותף: קורא את ה-scale הנוכחי ישירות מרוחב #app
+   בפועל (אותה טכניקה שכבר קיימת ב-clampPopupPosition, ראו למטה
+   בקובץ), לא מהנחה על innerWidth. */
+function currentCanvasScale() {
+  const appEl = document.getElementById('app');
+  return appEl ? (appEl.getBoundingClientRect().width / CANVAS_W) : 1;
+}
+
+function s3AlignHintRow() {
+  const row = document.querySelector('#s3-part-1 .btn-hint-row');
+  const inputs = document.querySelectorAll('#s3-part-1 .viq-input');
+  const part = document.getElementById('s3-part-1');
+  if (!row || !inputs.length || !part) return;
+  const scale = currentCanvasScale();
+  const leftmost = Math.min.apply(null, Array.prototype.map.call(inputs, function (i) { return i.getBoundingClientRect().left; }));
+  const partRect = part.getBoundingClientRect();
+  row.style.marginLeft = Math.max(0, (leftmost - partRect.left) / scale) + 'px';
+}
+
+/* ⚠️ נוסף (07.09.2026, דיווח: "המלבנים של המסיחים מאוד גדולים") —
+   אותה טכניקה בדיוק כמו methodica-math-ratio-05-02 (equalizeScqOptWidths
+   שם): מודד רוחב-תוכן טבעי לכל .scq-opt בתוך קבוצה שסומנה
+   .scq-answers--fit ומיישם את הרחב ביותר על כולם, ואז מיישר את שורת-
+   הכפתור הבאה (.s3-inline-btn *או* .btn-hint-row — שני הדפוסים
+   הקיימים בפרויקט לכפתור-בדיקה) לקצה-שמאל של הפילים המצומצמים. */
+function equalizeScqOptWidths() {
+  document.querySelectorAll('.scq-answers--fit').forEach(function (group) {
+    const opts = Array.prototype.slice.call(group.querySelectorAll('.scq-opt'));
+    if (!opts.length) return;
+    opts.forEach(function (o) { o.style.width = ''; });
+    const maxWidth = Math.max.apply(null, opts.map(function (o) { return o.offsetWidth; }));
+    opts.forEach(function (o) { o.style.width = maxWidth + 'px'; });
+
+    const next = group.nextElementSibling;
+    if (next && (next.classList.contains('s3-inline-btn') || next.classList.contains('btn-hint-row'))) {
+      const scale = currentCanvasScale();
+      const optRect = opts[0].getBoundingClientRect();
+      const partRect = group.parentElement.getBoundingClientRect();
+      next.style.marginLeft = Math.max(0, (optRect.left - partRect.left) / scale) + 'px';
+    }
+  });
+}
+
 function resetScreenState3() {
   setCurrentQuestion(2);
   syncPracticeProgressNav(document.getElementById('s3'));
   s3MaybeShowScrollGesture();
+  requestAnimationFrame(s3AlignHintRow);
 }
 
 /* SCQ_CFG/VIQ_CFG הגלובליים — מוגדרים כאן (אחרי כל שלושת המסכים),

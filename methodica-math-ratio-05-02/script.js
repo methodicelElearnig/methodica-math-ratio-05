@@ -728,6 +728,12 @@ function resetScreenState3() {
      (goTo קוראת ל-resetScreenState *לפני* target.classList.add('active')),
      אז offsetWidth היה נמדד כ-0 אם היינו קוראים ישירות. */
   requestAnimationFrame(equalizeTfBtnWidths);
+  /* ⚠️ נוסף (07.09.2026, דיווח: "גודל המלבנים של המסיחים לא תקין, גדול
+     יותר מדי" על .scq-answers של s3-part-2) — נשכח כאן בטעות כש-
+     equalizeScqOptWidths()/scq-answers--fit נוספו למסך 5 (resetScreenState4
+     למטה); .scq-opt של מסך 4 (s3-part-2) נשאר עם .scq-answers רגיל
+     (width:100% גלובלי) ולא קיבל את הצמצום-לרוחב-תוכן. */
+  requestAnimationFrame(equalizeScqOptWidths);
 }
 
 /* =========================================================
@@ -779,10 +785,64 @@ function s4MaybeShowScrollGesture() {
 
   });}
 
+/* ⚠️ נוסף (06.09.2026, דיווח: "המלבנים ממורחים על כל רוחב המסך, צריך
+   שיתאימו לאורך המסיח הגדול ביותר") — אותה טכניקה בדיוק כמו
+   equalizeTfBtnWidths למעלה, רק על .scq-opt בתוך קבוצות שסומנו
+   .scq-answers--fit (לא כל .scq-answers בפרויקט — .scq-opt הגלובלי
+   נשאר width:100% כרפרנס-משותף, ראו הערה ב-styles.css). */
+function equalizeScqOptWidths() {
+  document.querySelectorAll('.scq-answers--fit').forEach(function (group) {
+    const opts = Array.prototype.slice.call(group.querySelectorAll('.scq-opt'));
+    if (!opts.length) return;
+    opts.forEach(function (o) { o.style.width = ''; });
+    const maxWidth = Math.max.apply(null, opts.map(function (o) { return o.offsetWidth; }));
+    opts.forEach(function (o) { o.style.width = maxWidth + 'px'; });
+
+    /* ⚠️ נוסף (07.09.2026, דיווח: "כפתור 'צדקתי?' נשאר זרוק לגמרי
+       לשמאל, תמיד היה מיושר לנקודת-הסיום של מלבן המסיח") — .s3-inline-
+       btn מיושר ב-align-self:flex-end (כלל גלובלי, לא שונה) שהצמיד
+       אותו לשמאל *הכלל של .s4-part* — לפני התיקון הזה .scq-answers
+       מילא את כל הרוחב הזה, אז זה במקרה חפף לקצה-השמאלי של תיבת-
+       המסיחים. עכשיו שהפילים צרים יותר, נמדד ההפרש בפועל (getBoundingClientRect,
+       פיקסלים אמיתיים — לא הנחה על כיוון RTL) ומוחל כ-margin-left על
+       הכפתור, כדי שקצה-שמאל שלו יחפוף מחדש לקצה-שמאל של הפילים,
+       בלי לשנות את גודל-הכפתור עצמו (נשאר קומפקטי, עקבי עם כל שאר
+       כפתורי "צדקתי?" בפרויקט). */
+    /* ⚠️ תוקן (07.09.2026) — נמדד היה group (.scq-answers) עצמו, שנשאר
+       width:100% (לא שונה, רק .scq-opt הפנימי צומצם) — הרוחב-המלא-
+       הזה גרם ל-groupRect.left להיות זהה בערך ל-partRect.left, כך
+       ש-margin-left יצא ~0 והכפתור נשאר תקוע בשמאל-הרחוק (הבאג
+       שדווח בתמונה). נמדד עכשיו opts[0] (הפיל הראשון) — כל הפילים
+       כבר באותו רוחב+יישור-ימני, אז יש להם את אותו קצה-שמאל בדיוק. */
+    /* ⚠️ תוקן שוב (07.09.2026, דיווח: "שיבשת את הכול" — מסך אחר, אותו
+       באג-מקור) — getBoundingClientRect מחזיר פיקסלי-viewport, כלומר
+       *אחרי* ה-transform:scale() של #app (scaleApp(), script.js
+       הראשי) — הם כבר מוכפלים ב-scale הנוכחי. margin-left, לעומת
+       זאת, מתפרש *לפני* אותו transform (יחידות מקומיות של #app), ואז
+       מוכפל ב-scale שוב בזמן הרינדור בפועל — התוצאה בפועל הייתה
+       delta × scale² (לא delta), מה שעל מסך גדול/מוגדל (scale>1)
+       יוצר margin ענק ושובר את הפריסה. מחלקים כאן ב-scale הנוכחי
+       (נמדד ישירות מרוחב #app בפועל, לא בהנחה על innerWidth) לפני
+       ההחלה, כדי לקבל בחזרה יחידות מקומיות נכונות. */
+    const checkBtn = group.nextElementSibling;
+    if (checkBtn && checkBtn.classList.contains('s3-inline-btn')) {
+      const appEl = document.getElementById('app');
+      const scale = appEl ? (appEl.getBoundingClientRect().width / CANVAS_W) : 1;
+      const optRect = opts[0].getBoundingClientRect();
+      const partRect = group.parentElement.getBoundingClientRect();
+      checkBtn.style.marginLeft = Math.max(0, (optRect.left - partRect.left) / scale) + 'px';
+    }
+  });
+}
+
 function resetScreenState4() {
   setCurrentQuestion(3);
   syncPracticeProgressNav(document.getElementById('s4'));
   s4MaybeShowScrollGesture();
+  /* ⚠️ נדחה ל-requestAnimationFrame — אותה סיבה בדיוק כמו
+     equalizeTfBtnWidths (resetScreenState3 למעלה): המסך עדיין
+     display:none כש-resetScreenState רץ, אז offsetWidth היה 0. */
+  requestAnimationFrame(equalizeScqOptWidths);
 }
 
 /* =========================================================

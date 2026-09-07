@@ -471,7 +471,7 @@ img { display: block; max-width: none; }
   align-items: flex-start; /* RTL column: flex-start = פיזית ימין */
   width: 604px;
   max-width: 100%;
-  gap: 12px;
+  gap: 6px;
 }
 
 /* =========================================================
@@ -1272,14 +1272,70 @@ img { display: block; max-width: none; }
    (460×320px), class נפרד כדי לא לצמד את שני המסכים (עקבי עם ההיגיון
    שכבר קיים מאחורי .s6-applet-placeholder הנפרד). ה-border-radius/
    הגבול כבר מגיעים מתוך תוכן ה-iframe עצמו (geogbra-app/index.html). */
-.s2-sim-applet {
+/* ⚠️ תוקן (07.09.2026, לפי בקשה מפורשת: "אפשרות הגדלה כמו היישומון של
+   השוקולד") — המידות הקבועות (650×320) עברו מ-.s2-sim-applet עצמו
+   ל-.s2-sim-wrap החדש (עוטף); .s2-sim-applet עכשיו inset:0 בתוך
+   .s2-sim-panel, כדי שיוכל להתמלא-לגודל-הפאנל גם במצב-רגיל וגם
+   במצב-מוגדל (80%×75% מהקנבס) בלי לשכפל/לטעון-מחדש את ה-iframe —
+   אותו מנגנון בדיוק כמו .s1-widget-wrap/.s1-widget-panel ב-methodica-
+   math-ratio-05-03/styles.css (s1WidgetExpandToggle). */
+.s2-sim-wrap {
+  position: relative;
   flex-shrink: 0;
   width: 650px;
   max-width: 100%;
   height: 320px;
+}
+.s2-sim-panel { position: relative; width: 100%; height: 100%; }
+.s2-sim-applet {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   border: none;
   box-sizing: border-box;
 }
+/* ⚠️ תוקן (07.09.2026, דיווח: "העדשה המגדילה מכסה את המונה/כפתור-
+   הרענון בפינה הימנית") — .img-zoom-btn הגלובלי הוא right:10px
+   (כלל-פרויקט, מתאים לתמונות רגילות), אבל הכותרת הפנימית של
+   geogbra-app (מונה חסה:צנונית + כפתור-רענון, ראו geogbra-app/
+   index.html) יושבת גם היא בצד ימין (RTL start) — התנגשות. הוזז
+   ל-left:10px, סימטרי לכפתור-הסגירה (.img-zoom-close, גם הוא
+   left-קבוע) שמחליף אותו במצב-מוגדל, כדי לפנות את כל הצד הימני
+   לכותרת הפנימית של היישומון. */
+.s2-sim-panel .img-zoom-btn { display: flex; right: auto; left: 10px; }
+.s2-sim-panel .img-zoom-close { display: none; }
+/* ⚠️ תוקן (07.09.2026, דיווח: "בכלל לא גדל, פשוט קפץ למעלה, נשאר
+   באותו גודל, שיבש את המסך המקורי") — .s2-sim-wrap הבסיסי (למעלה)
+   מגדיר width:650px/height:320px *מפורשות*; .is-expanded הוסיף
+   inset:0 בלי לבטל אותן — position:absolute עם גם width/height
+   מפורשים וגם inset:0 הוא מצב over-constrained: הדפדפן משאיר את
+   המידות הקבועות (650×320, קטן!) ומתעלם מ-right/bottom, כך שהקופסה
+   (כולל רקע-הבד-האטום) רק "קפצה" ל-top:0/left:0 של #s2 בלי לגדול
+   בכלל, ובלי לכסות את שאר המסך — בדיוק שני חלקי הדיווח. width/
+   height:auto מפורש כאן משחרר את האילוץ, כדי ש-inset:0 באמת ימתח
+   את ה-wrap (אחרי ה-reparent ל-#s2, ראו script.js) למלוא המסך. */
+.s2-sim-wrap.is-expanded {
+  position: absolute;
+  inset: 0;
+  width: auto; height: auto;
+  z-index: 950;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.78);
+}
+.s2-sim-wrap.is-expanded .s2-sim-panel {
+  width: 80%;
+  height: 75%;
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.s2-sim-wrap.is-expanded .s2-sim-panel .img-zoom-btn { display: none; }
+.s2-sim-wrap.is-expanded .s2-sim-panel .img-zoom-close { display: flex; }
 .s2-sim-text {
   flex: 1;
   min-width: 0;
@@ -1864,17 +1920,6 @@ img { display: block; max-width: none; }
 /* ⚠️ נוסף (20.08.2026) — כשהשלב נענה, התיבה מציגה בפועל את התשובה-
    הנכונה (לא ריקה/pending יותר) — גבול עובר לצבע-נושא מלא. */
 .s4-preview-box.answered { border-color: var(--subject-500); }
-.s4-recap {
-  font-family: 'Assistant', sans-serif;
-  font-size: 24px;
-  font-weight: 400;
-  color: var(--subject-500);
-  opacity: 0.25;
-  text-align: right;
-  width: 100%;
-  margin: 0;
-}
-.s4-recap[hidden] { display: none; }
 /* ⚠️ הוסר (20.08.2026, לפי בקשה מפורשת) — .s4-current-step-block
    ("נעבוד שלב שלב:" + חזרה-על-הסעיף-הנוכחי) היה כפילות: הסעיפים
    כבר כתובים ב-.s4-preview-rows, עם הנוכחי מודגש שם (.current). */
@@ -1909,7 +1954,7 @@ img { display: block; max-width: none; }
   flex-shrink: 0;
 }
 .s4-marble--red { background: #c0392b; }
-.s4-marble--blue { background: #2f4ba0; }
+.s4-marble--blue { background: white; }
 
 /* ⚠️ נוסף — דמות-מלווה בשלב הפתיחה (שקף 16), תופסת את אותו מקום-צד
    (משמאל) שהכרטיס הסגול יתפוס משלב 1 ואילך — כדי שלא יישאר ריק/ארוך
@@ -2233,7 +2278,7 @@ img { display: block; max-width: none; }
 .s6-question[hidden] { display: none; }
 
 .s6-q-row { display: flex; flex-direction: row; align-items: flex-start; gap: 24px; width: 100%; }
-.s6-q-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 24px; }
+.s6-q-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
 
 /* פלייסהולדר-יישומון — זהה במדויק ל-.s2-sim-placeholder (הרפרנס
    המאומת, dq-sim-placeholder), לפי בקשה מפורשת "פלייסהולדר ריק
@@ -2268,14 +2313,61 @@ img { display: block; max-width: none; }
    ההערה למעלה), class נפרד כדי לא לצמד את שני המסכים (עקבי עם ההיגיון
    שכבר קיים מאחורי .s2-sim-applet/.s1-widget-applet בסיינים אחרים).
    הגבול/העיגול-פינות הוויזואלי מגיעים מתוך תוכן ה-iframe עצמו. */
-.s6-applet-frame {
+/* ⚠️ תוקן (07.09.2026, לפי בקשה מפורשת: "אייקון הגדלת יישומון") —
+   המידות הקבועות (460×460) עברו מ-.s6-applet-frame עצמו ל-.s6-applet-
+   wrap החדש (עוטף); .s6-applet-frame עכשיו inset:0 בתוך .s6-applet-
+   panel, אותו מנגנון בדיוק כמו .s2-sim-wrap/.s2-sim-applet (סעיף ב,
+   מסך 3) — ראו שם להסבר המלא. */
+.s6-applet-wrap {
+  position: relative;
   flex-shrink: 0;
   width: 460px;
   max-width: 100%;
   height: 460px;
+}
+.s6-applet-panel { position: relative; width: 100%; height: 100%; }
+/* ⚠️ תוקן (07.09.2026, דיווח: "אייקון ההגדלה לשים בצד השמאלי") —
+   .img-zoom-btn הגלובלי הוא right:10px (כלל-פרויקט), אבל בתוך הפאנל
+   הזה זה חופף לכותרת "הנחיות:" שיושבת בפינה הימנית-עליונה (RTL) של
+   הכרטיס הפנימי. הוזז ל-left:10px, אותה סיבה בדיוק כמו .s2-sim-panel
+   (סעיף ב, מסך 3) שהוזז מסיבה מקבילה (שם: התנגשות עם מונה-פנימי). */
+.s6-applet-panel .img-zoom-btn { display: flex; right: auto; left: 10px; }
+.s6-applet-panel .img-zoom-close { display: none; }
+.s6-applet-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   border: none;
   box-sizing: border-box;
 }
+.s6-applet-wrap.is-expanded {
+  position: absolute;
+  inset: 0;
+  width: auto; height: auto;
+  z-index: 950;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.78);
+}
+/* ⚠️ תוקן (07.09.2026, דיווח: "בהגדלת היישומון צריך שיהיה יותר גדול
+   שהלומד יראה אותו מספיק טוב") — היה 80%×75% (כמו .s2-sim-wrap,
+   שם הוגדר עבור יישומון-דמו קטן/פשוט יותר); היישומון הזה עשיר יותר
+   (הנחיות+מדף+ארגזים+ספירה) וזקוק ליותר שטח בפועל בהגדלה. הועלה
+   ל-94%×90% — כמעט מלוא הקנבס, בלי לגעת ב-inset:0/מרכוז של
+   .s6-applet-wrap.is-expanded עצמו. */
+.s6-applet-wrap.is-expanded .s6-applet-panel {
+  width: 94%;
+  height: 90%;
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.s6-applet-wrap.is-expanded .s6-applet-panel .img-zoom-btn { display: none; }
+.s6-applet-wrap.is-expanded .s6-applet-panel .img-zoom-close { display: flex; }
 /* ⚠️ נוסף (20.08.2026, לפי בקשה מפורשת: "כל הטקסט במסך 7 בגודל 24")
    — .s2-qtext הוא class משותף (גם במסך 3), בלי font-size משלו (רק
    font-weight/color) — במסך 7 הוא לא מלווה ב-.s2-body (בניגוד למסך 3),
@@ -2284,7 +2376,26 @@ img { display: block; max-width: none; }
 
 /* דיאגרמת-הזווית (שקף 26) — נכס אמיתי, יוצא מהשקף עצמו (PowerPoint
    COM export + טרימינג-רקע), לא צויר ביד. */
-.s6-angle-diagram { flex-shrink: 0; width: 200px; height: auto; margin-top: 8px; }
+/* ⚠️ תוקן (06.09.2026, דיווח: "גודל/מיקום תמונה לא אחיד, בעיקר
+   דיאגרמות/משולשים", "אין מסגרת לתמונה") — width הועלה מ-200px ל-300px
+   (תואם את תקן-הדיאגרמות בשאר הפרויקט: .s3-img-frame/.s1-img-frame,
+   300px; .s6-q-col הסמוך הוא flex:1/min-width:0 — גמיש, סופג את
+   ההפרש בלי לגלוש). נוספה מסגרת (1px solid rgba(174,174,174,.5)) +
+   overflow:hidden, אותו ערך-border המאומת-מול-Figma של .s2-hook-img-
+   frame-inner/.s2-fb-img-frame-inner באותה תיקייה (לא 3px
+   rgba(201,206,216,.4) של .oly-delegation-img-frame-inner — זה
+   מסגרת-כרטיס נפרדת, לא תקן-תמונת-תוכן). */
+.s6-angle-diagram-frame {
+  position: relative;
+  flex-shrink: 0;
+  width: 300px;
+  margin-top: 8px;
+  border: 1px solid rgba(174, 174, 174, 0.5);
+  border-radius: 16px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.s6-angle-diagram { width: 100%; height: auto; display: block; }
 
 .s6-answer-row { display: flex; flex-direction: row; align-items: center; gap: 16px; width: 100%; }
 .s6-answer-label {
@@ -2673,6 +2784,13 @@ input[type=number] { -moz-appearance: textfield; }
   width: 100%;
   height: 100%;
 }
+/* ⚠️ נוסף (06.09.2026) — .s6-angle-diagram-frame הוא wrapper ברוחב-קבוע
+   (200px, לא ריבועי כמו .oly-delegation-img-frame-inner וכו') — בלי
+   הכלל הזה, השכפול למודל היה נשאר ב-200px (לא מוגדל) בתוך הפאנל
+   660×660. הכלל ממוקד ל-.img-zoom-modal__stage בלבד — לא משפיע על
+   התצוגה הרגילה של הדיאגרמה במסך. */
+.img-zoom-modal__stage .s6-angle-diagram-frame { width: 100%; height: 100%; }
+.img-zoom-modal__stage .s6-angle-diagram { width: 100%; height: 100%; object-fit: contain; }
 
 .img-zoom-close {
   position: absolute;

@@ -41,11 +41,19 @@
     overflow: hidden;
   }
 
+  /* ⚠️ תוקן (07.09.2026, דיווח: "כפתור הרענון נמצא מתחת ל-X בהגדלת
+     המסך") — היה justify-content:space-between (מונה בצד ימין,
+     כפתור-רענון בצד שמאל-רחוק) — בהגדלה, כפתור-הסגירה החיצוני
+     (.img-zoom-close, top:16px/left:16px, כלל-פרויקט גלובלי) יושב
+     תמיד שם, אז שני הכפתורים התנגשו. הוחלף ל-flex-start+gap: שני
+     האלמנטים (מונה+כפתור) קבוצה אחת צמודה בצד ימין (RTL start), לא
+     נוגעים בפינה השמאלית-העליונה כלל. */
   .ratio-app__header {
     flex-shrink: 0;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 12px;
     padding: 8px 14px;
     background: #EAD9FF;
     border-bottom: 1px solid #CEC7FF;
@@ -120,7 +128,37 @@
 
   .control-row { display: flex; align-items: center; gap: 8px; font-size: 20px; color: #2F2478; }
   .control-row.rows-row label { flex-shrink: 0; font-weight: 700; }
-  .control-row input[type="range"] { flex: 1; accent-color: #3B2FC2; }
+  /* ⚠️ הוחלף (07.09.2026, לפי בקשה מפורשת: "הייתי משנה מסליידר לאפשרות
+     ללחוץ על + ועל - ... שליטה טובה יותר מסליידר") — input[type=range]
+     הוחלף בזוג כפתורי-דילוג (rows-step-btn), אותה שפה חזותית כמו
+     .reset-btn הקיים (עיגול-לבן/סגול). */
+  /* ⚠️ תוקן (07.09.2026, דיווח: "תצמיד את הכפתורים ליד המילה שורות") —
+     flex:1+justify-content:center היו גורמים ל-stepper לתפוס את כל
+     הרוחב הפנוי בשורה ולמרכז את עצמו בתוכו, מרוחק מ-"שורות" (שמאלי
+     בתוך שורה רחבה). הוסרו — ה-stepper מתכווץ עכשיו לרוחב-תוכן טבעי
+     ונדבק ל-label דרך ה-gap הרגיל של .control-row. */
+  .rows-stepper { display: flex; align-items: center; gap: 10px; }
+  .rows-step-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: none;
+    background: #ffffff;
+    color: #3B2FC2;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1;
+    padding: 0;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(59, 47, 194, 0.25);
+  }
+  .rows-step-btn:hover:not(:disabled) { background: #EAD9FF; }
+  .rows-step-btn:focus-visible { outline: 2px solid #3B2FC2; outline-offset: 2px; }
+  .rows-step-btn:disabled { opacity: 0.35; cursor: not-allowed; }
   .rows-row .rows-val { flex-shrink: 0; font-weight: 800; min-width: 22px; text-align: center; }
 
   .per-row-inputs { justify-content: center; gap: 16px; flex-wrap: wrap; }
@@ -179,9 +217,12 @@
 
     <div class="ratio-app__controls">
       <div class="control-row rows-row">
-        <label for="rowsRange">שורות</label>
-        <input type="range" id="rowsRange" min="1" step="1">
-        <span class="rows-val" id="rowsVal">1</span>
+        <label id="rowsLabel">שורות</label>
+        <div class="rows-stepper" role="group" aria-labelledby="rowsLabel">
+          <button type="button" class="rows-step-btn" id="rowsMinus" aria-label="הפחתת שורה">−</button>
+          <span class="rows-val" id="rowsVal">1</span>
+          <button type="button" class="rows-step-btn" id="rowsPlus" aria-label="הוספת שורה">+</button>
+        </div>
       </div>
       <div class="control-row per-row-inputs">
         <span class="per-row-field">
@@ -213,8 +254,9 @@
     maxRows: intParam('maxRows', 18)
   };
 
-  var rowsRange = document.getElementById('rowsRange');
   var rowsVal = document.getElementById('rowsVal');
+  var rowsMinusBtn = document.getElementById('rowsMinus');
+  var rowsPlusBtn = document.getElementById('rowsPlus');
   var lettucePerRowInput = document.getElementById('lettucePerRow');
   var radishPerRowInput = document.getElementById('radishPerRow');
   var lettuceTotalEl = document.getElementById('lettuceTotal');
@@ -223,7 +265,16 @@
   var radishCol = document.getElementById('radishCol');
   var resetBtn = document.getElementById('resetBtn');
 
-  rowsRange.max = String(DEFAULTS.maxRows);
+  /* ⚠️ הוחלף (07.09.2026, לפי בקשה מפורשת: "הייתי משנה מסליידר
+     לאפשרות ללחוץ על + ועל -") — currentRows הוא מקור-האמת עכשיו
+     (היה rowsRange.value). גבולות זהים למה שהיה ל-slider (min=1,
+     max=DEFAULTS.maxRows). */
+  var currentRows = 1;
+
+  function updateRowsButtons() {
+    rowsMinusBtn.disabled = currentRows <= 1;
+    rowsPlusBtn.disabled = currentRows >= DEFAULTS.maxRows;
+  }
 
   function clampPerRow(v) {
     v = parseInt(v, 10);
@@ -250,7 +301,7 @@
   }
 
   function render() {
-    var rows = parseInt(rowsRange.value, 10) || 0;
+    var rows = currentRows;
     var lettucePerRow = clampPerRow(lettucePerRowInput.value);
     var radishPerRow = clampPerRow(radishPerRowInput.value);
 
@@ -260,19 +311,29 @@
     rowsVal.textContent = String(rows);
     lettuceTotalEl.textContent = String(lettuceTotal);
     radishTotalEl.textContent = String(radishTotal);
+    updateRowsButtons();
 
     renderColumn(lettuceCol, lettuceTotal, lettucePerRow, 'images/חסה.png', '');
     renderColumn(radishCol, radishTotal, radishPerRow, 'images/צנונית.png', '');
   }
 
   function reset() {
-    rowsRange.value = String(Math.min(DEFAULTS.rows, DEFAULTS.maxRows));
+    currentRows = Math.max(1, Math.min(DEFAULTS.rows, DEFAULTS.maxRows));
     lettucePerRowInput.value = String(DEFAULTS.lettuce);
     radishPerRowInput.value = String(DEFAULTS.radish);
     render();
   }
 
-  rowsRange.addEventListener('input', render);
+  rowsMinusBtn.addEventListener('click', function () {
+    if (currentRows <= 1) return;
+    currentRows--;
+    render();
+  });
+  rowsPlusBtn.addEventListener('click', function () {
+    if (currentRows >= DEFAULTS.maxRows) return;
+    currentRows++;
+    render();
+  });
   lettucePerRowInput.addEventListener('input', render);
   radishPerRowInput.addEventListener('input', render);
   resetBtn.addEventListener('click', reset);

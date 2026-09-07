@@ -117,16 +117,25 @@
   }
 
   .choc-app__grid {
+    /* ⚠️ תוקן (06.09.2026, דיווח: "לא מאפשר למלא שורה של 10 אלא שתי
+       שורות של 5, זה מסבך") — היה 5 עמודות × 10 שורות, בניגוד להסבר
+       הפדגוגי של התשובה הנכונה עצמה (S1MIX_CFG.p1.correctMsg, script.js
+       הראשי): "בכל שורה... סה"כ 10 פרחים בשורה. נקבל 5 שורות". הרשת
+       הופכת עכשיו ל-10 עמודות × 5 שורות, תואמת את המודל שבטקסט. */
+    /* ⚠️ תוקן שוב (07.09.2026) — גודל-התא הוקטן מ-48px ל-44px בעקבות
+       צמצום-רוחב .s1-widget-wrap ב-index.html (570→530, ראו שם) —
+       530px-36px(ריפוד .choc-app) = 494px זמינים; (494-9×6)/10=44px
+       בדיוק. */
     direction: rtl;
     display: grid;
-    grid-template-columns: repeat(5, 58px);
-    grid-auto-rows: 58px;
-    gap: 6px;
+    grid-template-columns: repeat(10, 44px);
+    grid-auto-rows: 44px;
+    gap: 2px;
   }
 
   .choc-cell {
-    width: 58px;
-    height: 58px;
+    width: 40px;
+    height: 40px;
     border-radius: 8px;
     /* ⚠️ תוקן (31.08.2026, דיווח: "הצבע ההתחלתי צריך להיות בהיר יותר
        וקרוב יותר לאפור") — היה גוון-קרם/בז' חם (#EFEAE1 + border

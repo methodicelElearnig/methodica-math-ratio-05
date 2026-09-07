@@ -80,6 +80,46 @@ function scaleApp() {
 }
 window.addEventListener('resize', scaleApp);
 
+/* ⚠️ נוסף (07.09.2026, בדיקה מקיפה: "כפתור 'צדקתי?' לא תמיד מיושר
+   לשמאל") — הועתק/הותאם מ-methodica-math-ratio-05-05/script.js
+   (currentCanvasScale). getBoundingClientRect() מחזיר פיקסלי-viewport
+   *אחרי* transform:scale() של #app (scaleApp() למעלה) — margin-left,
+   לעומת זאת, מתפרש *לפני* אותו transform ואז מוכפל ב-scale שוב בזמן
+   הרינדור, delta × scale² בפועל. מחלקים ב-scale הנוכחי (נמדד ישירות
+   מרוחב #app בפועל) כדי לקבל בחזרה יחידות מקומיות נכונות. */
+function currentCanvasScale() {
+  const appEl = document.getElementById('app');
+  return appEl ? (appEl.getBoundingClientRect().width / CANVAS_W) : 1;
+}
+
+/* ⚠️ נוסף (07.09.2026, בדיקה מקיפה) — .s3-inline-btn (align-self:
+   flex-end גלובלי) מיושר נכון רק כשהקבוצה-שמעליו (.viq-answers) ממלאת
+   את כל רוחב ה-.viq-answer-row שלה; בפועל כל שורה כזו היא flex-row
+   בלי justify-content, כך שהתוכן (תווית+קלט[+יחידה], או .viq-coord,
+   או .s1-yn-group) נדחס לימין ומשאיר שוליים-ריקים בצד שמאל — הכפתור
+   נשאר דבוק לקצה-השמאלי של *כל הסעיף* (רוחב-מלא), לא לקצה-השמאלי
+   בפועל של התוכן הצר. זוהתה ב-4 מקומות בסיין הזה (בדיקה מקיפה,
+   07.09.2026) שמעולם לא קיבלו תיקון-יישור (בניגוד לסיינים 02/05 שכבר
+   קיבלו equalizeScqOptWidths/s3AlignHintRow דומים). הפונקציה הזו
+   כללית: row.lastElementChild הוא תמיד האלמנט הכי-שמאלי בפועל בתוך
+   שורה כזו (RTL, ריצה-ימנית), ללא-תלות אם זה .viq-input/.viq-answer-
+   unit/.viq-coord/.s1-yn-group — לא צריך case נפרד לכל מבנה-שורה. */
+function alignInlineCheckBtn(containerId, btnId) {
+  const btn = document.getElementById(btnId);
+  const container = document.getElementById(containerId);
+  if (!btn || !container) return;
+  const rows = container.querySelectorAll('.viq-answer-row');
+  if (!rows.length) return;
+  const scale = currentCanvasScale();
+  const leftEdges = Array.prototype.map.call(rows, function (row) {
+    const last = row.lastElementChild || row;
+    return last.getBoundingClientRect().left;
+  });
+  const leftmost = Math.min.apply(null, leftEdges);
+  const containerRect = container.getBoundingClientRect();
+  btn.style.marginLeft = Math.max(0, (leftmost - containerRect.left) / scale) + 'px';
+}
+
 /* ---------- closeAllPopupsAndHints() — bug-fixed version (מקורה מ-
    סיין 1, לפי סיכום-תהליך-בניית-הלומדה.md) ---------- */
 function closeAllPopupsAndHints() {
@@ -821,6 +861,18 @@ function s1FinishAggregate() {
   syncPracticeProgressNav(document.getElementById('s1'));
 }
 
+/* ⚠️ נוסף (06.09.2026, דיווח: "להזניק את היישומון על מסך מלא") —
+   מגדיל/ממרכז את אותו אייפריים ממש (toggle של .is-expanded על
+   .s1-widget-wrap, CSS בלבד) — לא משכפל/טוען-מחדש אותו, כדי לא לאבד
+   את מצב-הצביעה של הלומד/ת. בכוונה לא נעשה שימוש ב-imgZoomOpen/Close
+   הגלובליים (אלה משכפלים DOM, imgZoomOpen עושה cloneNode על ה-frame —
+   שכפול-אייפריים היה טוען עותק ריק מאפס, לא מגדיל את הקיים). */
+function s1WidgetExpandToggle(expand) {
+  const wrap = document.getElementById('s1-widget-wrap');
+  if (!wrap) return;
+  wrap.classList.toggle('is-expanded', expand);
+}
+
 /* ⚠️ הוסרה s1ShowPart (20.08.2026, לפי בקשה מפורשת: "התוכן לא יעלה
    בהדרגתיות") — שלושת החלקים גלויים תמיד (index.html, hidden הוסר).
    s1ProgrammaticScroll נשאר מוצהר (תמיד false עכשיו, בלי שום קריאה
@@ -859,6 +911,13 @@ function resetScreenState1() {
   setCurrentQuestion(practiceProgress, 0);
   syncPracticeProgressNav(document.getElementById('s1'));
   s1MaybeShowScrollGesture();
+  /* ⚠️ נוסף (07.09.2026, בדיקה מקיפה) — ראו alignInlineCheckBtn למעלה.
+     נדחה ל-requestAnimationFrame מאותה סיבה כמו שאר המדידות במסך הזה
+     (המסך עדיין display:none ברגע ש-resetScreenState רץ). */
+  requestAnimationFrame(function () {
+    alignInlineCheckBtn('s1-part-1', 's1-p1-check');
+    alignInlineCheckBtn('s1-part-2', 's1-p2-check');
+  });
 }
 
 /* =========================================================
@@ -1124,6 +1183,8 @@ function resetScreenState3() {
      s5UpdatePhotoByScroll (סיין 3 עצמו, מסך 6) ו-s2MaybeRestoreDiagram
      (methodica-math-ratio-05-06). */
   requestAnimationFrame(s3UpdatePhotoVisibilityByScroll);
+  /* ⚠️ נוסף (07.09.2026, בדיקה מקיפה) — ראו alignInlineCheckBtn למעלה. */
+  requestAnimationFrame(function () { alignInlineCheckBtn('s3-part-1', 's3-p1-check'); });
 }
 
 /* =========================================================
@@ -1175,22 +1236,31 @@ function resetScreenState4() {
    ========================================================= */
 VIQ_CFG_REGISTER('s5p1', {
   inputs: ['s5-p1-a', 's5-p1-b'], correct: [60, 150], checkBtn: 's5-p1-check', feedbox: 's5-p1-feedbox', revealBtn: 's5-p1-reveal-btn', nextScreen: null,
-  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'היחס בין מספר השעות שעבדה נעמי למספר השעות שעבד יוני הוא 2:5.<br>מספר החלקים הוא <span dir="">2 + 5 = 7</span>.<br>אם נועה ויוני הרוויחו 210 ₪ והם מתכוונים לחלק את הכסף לפי מספר השעות היחסי אז:<br>נועה תקבל <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span> · 210 = 60</span>,<br>ויוני יקבל <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> · 210 = 150</span>.' },
+  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'היחס בין מספר השעות שעבדה נעמי למספר השעות שעבד יוני הוא 2:5.<br>מספר החלקים הוא <span dir="ltr">2 + 5 = 7</span>.<br>אם נועה ויוני הרוויחו 210 ₪ והם מתכוונים לחלק את הכסף לפי מספר השעות היחסי אז:<br>נועה תקבל <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span> · 210 = 60</span>,<br>ויוני יקבל <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> · 210 = 150</span>.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'היחס בין מספר השעות שעבדה נעמי למספר השעות שעבד יוני הוא 2:5.<br>מספר החלקים הוא <span dir=""> 7 = 2 + 5</span>.<br>אם נועה ויוני הרוויחו 210 ₪ והם מתכוונים לחלק את הכסף לפי מספר השעות היחסי אז:<br>נועה תקבל <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span> · 210 = 60</span>,<br>ויוני יקבל <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> · 210 = 150</span>.' },
+  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'היחס בין מספר השעות שעבדה נעמי למספר השעות שעבד יוני הוא 2:5.<br>מספר החלקים הוא <span dir="ltr"> 2 + 5 = 7</span>.<br>אם נועה ויוני הרוויחו 210 ₪ והם מתכוונים לחלק את הכסף לפי מספר השעות היחסי אז:<br>נועה תקבל <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span> · 210 = 60</span>,<br>ויוני יקבל <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> · 210 = 150</span>.' },
   onDone: null
 });
 function s5P1OnInput() { viqOnInput('s5p1'); }
 function s5P1Check() { viqCheck('s5p1'); }
 
+/* ⚠️ תוקן (07.09.2026, דיווח: "ש"ח כתובה לימין ה-100, המצב התקין
+   שתהיה כתובה בצד השמאלי של ה-100") — "100  ש"ח" ישב כטקסט-רגיל
+   *בתוך* ה-dir="ltr" הגדול שעוטף את כל המשוואה (5/7 · x = 100 ש"ח),
+   כך שהיחידה יצאה בסוף-הרצף (ימין-הביטוי). לפי בקשה מפורשת: היחידה
+   צריכה להיות משמאל למספר "ללא קשר לדירקשן של כל הביטוי" — נוסף
+   dir="rtl" מקונן רק סביב "100 ש"ח" עצמם (סדר-מקור: מספר ואז יחידה),
+   בתוך ה-dir="ltr" החיצוני שנשאר כמו שהוא (המשוואה כולה עדיין קוראת
+   שמאל-לימין כרגיל) — אותה טכניקה נקודתית בדיוק כמו ב-methodica-
+   math-ratio-05-05/script.js § VIQ_CFG_S2_BODY (עדכון מקביל, אותו יום). */
 SCQ_CFG_REGISTER('s5p2', {
   containerSel: '#s5-part-2',
   correctId: 'a',
   checkBtnId: 's5-p2-check',
   feedboxId: 's5-p2-feedbox',
-  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'נסמן את סכום הכסף שנועה ויוני הרוויחו ב-x.<br>יוני הרוויח: <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> · x = 100  ש"ח</span><br>ואם נחלק ב-<span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> נקבל <span dir="ltr">x = 140</span>.<br>מסקנה: נועה ויוני הרוויחו יחד 140 ₪.<br>יוני הרוויח 100 ₪ לכן נועה הרוויחה 40 ₪.<br><br>תשובה א׳ נכונה.' },
+  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'נסמן את סכום הכסף שנועה ויוני הרוויחו ב-x.<br>יוני הרוויח: <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> · x = <span dir="rtl">100 ש"ח</span></span><br>ואם נחלק ב-<span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> נקבל <span dir="ltr">x = 140</span>.<br>מסקנה: נועה ויוני הרוויחו יחד 140 ₪.<br>יוני הרוויח 100 ₪ לכן נועה הרוויחה 40 ₪.<br><br>תשובה א׳ נכונה.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'נסמן את סכום הכסף שנועה ויוני הרוויחו ב-x.<br>יוני הרוויח: <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> · x = 100  ש"ח</span><br>ואם נחלק ב-<span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> נקבל <span dir="ltr">x = 140</span>.<br>מסקנה: נועה ויוני הרוויחו יחד 140 ₪.<br>יוני הרוויח 100 ₪ לכן נועה הרוויחה 40 ₪.<br><br>תשובה א׳ נכונה.' },
+  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'נסמן את סכום הכסף שנועה ויוני הרוויחו ב-x.<br>יוני הרוויח: <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> · x = <span dir="rtl">100 ש"ח</span></span><br>ואם נחלק ב-<span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> נקבל <span dir="ltr">x = 140</span>.<br>מסקנה: נועה ויוני הרוויחו יחד 140 ₪.<br>יוני הרוויח 100 ₪ לכן נועה הרוויחה 40 ₪.<br><br>תשובה א׳ נכונה.' },
   onDone: function () {
     const anyFail = (viqState.s5p1 && viqState.s5p1.outcome === 'fail') || (scqState.s5p2 && scqState.s5p2.outcome === 'fail');
     practiceProgress2.questions[0].state = anyFail ? 'incorrect' : 'correct';
@@ -1221,7 +1291,11 @@ function s5P3Check() { scqCheck('s5p3'); }
 function s5SetPhoto(src, alt) {
   const img = document.getElementById('s5-fixed-img');
   if (!img) return;
-  if (img.src.indexOf(src) === -1) { img.src = src; img.alt = alt; }
+  if (img.src.indexOf(src) === -1) {
+    img.src = src; img.alt = alt;
+    const zoomBtn = document.getElementById('s5-fixed-img-zoom-btn');
+    if (zoomBtn) { zoomBtn.setAttribute('data-zoom-src', src); zoomBtn.setAttribute('data-zoom-alt', alt); }
+  }
 }
 
 /* ⚠️ נוסף (31.08.2026, ראו הערה מלאה למעלה ליד "מסך 6") — שלושת החלקים
@@ -1304,6 +1378,8 @@ function resetScreenState5() {
      אז getBoundingClientRect של האזור/החלקים היה מחזיר הכל 0 — אותה
      גותצ'ה בדיוק כמו equalizeTfBtnWidths (מסכים 4/5, ראו שם). */
   requestAnimationFrame(s5UpdatePhotoByScroll);
+  /* ⚠️ נוסף (07.09.2026, בדיקה מקיפה) — ראו alignInlineCheckBtn למעלה. */
+  requestAnimationFrame(function () { alignInlineCheckBtn('s5-part-1', 's5-p1-check'); });
 }
 
 /* =========================================================
@@ -1412,9 +1488,22 @@ document.addEventListener('click', function (e) {
   imgZoomClose();
 });
 
+/* ⚠️ נוסף (06.09.2026) — סגירת מצב-הגדלת-היישומון (s1) בלחיצה על
+   הרקע (מחוץ ל-.s1-widget-panel המורחב), אותה מוסכמה כמו סגירת
+   img-zoom-modal בלחיצה מחוץ ל-panel. */
+document.addEventListener('click', function (e) {
+  const wrap = document.getElementById('s1-widget-wrap');
+  if (wrap && wrap.classList.contains('is-expanded') && e.target === wrap) {
+    s1WidgetExpandToggle(false);
+  }
+});
+
 document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Escape') return;
   const modal = document.getElementById('img-zoom-modal');
-  if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) imgZoomClose();
+  if (modal && !modal.classList.contains('hidden')) imgZoomClose();
+  const widgetWrap = document.getElementById('s1-widget-wrap');
+  if (widgetWrap && widgetWrap.classList.contains('is-expanded')) s1WidgetExpandToggle(false);
 });
 
 /* אתחול */
