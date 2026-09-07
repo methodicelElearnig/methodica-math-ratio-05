@@ -621,7 +621,13 @@ function resetScreenState2() {
    אפשרויות). תמונת פחיות-הצבע קבועה בצד שמאל לכל אורך שני החלקים.
    זהו המסך האחרון בסיין.
    ========================================================= */
-const VIQ_CFG_S3P1_BODY = 'א. נסמן ב-x את סך הליטרים של הצבע "ירוק זית" שהתקבל.<br>סכום חלקי היחס הוא: <span dir="ltr">5 + 3 + 2 = 10</span><br>לכן הצבע השחור מהווה <span class="frac"><span class="frac-num">2</span><span class="frac-den">10</span></span> מהתערובת.<br>נסמן ב-x את כמות הליטרים של התערובת ונבנה משוואה: <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">10</span></span> · x = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">2</span><span class="frac-den">10</span></span> ונקבל: <span dir="ltr">x = 60</span>.<br>לכן, יש 60 ליטרים של צבע ירוק זית.<br>הצבע הצהוב מהווה <span class="frac"><span class="frac-num">5</span><span class="frac-den">10</span></span> מהתערובת. מדובר במחצית מהתערובת לכן יש 30 ליטרים של צבע צהוב בתערובת.<br>מסקנה: יש <span dir="ltr">60 − 12 − 30 = ליטרים 18</span><br>של צבע כחול בתערובת.';
+/* ⚠️ תוקן (07.09.2026, דיווח: "במשוב של סעיף א' צריך לתקן את המסומן
+   באדום, בדומה למה שעשית כבר קודם") — "ליטרים 18" ישב שטוח בתוך
+   dir="ltr" יחיד, עם היחידה לפני המספר בסדר-המקור (בדיוק תבנית-הכישלון
+   הראשונה שתועדה ב-"ניסוח מתמטי.md"). תוקן לתבנית א' של אותו קובץ:
+   dir="rtl" מקונן סביב "18 ליטרים" (סדר-מקור מספר-ואז-יחידה), בתוך
+   ה-dir="ltr" החיצוני שנשאר כמו שהוא. */
+const VIQ_CFG_S3P1_BODY = 'א. נסמן ב-x את סך הליטרים של הצבע "ירוק זית" שהתקבל.<br>סכום חלקי היחס הוא: <span dir="ltr">5 + 3 + 2 = 10</span><br>לכן הצבע השחור מהווה <span class="frac"><span class="frac-num">2</span><span class="frac-den">10</span></span> מהתערובת.<br>נסמן ב-x את כמות הליטרים של התערובת ונבנה משוואה: <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">10</span></span> · x = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">2</span><span class="frac-den">10</span></span> ונקבל: <span dir="ltr">x = 60</span>.<br>לכן, יש 60 ליטרים של צבע ירוק זית.<br>הצבע הצהוב מהווה <span class="frac"><span class="frac-num">5</span><span class="frac-den">10</span></span> מהתערובת. מדובר במחצית מהתערובת לכן יש 30 ליטרים של צבע צהוב בתערובת.<br>מסקנה: יש <span dir="ltr">60 − 12 − 30 = <span dir="rtl">18 ליטרים</span></span><br>של צבע כחול בתערובת.';
 
 /* ⚠️ הוסרה s3ShowPart (20.08.2026, לפי בקשה מפורשת) — שני החלקים
    גלויים תמיד. resetScreenState3 כבר קורא ל-s3MaybeShowScrollGesture
