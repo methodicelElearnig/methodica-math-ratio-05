@@ -897,7 +897,13 @@ img { display: block; max-width: none; }
   width: 0; height: 0;
   pointer-events: none;
 }
-.gesture-hint-scroll-wrap .gesture-hint { left: auto; right: 22px; }
+/* ⚠️ תוקן שוב (10.09.2026, דיווח: "כף היד לא ממוקמת בדיוק על
+   הסקרולבר בכל המסכים שיש בהם גלילה") — right כאן כבר יחסי לקצה-ה-
+   wrap עצמו (frame פנימי), לא למסך — אין להוסיף את ה-right:16px של
+   ה-wrap עצמו לחצי-רוחב-הפס (6px). הפס (12px) יושב צמוד לקצה-ה-wrap,
+   מרכזו הוא 12/2=6px מהקצה, לא 22px. תוקן ל-6px (זהה לתיקון שבוצע
+   ב-methodica-math-ratio-05-01, ראו שם ההערה המלאה). */
+.gesture-hint-scroll-wrap .gesture-hint { left: auto; right: 6px; }
 .gesture-hint-hand,
 .gesture-hint-ring {
   position: absolute;

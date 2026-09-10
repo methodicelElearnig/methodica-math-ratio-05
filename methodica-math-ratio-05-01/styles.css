@@ -661,6 +661,10 @@ img { display: block; max-width: none; }
    .s6-scroll-area בפועל (top:110;left:40) — היד התיישרה למקטע לא-נכון
    של המסך. תוקן: */
 #s6-scroll-gesture { top: 110px; left: 40px; right: 16px; bottom: 74px; } /* תואם ל-.s6-scroll-area (right עודכן 31.08.2026) */
+/* ⚠️ הוסר (10.09.2026) — override ממוקד שהוסיף right:6px רק כאן, לפני
+   שהתברר שזה באג גורף בכלל המשותף עצמו (.gesture-hint-scroll-wrap
+   .gesture-hint, למטה) שהיה שגוי בכל 13 מסכי-הגלילה בפרויקט, לא רק
+   כאן — תוקן שם ישירות, ה-override הזה הפך למיותר. */
 
 /* ⚠️ נוסף (18.08.2026) — Gesture Hint: Cursor Drag (SELF-QA-lomda.md §7):
    מסך 3/"garden" (id=s2) מכיל אינטראקציית-גרירה אמיתית (סעיף ה, דיאגרמת-
@@ -707,7 +711,17 @@ img { display: block; max-width: none; }
    העמודה (בניגוד לאחוז, שמתרחק מהקצה ככל שהעמודה רחבה יותר). */
 /* ⚠️ תוקן (31.08.2026, בדיקה חיה חדשה מול Figma) — right:16px (wrap)
    + פס 12px רוחב → מרכז-הפס בפועל ב-right:16+6=22px מקצה-ה-wrap. */
-.gesture-hint-scroll-wrap .gesture-hint { left: auto; right: 22px; }
+/* ⚠️ תוקן שוב (10.09.2026, דיווח: "כף היד לא ממוקמת בדיוק על
+   הסקרולבר בכל המסכים שיש בהם גלילה") — בדיקה שיטתית בפועל
+   (getBoundingClientRect, לא חישוב תיאורטי) על כל מסכי-הגלילה
+   בפרויקט הראתה: "22px" מה-31.08.2026 היה שגוי — התיקון ההוא בעצמו
+   היה הרגרסיה (לפני זה, מ-20.08.2026, הערך היה 6px ונכון). פס-הגלילה
+   (12px) יושב צמוד ממש לקצה-ה-wrap עצמו (לא במרחק 16px כפי שההערה
+   הקודמת הניחה) — מרכזו הוא 12/2=6px מהקצה, לא 22px. תוקן חזרה ל-6px,
+   ואומת מחדש על כל 13 מופעי-הגלילה בפרויקט (כולל אלה שכבר תוקנו
+   נקודתית בסבב הקודם — s6-scroll-gesture/s3-scroll-gesture, שהoverride
+   הממוקד שלהם הוסר כאן כמיותר). */
+.gesture-hint-scroll-wrap .gesture-hint { left: auto; right: 6px; }
 .gesture-hint-hand,
 .gesture-hint-ring {
   position: absolute;
@@ -1931,7 +1945,10 @@ img { display: block; max-width: none; }
   bsckground-color: white;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0; /* ⚠️ עודכן (10.09.2026, לפי בקשה מפורשת: "אפשר להגדיל את העיגולים")
+    — היה 4px, ואז 1px; אחרי שהגולות עצמן הוגדלו (ר' .s4-marble למטה),
+    המרווח האנכי בין השורות צומצם ל-0 כדי לפנות גובה ולהישאר בלי גלילה
+    (ר' הערה ב-.s4-step-card § "תימנע מסקרול"). */
   width: 100%;
   /* ⚠️ תוקן שוב (31.08.2026, דיווח חוזר: "המיקום של הנקודות עדיין לא
      נכון") — הבקשה המקורית הייתה מפורשת: "ממש בצד השמאלי", לא "במרכז".
@@ -1946,10 +1963,10 @@ img { display: block; max-width: none; }
 /* ⚠️ תוקן (31.08.2026, לפי בקשה מפורשת: "תקטין את העיגולים הוא יכנס")
    — 11px→8px, כדי שהדיאגרמה כולה (56 גולות) תיכנס בנוחות בצד השמאלי
    של הכרטיס בלי לגלוש. */
-.s4-marble-row { display: flex; flex-direction: row; gap: 3px; }
+.s4-marble-row { display: flex; flex-direction: row; gap: 2px; }
 .s4-marble {
-  width: 8px;
-  height: 8px;
+  width: 10px; /* ⚠️ עודכן (10.09.2026, לפי בקשה מפורשת: "אפשר להגדיל את העיגולים") — היה 4px */
+  height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -1975,10 +1992,13 @@ img { display: block; max-width: none; }
 
 /* כרטיס "שלב מודרך" סגול ("Guided Step") — פיזית משמאל (שני ב-DOM).
    bg/radius/padding תואמים למדויק לרפרנס (#5749c4, radius24, padding26).
-   ⚠️ תוקן (18.08.2026) — אותה סיבה בדיוק כמו .s4-notebook למעלה: יש לו
-   overflow-y:auto, אז חל עליו כלל "גלילה תמיד בצד ימין". direction:ltr
-   כאן רק למיקום-פס-הגלילה; .s4-step-card-inner מחזיר direction:rtl
-   ומחזיק את ה-flex/gap. padding26 הסימטרי כבר משאיר מרווח מספיק. */
+   ⚠️ תוקן (10.09.2026, לפי בקשה מפורשת: "תימנע מסקרול אופקי/אנכי
+   במלבן עם רקע סגול") — היה overflow-y:auto (+ סקרולבר מותאם +
+   gesture-hint ייעודי, ר' §Gesture Hint למטה) מאז שהכרטיס נהג
+   להיחתך; עכשיו הניווט כולו עבר לכפתור "המשך" הכללי בסרגל התחתון
+   (ר' script.js § s4ContinueClick) ואין עוד כפתור-אישור פנימי שתופס
+   מקום, אז אין להשאיר את הכרטיס גלילי — direction נשאר ltr רק
+   כתיעוד-היסטורי (לא משפיע כש-overflow:hidden, אין פס-גלילה להציג). */
 .s4-step-card {
   flex: 1 1 461px;
   max-width: 461px;
@@ -1987,14 +2007,10 @@ img { display: block; max-width: none; }
   border-radius: 24px;
   padding: 26px;
   box-sizing: border-box;
-  overflow-y: auto;
+  overflow: hidden;
   position: relative;
   direction: ltr;
-  cursor: grab; /* SELF-QA-lomda.md §7 — נוסף (31.08.2026), חסר קודם */
 }
-.s4-step-card::-webkit-scrollbar { width: 12px; }
-.s4-step-card::-webkit-scrollbar-track { background: rgba(201, 206, 216, 0.4); border-radius: 16px; }
-.s4-step-card::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.56); border-radius: 24px; }
 .s4-step-card-inner {
   direction: rtl;
   display: flex;
@@ -2034,42 +2050,54 @@ img { display: block; max-width: none; }
 /* ⚠️ הוסר (20.08.2026, לפי בקשה מפורשת) — מונה "X מתוך 6" לא נחוץ. */
 
 /* gap:20 — זהה בדיוק לרפרנס ("Slot" gap-[20px] בתוך הכרטיס), היה 16px */
-.s4-step-block { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; width: 100%; }
+.s4-step-block { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; width: 100%; }
 .s4-step-block[hidden] { display: none; }
 
-/* ⚠️ נוסף (17.08.2026) — Body/B-6 (20px Regular) — שורת-הקדמה, תואם
-   ל-per1 ברפרנס (regular, לפני השורה המודגשת). לא היה קיים קודם —
-   הכול הוטבע כמשפט-בודד מודגש, בניגוד להיררכיית-הטקסט האמיתית
-   ברפרנס (הקדמה רגילה → שאלה מודגשת). */
+/* ⚠️ עודכן (10.09.2026, לפי בקשה מפורשת + Figma node eSbp4bKHgBky0rakDb8l9N
+   4551:23404 "per1"/Body/B-3 (24px Regular) — היה 20px (Body/B-6),
+   לא תואם לרפרנס בפועל. שורת-הקדמה, תואם ל-per1 ברפרנס (regular,
+   לפני השורה המודגשת). */
 .s4-step-setup {
   font-family: 'Assistant', sans-serif;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 400;
   color: #fff;
   text-align: right;
-  line-height: 1.4;
+  line-height: 1.08; /* ⚠️ עודכן (10.09.2026) — היה 1.4; Figma מציין lineHeight:100
+    (=100%) על כל טוקני ה-Body/Questions האלה. 1.08 (לא 1.0 מלא) נשאר
+    קריא לעברית עם ניקוד/סימנים תוך שהוא הרבה יותר קרוב לרפרנס מ-1.4,
+    וגם נחוץ כדי שהתוכן הארוך בשלב 6 ייכנס בלי גלילה (ר' .s4-step-card)
+    — כולל מרווח-ביטחון קטן אחרי שדיאגרמת-הגולות הוגדלה לפי בקשה. */
   width: 100%;
   margin: 0;
 }
-/* Body/B-8 (20px Bold) — טוקן מאושר, השאלה עצמה (ברפרנס: השורה
-   המודגשת אחרי per1 הרגיל). */
+/* ⚠️ עודכן (10.09.2026) — Body/B-5 (24px Bold, ר' הערה למעלה) — היה
+   20px (Body/B-8). השאלה עצמה (ברפרנס: השורה המודגשת אחרי per1 הרגיל). */
 .s4-step-prompt {
   font-family: 'Assistant', sans-serif;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 700;
   color: #fff;
   text-align: right;
-  line-height: 1.4;
+  line-height: 1.08; /* ⚠️ עודכן (10.09.2026) — היה 1.4; Figma מציין lineHeight:100
+    (=100%) על כל טוקני ה-Body/Questions האלה. 1.08 (לא 1.0 מלא) נשאר
+    קריא לעברית עם ניקוד/סימנים תוך שהוא הרבה יותר קרוב לרפרנס מ-1.4,
+    וגם נחוץ כדי שהתוכן הארוך בשלב 6 ייכנס בלי גלילה (ר' .s4-step-card)
+    — כולל מרווח-ביטחון קטן אחרי שדיאגרמת-הגולות הוגדלה לפי בקשה. */
   width: 100%;
   margin: 0;
 }
 .s4-step-explain {
   font-family: 'Assistant', sans-serif;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 400;
   color: #fff;
   text-align: right;
-  line-height: 1.4;
+  line-height: 1.08; /* ⚠️ עודכן (10.09.2026) — היה 1.4; Figma מציין lineHeight:100
+    (=100%) על כל טוקני ה-Body/Questions האלה. 1.08 (לא 1.0 מלא) נשאר
+    קריא לעברית עם ניקוד/סימנים תוך שהוא הרבה יותר קרוב לרפרנס מ-1.4,
+    וגם נחוץ כדי שהתוכן הארוך בשלב 6 ייכנס בלי גלילה (ר' .s4-step-card)
+    — כולל מרווח-ביטחון קטן אחרי שדיאגרמת-הגולות הוגדלה לפי בקשה. */
   width: 100%;
   margin: 0;
 }
@@ -2126,7 +2154,7 @@ img { display: block; max-width: none; }
   background: #fff;
   color: #222; /* ⚠️ תוקן (31.08.2026, מול Figma) — היה var(--s4-card-bg-unconfirmed) (סגול) */
   font-family: 'Assistant', sans-serif;
-  font-size: 20px; /* ⚠️ תוקן (18.08.2026) — 18px לא היה בטבלת-הטוקנים; זהו <button>, לכן חייב {26,20,22} */
+  font-size: 22px; /* ⚠️ עודכן (10.09.2026, לפי Figma node eSbp4bKHgBky0rakDb8l9N 4551:23404 — Questions/Q-1/Q-2), היה 20px */
   font-weight: 400;
   cursor: pointer;
   box-sizing: border-box;
@@ -2148,76 +2176,65 @@ img { display: block; max-width: none; }
    .btn-back/.btn-hint/.option-card/.img-zoom-btn שכולם כבר כוללים
    כלל כזה — אותו טיפול חזותי (var(--subject-500), 2px/2px). */
 .s4-pill:focus-visible { outline: 2px solid var(--subject-500); outline-offset: 2px; }
-/* ⚠️ נוסף (31.08.2026, לפי בקשה מפורשת) — בחירה (לפני לחיצה על "צדקתי?")
-   חייבת סימון ויזואלי משלה, שונה מ-.correct/.wrong (שמופיעים רק אחרי
-   הבדיקה) — טבעת בצבע-הנושא, לא border רגיל (הבסיס הוא border:none,
-   ו-box-shadow לא משנה את מידות הקופסה כמו border היה). */
-/* ⚠️ תוקן שוב (31.08.2026, לפי get_design_context בפועל על Figma node
-   525:8882 — "מצב סיליקטד בכל השאלות החד-ברירה") — לא רקע, לא
-   box-shadow, לא font-weight על השורה עצמה: ברפרנס האמיתי כל שורת-
-   תשובה (default/selected) נשארת זהה לגמרי (רקע לבן, border 2px
-   subject-500, טקסט Regular) — הדבר היחיד שמשתנה הוא אייקון-העיגול
-   עצמו (QuestionsIcons "selected"), שמתמלא בצבע-הנושא במקום עיגול-
-   מתאר ריק. ראו .s4-pill.selected::after למטה. */
-/* ⚠️ תוקן (31.08.2026, בדיקה מול Figma node 615:10187) — .correct היה
-   background:var(--subject-300) (סגול, #E1D9FF) — הספק דורש ירוק-בהיר
-   (#EDF8ED, Feedback/Correct/100) + border 1.5px #609E12. */
-/* ⚠️ תוקן (31.08.2026, דיווח: "'לא נכון' נראה שבור לגמרי במסך 5") —
-   font-weight:600 גרם לטקסט להתרחב בדיוק ברגע-הופעת-החיווי (כשה-
-   class הזה מתווסף), אחרי ש-s4EqualizePillWidths כבר קבע רוחב-קבוע
-   לפי המדידה במשקל-רגיל (לפני-בדיקה) — הטקסט המודגש כבר לא נכנס
-   ברוחב שנקבע, ועם white-space:nowrap (נוסף קודם) הוא לא יכול
-   להישבר לשורה נוספת, אז הוא גולש. גם לא עקבי עם .scq-opt.correct
-   באותו קובץ, שלא מדגיש טקסט. הוסר. */
-.s4-pill.correct {
-  background: #EDF8ED;
-  border: 1.5px solid #609E12;
-  color: #222;
+/* ⚠️ הוחלף (10.09.2026, לפי בקשה מפורשת + Figma node
+   eSbp4bKHgBky0rakDb8l9N — 4551:21752 (בחירה, לפני בדיקה),
+   4551:23839+4551:24245 (חיווי כשהלומד טעה), 4551:23989 (חיווי
+   כשהלומד צדק)) — מחליף לגמרי את החיווי הישן (רקע ירוק/ורוד-בהיר +
+   border צבעוני + תג ✓/✗ על כל פיל). המצבים החדשים, לפי הרפרנס:
+   • .selected (נבחר, טרם נבדק): רקע סגול (--subject-300) + טקסט
+     מודגש (SemiBold) — לא רק שינוי-אייקון כמו קודם.
+   • .correct (הפיל הנכון, גם אם לא נבחר): רקע לבן + טקסט מודגש +
+     תג-וי ירוק.
+   • .correct.chosen (הפיל הנכון *וגם* זה שנבחר): אותו דבר, רקע סגול
+     במקום לבן.
+   • .wrong (הפיל שנבחר, והוא שגוי): רקע סגול + טקסט רגיל (לא מודגש)
+     + בלי תג (חוזר לעיגול-מתאר הריק של ברירת-המחדל).
+   • כל שאר הפילים (לא נבחרו ולא נכונים): נשארים במראה ברירת-המחדל.
+   border נשאר קבוע (2px subject-500) בכל המצבים — לא עוד override
+   צבעוני לפי-מצב כמו קודם. */
+.s4-pill.selected {
+  background: var(--subject-300);
+  font-weight: 600;
 }
-/* ⚠️ תוקן שוב (20.08.2026, לפי בקשה מפורשת: "אותם אייקונים ואחידים
-   כמו בשאלות חד-ברירה, אייקון בצד ימין") — המימוש הקודם (position:
-   absolute; left:8px) היה תג-ייחודי-לרכיב-הזה, פיזית *שמאל* — לא
-   תואם למוסכמה הגלובלית ולא ל-SELF-QA-lomda.md §5 ("התג חייב להיות
-   בצד הפיזי-ימין"). הוחלף באותו דפוס-flex+order:-1 בדיוק כמו
-   .scq-radio (ר' למעלה) — התג הופך לילד-flex רגיל (לא absolute),
-   .s4-pills-inner יורש direction:rtl מ-.s4-step-card-inner, אז
-   order:-1 מזיז אותו לתחילת-הסדר-הפיזי = ימין. גם גודל-האייקון-
-   הפנימי (12px 9px / 10px 10px) הוחלף להיות זהה-בדיוק ל-.scq-radio
-   (היה 12px 10px / 11px 11px, שרירותי-קודם) — "אותם אייקונים" כפי
-   שהתבקש, לא רק "דומים". */
-/* ⚠️ נוסף (31.08.2026, בדיקה מול Figma node 615:10187) — עיגול-אייקון
-   ריק (מתאר בלבד) קיים גם במצב ברירת-מחדל (לא רק אחרי correct/wrong) —
-   היה חסר לגמרי קודם. .correct/.wrong דורסים רק צבע-מילוי+גבול+תוכן. */
-.s4-pill::after {
+.s4-pill.correct {
+  background: #fff;
+  font-weight: 600;
+}
+.s4-pill.correct.chosen {
+  background: var(--subject-300);
+}
+.s4-pill.wrong {
+  background: var(--subject-300);
+  font-weight: 400;
+}
+/* ⚠️ הוסר (10.09.2026, לפי בקשה מפורשת: "לא צריכים ראדיו-עיגולים
+   למסיחים, תראה בפיגמה" — Figma node eSbp4bKHgBky0rakDb8l9N 4551:23404)
+   — עיגול-המתאר הריק (ברירת-מחדל) והעיגול-המלא (selected) שהיו כאן
+   קודם (.s4-pill::after הבסיסי + .s4-pill.selected::after) לא קיימים
+   בכלל ב-Figma בפועל: "Choice Buttons"/"Guided Instruction-Answer
+   Option" הוא פיל טקסט+רקע בלבד בברירת-מחדל ובמצב-נבחר (הסימון
+   היחיד שם הוא רקע-סגול+טקסט-מודגש, ר' .selected למעלה) — עיגול
+   מופיע רק במצב "נכון" (תג-הוי הירוק, נשאר למטה). המוסכמה
+   הגלובלית ("אותם אייקונים כמו בשאלות חד-ברירה") הייתה נכונה לרכיב
+   אחר (615:10187/525:8882), לא לפילים האלה — הוחלפה כאן בגרסה
+   הספציפית-לרפרנס בפועל. */
+/* ⚠️ עודכן (10.09.2026, לפי בקשה מפורשת: "תייבא את האייקון של הV
+   הירוק מהפיגמה") — אייקון-הוי יובא ישירות מ-Figma node 4551:23989
+   ("questions icons" — Group), לא נכס-קירוב ישן (icon-check-white.svg,
+   שנשאר בשימוש במקומות אחרים בפרויקט ולא נגעו בו). התג עצמו (מידות/
+   radius/border) כבר לא יורש מ-.s4-pill::after הכללי (הוסר, ר' למעלה) —
+   מוגדר כאן במלואו, עדיין order:-1 (פיזית-ימין ב-RTL) כמו קודם. */
+.s4-pill.correct::after {
   content: '';
   order: -1;
   flex-shrink: 0;
   width: 22px;
   height: 22px;
   border-radius: 999px;
-  border: 2px solid var(--subject-500);
   box-sizing: border-box;
-}
-/* Figma node 525:8882 (QuestionsIcons, state="selected") — עיגול מלא
-   בצבע-הנושא, בלי אייקון בפנים (לא ✓/✗ — אלה רק אחרי correct/wrong). */
-.s4-pill.selected::after { background: var(--subject-500); }
-.s4-pill.correct::after {
   border-color: #609e12;
-  background: #609e12 url('assets/images/icon-check-white.svg') no-repeat center;
-  background-size: 12px 9px;
-}
-/* ⚠️ תוקן (31.08.2026, מול Figma) — .wrong היה background:rgba(178,0,16,0.85)
-   (אדום-כהה-שקוף מלא) — הספק דורש ורוד-בהיר (#FFF0F4, Feedback/Incorrect/100)
-   + border 1.5px #B20010. */
-.s4-pill.wrong {
-  background: #FFF0F4;
-  border: 1.5px solid #B20010;
-  color: #222;
-}
-.s4-pill.wrong::after {
-  border-color: #b20010;
-  background: #b20010 url('assets/images/icon-x-white.svg') no-repeat center;
-  background-size: 10px 10px;
+  background: #609e12 url('assets/images/icon-guided-step-check.svg') no-repeat center;
+  background-size: 10px 8px;
 }
 
 /* ⚠️ נשאר מכוון flex-end לפי בקשה מפורשת וחוזרת של המשתמשת — לא
@@ -2341,15 +2358,35 @@ img { display: block; max-width: none; }
   border: none;
   box-sizing: border-box;
 }
+/* ⚠️ תוקן (10.09.2026, דיווח: "כל מה שהכניס הלומד למדפים נמחק כשמגדילים
+   את היישומון") — הבאג האמיתי היה ב-s6AppletExpandToggle (script.js):
+   ה-wrap (עם ה-iframe בתוכו) עבר reparent בפועל (appendChild ל-#s6)
+   כדי "לברוח" מ-overflow:auto של .s6-scroll-area — אבל הזזת iframe
+   בין הורים ב-DOM גורמת לדפדפנים בפועל לטעון אותו מחדש (למרות
+   שה-src לא משתנה), מה שאיפס את כל מצב-היישומון (המדפים). position:fixed
+   כאן (במקום absolute) פותר את זה בלי לגעת ב-DOM בכלל: #app (האב
+   המשותף) כבר transform:scale()-ה (ר' scaleApp, script.js), ו-transform
+   הופך את האב לבסיס-המיקום גם עבור position:fixed — כך ש-inset:0 נמתח
+   על כל הקנבס (בדיוק כמו לפני) בלי overflow:auto של .s6-scroll-area
+   לחתוך אותו, ובלי לזוז ב-DOM בכלל (ה-iframe נשאר במקומו המקורי,
+   לעולם לא נטען-מחדש). script.js § s6AppletExpandToggle עודכן בהתאם
+   (הוסר ה-reparent). */
 .s6-applet-wrap.is-expanded {
-  position: absolute;
+  position: fixed;
   inset: 0;
   width: auto; height: auto;
   z-index: 950;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.78);
+  /* ⚠️ עודכן (10.09.2026, לפי בקשה מפורשת: "צריך שמה שמאחורי הפופ-אפ
+     יהיה בשחור חצי-טרנספרנט", ואז "להשחיר יותר") — היה
+     rgba(255,255,255,0.78), אותה מוסכמת-רקע כמו img-zoom-modal/
+     .s2-sim-wrap.is-expanded (לבן). כאן, לפי בקשה מפורשת וממוקדת
+     ליישומון הזה, הוחלף לשחור, ואז הועמק ל-0.8 (היה 0.6). שים לב:
+     זה יוצר אי-עקביות מול שני ה-popups האחרים (שנשארו לבן) — לא
+     נגעתי בהם כי לא התבקשו. */
+  background: rgba(0, 0, 0, 0.8);
 }
 /* ⚠️ תוקן (07.09.2026, דיווח: "בהגדלת היישומון צריך שיהיה יותר גדול
    שהלומד יראה אותו מספיק טוב") — היה 80%×75% (כמו .s2-sim-wrap,

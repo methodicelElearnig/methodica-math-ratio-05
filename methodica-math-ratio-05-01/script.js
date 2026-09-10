@@ -1004,30 +1004,20 @@ function s2SimExpandToggle(expand) {
   }
 }
 
-/* ⚠️ נוסף (07.09.2026, לפי בקשה מפורשת: "אייקון הגדלת יישומון בדומה
-   למה שעשיתה ביישומון אחרים") — אותו מנגנון בדיוק כמו s2SimExpandToggle
-   למעלה (.s6-applet-wrap מקונן בתוך .s6-scroll-area, position:absolute
-   בלבד היה נחתך ע"י overflow של אזור-הגלילה, לכן מזיזים אותו בפועל
-   להיות ילד-ישיר של #s6 בזמן ההגדלה ומחזירים למקומו המדויק בסגירה). */
-let s6AppletHomeParent = null;
-let s6AppletHomeNext = null;
+/* ⚠️ תוקן (10.09.2026, דיווח: "כל מה שהכניס הלומד למדפים נמחק כשמגדילים
+   את היישומון") — הייתה כאן העתקה-מדויקת של s2SimExpandToggle (reparent
+   בפועל ל-#s6 כדי "לברוח" מ-overflow:auto של .s6-scroll-area) — אבל
+   הזזת ה-wrap (עם ה-iframe בתוכו) בין הורים ב-DOM גורמת לדפדפנים
+   בפועל לטעון את ה-iframe מחדש (גם כש-src לא משתנה), ואיפסה את כל
+   מצב-היישומון (המדפים שכבר סודרו). תוקן מהשורש: .s6-applet-wrap.is-expanded
+   עבר ל-position:fixed (ר' styles.css) — #app (אב-משותף, transform:scale())
+   כבר הופך להיות בסיס-המיקום גם ל-fixed, כך שה-wrap "בורח" מה-overflow
+   בלי לזוז ב-DOM בכלל. אין יותר צורך ב-reparent/home-parent-tracking —
+   רק toggle של המחלקה. */
 function s6AppletExpandToggle(expand) {
   const wrap = document.getElementById('s6-applet-wrap');
-  const screen = document.getElementById('s6');
-  if (!wrap || !screen) return;
-  if (expand) {
-    if (wrap.classList.contains('is-expanded')) return;
-    s6AppletHomeParent = wrap.parentElement;
-    s6AppletHomeNext = wrap.nextSibling;
-    screen.appendChild(wrap);
-    wrap.classList.add('is-expanded');
-  } else {
-    if (!wrap.classList.contains('is-expanded')) return;
-    wrap.classList.remove('is-expanded');
-    if (s6AppletHomeParent) s6AppletHomeParent.insertBefore(wrap, s6AppletHomeNext);
-    s6AppletHomeParent = null;
-    s6AppletHomeNext = null;
-  }
+  if (!wrap) return;
+  wrap.classList.toggle('is-expanded', !!expand);
 }
 
 function resetScreenState2() {
@@ -1163,12 +1153,12 @@ let s4State = {
   done: false
 };
 
-/* ⚠️ שונה (31.08.2026, לפי בקשה מפורשת) — קודם לחיצה על פיל העריכה
-   מיידית (בחירה=הערכה, בלי כפתור-אישור נפרד). עכשיו: בחירה בפיל רק
-   מסמנת אותה (s4Choose) ומדליקה כפתור "צדקתי?"; לחיצה על הכפתור עצמו
-   (s4CheckStep) היא זו שמעריכה, חושפת הסבר, ומחליפה את טקסט הכפתור
-   ל"המשך" — אותה סמנטיקה כמו שאר שאלות-הבחירה בפרויקט (olyQ1Select/
-   olyQ1Check וכו'), רק עם כפתור-יחיד שמתחלף במקום שני כפתורים נפרדים. */
+/* ⚠️ שונה (10.09.2026, לפי בקשה מפורשת) — הכרטיס הסגול כבר לא מכיל
+   כפתורי "צדקתי?"/"המשך" משלו; הניווט כולו דרך כפתור "המשך" הכללי
+   בסרגל התחתון (#s4-continue, ר' s4ContinueClick למטה). בחירה בפיל
+   רק מסמנת אותה (s4Choose) ומדליקה את #s4-continue; s4ContinueClick
+   הוא זה שמפעיל את s4CheckStep (לחיצה ראשונה) ואת s4Next (לחיצה
+   שנייה), לפי s4State.answers. */
 function s4Choose(stepNum, id, btnEl) {
   if (s4State.answers[stepNum]) return; // כבר נענה — לא ניתן לשנות (guided, לא נבחן)
   document.querySelectorAll('#s4-pills-' + stepNum + ' .s4-pill').forEach(function (b) {
@@ -1176,28 +1166,40 @@ function s4Choose(stepNum, id, btnEl) {
   });
   s4State.selected = s4State.selected || {};
   s4State.selected[stepNum] = id;
-  const checkBtn = document.getElementById('s4-next-' + stepNum);
-  if (checkBtn) checkBtn.disabled = false;
+  const continueBtn = document.getElementById('s4-continue');
+  if (continueBtn) continueBtn.disabled = false;
 }
 
+/* ⚠️ שונה (10.09.2026, לפי בקשה מפורשת + Figma node eSbp4bKHgBky0rakDb8l9N
+   4551:23839/4551:24245/4551:21752/4551:23989) — חיווי-תשובה חדש
+   לגמרי, מחליף את הישן (רקע ירוק-בהיר/ורוד-בהיר + תג ✓/✗ על כל פיל):
+   - הפיל שנבחר, לפני בדיקה: רקע סגול (--subject-300) + טקסט מודגש
+     (s4-pill.selected, ר' CSS — לא כאן).
+   - אחרי בדיקה, הפיל הנכון (בין אם נבחר או לא): רקע לבן, טקסט מודגש,
+     תג-וי ירוק. אם הוא גם זה שנבחר — הרקע סגול במקום לבן (.chosen).
+   - אחרי בדיקה, הפיל שנבחר והוא שגוי: רקע סגול, טקסט רגיל (לא מודגש),
+     בלי תג — חוזר לעיגול-מתאר ריק כמו ברירת-המחדל.
+   - כל שאר הפילים (לא נבחרו ולא נכונים): נשארים במראה ברירת-המחדל. */
 function s4CheckStep(stepNum) {
-  if (s4State.answers[stepNum]) { s4Next(stepNum); return; } // כבר נבדק — הכפתור עצמו הפך ל"המשך"
   const id = s4State.selected && s4State.selected[stepNum];
   if (!id) return;
   const stepDef = S4_STEPS[stepNum];
-  const isCorrect = id === stepDef.correct;
   s4State.answers[stepNum] = id;
   document.querySelectorAll('#s4-pills-' + stepNum + ' .s4-pill').forEach(function (b) {
     b.disabled = true;
     b.classList.remove('selected');
-    if (b.dataset.id === stepDef.correct) b.classList.add('correct');
-    else if (b.dataset.id === id && !isCorrect) b.classList.add('wrong');
+    const isChosen = b.dataset.id === id;
+    const isPillCorrect = b.dataset.id === stepDef.correct;
+    if (isPillCorrect) {
+      b.classList.add('correct');
+      if (isChosen) b.classList.add('chosen');
+    } else if (isChosen) {
+      b.classList.add('wrong');
+    }
   });
   const explainEl = document.getElementById('s4-explain-' + stepNum);
   if (explainEl) explainEl.hidden = false;
   s4RefreshPreviewRows(stepNum);
-  const btn = document.getElementById('s4-next-' + stepNum);
-  if (btn) btn.textContent = 'המשך';
 }
 
 /* דיאגרמת-הגולות (שקף 22) — 8 שורות × 7 גולות (2 אדומות + 5 כחולות
@@ -1272,21 +1274,6 @@ function s4MaybeShowNotebookGesture() {
   scrollArea.addEventListener('scroll', function () { gesture.hidden = true; }, { once: true });
 
   });}
-let s4StepCardGestureShown = false;
-function s4MaybeShowStepCardGesture() {
-  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
-  requestAnimationFrame(function () {
-  if (s4StepCardGestureShown) return;
-  const gesture = document.getElementById('s4-step-card-gesture');
-  const scrollArea = document.getElementById('s4-step-card');
-  if (!gesture || !scrollArea || scrollArea.hidden) return;
-  if (scrollArea.scrollHeight <= scrollArea.clientHeight) return;
-  s4StepCardGestureShown = true;
-  gesture.hidden = false;
-  scrollArea.addEventListener('scroll', function () { gesture.hidden = true; }, { once: true });
-
-  });}
-
 /* ⚠️ נוסף (31.08.2026, לפי דיווח: "אורך המלבן של המסיחים צריך להיות
    לפי אורך המסיח הארוך ביותר בכל שאלה") — .s4-pill היה min-width:85px
    בלבד, כל פיל מתרווח לפי הטקסט שלו-עצמו (אין מנגנון-רוחב-משותף), אז
@@ -1296,14 +1283,19 @@ function s4MaybeShowStepCardGesture() {
    ביותר כ-width מפורש על כולם. נקרא מ-s4ShowStep בכל מעבר-שלב (לא רק
    פעם אחת) כי הפילים חייבים להיות גלויים (לא [hidden]) כדי שהמדידה
    תהיה נכונה. */
+/* ⚠️ עודכן (10.09.2026) — נמדד עכשיו במשקל-מודגש (font-weight:600)
+   זמנית, לא במשקל-רגיל: .selected/.correct/.correct.chosen כל
+   השלושה מציגים טקסט מודגש (ר' CSS), אז הרוחב-הקבוע חייב להתאים
+   למקרה-הרחב-ביותר מראש — בדיוק הבאג שתוקן קודם (דיווח: "'לא נכון'
+   נראה שבור") כשנוסף font-weight:600 בלי לעדכן את המדידה. */
 function s4EqualizePillWidths(stepNum) {
   const group = document.getElementById('s4-pills-' + stepNum);
   if (!group) return;
   const pills = Array.prototype.slice.call(group.querySelectorAll('.s4-pill'));
   if (!pills.length) return;
-  pills.forEach(function (p) { p.style.width = ''; });
+  pills.forEach(function (p) { p.style.width = ''; p.style.fontWeight = '600'; });
   const maxWidth = Math.max.apply(null, pills.map(function (p) { return p.offsetWidth; }));
-  pills.forEach(function (p) { p.style.width = maxWidth + 'px'; });
+  pills.forEach(function (p) { p.style.fontWeight = ''; p.style.width = maxWidth + 'px'; });
 }
 
 function s4ShowStep(n) {
@@ -1344,7 +1336,18 @@ function s4ShowStep(n) {
 
   s4State.step = n;
   s4MaybeShowNotebookGesture();
-  s4MaybeShowStepCardGesture();
+
+  /* ⚠️ עודכן (10.09.2026, לפי בקשה מפורשת: "לא צריך כפתור 'בואו
+     נתחיל', כפתור 'המשך' יעביר לחלק הראשון בתרגול") — #s4-continue
+     הכללי הוא זה שמדליק/מכבה את עצמו בכל מעבר-שלב, כולל שלב 0
+     (הפתיחה) עכשיו: דלוק תמיד שם (מפעיל s4Start דרך s4ContinueClick).
+     שלבים 1-4 (אינטראקטיביים): דלוק רק אם השלב כבר נענה (עדיין לא
+     נענה ← ידלק מ-s4Choose ברגע שנבחר מסיח). שלב 5 (הסבר בלבד, בלי
+     בחירה): דלוק תמיד. שלב 6: נדלק כבר למעלה (s4Finish). */
+  if (n >= 0 && n <= 5) {
+    const continueBtn = document.getElementById('s4-continue');
+    if (continueBtn) continueBtn.disabled = (n >= 1 && n <= 4) && !s4State.answers[n];
+  }
 }
 
 function s4Start() {
@@ -1357,16 +1360,46 @@ function s4Next(fromStep) {
   s4ShowStep(n);
 }
 
+/* ⚠️ עודכן (10.09.2026, לפי בקשה מפורשת) — נקודת-הכניסה היחידה של
+   כפתור "המשך" הכללי (#s4-continue) לכל אורך מסך 5, כולל שלב 0
+   (הפתיחה, ר' מטה — לא רק 1-6 כמו קודם): בשלב 0 מפעילה s4Start
+   (=s4ShowStep(1), אותה פונקציה שהייתה מחוברת ל"בואו נתחיל" שהוסר).
+   בשלבים 1-4, לחיצה ראשונה (עדיין לא נענה) בודקת את התשובה שנבחרה
+   (s4CheckStep, חושפת חיווי+הסבר, לא מתקדמת); לחיצה שנייה (כבר נענה)
+   מתקדמת לשלב הבא (s4Next). בשלב 5 (הסבר בלבד) מתקדמת ישירות לשלב 6.
+   בשלב 6 (סיום התרגול) מנווטת למסך הבא (advanceFromS4/goTo(5)). */
+function s4ContinueClick() {
+  const n = s4State.step;
+  if (n === 0) { s4Start(); return; }
+  if (n === 6) { advanceFromS4(); return; }
+  if (n === 5) { s4Next(5); return; }
+  if (n >= 1 && n <= 4) {
+    if (s4State.answers[n]) s4Next(n);
+    else s4CheckStep(n);
+  }
+}
+
 /* ⚠️ נוסף (07.09.2026, לפי בקשה מפורשת) — כפתור "חזרה" של המסך עצמו
    (#s4-back, בסרגל התחתון) היה onclick="goTo(3)" ישיר-תמיד. עכשיו:
-   בזמן שהתרגול-המודרך באמצע (s4State.step 2-6), "חזרה" מציג מחדש רק
-   את השלב הקודם (s4ShowStep, אותה פונקציה ששולפת גם קדימה) — לא יוצא
-   מהמסך. רק כש-step===1 (הכרטיס הראשון) או step===0 (טרם התחיל),
-   "חזרה" מבצע ניווט-מסך רגיל. s4ShowStep לא נוגעת ב-s4State.answers/
-   נעילת-הפילים כלל — חזרה לשלב קודם רק *מציגה* אותו כפי-שהוא (כבר
-   נענה+נעול), לא פותחת-מחדש לענות שוב. */
+   בזמן שהתרגול-המודרך באמצע, "חזרה" מציג מחדש רק את השלב הקודם
+   (s4ShowStep, אותה פונקציה ששולפת גם קדימה) — לא יוצא מהמסך. רק
+   כש-step===0 (טרם התחיל, מסך-הפתיחה) "חזרה" מבצע ניווט-מסך רגיל.
+   s4ShowStep לא נוגעת ב-s4State.answers/נעילת-הפילים כלל — חזרה
+   לשלב קודם רק *מציגה* אותו כפי-שהוא (כבר נענה+נעול), לא פותחת-מחדש
+   לענות שוב.
+   ⚠️ תוקן (10.09.2026, דיווח לקוח: "בניווט קדימה/אחורה החלק הסגול
+   משתבש וגם הכפתור") — התנאי היה step>1, אז מ-step===1 "חזרה" קפץ
+   ישר ל-goTo(3) (החוצה מהמסך לגמרי), מדלג על step===0 (מסך-הפתיחה עם
+   הדמות) — שהיה תקין כשלשלב 0 היה כפתור "בואו נתחיל" נפרד ובלתי-תלוי,
+   אבל לא מאז ש-#s4-continue הכללי נהיה אחראי גם על step===0 (ר'
+   s4ContinueClick). זה גם גרם לבאג-שרשרת: אם המשתמש/ת חוזר/ת החוצה
+   מ-step===1 בלי ש-s4State.step התאפס ל-0, וחוזר/ת קדימה למסך (למשל
+   דרך "המשך" של מסך 4/s3) — resetScreenState4 קורא ל-s4ShowStep(1)
+   ישירות (עדיין 1, לא 0), מדלג לגמרי על מסך-הפתיחה גם בכיוון-קדימה.
+   step>0 מתקן את שניהם: step===1 "חזרה" מציג step===0 (המסך-הפתיחה),
+   לא קופץ החוצה. */
 function s4BackOrPrevScreen() {
-  if (s4State.step > 1) {
+  if (s4State.step > 0) {
     s4ShowStep(s4State.step - 1);
   } else {
     goTo(3);
@@ -1391,18 +1424,23 @@ function resetScreenState4() {
     const chosen = s4State.answers[stepNum];
     document.querySelectorAll('#s4-pills-' + stepNum + ' .s4-pill').forEach(function (b) {
       b.disabled = true;
-      b.classList.remove('correct', 'wrong', 'selected');
-      if (b.dataset.id === stepDef.correct) b.classList.add('correct');
-      else if (b.dataset.id === chosen) b.classList.add('wrong');
+      b.classList.remove('correct', 'wrong', 'selected', 'chosen');
+      const isChosen = b.dataset.id === chosen;
+      const isPillCorrect = b.dataset.id === stepDef.correct;
+      if (isPillCorrect) {
+        b.classList.add('correct');
+        if (isChosen) b.classList.add('chosen');
+      } else if (isChosen) {
+        b.classList.add('wrong');
+      }
     });
     const explainEl = document.getElementById('s4-explain-' + stepNum);
     if (explainEl) explainEl.hidden = false;
-    const nextBtn = document.getElementById('s4-next-' + stepNum);
-    if (nextBtn) { nextBtn.disabled = false; nextBtn.textContent = 'המשך'; }
   });
+  // s4ShowStep (למטה) כבר קובעת מחדש את מצב-ה-disabled של #s4-continue
+  // לפי s4State.step/answers/done (ר' סוף s4ShowStep + s4Finish) — אין
+  // צורך בקביעה נוספת כאן.
   s4ShowStep(s4State.step);
-  const continueBtn = document.getElementById('s4-continue');
-  if (continueBtn) continueBtn.disabled = !s4State.done;
 }
 
 function advanceFromS4() {

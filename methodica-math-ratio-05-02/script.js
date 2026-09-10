@@ -718,6 +718,25 @@ function equalizeTfBtnWidths() {
     const maxWidth = Math.max.apply(null, btns.map(function (b) { return b.offsetWidth; }));
     btns.forEach(function (b) { b.style.width = maxWidth + 'px'; });
   });
+  /* ⚠️ נוסף (10.09.2026, דיווח: "תזיז גם את כפתור הצדקתי מתחת לשאלת
+     הנכון/לא נכון שלא יתנגש עם התמונות") — אותו באג-מקור בדיוק כמו
+     equalizeScqOptWidths למעלה (#s3-p2-check): .s3-inline-btn מיושר
+     ב-align-self:flex-end (כלל גלובלי) לקצה-השמאלי של .s3-part
+     המלא (100%), לא לקצה-השמאלי בפועל של .tf-rows — שצומצם היום
+     (styles.css, calc(100% - 84px)) כדי לא לחפוף את .s3-fixed-images.
+     אותה שיטת-מדידה בדיוק (getBoundingClientRect, מחולק ב-scale של
+     #app — ראו ההערה המלאה למעלה למה לא margin-left גולמי): מיישם
+     margin-left על #s3-p3-check כך שקצה-שמאל שלו יחפוף מחדש לקצה-
+     שמאל בפועל של .tf-rows. */
+  document.querySelectorAll('.tf-rows').forEach(function (rows) {
+    const checkBtn = rows.nextElementSibling;
+    if (!checkBtn || !checkBtn.classList.contains('s3-inline-btn')) return;
+    const appEl = document.getElementById('app');
+    const scale = appEl ? (appEl.getBoundingClientRect().width / CANVAS_W) : 1;
+    const rowsRect = rows.getBoundingClientRect();
+    const partRect = rows.parentElement.getBoundingClientRect();
+    checkBtn.style.marginLeft = Math.max(0, (rowsRect.left - partRect.left) / scale) + 'px';
+  });
 }
 
 function resetScreenState3() {

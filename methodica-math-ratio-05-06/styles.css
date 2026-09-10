@@ -869,9 +869,14 @@ img { display: block; max-width: none; }
 /* QA 20.08.2026 (תוקן שוב — 92% לא היה מספיק קרוב בפועל): עוגן ב-
    right:6px קבוע (לא אחוז) — ממורכז בתוך פס-הגלילה עצמו, ללא תלות
    ברוחב-העמודה. ראו methodica-math-ratio-01-01/styles.css להסבר המלא. */
-/* ⚠️ תוקן (31.08.2026, בדיקה חיה מול Figma) — right:16px (wrap) + פס
-   12px רוחב → מרכז-הפס בפועל ב-right:16+6=22px מקצה-ה-wrap. */
-.gesture-hint-scroll-wrap .gesture-hint { left: auto; right: 22px; }
+/* ⚠️ תוקן שוב (10.09.2026, דיווח: "כף היד לא ממוקמת בדיוק על
+   הסקרולבר בכל המסכים שיש בהם גלילה") — ההערה הקודמת (31.08.2026)
+   טעתה: היא הוסיפה את ה-right:16px של ה-wrap עצמו (ביחס למסך) לחצי-
+   רוחב-הפס (6px), אבל right כאן כבר יחסי לקצה-ה-wrap עצמו (frame
+   פנימי) — אין להוסיף שוב את ה-16px. הפס (12px) יושב צמוד לקצה-ה-wrap,
+   מרכזו הוא 12/2=6px מהקצה, לא 22px. תוקן חזרה ל-6px (זהה לתיקון
+   שבוצע ב-methodica-math-ratio-05-01, ראו שם ההערה המלאה). */
+.gesture-hint-scroll-wrap .gesture-hint { left: auto; right: 6px; }
 .gesture-hint-hand,
 .gesture-hint-ring {
   position: absolute;

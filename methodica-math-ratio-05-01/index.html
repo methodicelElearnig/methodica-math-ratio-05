@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>לומדה 720 | מתמטיקה יעד 1.5 | יחס | סיין 1</title>
-<link rel="stylesheet" href="styles.css?v=20260907d">
+<link rel="stylesheet" href="styles.css?v=20260910c">
 </head>
 <body>
 <div id="app">
@@ -766,6 +766,10 @@
            מהרפרנס הגנרי) — ממלאת את אותו מקום-פיזי (משמאל) שהכרטיס
            הסגול יתפוס בשלבים 1-6, כדי שלא יישאר ריק/ארוך-מדי כמו
            שהיה קודם. -->
+      <!-- ⚠️ תוקן (10.09.2026, לפי בקשה מפורשת) — כפתור "בואו נתחיל"
+           הפנימי (#s4-start-btn) הוסר; כפתור "המשך" הכללי בסרגל התחתון
+           (#s4-continue) הוא זה שמפעיל את s4Start (ר' s4ContinueClick,
+           script.js) — פעיל כבר בשלב 0 (הפתיחה), לא disabled כמו קודם. -->
       <div class="s4-intro-char" id="s4-intro-char">
         <div class="char-bubble-wrap">
           <div class="char-speech-bubble">
@@ -775,7 +779,6 @@
             <video id="s4-intro-avatar" loop muted playsinline></video>
           </div>
         </div>
-        <button class="btn-continue s4-inline-btn" id="s4-start-btn" onclick="s4Start()">בואו נתחיל</button>
       </div>
 
       <!-- כרטיס "שלב מודרך" סגול ("Guided Step") — פיזית משמאל (שני
@@ -790,14 +793,15 @@
 
         <!-- שלב 1 — א' (שקף 17): בינארי נכון/לא נכון -->
         <div class="s4-step-block" id="s4-step-1" hidden>
-          <p class="s4-step-setup">היחס בין כמות הגולות האדומות לכמות הגולות הכחולות הוא 2:5. לכן ה"שלם" שלנו הוא <span dir="ltr">2 + 5 = 7</span>.</p>
+          <p class="s4-step-setup">היחס בין כמות הגולות האדומות לכמות הגולות הכחולות הוא 2:5. לכן ה"שלם" שלנו הוא 
+            <br/>
+            <span dir="ltr">2 + 5 = 7</span>.</p>
           <p class="s4-step-prompt">א. האם נכון שיש לאורי <span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span> מהגולות?</p>
           <div class="s4-pills" id="s4-pills-1">
             <button class="s4-pill" data-id="true" onclick="s4Choose(1,'true',this)">נכון</button>
             <button class="s4-pill" data-id="false" onclick="s4Choose(1,'false',this)">לא נכון</button>
           </div>
           <p class="s4-step-explain" id="s4-explain-1" hidden>אורי קיבל את הגולות האדומות, כלומר יש לו <span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span> מהגולות.</p>
-          <button class="btn-continue s4-inline-btn" id="s4-next-1" disabled onclick="s4CheckStep(1)">צדקתי?</button>
         </div>
 
         <!-- שלב 2 — ב' (שקף 18): 3 פילים שבר -->
@@ -810,7 +814,6 @@
             <button class="s4-pill" data-id="2/5" onclick="s4Choose(2,'2/5',this)"><span class="frac"><span class="frac-num">2</span><span class="frac-den">5</span></span></button>
           </div>
           <p class="s4-step-explain" id="s4-explain-2" hidden>דן קיבל <span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> מהגולות.</p>
-          <button class="btn-continue s4-inline-btn" id="s4-next-2" disabled onclick="s4CheckStep(2)">צדקתי?</button>
         </div>
 
         <!-- שלב 3 — ג' (שקף 19): 3 פילים מספר -->
@@ -823,7 +826,6 @@
             <button class="s4-pill" data-id="16" onclick="s4Choose(3,'16',this)">16</button>
           </div>
           <p class="s4-step-explain" id="s4-explain-3" hidden>אורי קיבל 16 גולות.</p>
-          <button class="btn-continue s4-inline-btn" id="s4-next-3" disabled onclick="s4CheckStep(3)">צדקתי?</button>
         </div>
 
         <!-- שלב 4 — ד' (שקף 20): 3 פילים מספר -->
@@ -836,17 +838,15 @@
             <button class="s4-pill" data-id="39" onclick="s4Choose(4,'39',this)">39</button>
           </div>
           <p class="s4-step-explain" id="s4-explain-4" hidden>דן קיבל 40 גולות.</p>
-          <button class="btn-continue s4-inline-btn" id="s4-next-4" disabled onclick="s4CheckStep(4)">צדקתי?</button>
         </div>
 
         <!-- שלב 5 — ד' דרך נוספת (שקף 21): לא אינטראקטיבי -->
         <div class="s4-step-block" id="s4-step-5" hidden>
           <p class="s4-step-prompt"><span style="font-weight:400">ד. </span>דרך נוספת:</p>
-          <p class="s4-step-explain">סך כל הגולות הוא 56.<br>אורי קיבל 16 גולות.<br>לכן, דן קיבל:<br><span dir="ltr"> 
+          <p class="s4-step-explain">סך כל הגולות הוא 56.<br>אורי קיבל 16 גולות.<br>לכן, דן קיבל:<br><span dir="ltr">
  56 − 16 = גולות 40
-          
+
           </span></p>
-          <button class="btn-continue s4-inline-btn" id="s4-next-5" onclick="s4Next(5)">המשך</button>
         </div>
 
         <!-- שלב 6 — סידור בקבוצות (שקף 22): לא אינטראקטיבי, מציג את דיאגרמת הגולות -->
@@ -865,13 +865,6 @@
         </div>
 
         </div>
-        <div class="s4-card-gesture-wrap" id="s4-step-card-gesture" hidden>
-          <div class="gesture-hint">
-            <div class="gesture-hint-ring gesture-hint-ring--big"></div>
-            <div class="gesture-hint-ring gesture-hint-ring--small"></div>
-            <img class="gesture-hint-hand" src="assets/images/gesture-hand-cursor.svg" alt="">
-          </div>
-        </div>
       </div>
         </div>
       </div>
@@ -883,7 +876,7 @@
              תמיד; s4BackOrPrevScreen() (script.js) מדרג-לאחור דרך שלבי
              התרגול-המודרך קודם, וניווט-מסך-רגיל רק משלב 1 והלאה. -->
         <div class="bar-back"><button class="btn-back" id="s4-back" onclick="s4BackOrPrevScreen()">חזרה</button></div>
-        <div class="bar-actions"><button class="btn-continue" id="s4-continue" disabled onclick="advanceFromS4()">המשך</button></div>
+        <div class="bar-actions"><button class="btn-continue" id="s4-continue" onclick="s4ContinueClick()">המשך</button></div>
       </div>
     </div>
   </section>
@@ -1025,7 +1018,7 @@
                (script.js) היא הפונקציה המקבילה ל-s2SimExpandToggle. -->
           <div class="s6-applet-wrap" id="s6-applet-wrap">
             <div class="s6-applet-panel">
-              <iframe class="s6-applet-frame" title="יישומון יחס — סידור בקבוקים במכולת" src="juice-store-app/index.html?v=20260907d" loading="lazy"></iframe>
+              <iframe class="s6-applet-frame" title="יישומון יחס — סידור בקבוקים במכולת" src="juice-store-app/index.html?v=20260910g" loading="lazy"></iframe>
               <button class="img-zoom-btn" type="button" aria-label="הגדלת היישומון" onclick="s6AppletExpandToggle(true)">
                 <svg class="img-zoom-btn__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.6"/>
@@ -1176,6 +1169,6 @@
        בדיוק כמו בפרויקטי המדעים. -->
 
 </div>
-<script src="script.js?v=20260907d"></script>
+<script src="script.js?v=20260910c"></script>
 </body>
 </html>
