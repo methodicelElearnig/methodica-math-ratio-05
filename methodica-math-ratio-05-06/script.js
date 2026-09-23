@@ -50,16 +50,31 @@ window.lomdaState = {
    clampPopupPosition (למטה) קוראים מכאן, לא מגדירים בעצמם. */
 const CANVAS_W = 1280, CANVAS_H = 710;
 
+/* ⚠️ תוקן (23.09.2026, דיווח לקוח: "יש מלא שטח מת למעלה ולמטה") —
+   אותו תיקון שכבר בוצע ואומת ב-methodica-math-ratio-05-01/script.js:
+   scaleApp() ממרכז-עם-שוליים הוחלף במתיחת-הקנבס-עצמו למילוי-מדויק של
+   ה-viewport (אפס שטח-מת, בכל יחס-גובה-רוחב). getCanvasSize() למטה
+   היא מקור-האמת לגודל-הקנבס בפועל מרגע זה. */
 function scaleApp() {
   const app = document.getElementById('app');
   const scale = Math.min(window.innerWidth / CANVAS_W, window.innerHeight / CANVAS_H);
-  const left = (window.innerWidth - CANVAS_W * scale) / 2;
-  const top = (window.innerHeight - CANVAS_H * scale) / 2;
+  const canvasW = window.innerWidth / scale;
+  const canvasH = window.innerHeight / scale;
+  app.style.width = canvasW + 'px';
+  app.style.height = canvasH + 'px';
   app.style.transform = 'scale(' + scale + ')';
-  app.style.left = left + 'px';
-  app.style.top = top + 'px';
+  app.style.left = '0px';
+  app.style.top = '0px';
 }
 window.addEventListener('resize', scaleApp);
+
+function getCanvasSize() {
+  const app = document.getElementById('app');
+  return {
+    w: parseFloat(app.style.width) || CANVAS_W,
+    h: parseFloat(app.style.height) || CANVAS_H
+  };
+}
 
 /* ---------- closeAllPopupsAndHints() — bug-fixed version (מקורה מ-
    סיין 1, לפי סיכום-תהליך-בניית-הלומדה.md) ---------- */
@@ -219,9 +234,6 @@ function setCurrentQuestion(state, idx) {
    שינוי לוגי, רק VIQ_CFG מכיל מפתחות חדשים לסיין הזה.
    ========================================================= */
 const viqState = {};
-/* ⚠️ נוסף (31.08.2026, לפי הנחיות-כפתור-התשובה-הנכונה.md) — הודעת-
-   ביניים משותפת, לשימוש חוזר בכל טוגל חזרה-אליה. */
-const VIQ_PENDING_FEEDBACK = { title: 'התשובה אינה נכונה.', body: 'רוצים לראות את הפתרון הנכון?' };
 
 function viqOnInput(key) {
   const cfg = VIQ_CFG[key];
@@ -278,76 +290,39 @@ function viqCheck(key) {
     bodyEl.innerHTML = cfg.wrongOnce.body;
     document.getElementById(cfg.checkBtn).disabled = true;
   } else {
-    /* ⚠️ תוקן (31.08.2026, לפי דיווח: "כשמוצגת התשובה הנכונה עדיין יש
-       אייקון X", ולפי הנחיות-כפתור-התשובה-הנכונה.md) — קודם: דרס את
-       הערך בתשובה-הנכונה מיד אבל השאיר .wrong (correctFlags חושב לפני
-       הדריסה) — התשובה הנכונה הוצגה עם אייקון-שגיאה. עכשיו: הערכים של
-       הלומד/ת נשארים (עם .correct/.wrong ביחס-אליהם), נלקח snapshot,
-       מוצגת הודעת-ביניים, וכפתור "התשובה הנכונה" נחשף. */
+    /* ⚠️ תוקן (23.09.2026, דיווח: "לא ביקשתי שהתשובה הנכונה תיחשף
+       באופן מידי, לא צריך לחשוף אותה בכלל — היה צריך שתישאר התשובה
+       השגויה שהזין הלומד") — ההערה הקודמת כאן תיארה במפורש את הבאג
+       (דריסת-ערך אוטומטית); לא דורסים יותר — הערך שהלומד/ת הקלידו
+       נשאר, מסומן correct/wrong לפי-שדה בפועל (זהה לענף wrongOnce
+       למעלה), רק ננעל. */
     inputs.forEach(function (input, i) {
       input.classList.toggle('correct', correctFlags[i]);
       input.classList.toggle('wrong', !correctFlags[i]);
       input.disabled = true;
     });
-    st.snapshot = inputs.map(function (input) { return input.value; });
-    st.revealed = false;
-    fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.innerHTML = VIQ_PENDING_FEEDBACK.title;
-    bodyEl.innerHTML = VIQ_PENDING_FEEDBACK.body;
-    if (cfg.revealBtn) {
-      const revealBtn = document.getElementById(cfg.revealBtn);
-      if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
-    }
-    st.outcome = 'fail';
-    viqFinish(key);
-  }
-}
-
-/* ⚠️ נוסף (31.08.2026, לפי הנחיות-כפתור-התשובה-הנכונה.md, וריאנט 2) —
-   טוגל: לחיצה ראשונה חושפת את התשובה הנכונה בפועל (מעדכנת ערכים,
-   מסמנת .correct, מציגה את wrongFinal הקיים ללא שינוי), לחיצה שנייה
-   משחזרת בדיוק את מה שהלומד/ת הקלידו (מ-snapshot) עם .correct/.wrong
-   ביחס-אליו, וחוזרת להודעת-הביניים. */
-function viqToggleReveal(key) {
-  const cfg = VIQ_CFG[key];
-  const st = viqState[key];
-  const inputs = cfg.inputs.map(function (id) { return document.getElementById(id); });
-  const fb = document.getElementById(cfg.feedbox);
-  const titleEl = fb.querySelector('.scq-fb-title-text');
-  const bodyEl = fb.querySelector('.scq-fb-body');
-  const revealBtn = document.getElementById(cfg.revealBtn);
-  if (!st.revealed) {
-    inputs.forEach(function (input, i) {
-      input.value = cfg.correct[i];
-      input.classList.remove('wrong');
-      input.classList.add('correct');
-    });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
     titleEl.innerHTML = cfg.wrongFinal.title;
     bodyEl.innerHTML = cfg.wrongFinal.body;
-    st.revealed = true;
-    if (revealBtn) revealBtn.textContent = 'התשובה שלי';
-  } else {
-    const snapshot = st.snapshot;
-    inputs.forEach(function (input, i) {
-      input.value = snapshot[i];
-      const ok = Number(snapshot[i]) === cfg.correct[i];
-      input.classList.toggle('correct', ok);
-      input.classList.toggle('wrong', !ok);
-    });
-    fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.innerHTML = VIQ_PENDING_FEEDBACK.title;
-    bodyEl.innerHTML = VIQ_PENDING_FEEDBACK.body;
-    st.revealed = false;
-    if (revealBtn) revealBtn.textContent = 'התשובה הנכונה';
+    st.outcome = 'fail';
+    viqFinish(key);
   }
 }
 
 function viqFinish(key) {
   const cfg = VIQ_CFG[key];
   const btn = document.getElementById(cfg.checkBtn);
-  btn.disabled = false;
-  btn.textContent = 'המשך';
+  /* ⚠️ תוקן (23.09.2026, דיווח: "יש שני כפתורים של המשך", זוהה במסך
+     אחר באותה סצנה) — רלייבל ל-"המשך"+re-enable תקין רק אם הכפתור
+     *באמת* חי בתוך .bottom-bar (כלומר הוא בעצמו כפתור-הניווט הראשי,
+     לא כפתור-בדיקה נפרד של סעיף בתוך מסך-רב-חלקים). בדיקה מבנית, לא
+     ניחוש-שם — ראו הערה מלאה זהה ב-methodica-math-ratio-05-05/script.js. */
+  if (btn.closest('.bottom-bar')) {
+    btn.disabled = false;
+    btn.textContent = 'המשך';
+  } else {
+    btn.disabled = true;
+  }
   if (cfg.onDone) cfg.onDone();
 }
 
@@ -361,8 +336,12 @@ const BOTTOM_BAR_H = 74;
 
 function clampPopupPosition(x, y, popupEl) {
   const w = popupEl.offsetWidth, h = popupEl.offsetHeight;
-  const minX = 0, maxX = CANVAS_W - w;
-  const minY = 0, maxY = (CANVAS_H - BOTTOM_BAR_H) - h; // top edge of the bottom bar
+  // ⚠️ עודכן (23.09.2026) — קורא ל-getCanvasSize() במקום ל-CANVAS_W/
+  // CANVAS_H הקבועים: הקנבס עשוי כעת להיות רחב/גבוה יותר מגודל-העיצוב
+  // (ראו scaleApp()), אז גבולות-ההגבלה חייבים לשקף את הגודל בפועל.
+  const canvasSize = getCanvasSize();
+  const minX = 0, maxX = canvasSize.w - w;
+  const minY = 0, maxY = (canvasSize.h - BOTTOM_BAR_H) - h; // top edge of the bottom bar
   return {
     x: Math.min(Math.max(x, minX), maxX),
     y: Math.min(Math.max(y, minY), maxY)
@@ -385,7 +364,6 @@ function scqFbMakeDraggable(boxId) {
   let startX = 0, startY = 0, startLeft = 0, startTop = 0;
 
   box.addEventListener('mousedown', function (e) {
-    if (e.target.closest('.scq-fb-reveal-btn')) return;
     const parent = box.offsetParent || box.parentElement;
     const boxRect = box.getBoundingClientRect();
     const parentRect = parent.getBoundingClientRect();
@@ -407,7 +385,9 @@ function scqFbMakeDraggable(boxId) {
     const parentRect = parent.getBoundingClientRect();
     // pointer delta lives in raw viewport px — convert to canvas-space
     // (divide by the current scaleApp() zoom factor) before clamping.
-    const scale = parentRect.width / CANVAS_W;
+    // ⚠️ עודכן (23.09.2026) — getCanvasSize().w במקום CANVAS_W הקבוע,
+    // אותה סיבה כמו ב-clampPopupPosition למעלה.
+    const scale = parentRect.width / getCanvasSize().w;
     const dx = (e.clientX - startX) / scale;
     const dy = (e.clientY - startY) / scale;
     const clamped = clampPopupPosition(startLeft + dx, startTop + dy, box);
@@ -507,7 +487,7 @@ function resetScreenState1() {
    ה-dir="ltr" החיצוני שנשאר כמו שהוא. "שטח החלקה כולה הוא" (הטקסט-
    המוביל) לא נגעתי בו — לא סומן בדיווח. */
 VIQ_CFG_REGISTER('s2p1', {
-  inputs: ['s2-p1-input'], correct: [216], checkBtn: 's2-p1-check', feedbox: 's2-p1-feedbox', revealBtn: 's2-p1-reveal-btn', nextScreen: null,
+  inputs: ['s2-p1-input'], correct: [216], checkBtn: 's2-p1-check', feedbox: 's2-p1-feedbox', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'היחס בין AB ל-AE הוא 2 : 1, לכן <span dir="ltr">AE = 10</span>.<br>נחשב את שטח המלבן AEDB:<br><span dir="ltr"> 20 ⋅ 10 = 200</span>.<br>נחשב את שטח הריבוע GHCD:<br><span dir="ltr"> 4 ⋅ 4 = 16</span>.<br>שטח החלקה כולה הוא <span dir="ltr">200 + 16 = <span dir="rtl">216 מ"ר</span></span>.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
   wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'היחס בין AB ל-AE הוא 2 : 1, לכן <span dir="ltr">AE = 10</span>.<br>נחשב את שטח המלבן AEDB:<br><span dir="ltr"> 20  ⋅10 = 200</span>.<br>נחשב את שטח הריבוע GHCD:<br><span dir="ltr"> 4 ⋅ 4 = 16</span>.<br>שטח החלקה כולה הוא <span dir="ltr">200 + 16 = <span dir="rtl">216 מ"ר</span></span>.' },
@@ -529,10 +509,10 @@ function s2P1HintClose() { document.getElementById('s2-p1-hint-overlay').hidden 
    בשאלת-ערבוב-הצבעים של methodica-math-ratio-01-05), משעתקים את הטקסט
    הנתון מילה-במילה ולא "מתקנים" אותו. */
 VIQ_CFG_REGISTER('s2p2', {
-  inputs: ['s2-p2-input'], correct: [80], checkBtn: 's2-p2-check', feedbox: 's2-p2-feedbox', revealBtn: 's2-p2-reveal-btn', nextScreen: null,
-  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'ידוע כי מ\' <span dir="ltr">AB = 20</span>. היחס בין AT ל-TB הוא 3 : 2.<br>נחשב את AT: <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">5</span></span> ⋅ 20 = 8</span>,<br>לכן שטח הגינה הוא <span dir="ltr"> 10 ⋅ 8 = 80</span>.' },
+  inputs: ['s2-p2-input'], correct: [80], checkBtn: 's2-p2-check', feedbox: 's2-p2-feedbox', nextScreen: null,
+  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'ידוע כי מ\' <span dir="ltr">AB = 20</span>. היחס בין AT ל-TB הוא 3 : 2.<br>נחשב את AT: <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">5</span></span> ⋅ 20 = 8</span>,<br>לכן שטח הגינה הוא <span dir="ltr"> 10 ⋅ 8 = <span dir="rtl">80 מ"ר</span></span>.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'ידוע כי מ\' <span dir="ltr">AB = 20</span>. היחס בין AT ל-TB הוא 3 : 2.<br>נחשב את AT: <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">5</span></span> ⋅ 20 = 8</span>,<br>לכן שטח הגינה הוא <span dir="ltr"> 10 ⋅ 8 = 80</span>.' },
+  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'ידוע כי מ\' <span dir="ltr">AB = 20</span>. היחס בין AT ל-TB הוא 3 : 2.<br>נחשב את AT: <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">5</span></span> ⋅ 20 = 8</span>,<br>לכן שטח הגינה הוא <span dir="ltr"> 10 ⋅ 8 = <span dir="rtl">80 מ"ר</span></span>.' },
   onDone: function () {
     practiceProgress.questions[1].state = (viqState.s2p2 && viqState.s2p2.outcome === 'fail') ? 'incorrect' : 'correct';
     setCurrentQuestion(practiceProgress, 2);
@@ -553,14 +533,20 @@ function s2P2HintClose() { document.getElementById('s2-p2-hint-overlay').hidden 
    (לא משותפת עם מסך 3), קבועה וזהה בשני הסעיפים. ⚠️ נוסף (07.09.2026,
    לפי בקשה מפורשת) — הועבר ממסך 3 (s2) הישן, ראו ההערה שם. */
 VIQ_CFG_REGISTER('s2p4', {
-  inputs: ['s2-p4-input'], correct: [26], checkBtn: 's2-p4-check', feedbox: 's2-p4-feedbox', revealBtn: 's2-p4-reveal-btn', nextScreen: null,
-  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'שטח המגרש הוא 216 מ"ר. היחס המבוקש הוא 3 : 1.<br>נחשב את השטח המיועד לבנייה לפי היחס המבוקש:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">4</span></span> ⋅ 216 = 162</span><br>ואת השטח המיועד לגינה: <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">4</span></span>  ⋅216 = 54</span>.<br>שטח הגינה שמצאנו בסעיף ב\' הוא 80 מ"ר.<br>לכן, עלינו להעביר <span dir="ltr">80 - 54 = 26</span> מ"ר לשטח המיועד לבנייה.' },
+  inputs: ['s2-p4-input'], correct: [26], checkBtn: 's2-p4-check', feedbox: 's2-p4-feedbox', nextScreen: null,
+  correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'שטח המגרש הוא 216 מ"ר. היחס המבוקש הוא 3 : 1.<br>נחשב את השטח המיועד לבנייה לפי היחס המבוקש:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">4</span></span> ⋅ 216 = 162</span><br>ואת השטח המיועד לגינה: <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">4</span></span>  ⋅216 = 54</span>.<br>שטח הגינה שמצאנו בסעיף ב\' הוא 80 מ"ר.<br>לכן, עלינו להעביר <span dir="ltr">80 - 54 = <span dir="rtl">26 מ"ר</span></span> לשטח המיועד לבנייה.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'שטח המגרש הוא 216 מ"ר. היחס המבוקש הוא 3 : 1.<br>נחשב את השטח המיועד לבנייה לפי היחס המבוקש:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">4</span></span> ⋅ 216 = 162</span><br>ואת השטח המיועד לגינה: <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">4</span></span> ⋅ 216 = 54</span>.<br>שטח הגינה שמצאנו בסעיף ב\' הוא 80 מ"ר.<br>לכן, עלינו להעביר <span dir="ltr">80 - 54 = 26</span> מ"ר לשטח המיועד לבנייה.' },
+  wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'שטח המגרש הוא 216 מ"ר. היחס המבוקש הוא 3 : 1.<br>נחשב את השטח המיועד לבנייה לפי היחס המבוקש:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">4</span></span> ⋅ 216 = 162</span><br>ואת השטח המיועד לגינה: <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">4</span></span> ⋅ 216 = 54</span>.<br>שטח הגינה שמצאנו בסעיף ב\' הוא 80 מ"ר.<br>לכן, עלינו להעביר <span dir="ltr">80 - 54 = <span dir="rtl">26 מ"ר</span></span> לשטח המיועד לבנייה.' },
+  /* ⚠️ תוקן (23.09.2026, בקשה מפורשת: "ג יהיה במקום ד וד יהיה במקום
+     ג") — סעיף ג' (הסעיף הזה) עבר להיות שני פיזית על המסך (אחרי ד'),
+     אז ה-onDone שלו הוחלף עם זה שהיה ב-s2p5 למטה: מסמן עכשיו את
+     practiceProgress.questions[3] ("שאלה 4", לא [2]) ומפעיל את
+     "המשך" בסרגל התחתון — כי הוא עכשיו הסעיף *האחרון* שנענה במסך,
+     לא הראשון. ראו ההערה המקבילה ב-s2p5 למטה + ב-index.html. */
   onDone: function () {
-    practiceProgress.questions[2].state = (viqState.s2p4 && viqState.s2p4.outcome === 'fail') ? 'incorrect' : 'correct';
-    setCurrentQuestion(practiceProgress, 3);
+    practiceProgress.questions[3].state = (viqState.s2p4 && viqState.s2p4.outcome === 'fail') ? 'incorrect' : 'correct';
     syncBothProgressNavs();
+    document.getElementById('s4-continue').disabled = false;
   }
 });
 function s2P4OnInput() { viqOnInput('s2p4'); }
@@ -576,14 +562,21 @@ function s2P4HintClose() { document.getElementById('s2-p4-hint-overlay').hidden 
    נוסף dir="rtl" מקונן סביב "108 מ"ר"/"28 מ"ר" (סדר-מקור מספר-ואז-
    יחידה), בתוך ה-dir="ltr" החיצוני שנשאר כמו שהוא. */
 VIQ_CFG_REGISTER('s2p5', {
-  inputs: ['s2-p5-input'], correct: [28], checkBtn: 's2-p5-check', feedbox: 's2-p5-feedbox', revealBtn: 's2-p5-reveal-btn', nextScreen: null,
+  inputs: ['s2-p5-input'], correct: [28], checkBtn: 's2-p5-check', feedbox: 's2-p5-feedbox', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'שטח הגינה כולה הוא 216 מ"ר.<br>אם נרצה לחלק את השטחים ביחס של 1:1, בעצם נרצה ששני השטחים יהיו שווים.<br>לכן, שטח הבנייה ושטח הגינה יהיו:<br><span dir="ltr">216 : 2 = <span dir="rtl">108 מ"ר</span></span>.<br>שטח הגינה הוא 80 מ"ר, לכן נרצה להעביר <span dir="ltr">108 - 80 = <span dir="rtl">28 מ"ר</span></span> משטח הבנייה לשטח הגינה.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
   wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'שטח הגינה כולה הוא 216 מ"ר.<br>אם נרצה לחלק את השטחים ביחס של 1:1, בעצם נרצה ששני השטחים יהיו שווים.<br>לכן, שטח הבנייה ושטח הגינה יהיו:<br><span dir="ltr">216 : 2 = <span dir="rtl">108 מ"ר</span></span>.<br>שטח הגינה הוא 80 מ"ר, לכן נרצה להעביר <span dir="ltr">108 - 80 = <span dir="rtl">28 מ"ר</span></span> משטח הבנייה לשטח הגינה.' },
+  /* ⚠️ תוקן (23.09.2026, בקשה מפורשת: "ג יהיה במקום ד וד יהיה במקום
+     ג") — סעיף ד' (הסעיף הזה) עבר להיות ראשון פיזית על המסך, אז
+     ה-onDone שלו הוחלף עם זה שהיה ב-s2p4 למעלה: מסמן עכשיו את
+     practiceProgress.questions[2] ("שאלה 3", לא [3]) ומקדם את
+     "הנוכחי" לשאלה 4 — כי הוא עכשיו הסעיף *הראשון* שנענה במסך, לא
+     האחרון (לא מפעיל עוד את "המשך" בסרגל התחתון בעצמו). ראו ההערה
+     המקבילה ב-s2p4 למעלה + ב-index.html. */
   onDone: function () {
-    practiceProgress.questions[3].state = (viqState.s2p5 && viqState.s2p5.outcome === 'fail') ? 'incorrect' : 'correct';
+    practiceProgress.questions[2].state = (viqState.s2p5 && viqState.s2p5.outcome === 'fail') ? 'incorrect' : 'correct';
+    setCurrentQuestion(practiceProgress, 3);
     syncBothProgressNavs();
-    document.getElementById('s4-continue').disabled = false;
   }
 });
 function s2P5OnInput() { viqOnInput('s2p5'); }

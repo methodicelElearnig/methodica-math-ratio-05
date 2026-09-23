@@ -69,16 +69,31 @@ window.lomdaState = {
    clampPopupPosition (למטה) קוראים מכאן, לא מגדירים בעצמם. */
 const CANVAS_W = 1280, CANVAS_H = 710;
 
+/* ⚠️ תוקן (23.09.2026, דיווח לקוח: "יש מלא שטח מת למעלה ולמטה") — אותו
+   תיקון שכבר בוצע ואומת ב-methodica-math-ratio-05-01/script.js: #app
+   מתרחב למילוי-מדויק של ה-viewport אחרי ה-scale, במקום להישאר נעול
+   ל-1280×710 עם שוליים ממורכזים. getCanvasSize() למטה היא מקור-האמת
+   לגודל-הקנבס בפועל. */
 function scaleApp() {
   const app = document.getElementById('app');
   const scale = Math.min(window.innerWidth / CANVAS_W, window.innerHeight / CANVAS_H);
-  const left = (window.innerWidth - CANVAS_W * scale) / 2;
-  const top = (window.innerHeight - CANVAS_H * scale) / 2;
+  const canvasW = window.innerWidth / scale;
+  const canvasH = window.innerHeight / scale;
+  app.style.width = canvasW + 'px';
+  app.style.height = canvasH + 'px';
   app.style.transform = 'scale(' + scale + ')';
-  app.style.left = left + 'px';
-  app.style.top = top + 'px';
+  app.style.left = '0px';
+  app.style.top = '0px';
 }
 window.addEventListener('resize', scaleApp);
+
+function getCanvasSize() {
+  const app = document.getElementById('app');
+  return {
+    w: parseFloat(app.style.width) || CANVAS_W,
+    h: parseFloat(app.style.height) || CANVAS_H
+  };
+}
 
 /* ⚠️ נוסף (07.09.2026, בדיקה מקיפה: "כפתור 'צדקתי?' לא תמיד מיושר
    לשמאל") — הועתק/הותאם מ-methodica-math-ratio-05-05/script.js
@@ -89,7 +104,9 @@ window.addEventListener('resize', scaleApp);
    מרוחב #app בפועל) כדי לקבל בחזרה יחידות מקומיות נכונות. */
 function currentCanvasScale() {
   const appEl = document.getElementById('app');
-  return appEl ? (appEl.getBoundingClientRect().width / CANVAS_W) : 1;
+  // ⚠️ עודכן (23.09.2026) — מחלקים ב-getCanvasSize().w (הרוחב הדינמי
+  // בפועל שנקבע ב-scaleApp(), עשוי לחרוג מ-1280), לא ב-CANVAS_W הקבוע.
+  return appEl ? (appEl.getBoundingClientRect().width / getCanvasSize().w) : 1;
 }
 
 /* ⚠️ נוסף (07.09.2026, בדיקה מקיפה) — .s3-inline-btn (align-self:
@@ -494,9 +511,6 @@ function mcqFinish(key) {
    שינוי לוגי — רק VIQ_CFG מכיל מפתחות חדשים לסיין הזה.
    ========================================================= */
 const viqState = {};
-/* ⚠️ נוסף (31.08.2026, לפי הנחיות-כפתור-התשובה-הנכונה.md) — הודעת-
-   ביניים משותפת, לשימוש חוזר בכל טוגל חזרה-אליה. */
-const VIQ_PENDING_FEEDBACK = { title: 'התשובה אינה נכונה.', body: 'רוצים לראות את הפתרון הנכון?' };
 
 function viqOnInput(key) {
   const cfg = VIQ_CFG[key];
@@ -553,74 +567,42 @@ function viqCheck(key) {
     bodyEl.innerHTML = cfg.wrongOnce.body;
     document.getElementById(cfg.checkBtn).disabled = true;
   } else {
-    /* ⚠️ תוקן (31.08.2026, לפי דיווח: "כשמוצגת התשובה הנכונה עדיין יש
-       אייקון X", ולפי הנחיות-כפתור-התשובה-הנכונה.md) — קודם: דרס את
-       הערך בתשובה-הנכונה מיד אבל השאיר .wrong (correctFlags חושב לפני
-       הדריסה) — התשובה הנכונה הוצגה עם אייקון-שגיאה. עכשיו: הערכים של
-       הלומד/ת נשארים (עם .correct/.wrong ביחס-אליהם), נלקח snapshot,
-       מוצגת הודעת-ביניים, וכפתור "התשובה הנכונה" נחשף. */
+    /* ⚠️ תוקן (23.09.2026, דיווח: "לא ביקשתי שהתשובה הנכונה תיחשף
+       באופן מידי, לא צריך לחשוף אותה בכלל — היה צריך שתישאר התשובה
+       השגויה שהזין הלומד") — הסרת כפתור-הטוגל (31.08.2026→בוטל)
+       השאירה בטעות את דריסת-הערך המקורית (input.value=cfg.correct[i])
+       שהיא בדיוק החשיפה הבלתי-רצויה; הוסרה. עכשיו, כמו ב-scqCheck/
+       s2P1Check: הערך שהלומד/ת הקלידו נשאר כמות שהוא, מסומן
+       correct/wrong לפי-שדה (זהה לענף wrongOnce למעלה), רק ננעל
+       (disabled) — התשובה הנכונה מוסברת במלל ב-wrongFinal.body, לא
+       בשדה עצמו. */
     inputs.forEach(function (input, i) {
       input.classList.toggle('correct', correctFlags[i]);
       input.classList.toggle('wrong', !correctFlags[i]);
       input.disabled = true;
     });
-    st.snapshot = inputs.map(function (input) { return input.value; });
-    st.revealed = false;
-    fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.innerHTML = VIQ_PENDING_FEEDBACK.title;
-    bodyEl.innerHTML = VIQ_PENDING_FEEDBACK.body;
-    if (cfg.revealBtn) {
-      const revealBtn = document.getElementById(cfg.revealBtn);
-      if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
-    }
-    st.outcome = 'fail';
-    viqFinish(key);
-  }
-}
-
-/* ⚠️ נוסף (31.08.2026, לפי הנחיות-כפתור-התשובה-הנכונה.md, וריאנט 2) —
-   טוגל: לחיצה ראשונה חושפת את התשובה הנכונה בפועל, לחיצה שנייה משחזרת
-   בדיוק את מה שהלומד/ת הקלידו (מ-snapshot). */
-function viqToggleReveal(key) {
-  const cfg = VIQ_CFG[key];
-  const st = viqState[key];
-  const inputs = cfg.inputs.map(function (id) { return document.getElementById(id); });
-  const fb = document.getElementById(cfg.feedbox);
-  const titleEl = fb.querySelector('.scq-fb-title-text');
-  const bodyEl = fb.querySelector('.scq-fb-body');
-  const revealBtn = document.getElementById(cfg.revealBtn);
-  if (!st.revealed) {
-    inputs.forEach(function (input, i) {
-      input.value = cfg.correct[i];
-      input.classList.remove('wrong');
-      input.classList.add('correct');
-    });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
     titleEl.innerHTML = cfg.wrongFinal.title;
     bodyEl.innerHTML = cfg.wrongFinal.body;
-    st.revealed = true;
-    if (revealBtn) revealBtn.textContent = 'התשובה שלי';
-  } else {
-    const snapshot = st.snapshot;
-    inputs.forEach(function (input, i) {
-      input.value = snapshot[i];
-      const ok = Number(snapshot[i]) === cfg.correct[i];
-      input.classList.toggle('correct', ok);
-      input.classList.toggle('wrong', !ok);
-    });
-    fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.innerHTML = VIQ_PENDING_FEEDBACK.title;
-    bodyEl.innerHTML = VIQ_PENDING_FEEDBACK.body;
-    st.revealed = false;
-    if (revealBtn) revealBtn.textContent = 'התשובה הנכונה';
+    st.outcome = 'fail';
+    viqFinish(key);
   }
 }
 
 function viqFinish(key) {
   const cfg = VIQ_CFG[key];
   const btn = document.getElementById(cfg.checkBtn);
-  btn.disabled = false;
-  btn.textContent = 'המשך';
+  /* ⚠️ תוקן (23.09.2026, דיווח: "יש שני כפתורים של המשך", זוהה במסך
+     אחר באותה סצנה) — רלייבל ל-"המשך"+re-enable תקין רק אם הכפתור
+     *באמת* חי בתוך .bottom-bar (כלומר הוא בעצמו כפתור-הניווט הראשי,
+     לא כפתור-בדיקה נפרד של סעיף בתוך מסך-רב-חלקים). בדיקה מבנית, לא
+     ניחוש-שם — ראו הערה מלאה זהה ב-methodica-math-ratio-05-05/script.js. */
+  if (btn.closest('.bottom-bar')) {
+    btn.disabled = false;
+    btn.textContent = 'המשך';
+  } else {
+    btn.disabled = true;
+  }
   if (cfg.onDone) cfg.onDone();
 }
 
@@ -654,7 +636,7 @@ function resetScreenState0() {
 const S1MIX_CFG = {
   p1: {
     whiteId: 's1-p1-white', darkId: 's1-p1-dark', ynYesId: 's1-p1-yes', ynNoId: 's1-p1-no',
-    checkBtn: 's1-p1-check', feedbox: 's1-p1-feedbox', revealBtn: 's1-p1-reveal-btn',
+    checkBtn: 's1-p1-check', feedbox: 's1-p1-feedbox',
     correct: { white: 5, dark: 45, yn: 'no' },
     correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'בכל שורה נשים פרח שוקולד לבן אחד, ו-9 פרחי שוקולד מריר,\nסה"כ 10 פרחים בשורה. נקבל 5 שורות מכיוון ש: <span dir="">5 = 10 : 50</span>.\nמספר פרחי שוקולד לבן בכל התבנית הוא: 5,\nמספר פרחי שוקולד המריר בכל התבנית הוא: 45.\nמאחר ו- <span dir="">50 = 5 + 45</span>, אז לא נשארו שקעים ריקים.' },
     wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
@@ -662,7 +644,7 @@ const S1MIX_CFG = {
   },
   p2: {
     whiteId: 's1-p2-white', darkId: 's1-p2-dark', ynYesId: 's1-p2-yes', ynNoId: 's1-p2-no',
-    checkBtn: 's1-p2-check', feedbox: 's1-p2-feedbox', revealBtn: 's1-p2-reveal-btn',
+    checkBtn: 's1-p2-check', feedbox: 's1-p2-feedbox',
     correct: { white: 12, dark: 36, yn: 'yes' },
     correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'על כל משבצת לבנה נסמן 3 משבצות חומות. נקבל סך הכל 12 פרחי שוקולד לבן, 36 פרחי שוקולד מריר ו-2 משבצות ריקות. חשבו איך כדאי לכם למלא את התבניות לפי היחס הנתון.' },
     wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
@@ -768,69 +750,21 @@ function s1MixCheck(key) {
     bodyEl.innerHTML = cfg.wrongOnce.body;
     document.getElementById(cfg.checkBtn).disabled = true;
   } else {
-    /* ⚠️ תוקן (31.08.2026, לפי דיווח: "כשמוצגת התשובה הנכונה עדיין יש
-       אייקון X", ולפי הנחיות-כפתור-התשובה-הנכונה.md) — קודם: דרס את
-       whiteInput/darkInput בערך-הנכון מיד אבל השאיר .wrong (whiteOk/
-       darkOk חושבו לפני הדריסה) — התשובה הנכונה הוצגה עם אייקון-שגיאה.
-       עכשיו: הערכים של הלומד/ת נשארים (עם .correct/.wrong ביחס-אליהם),
-       נלקח snapshot, וכפתור "התשובה הנכונה" נחשף. בורר-כן/לא (yn) לא
-       נגוע בבאג הזה כלל (הסימון-הקבוע שלו כבר תואם למוסכמת-הפרויקט
-       ל-SCQ — נשאר ללא שינוי, לא חלק מהטוגל). */
-    whiteInput.classList.toggle('correct', whiteOk); whiteInput.classList.toggle('wrong', !whiteOk);
-    whiteInput.disabled = true;
-    darkInput.classList.toggle('correct', darkOk); darkInput.classList.toggle('wrong', !darkOk);
-    darkInput.disabled = true;
+    /* ⚠️ תוקן (23.09.2026, דיווח: "לא ביקשתי שהתשובה הנכונה תיחשף
+       באופן מידי, לא צריך לחשוף אותה בכלל — היה צריך שתישאר התשובה
+       השגויה שהזין הלומד") — אותו תיקון בדיוק כמו viqCheck למעלה: לא
+       דורסים white/darkInput.value בתשובה הנכונה — משאירים את מה
+       שהלומד/ת הקלידו, מסומן correct/wrong לפי-שדה בפועל, רק ננעל. */
+    whiteInput.classList.toggle('correct', whiteOk); whiteInput.classList.toggle('wrong', !whiteOk); whiteInput.disabled = true;
+    darkInput.classList.toggle('correct', darkOk); darkInput.classList.toggle('wrong', !darkOk); darkInput.disabled = true;
     if (!ynOk) { chosenEl.classList.add('wrong'); correctYNEl.classList.add('correct'); }
     else { chosenEl.classList.add('correct'); }
     s1MixLock(key);
-    st.snapshot = { white: whiteInput.value, dark: darkInput.value };
-    st.revealed = false;
-    fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.innerHTML = VIQ_PENDING_FEEDBACK.title;
-    bodyEl.innerHTML = VIQ_PENDING_FEEDBACK.body;
-    if (cfg.revealBtn) {
-      const revealBtn = document.getElementById(cfg.revealBtn);
-      if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
-    }
-    st.outcome = 'fail';
-    s1MixFinish(key);
-  }
-}
-
-/* ⚠️ נוסף (31.08.2026, לפי הנחיות-כפתור-התשובה-הנכונה.md, וריאנט 2) —
-   טוגל של whiteInput/darkInput בלבד (הבורר yn לא נגוע, נשאר קבוע). */
-function s1MixToggleReveal(key) {
-  const cfg = S1MIX_CFG[key];
-  const st = s1MixState[key];
-  const whiteInput = document.getElementById(cfg.whiteId);
-  const darkInput = document.getElementById(cfg.darkId);
-  const fb = document.getElementById(cfg.feedbox);
-  const titleEl = fb.querySelector('.scq-fb-title-text');
-  const bodyEl = fb.querySelector('.scq-fb-body');
-  const revealBtn = document.getElementById(cfg.revealBtn);
-  if (!st.revealed) {
-    whiteInput.value = cfg.correct.white;
-    whiteInput.classList.remove('wrong'); whiteInput.classList.add('correct');
-    darkInput.value = cfg.correct.dark;
-    darkInput.classList.remove('wrong'); darkInput.classList.add('correct');
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
     titleEl.innerHTML = cfg.wrongFinal.title;
     bodyEl.innerHTML = cfg.wrongFinal.body;
-    st.revealed = true;
-    if (revealBtn) revealBtn.textContent = 'התשובה שלי';
-  } else {
-    const snap = st.snapshot;
-    whiteInput.value = snap.white;
-    const whiteOk = Number(snap.white) === cfg.correct.white;
-    whiteInput.classList.toggle('correct', whiteOk); whiteInput.classList.toggle('wrong', !whiteOk);
-    darkInput.value = snap.dark;
-    const darkOk = Number(snap.dark) === cfg.correct.dark;
-    darkInput.classList.toggle('correct', darkOk); darkInput.classList.toggle('wrong', !darkOk);
-    fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.innerHTML = VIQ_PENDING_FEEDBACK.title;
-    bodyEl.innerHTML = VIQ_PENDING_FEEDBACK.body;
-    st.revealed = false;
-    if (revealBtn) revealBtn.textContent = 'התשובה הנכונה';
+    st.outcome = 'fail';
+    s1MixFinish(key);
   }
 }
 
@@ -1071,11 +1005,16 @@ function resetScreenState2() {
    בלבד, ב-onDone של s3p2).
    ========================================================= */
 VIQ_CFG_REGISTER('s3p1', {
-  inputs: ['s3-p1-a', 's3-p1-b'], correct: [5, 7], checkBtn: 's3-p1-check', feedbox: 's3-p1-feedbox', revealBtn: 's3-p1-reveal-btn', nextScreen: null,
+  inputs: ['s3-p1-a', 's3-p1-b'], correct: [5, 7], checkBtn: 's3-p1-check', feedbox: 's3-p1-feedbox', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'רועי שילם 5 ש"ח ועינת שילמה 7 ש"ח, לכן יחס ההשקעה הוא 7 : 5.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
   wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'רועי שילם 5 ש"ח ועינת שילמה 7 ש"ח, לכן יחס ההשקעה הוא 7 : 5.' },
-  onDone: function () { s3ShowPart(2); }
+  /* ⚠️ תוקן (23.09.2026, נמצא בבדיקה יזומה) — קרא ל-s3ShowPart(2), פונקציה
+     שהוסרה כבר ב-20.08.2026 (כל החלקים גלויים-תמיד-בבת-אחת, ראו ההערה
+     המלאה למטה ליד "הוסרה s3ShowPart") — כל לחיצה על "צדקתי?" כאן זרקה
+     ReferenceError בקונסול. אין יותר צורך בחשיפה-יזומה של חלק ב', אז
+     onDone הוא null, כמו שאלות אחרות בפרויקט בלי פעולת-onDone. */
+  onDone: null
 });
 function s3P1OnInput() { viqOnInput('s3p1'); }
 function s3P1Check() { viqCheck('s3p1'); }
@@ -1235,7 +1174,7 @@ function resetScreenState4() {
    goTo(5)) — יעד-ניווט אמיתי לסוף-היחידה דורש אישור-מוצר, לא הומצא כאן.
    ========================================================= */
 VIQ_CFG_REGISTER('s5p1', {
-  inputs: ['s5-p1-a', 's5-p1-b'], correct: [60, 150], checkBtn: 's5-p1-check', feedbox: 's5-p1-feedbox', revealBtn: 's5-p1-reveal-btn', nextScreen: null,
+  inputs: ['s5-p1-a', 's5-p1-b'], correct: [60, 150], checkBtn: 's5-p1-check', feedbox: 's5-p1-feedbox', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'היחס בין מספר השעות שעבדה נעמי למספר השעות שעבד יוני הוא 2:5.<br>מספר החלקים הוא <span dir="ltr">2 + 5 = 7</span>.<br>אם נועה ויוני הרוויחו 210 ₪ והם מתכוונים לחלק את הכסף לפי מספר השעות היחסי אז:<br>נועה תקבל <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span> · 210 = 60</span>,<br>ויוני יקבל <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> · 210 = 150</span>.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
   wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'היחס בין מספר השעות שעבדה נעמי למספר השעות שעבד יוני הוא 2:5.<br>מספר החלקים הוא <span dir="ltr"> 2 + 5 = 7</span>.<br>אם נועה ויוני הרוויחו 210 ₪ והם מתכוונים לחלק את הכסף לפי מספר השעות היחסי אז:<br>נועה תקבל <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span> · 210 = 60</span>,<br>ויוני יקבל <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> · 210 = 150</span>.' },
@@ -1307,12 +1246,24 @@ function s5SetPhoto(src, alt) {
 function s5UpdatePhotoByScroll() {
   const area = document.getElementById('s5-scroll-area');
   if (!area) return;
-  const parts = [
-    { el: document.getElementById('s5-part-2'), src: 'assets/images/girl-washing-car.jpeg', alt: 'ילדה שוטפת מכונית' },
-    { el: document.getElementById('s5-part-3'), src: 'assets/images/lottery-kiosk-siblings.jpg', alt: 'אחים בדוכן הגרלה' } /* ⚠️ תוקן (31.08.2026, דיווח: "לא מופיעה התמונה בסעיף האחרון") — הקובץ בפועל בדיסק הוא .jpg, לא .jpeg */
-  ];
   const areaRect = area.getBoundingClientRect();
   const midpoint = areaRect.top + areaRect.height / 2;
+
+  /* ⚠️ תוקן (23.09.2026, בקשה מפורשת: "צריך להוריד לגמרי את התמונה
+     המלווה לשאלה [ג]") — סעיף ג' (חלק 3) כבר לא מציג lottery-kiosk-
+     siblings.jpg; אותו מנגנון בדיוק כמו s3UpdatePhotoVisibilityByScroll
+     למעלה (מסך 4, ראו שם): מסתיר את כל עמודת-התמונה ברגע שסעיף ג'
+     מגיע לאמצע אזור-הגלילה, מציג אותה שוב אם גוללים חזרה למעלה. */
+  const wrap = document.getElementById('s5-fixed-images');
+  const part3 = document.getElementById('s5-part-3');
+  if (wrap && part3) {
+    wrap.hidden = part3.getBoundingClientRect().top <= midpoint;
+    if (wrap.hidden) return;
+  }
+
+  const parts = [
+    { el: document.getElementById('s5-part-2'), src: 'assets/images/girl-washing-car.jpeg', alt: 'ילדה שוטפת מכונית' }
+  ];
   let active = null;
   parts.forEach(function (p) {
     if (!p.el) return;
@@ -1392,8 +1343,13 @@ const BOTTOM_BAR_H = 74;
 
 function clampPopupPosition(x, y, popupEl) {
   const w = popupEl.offsetWidth, h = popupEl.offsetHeight;
-  const minX = 0, maxX = CANVAS_W - w;
-  const minY = 0, maxY = (CANVAS_H - BOTTOM_BAR_H) - h; // top edge of the bottom bar
+  // ⚠️ עודכן (23.09.2026) — גבולות ביחס לגודל-הקנבס *בפועל*
+  // (getCanvasSize(), עשוי לחרוג מ-1280×710), לא ביחס ל-CANVAS_W/
+  // CANVAS_H הקבועים — אחרת פופ-אפ נגרר היה נשאר נעול לתוך המלבן
+  // הישן-הקטן גם כש-#app כבר גדול יותר (ראו ההערה המלאה ליד scaleApp()).
+  const canvas = getCanvasSize();
+  const minX = 0, maxX = canvas.w - w;
+  const minY = 0, maxY = (canvas.h - BOTTOM_BAR_H) - h; // top edge of the bottom bar
   return {
     x: Math.min(Math.max(x, minX), maxX),
     y: Math.min(Math.max(y, minY), maxY)
@@ -1416,7 +1372,6 @@ function scqFbMakeDraggable(boxId) {
   let startX = 0, startY = 0, startLeft = 0, startTop = 0;
 
   box.addEventListener('mousedown', function (e) {
-    if (e.target.closest('.scq-fb-reveal-btn')) return;
     const parent = box.offsetParent || box.parentElement;
     const boxRect = box.getBoundingClientRect();
     const parentRect = parent.getBoundingClientRect();
@@ -1436,7 +1391,9 @@ function scqFbMakeDraggable(boxId) {
     if (!dragging) return;
     const parent = box.offsetParent || box.parentElement;
     const parentRect = parent.getBoundingClientRect();
-    const scale = parentRect.width / CANVAS_W;
+    // ⚠️ עודכן (23.09.2026) — getCanvasSize().w, לא CANVAS_W הקבוע (ראו
+    // ההערה המלאה ליד scaleApp()/currentCanvasScale()).
+    const scale = parentRect.width / getCanvasSize().w;
     const dx = (e.clientX - startX) / scale;
     const dy = (e.clientY - startY) / scale;
     const clamped = clampPopupPosition(startLeft + dx, startTop + dy, box);

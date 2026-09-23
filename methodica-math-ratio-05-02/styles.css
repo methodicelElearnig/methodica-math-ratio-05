@@ -380,7 +380,15 @@ img { display: block; max-width: none; }
   box-sizing: border-box;
   flex-direction: column;
   gap: 24px;
-  z-index: 50;
+  /* ⚠️ תוקן (22.09.2026, דיווח: "המשוב הקבוע עולה מעל פופ-אפ הרמז") —
+     z-index חייב להישאר נמוך מ-.scq-hint-overlay (z-index:40), אחרת
+     הפופ-אפ הצף (position:absolute) *וגם* הגרסה הקבועה-בזרימה
+     (.is-static, שכן היא flex item בתוך ה-.*-part/.*-flow-row —
+     z-index נאכף גם ב-position:static כש-parent הוא flex container)
+     מציירים את עצמם מעל השכבה הכהה. אותו ערך מדויק כמו
+     methodica-math-ratio-05-01/styles.css (כבר תוקן שם), ואותה בעיה
+     שתוקנה נקודתית ל-.is-static ב-05-06/styles.css. */
+  z-index: 25;
   cursor: grab;
 }
 .scq-fb-box.visible { display: flex; }
@@ -420,21 +428,6 @@ img { display: block; max-width: none; }
   text-align: right;
   white-space: pre-line;
 }
-.scq-fb-reveal-btn {
-  align-self: flex-start;
-  background: #fff;
-  color: var(--subject-500);
-  border: 1.5px solid var(--subject-500);
-  border-radius: 1000px;
-  font-family: 'Assistant', sans-serif;
-  font-size: 20px; /* תוקן (720-design-guidelines) — 18px לא בסולם הגופנים המאושר לתפקיד-כפתור (dead code כרגע, אין מופע HTML, אך מתוקן כי הוא נשלח ב-CSS) */
-  font-weight: 400;
-  padding: 10px 24px;
-  cursor: pointer;
-}
-.scq-fb-reveal-btn[hidden] { display: none; }
-.scq-fb-reveal-btn:hover { background: #f0f8ff; }
-
 /* ════════════════════════════════════════════════════════
    GLOBAL — Hint overlay (_global-components.md — outside .screen,
    direct child of #app, one instance per screen that needs it, e.g.
@@ -954,6 +947,15 @@ img { display: block; max-width: none; }
 .s3-part[hidden] { display: none; }
 .s3-body { font-family: 'Assistant', sans-serif; font-size: 24px; font-weight: 400; color: #303030; text-align: right; line-height: 1.4; width: 100%; margin: 0; }
 .s3-inline-btn { align-self: flex-end; }
+/* ⚠️ נוסף (23.09.2026, דיווח: "רוחב המשוב גדול יותר מדי, עולה על
+   התמונות") — .scq-fb-box.is-static הגלובלי (width:100%) מתח את
+   תיבת-המשוב עד left:360px (קצה .s3-scroll-area), בדיוק כמו הבאג
+   שכבר תוקן ב-.tf-rows למעלה (ר' ההערה שם) — אותה חפיפה של 60px עם
+   .s3-fixed-images (עד left:420px) + 24px רווח חזותי. אותו תיקון
+   מדויק, אבל ממוקד רק לתיבות-המשוב בתוך s3 (s3-p2-feedbox/
+   s3-p3-feedbox) — לא ל-.scq-fb-box.is-static הגלובלי, שמשמש גם
+   בסיינים s1/s2/s4 בלי תמונות-קבועות בצד. */
+.s3-part .scq-fb-box.is-static { width: calc(100% - 84px); }
 
 /* ════════════════════════════════════════════════════════
    GLOBAL — TrueFalseQuestion rows (720-templates family; מבנה

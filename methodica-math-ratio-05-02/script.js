@@ -58,16 +58,35 @@ window.lomdaState = {
    clampPopupPosition (למטה) קוראים מכאן, לא מגדירים בעצמם. */
 const CANVAS_W = 1280, CANVAS_H = 710;
 
+/* ⚠️ תוקן (23.09.2026, לפי דיווח-לקוח על סיין 05-01: "יש מלא שטח מת
+   למעלה ולמטה") — מרכוז-עם-שוליים-קבועים (scale+left/top) השאיר שטח
+   מת גלוי בכל יחס-גובה-רוחב שאינו בדיוק 1280:710. הוחלף במילוי-נזיל:
+   #app עצמו גדל בפועל כדי למלא את כל ה-viewport אחרי ה-scale (ראו
+   התיקון המקביל, המאומת, ב-methodica-math-ratio-05-01/script.js). */
 function scaleApp() {
   const app = document.getElementById('app');
   const scale = Math.min(window.innerWidth / CANVAS_W, window.innerHeight / CANVAS_H);
-  const left = (window.innerWidth - CANVAS_W * scale) / 2;
-  const top = (window.innerHeight - CANVAS_H * scale) / 2;
+  const canvasW = window.innerWidth / scale;
+  const canvasH = window.innerHeight / scale;
+  app.style.width = canvasW + 'px';
+  app.style.height = canvasH + 'px';
   app.style.transform = 'scale(' + scale + ')';
-  app.style.left = left + 'px';
-  app.style.top = top + 'px';
+  app.style.left = '0px';
+  app.style.top = '0px';
 }
 window.addEventListener('resize', scaleApp);
+
+/* ⚠️ נוסף (23.09.2026, אותו תיקון) — #app עשוי כעת להיות רחב/גבוה יותר
+   מגודל-העיצוב הקבוע (1280×710); כל חישוב-גיאומטריה שהיה קורא ל-
+   CANVAS_W/CANVAS_H ישירות (למטה) עודכן לקרוא לפונקציה הזו במקום, כדי
+   לקבל את הגודל האמיתי הנוכחי של #app. */
+function getCanvasSize() {
+  const app = document.getElementById('app');
+  return {
+    w: parseFloat(app.style.width) || CANVAS_W,
+    h: parseFloat(app.style.height) || CANVAS_H
+  };
+}
 
 /* ---------- closeAllPopupsAndHints() — bug-fixed version (מהותה מ-
    סיין 1, לפי סיכום-תהליך-בניית-הלומדה.md §0.3) ----------
@@ -320,9 +339,9 @@ const SCQ_CFG = {
     correctId: 'b',
     checkBtnId: 's4-p1-check',
     feedboxId: 's4-p1-feedbox',
-    correctMsg: { title: 'נכון מאוד!', body: '<strong>נופר השתתפה ביותר משחים - </strong>לשניהם אותו מספר ניצחונות, אך נופר נדרשה ל-8 משחים על כל 3 ניצחונות (לעומת 5 בלבד אצל דניאל), ולכן עשתה יותר מישחים בסך הכל.' },
+    correctMsg: { title: 'נכון מאוד!', body: '<strong>נופר השתתפה ביותר מישחים - </strong>לשניהם אותו מספר ניצחונות, אך נופר נדרשה ל-8 מישחים על כל 3 ניצחונות (לעומת 5 בלבד אצל דניאל), ולכן עשתה יותר מישחים בסך הכל.' },
     wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-    wrongFinal: { title: 'טעיתם, בואו נסביר:', body: '<strong>נופר השתתפה ביותר משחים - </strong>לשניהם אותו מספר ניצחונות, אך נופר נדרשה ל-8 משחים על כל 3 ניצחונות (לעומת 5 בלבד אצל דניאל), ולכן עשתה יותר מישחים בסך הכל.' }
+    wrongFinal: { title: 'טעיתם, בואו נסביר:', body: '<strong>נופר השתתפה ביותר מישחים - </strong>לשניהם אותו מספר ניצחונות, אך נופר נדרשה ל-8 מישחים על כל 3 ניצחונות (לעומת 5 בלבד אצל דניאל), ולכן עשתה יותר מישחים בסך הכל.' }
   },
   s4p2: {
     containerSel: '#s4-part-2',
@@ -358,10 +377,6 @@ const viqState = {};
    כלום ברמת השאלה כולה, (3) התג מופיע **גם בניסיון הראשון השגוי**,
    לא רק בסופי (§1 checklist: "the icon must appear on the first
    wrong attempt too, not only the final one"). */
-/* ⚠️ נוסף (31.08.2026, לפי הנחיות-כפתור-התשובה-הנכונה.md) — הודעת-
-   ביניים משותפת, לשימוש חוזר בכל טוגל חזרה-אליה. */
-const VIQ_PENDING_FEEDBACK = { title: 'התשובה אינה נכונה.', body: 'רוצים לראות את הפתרון הנכון?' };
-
 function viqOnInput(key) {
   const cfg = VIQ_CFG[key];
   const st = viqState[key];
@@ -417,80 +432,45 @@ function viqCheck(key) {
     bodyEl.innerHTML = cfg.wrongOnce.body;
     document.getElementById(cfg.checkBtn).disabled = true;
   } else {
-    /* ⚠️ תוקן (31.08.2026, לפי דיווח: "כשמוצגת התשובה הנכונה עדיין יש
-       אייקון X", ולפי הנחיות-כפתור-התשובה-הנכונה.md) — קודם: דרס את
-       הערך בתשובה-הנכונה מיד אבל השאיר .wrong (correctFlags חושב לפני
-       הדריסה) — התשובה הנכונה הוצגה עם אייקון-שגיאה. עכשיו: הערכים של
-       הלומד/ת נשארים (עם .correct/.wrong ביחס-אליהם), נלקח snapshot,
-       מוצגת הודעת-ביניים, וכפתור "התשובה הנכונה" נחשף. */
+    /* ⚠️ תוקן (23.09.2026, דיווח: "לא ביקשתי שהתשובה הנכונה תיחשף
+       באופן מידי, לא צריך לחשוף אותה בכלל — היה צריך שתישאר התשובה
+       השגויה שהזין הלומד") — ההערה הקודמת כאן תיארה במפורש את הבאג
+       (דריסת-ערך אוטומטית); לא דורסים יותר — הערך שהלומד/ת הקלידו
+       נשאר, מסומן correct/wrong לפי-שדה בפועל (זהה לענף wrongOnce
+       למעלה), רק ננעל. */
     inputs.forEach(function (input, i) {
       input.classList.toggle('correct', correctFlags[i]);
       input.classList.toggle('wrong', !correctFlags[i]);
       input.disabled = true;
     });
-    st.snapshot = inputs.map(function (input) { return input.value; });
-    st.revealed = false;
-    fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.innerHTML = VIQ_PENDING_FEEDBACK.title;
-    bodyEl.innerHTML = VIQ_PENDING_FEEDBACK.body;
-    if (cfg.revealBtn) {
-      const revealBtn = document.getElementById(cfg.revealBtn);
-      if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
-    }
-    st.outcome = 'fail';
-    viqFinish(key);
-  }
-}
-
-/* ⚠️ נוסף (31.08.2026, לפי הנחיות-כפתור-התשובה-הנכונה.md, וריאנט 2) —
-   טוגל: לחיצה ראשונה חושפת את התשובה הנכונה בפועל, לחיצה שנייה משחזרת
-   בדיוק את מה שהלומד/ת הקלידו (מ-snapshot). */
-function viqToggleReveal(key) {
-  const cfg = VIQ_CFG[key];
-  const st = viqState[key];
-  const inputs = cfg.inputs.map(function (id) { return document.getElementById(id); });
-  const fb = document.getElementById(cfg.feedbox);
-  const titleEl = fb.querySelector('.scq-fb-title-text');
-  const bodyEl = fb.querySelector('.scq-fb-body');
-  const revealBtn = document.getElementById(cfg.revealBtn);
-  if (!st.revealed) {
-    inputs.forEach(function (input, i) {
-      input.value = cfg.correct[i];
-      input.classList.remove('wrong');
-      input.classList.add('correct');
-    });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
     titleEl.innerHTML = cfg.wrongFinal.title;
     bodyEl.innerHTML = cfg.wrongFinal.body;
-    st.revealed = true;
-    if (revealBtn) revealBtn.textContent = 'התשובה שלי';
-  } else {
-    const snapshot = st.snapshot;
-    inputs.forEach(function (input, i) {
-      input.value = snapshot[i];
-      const ok = Number(snapshot[i]) === cfg.correct[i];
-      input.classList.toggle('correct', ok);
-      input.classList.toggle('wrong', !ok);
-    });
-    fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.innerHTML = VIQ_PENDING_FEEDBACK.title;
-    bodyEl.innerHTML = VIQ_PENDING_FEEDBACK.body;
-    st.revealed = false;
-    if (revealBtn) revealBtn.textContent = 'התשובה הנכונה';
+    st.outcome = 'fail';
+    viqFinish(key);
   }
 }
 
 function viqFinish(key) {
   const cfg = VIQ_CFG[key];
   const btn = document.getElementById(cfg.checkBtn);
-  btn.disabled = false;
-  btn.textContent = 'המשך';
+  /* ⚠️ תוקן (23.09.2026, דיווח: "יש שני כפתורים של המשך", זוהה במסך
+     אחר באותה סצנה) — רלייבל ל-"המשך"+re-enable תקין רק אם הכפתור
+     *באמת* חי בתוך .bottom-bar (כלומר הוא בעצמו כפתור-הניווט הראשי,
+     לא כפתור-בדיקה נפרד של סעיף בתוך מסך-רב-חלקים). בדיקה מבנית, לא
+     ניחוש-שם — ראו הערה מלאה זהה ב-methodica-math-ratio-05-05/script.js. */
+  if (btn.closest('.bottom-bar')) {
+    btn.disabled = false;
+    btn.textContent = 'המשך';
+  } else {
+    btn.disabled = true;
+  }
   if (cfg.onDone) cfg.onDone();
 }
 
 const VIQ_CFG = {
   s1: {
-    inputs: ['s1-a', 's1-b'], correct: [21, 9], checkBtn: 's1-check', feedbox: 's1-feedbox', revealBtn: 's1-reveal-btn', nextScreen: 2,
+    inputs: ['s1-a', 's1-b'], correct: [21, 9], checkBtn: 's1-check', feedbox: 's1-feedbox', nextScreen: 2,
     correctMsg: { title: 'נכון!', body: 'א. היחס בין מספר העורכים למספר השחקנים בערוץ הוא 7 : 3 .<br>מספר החלקים ה"שלם" הוא: <span dir="">10 = 3 + 7</span>.<br>נחשב את מספר השחקנים : <span dir="ltr"><span class="frac"><span class="frac-num">7</span><span class="frac-den">10</span></span> · 30 = 21</span><br><br>ב. נחשב את מספר העורכים : <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">10</span></span> · 30 = 9</span>' },
     wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
     wrongFinal: { title: 'לא נכון.', body: 'א. היחס בין מספר העורכים למספר השחקנים בערוץ הוא 7 : 3 .<br>מספר החלקים ה"שלם" הוא: <span dir="">10 = 3 + 7</span>.<br>נחשב את מספר השחקנים : <span dir="ltr"><span class="frac"><span class="frac-num">7</span><span class="frac-den">10</span></span> · 30 = 21</span><br><br>ב. נחשב את מספר העורכים : <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">10</span></span> · 30 = 9</span>' },
@@ -500,7 +480,7 @@ const VIQ_CFG = {
     }
   },
   s2: {
-    inputs: ['s2-a-x', 's2-a-y', 's2-b-x', 's2-b-y'], correct: [5, 25, 25, 25], checkBtn: 's2-check', feedbox: 's2-feedbox', revealBtn: 's2-reveal-btn', nextScreen: 3,
+    inputs: ['s2-a-x', 's2-a-y', 's2-b-x', 's2-b-y'], correct: [5, 25, 25, 25], checkBtn: 's2-check', feedbox: 's2-feedbox', nextScreen: 3,
     correctMsg: { title: 'נכון!', body: 'א. היחס בין מספר הבנים למספר הבנות הוא 5 : 1.<br>נחשב את מספר הבנים: <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">6</span></span> · 30 = 5</span><br>נחשב את מספר הבנות: <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">6</span></span> · 30 = 25</span><br>שיעורי נקודה A הם (5,25).<br><br>ב. בחצי השעה השנייה התווספו רק בנים, והיחס החדש הוא 1 : 1. מספר הבנות לא השתנה, לכן מספר הבנים החדש הוא 25.<br>שיעורי נקודה B הם (25,25).' },
     wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
     wrongFinal: { title: 'לא נכון.', body: 'א. היחס בין מספר הבנים למספר הבנות הוא 5 : 1.<br>נחשב את מספר הבנים: <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">6</span></span> · 30 = 5</span><br>נחשב את מספר הבנות: <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">6</span></span> · 30 = 25</span><br>שיעורי נקודה A הם (5,25).<br><br>ב. בחצי השעה השנייה התווספו רק בנים, והיחס החדש הוא 1 : 1. מספר הבנות לא השתנה, לכן מספר הבנים החדש הוא 25.<br>שיעורי נקודה B הם (25,25).' },
@@ -510,10 +490,10 @@ const VIQ_CFG = {
     }
   },
   s4p3: {
-    inputs: ['s4-p3-a', 's4-p3-b'], correct: [20, 32], checkBtn: 's4-p3-check', feedbox: 's4-p3-feedbox', revealBtn: 's4-p3-reveal-btn', nextScreen: null,
-    correctMsg: { title: 'נכון!', body: 'ג. נתון כי דניאל ניצח ב-12 מישחים שהם <span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> מכלל המישחים שהוא השתתף בהם.<br>נסמן את כלל המשחים ב-x ונבנה את המשוואה: <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> · x = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> ונקבל: <span dir="ltr">x = 20</span>.<br><strong>לכן, דניאל שחה 20 משחים בכל העונה.</strong><br>נתון כי נופר ודניאל השיגו את אותו מספר ניצחונות לכן נופר ניצחה ב-12 משחים שהם <span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> מכלל המישחים בהם השתתפה.<br>נסמן את כלל המישחים ששחתה נופר ב-y ונבנה את המשוואה:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> · y = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> ונקבל: <span dir="ltr">y = 32</span>.<br><strong>לכן, נופר שחתה 32 מישחים בכל העונה.</strong>' },
+    inputs: ['s4-p3-a', 's4-p3-b'], correct: [20, 32], checkBtn: 's4-p3-check', feedbox: 's4-p3-feedbox', nextScreen: null,
+    correctMsg: { title: 'נכון!', body: 'ג. נתון כי דניאל ניצח ב-12 מישחים שהם <span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> מכלל המישחים שהוא השתתף בהם.<br>נסמן את כלל המישחים ב-x ונבנה את המשוואה: <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> · x = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> ונקבל: <span dir="ltr">x = 20</span>.<br><strong>לכן, דניאל שחה 20 מישחים בכל העונה.</strong><br>נתון כי נופר ודניאל השיגו את אותו מספר ניצחונות לכן נופר ניצחה ב-12 מישחים שהם <span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> מכלל המישחים בהם השתתפה.<br>נסמן את כלל המישחים ששחתה נופר ב-y ונבנה את המשוואה:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> · y = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> ונקבל: <span dir="ltr">y = 32</span>.<br><strong>לכן, נופר שחתה 32 מישחים בכל העונה.</strong>' },
     wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
-    wrongFinal: { title: 'לא נכון.', body: 'ג. נתון כי דניאל ניצח ב-12 מישחים שהם <span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> מכלל המישחים שהוא השתתף בהם.<br>נסמן את כלל המשחים ב-x ונבנה את המשוואה: <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> · x = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> ונקבל: <span dir="ltr">x = 20</span>.<br><strong>לכן, דניאל שחה 20 משחים בכל העונה.</strong><br>נתון כי נופר ודניאל השיגו את אותו מספר ניצחונות לכן נופר ניצחה ב-12 משחים שהם <span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> מכלל המישחים בהם השתתפה.<br>נסמן את כלל המישחים ששחתה נופר ב-y ונבנה את המשוואה:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> · y = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> ונקבל: <span dir="ltr">y = 32</span>.<br><strong>לכן, נופר שחתה 32 מישחים בכל העונה.</strong>' },
+    wrongFinal: { title: 'לא נכון.', body: 'ג. נתון כי דניאל ניצח ב-12 מישחים שהם <span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> מכלל המישחים שהוא השתתף בהם.<br>נסמן את כלל המישחים ב-x ונבנה את המשוואה: <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> · x = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> ונקבל: <span dir="ltr">x = 20</span>.<br><strong>לכן, דניאל שחה 20 מישחים בכל העונה.</strong><br>נתון כי נופר ודניאל השיגו את אותו מספר ניצחונות לכן נופר ניצחה ב-12 מישחים שהם <span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> מכלל המישחים בהם השתתפה.<br>נסמן את כלל המישחים ששחתה נופר ב-y ונבנה את המשוואה:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> · y = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> ונקבל: <span dir="ltr">y = 32</span>.<br><strong>לכן, נופר שחתה 32 מישחים בכל העונה.</strong>' },
     onDone: function () { s4UpdateAggregate(); }
   }
 };
@@ -732,7 +712,9 @@ function equalizeTfBtnWidths() {
     const checkBtn = rows.nextElementSibling;
     if (!checkBtn || !checkBtn.classList.contains('s3-inline-btn')) return;
     const appEl = document.getElementById('app');
-    const scale = appEl ? (appEl.getBoundingClientRect().width / CANVAS_W) : 1;
+    // getCanvasSize().w, not the fixed CANVAS_W (23.09.2026) — #app can
+    // now be wider than the fixed design size, see note by scaleApp().
+    const scale = appEl ? (appEl.getBoundingClientRect().width / getCanvasSize().w) : 1;
     const rowsRect = rows.getBoundingClientRect();
     const partRect = rows.parentElement.getBoundingClientRect();
     checkBtn.style.marginLeft = Math.max(0, (rowsRect.left - partRect.left) / scale) + 'px';
@@ -846,7 +828,9 @@ function equalizeScqOptWidths() {
     const checkBtn = group.nextElementSibling;
     if (checkBtn && checkBtn.classList.contains('s3-inline-btn')) {
       const appEl = document.getElementById('app');
-      const scale = appEl ? (appEl.getBoundingClientRect().width / CANVAS_W) : 1;
+      // getCanvasSize().w, not the fixed CANVAS_W (23.09.2026) — #app can
+      // now be wider than the fixed design size, see note by scaleApp().
+      const scale = appEl ? (appEl.getBoundingClientRect().width / getCanvasSize().w) : 1;
       const optRect = opts[0].getBoundingClientRect();
       const partRect = group.parentElement.getBoundingClientRect();
       checkBtn.style.marginLeft = Math.max(0, (optRect.left - partRect.left) / scale) + 'px';
@@ -877,8 +861,12 @@ const BOTTOM_BAR_H = 74;
 
 function clampPopupPosition(x, y, popupEl) {
   const w = popupEl.offsetWidth, h = popupEl.offsetHeight;
-  const minX = 0, maxX = CANVAS_W - w;
-  const minY = 0, maxY = (CANVAS_H - BOTTOM_BAR_H) - h; // top edge of the bottom bar
+  // getCanvasSize() below, not the fixed CANVAS_W/CANVAS_H (23.09.2026) —
+  // #app can now be wider/taller than the fixed design size, see note by
+  // scaleApp(); drag bounds must clamp against the actual current size.
+  const canvas = getCanvasSize();
+  const minX = 0, maxX = canvas.w - w;
+  const minY = 0, maxY = (canvas.h - BOTTOM_BAR_H) - h; // top edge of the bottom bar
   return {
     x: Math.min(Math.max(x, minX), maxX),
     y: Math.min(Math.max(y, minY), maxY)
@@ -901,7 +889,6 @@ function scqFbMakeDraggable(boxId) {
   let startX = 0, startY = 0, startLeft = 0, startTop = 0;
 
   box.addEventListener('mousedown', function (e) {
-    if (e.target.closest('.scq-fb-reveal-btn')) return;
     const parent = box.offsetParent || box.parentElement;
     const boxRect = box.getBoundingClientRect();
     const parentRect = parent.getBoundingClientRect();
@@ -923,7 +910,9 @@ function scqFbMakeDraggable(boxId) {
     const parentRect = parent.getBoundingClientRect();
     // pointer delta lives in raw viewport px — convert to canvas-space
     // (divide by the current scaleApp() zoom factor) before clamping.
-    const scale = parentRect.width / CANVAS_W;
+    // getCanvasSize().w, not the fixed CANVAS_W (23.09.2026) — see note
+    // by scaleApp()/clampPopupPosition().
+    const scale = parentRect.width / getCanvasSize().w;
     const dx = (e.clientX - startX) / scale;
     const dy = (e.clientY - startY) / scale;
     const clamped = clampPopupPosition(startLeft + dx, startTop + dy, box);

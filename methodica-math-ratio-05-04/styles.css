@@ -367,7 +367,15 @@ img { display: block; max-width: none; }
   box-sizing: border-box;
   flex-direction: column;
   gap: 24px;
-  z-index: 50;
+  /* ⚠️ תוקן (22.09.2026, דיווח: "המשוב הקבוע עולה מעל פופ-אפ הרמז") —
+     z-index חייב להישאר נמוך מ-.scq-hint-overlay (z-index:40), אחרת
+     הפופ-אפ הצף (position:absolute) *וגם* הגרסה הקבועה-בזרימה
+     (.is-static, שכן היא flex item בתוך ה-.*-part/.*-flow-row —
+     z-index נאכף גם ב-position:static כש-parent הוא flex container)
+     מציירים את עצמם מעל השכבה הכהה. אותו ערך מדויק כמו
+     methodica-math-ratio-05-01/styles.css (כבר תוקן שם), ואותה בעיה
+     שתוקנה נקודתית ל-.is-static ב-05-06/styles.css. */
+  z-index: 25;
   cursor: grab;
 }
 .scq-fb-box.visible { display: flex; }

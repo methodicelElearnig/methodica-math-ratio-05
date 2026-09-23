@@ -105,7 +105,14 @@ img { display: block; max-width: none; }
 .screen1-content {
   position: absolute;
   top: 64px;
-  left: 235px;            /* (1280 - 810) / 2 = 235px */
+  /* ⚠️ תוקן (23.09.2026, דיווח: "התוכן לא נראה ממש באמצע במסכי המעבר")
+     — left:235px (=(1280-810)/2) מרכז רק כשהקנבס בדיוק 1280px רוחב;
+     מאז שינוי scaleApp() למילוי-דינמי (ראו script.js), #app/.screen
+     יכולים להיות רחבים יותר — left קבוע היה משאיר את הקופסה תקועה
+     240px מהקצה השמאלי במקום ממורכזת. left:50%+translateX(-50%) ממרכז
+     נכון בכל רוחב-קנבס בפועל. */
+  left: 50%;
+  transform: translateX(-50%);
   width: 810px;
   display: flex;
   flex-direction: column;
@@ -1692,7 +1699,13 @@ img { display: block; max-width: none; }
 .s3-content {
   position: absolute;
   top: 100px;
-  left: 240px;
+  /* ⚠️ תוקן (23.09.2026, דיווח: "התוכן לא נראה ממש באמצע במסכי המעבר",
+     כולל מסך 6/id="s5" שמשתמש ב-.s3-content הזו במלואה) — אותו תיקון
+     בדיוק כמו .screen1-content למעלה (ראו ההערה המלאה שם): left:240px
+     קבוע ריכז רק כש-#app היה נעול ל-1280px; left:50%+translateX(-50%)
+     ממרכז נכון בכל רוחב-קנבס דינמי. */
+  left: 50%;
+  transform: translateX(-50%);
   width: 800px;
   display: flex;
   flex-direction: column;
@@ -2678,21 +2691,6 @@ input[type=number] { -moz-appearance: textfield; }
   text-align: right;
   white-space: pre-line;
 }
-.scq-fb-reveal-btn {
-  align-self: flex-start;
-  background: #fff;
-  color: var(--subject-500);
-  border: 1.5px solid var(--subject-500);
-  border-radius: 1000px;
-  font-family: 'Assistant', sans-serif;
-  font-size: 20px; /* ⚠️ תוקן (18.08.2026) — <button>, מוגבל ל-{26,20,22}; 18px לא היה חוקי */
-  font-weight: 400;
-  padding: 10px 24px;
-  cursor: pointer;
-}
-.scq-fb-reveal-btn[hidden] { display: none; }
-.scq-fb-reveal-btn:hover { background: #f0f8ff; }
-
 /* ════════════════════════════════════════════════════════
    GLOBAL — Hint overlay (_global-components.md — outside .screen,
    direct child of #app, one instance per screen that needs it, e.g.

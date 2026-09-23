@@ -57,16 +57,31 @@ window.lomdaState = {
    clampPopupPosition (למטה) קוראים מכאן, לא מגדירים בעצמם. */
 const CANVAS_W = 1280, CANVAS_H = 710;
 
+/* ⚠️ תוקן (23.09.2026, דיווח לקוח: "יש מלא שטח מת למעלה ולמטה") — אותו
+   תיקון שכבר הוחל ואומת ב-methodica-math-ratio-05-01/script.js:
+   scaleApp() ממרכז-עם-שוליים הוחלף במתיחת-הקנבס-עצמו למילוי-מדויק של
+   ה-viewport (אפס שטח מת, בכל יחס-גובה-רוחב). getCanvasSize() למטה
+   היא מקור-האמת לגודל-הקנבס *בפועל* מרגע זה. */
 function scaleApp() {
   const app = document.getElementById('app');
   const scale = Math.min(window.innerWidth / CANVAS_W, window.innerHeight / CANVAS_H);
-  const left = (window.innerWidth - CANVAS_W * scale) / 2;
-  const top = (window.innerHeight - CANVAS_H * scale) / 2;
+  const canvasW = window.innerWidth / scale;
+  const canvasH = window.innerHeight / scale;
+  app.style.width = canvasW + 'px';
+  app.style.height = canvasH + 'px';
   app.style.transform = 'scale(' + scale + ')';
-  app.style.left = left + 'px';
-  app.style.top = top + 'px';
+  app.style.left = '0px';
+  app.style.top = '0px';
 }
 window.addEventListener('resize', scaleApp);
+
+function getCanvasSize() {
+  const app = document.getElementById('app');
+  return {
+    w: parseFloat(app.style.width) || CANVAS_W,
+    h: parseFloat(app.style.height) || CANVAS_H
+  };
+}
 
 /* ---------- closeAllPopupsAndHints() — bug-fixed version (מקורה מ-
    סיין 1, לפי סיכום-תהליך-בניית-הלומדה.md) ----------
@@ -314,9 +329,6 @@ function scqFinish(key) {
    בפונקציה הגנרית עצמה.
    ========================================================= */
 const viqState = {};
-/* ⚠️ נוסף (31.08.2026, לפי הנחיות-כפתור-התשובה-הנכונה.md) — הודעת-
-   ביניים משותפת, לשימוש חוזר בכל טוגל חזרה-אליה. */
-const VIQ_PENDING_FEEDBACK = { title: 'התשובה אינה נכונה.', body: 'רוצים לראות את הפתרון הנכון?' };
 
 function viqOnInput(key) {
   const cfg = VIQ_CFG[key];
@@ -375,74 +387,43 @@ function viqCheck(key) {
     bodyEl.innerHTML = cfg.wrongOnce.body;
     document.getElementById(cfg.checkBtn).disabled = true;
   } else {
-    /* ⚠️ תוקן (31.08.2026, לפי דיווח: "כשמוצגת התשובה הנכונה עדיין יש
-       אייקון X", ולפי הנחיות-כפתור-התשובה-הנכונה.md) — קודם: דרס את
-       הערך בתשובה-הנכונה מיד אבל השאיר .wrong (correctFlags חושב לפני
-       הדריסה) — התשובה הנכונה הוצגה עם אייקון-שגיאה. עכשיו: הערכים של
-       הלומד/ת נשארים (עם .correct/.wrong ביחס-אליהם), נלקח snapshot,
-       מוצגת הודעת-ביניים, וכפתור "התשובה הנכונה" נחשף. */
+    /* ⚠️ תוקן (23.09.2026, דיווח: "לא ביקשתי שהתשובה הנכונה תיחשף
+       באופן מידי, לא צריך לחשוף אותה בכלל — היה צריך שתישאר התשובה
+       השגויה שהזין הלומד") — ההערה הקודמת כאן תיארה במפורש את הבאג
+       (דריסת-ערך אוטומטית); לא דורסים יותר — הערך שהלומד/ת הקלידו
+       נשאר, מסומן correct/wrong לפי-שדה בפועל (זהה לענף wrongOnce
+       למעלה), רק ננעל. */
     inputs.forEach(function (input, i) {
       input.classList.toggle('correct', correctFlags[i]);
       input.classList.toggle('wrong', !correctFlags[i]);
       input.disabled = true;
     });
-    st.snapshot = inputs.map(function (input) { return input.value; });
-    st.revealed = false;
-    fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = VIQ_PENDING_FEEDBACK.title;
-    bodyEl.innerHTML = VIQ_PENDING_FEEDBACK.body;
-    if (cfg.revealBtn) {
-      const revealBtn = document.getElementById(cfg.revealBtn);
-      if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
-    }
-    st.outcome = 'fail';
-    viqFinish(key);
-  }
-}
-
-/* ⚠️ נוסף (31.08.2026, לפי הנחיות-כפתור-התשובה-הנכונה.md, וריאנט 2) —
-   טוגל: לחיצה ראשונה חושפת את התשובה הנכונה בפועל, לחיצה שנייה משחזרת
-   בדיוק את מה שהלומד/ת הקלידו (מ-snapshot). */
-function viqToggleReveal(key) {
-  const cfg = VIQ_CFG[key];
-  const st = viqState[key];
-  const inputs = cfg.inputs.map(function (id) { return document.getElementById(id); });
-  const fb = document.getElementById(cfg.feedbox);
-  const titleEl = fb.querySelector('.scq-fb-title-text');
-  const bodyEl = fb.querySelector('.scq-fb-body');
-  const revealBtn = document.getElementById(cfg.revealBtn);
-  if (!st.revealed) {
-    inputs.forEach(function (input, i) {
-      input.value = cfg.correct[i];
-      input.classList.remove('wrong');
-      input.classList.add('correct');
-    });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
     titleEl.textContent = cfg.wrongFinal.title;
     bodyEl.innerHTML = cfg.wrongFinal.body;
-    st.revealed = true;
-    if (revealBtn) revealBtn.textContent = 'התשובה שלי';
-  } else {
-    const snapshot = st.snapshot;
-    inputs.forEach(function (input, i) {
-      input.value = snapshot[i];
-      const ok = Number(snapshot[i]) === cfg.correct[i];
-      input.classList.toggle('correct', ok);
-      input.classList.toggle('wrong', !ok);
-    });
-    fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.textContent = VIQ_PENDING_FEEDBACK.title;
-    bodyEl.innerHTML = VIQ_PENDING_FEEDBACK.body;
-    st.revealed = false;
-    if (revealBtn) revealBtn.textContent = 'התשובה הנכונה';
+    st.outcome = 'fail';
+    viqFinish(key);
   }
 }
 
 function viqFinish(key) {
   const cfg = VIQ_CFG[key];
   const btn = document.getElementById(cfg.checkBtn);
-  btn.disabled = false;
-  btn.textContent = 'המשך';
+  /* ⚠️ תוקן (23.09.2026, דיווח: "יש שני כפתורים של המשך") — הרלייבל
+     ל-"המשך"+re-enable היה בלתי-מותנה, מתאים *רק* למקרה המכוון (כמו
+     VIQ_CFG_S2 כאן, checkBtn:'s2-continue' — אותו כפתור פיזי ממש כמו
+     .bottom-bar, per בקשה מפורשת ישנה "אין צורך בשני כפתורים"). במסך
+     עם כמה סעיפים (למשל VIQ_CFG_S3P1, checkBtn:'s3-p1-check' — כפתור
+     נפרד לגמרי מ-#s3-continue שבסרגל התחתון), אותו רלייבל יצר כפתור
+     "המשך" שני, מבלבל, לצד הכפתור האמיתי בסרגל. עכשיו: רלייבל רק אם
+     הכפתור *באמת* חי בתוך .bottom-bar (בדיקה מבנית, לא ניחוש-שם) —
+     אחרת רק ננעל, בדיוק כמו scqFinish. */
+  if (btn.closest('.bottom-bar')) {
+    btn.disabled = false;
+    btn.textContent = 'המשך';
+  } else {
+    btn.disabled = true;
+  }
   if (cfg.onDone) cfg.onDone();
 }
 
@@ -479,7 +460,7 @@ const VIQ_CFG_S1P1_BODY = 'א. סכום זוויות במשולש הוא <span d
    שהגלילה תזוהה נכון מיד בכניסה למסך (התוכן המלא כבר גלוי). */
 
 const VIQ_CFG_S1P1 = {
-  inputs: ['s1-a', 's1-b', 's1-c'], correct: [45, 67.5, 67.5], checkBtn: 's1-p1-check', feedbox: 's1-p1-feedbox', revealBtn: 's1-p1-reveal-btn', nextScreen: null,
+  inputs: ['s1-a', 's1-b', 's1-c'], correct: [45, 67.5, 67.5], checkBtn: 's1-p1-check', feedbox: 's1-p1-feedbox', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: VIQ_CFG_S1P1_BODY },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
   wrongFinal: { title: 'לא נכון.', body: VIQ_CFG_S1P1_BODY }
@@ -596,7 +577,7 @@ const VIQ_CFG_S2_BODY = 'היחס בין שטח משולש ACD לשטח משול
    ה-viqCheck הקיים-ומוכן ("אם כבר נענה, לחיצה נוספת = goTo(nextScreen)"
    — ראו תחילת viqCheck) — כך אותו כפתור-יחיד גם בודק וגם ממשיך. */
 const VIQ_CFG_S2 = {
-  inputs: ['s2-cd', 's2-db'], correct: [12, 4], checkBtn: 's2-continue', feedbox: 's2-feedbox', revealBtn: 's2-reveal-btn', nextScreen: 3,
+  inputs: ['s2-cd', 's2-db'], correct: [12, 4], checkBtn: 's2-continue', feedbox: 's2-feedbox', nextScreen: 3,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: VIQ_CFG_S2_BODY },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
   wrongFinal: { title: 'לא נכון.', body: VIQ_CFG_S2_BODY },
@@ -634,7 +615,7 @@ const VIQ_CFG_S3P1_BODY = 'א. נסמן ב-x את סך הליטרים של הצ�
    ישירות. */
 
 const VIQ_CFG_S3P1 = {
-  inputs: ['s3-total', 's3-yellow', 's3-blue'], correct: [60, 30, 18], checkBtn: 's3-p1-check', feedbox: 's3-p1-feedbox', revealBtn: 's3-p1-reveal-btn', nextScreen: null,
+  inputs: ['s3-total', 's3-yellow', 's3-blue'], correct: [60, 30, 18], checkBtn: 's3-p1-check', feedbox: 's3-p1-feedbox', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: VIQ_CFG_S3P1_BODY },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
   wrongFinal: { title: 'לא נכון.', body: VIQ_CFG_S3P1_BODY }
@@ -716,7 +697,11 @@ function s3MaybeShowScrollGesture() {
    בקובץ), לא מהנחה על innerWidth. */
 function currentCanvasScale() {
   const appEl = document.getElementById('app');
-  return appEl ? (appEl.getBoundingClientRect().width / CANVAS_W) : 1;
+  // ⚠️ עודכן (23.09.2026) — מחלקים ב-getCanvasSize().w (הרוחב הדינמי
+  // בפועל שנקבע ב-scaleApp(), עשוי לחרוג מ-1280), לא ב-CANVAS_W הקבוע
+  // — אחרת ה-scale היה יוצא שגוי בכל viewport שבו הקנבס התרחב מעבר
+  // לגודל-העיצוב (ראו ההערה המלאה ליד scaleApp()).
+  return appEl ? (appEl.getBoundingClientRect().width / getCanvasSize().w) : 1;
 }
 
 function s3AlignHintRow() {
@@ -791,8 +776,13 @@ const BOTTOM_BAR_H = 74;
 
 function clampPopupPosition(x, y, popupEl) {
   const w = popupEl.offsetWidth, h = popupEl.offsetHeight;
-  const minX = 0, maxX = CANVAS_W - w;
-  const minY = 0, maxY = (CANVAS_H - BOTTOM_BAR_H) - h; // top edge of the bottom bar
+  // ⚠️ עודכן (23.09.2026) — גבולות ביחס לגודל-הקנבס *בפועל*
+  // (getCanvasSize(), עשוי לחרוג מ-1280×710), לא ביחס ל-CANVAS_W/
+  // CANVAS_H הקבועים — אחרת פופ-אפ נגרר היה נשאר נעול לתוך המלבן
+  // הישן-הקטן גם כש-#app כבר גדול יותר (ראו ההערה המלאה ליד scaleApp()).
+  const canvas = getCanvasSize();
+  const minX = 0, maxX = canvas.w - w;
+  const minY = 0, maxY = (canvas.h - BOTTOM_BAR_H) - h; // top edge of the bottom bar
   return {
     x: Math.min(Math.max(x, minX), maxX),
     y: Math.min(Math.max(y, minY), maxY)
@@ -815,7 +805,6 @@ function scqFbMakeDraggable(boxId) {
   let startX = 0, startY = 0, startLeft = 0, startTop = 0;
 
   box.addEventListener('mousedown', function (e) {
-    if (e.target.closest('.scq-fb-reveal-btn')) return;
     const parent = box.offsetParent || box.parentElement;
     const boxRect = box.getBoundingClientRect();
     const parentRect = parent.getBoundingClientRect();
@@ -837,7 +826,9 @@ function scqFbMakeDraggable(boxId) {
     const parentRect = parent.getBoundingClientRect();
     // pointer delta lives in raw viewport px — convert to canvas-space
     // (divide by the current scaleApp() zoom factor) before clamping.
-    const scale = parentRect.width / CANVAS_W;
+    // ⚠️ עודכן (23.09.2026) — getCanvasSize().w, לא CANVAS_W הקבוע (ראו
+    // ההערה המלאה ליד scaleApp()/currentCanvasScale()).
+    const scale = parentRect.width / getCanvasSize().w;
     const dx = (e.clientX - startX) / scale;
     const dy = (e.clientY - startY) / scale;
     const clamped = clampPopupPosition(startLeft + dx, startTop + dy, box);

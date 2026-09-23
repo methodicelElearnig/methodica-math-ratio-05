@@ -164,7 +164,6 @@
         <div id="s2-p1-feedbox" class="scq-fb-box is-static">
           <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
           <p class="scq-fb-body"></p>
-          <button class="scq-fb-reveal-btn" id="s2-p1-reveal-btn" type="button" hidden onclick="viqToggleReveal('s2p1')">התשובה הנכונה</button>
         </div>
       </div>
 
@@ -191,7 +190,6 @@
         <div id="s2-p2-feedbox" class="scq-fb-box is-static">
           <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
           <p class="scq-fb-body"></p>
-          <button class="scq-fb-reveal-btn" id="s2-p2-reveal-btn" type="button" hidden onclick="viqToggleReveal('s2p2')">התשובה הנכונה</button>
         </div>
       </div>
 
@@ -321,34 +319,21 @@
     <div class="s3-scroll-area" id="s4-scroll-area">
     <div class="s3-scroll-inner">
 
-      <!-- סעיף ג (שאלה 1 מקומית) -->
-      <div class="s3-part" id="s2-part-4">
-        <p class="scq-qtext-em">ג. כמה שטח צריך אורי להעביר מהשטח המיועד לגינה אל השטח המיועד לבנייה כדי לעמוד בבקשתם?</p>
-        <div class="viq-answers">
-          <div class="viq-answer-row">
-            <span class="viq-answer-label">השטח שצריך להעביר הוא</span>
-            <input class="viq-input" id="s2-p4-input" type="number" inputmode="numeric" dir="ltr" placeholder=" " aria-label="השטח שצריך להעביר, במטרים רבועים" oninput="s2P4OnInput()">
-            <span class="viq-answer-unit">מ"ר</span>
-          </div>
-        </div>
-        <div class="btn-hint-row">
-          <button class="btn-hint" id="s2-p4-hint-btn" onclick="s2P4HintOpen()">
-            <img class="scq-hint-icon" src="assets/images/icon-hint-purple.svg" alt="" aria-hidden="true">
-            אפשר רמז?
-          </button>
-          <button class="btn-continue" id="s2-p4-check" disabled onclick="s2P4Check()">צדקתי?</button>
-        </div>
-        <div id="s2-p4-feedbox" class="scq-fb-box is-static">
-          <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
-          <p class="scq-fb-body"></p>
-          <button class="scq-fb-reveal-btn" id="s2-p4-reveal-btn" type="button" hidden onclick="viqToggleReveal('s2p4')">התשובה הנכונה</button>
-        </div>
-      </div>
+      <!-- ⚠️ הוחלף סדר-פיזי (23.09.2026, בקשה מפורשת: "ג יהיה במקום ד
+           וד יהיה במקום ג") — סעיף ד' עכשיו ראשון על המסך, סעיף ג'
+           שני. ה-id-ים/הפונקציות/התוכן של כל סעיף נשארו משויכים
+           לתווית שלו-עצמו כפי-שהם (s2-part-4/s2P4* עדיין "ג'",
+           s2-part-5/s2P5* עדיין "ד'") — רק המיקום הפיזי בדף התחלף,
+           לא הזהות. מעקב-ההתקדמות (onDone למטה ב-script.js) הוחלף
+           בהתאם כדי שסרגל-ההתקדמות ימשיך לעקוב אחרי סדר-המענה
+           הפיזי-החדש (מי שממלאים קודם מסמן "שאלה 3", מי שממלאים
+           שני/אחרון מסמן "שאלה 4" ומפעיל את "המשך" בסרגל התחתון) —
+           ראו ההערה המלאה שם. -->
 
       <!-- סעיף ד (שאלה 2 מקומית) -->
       <div class="s3-part" id="s2-part-5">
         <p class="s3-body">אחרי כמה ימים משפחת לוי התחרטה, והחליטה שהיא רוצה גינה גדולה יותר. הם ביקשו מאורי שהיחס בין שטח הגינה לשטח הבנייה יהיה 1 : 1.</p>
-        <p class="scq-qtext-em">ד. בהנחה ששטח הגינה לפני השינוי הוא 80 מ"ר, כמה שטח צריך אורי להעביר מהשטח המיועד לבנייה, אל הגינה, כדי לעמוד בבקשה החדשה?</p>
+        <p class="scq-qtext-em">ג. בהנחה ששטח הגינה לפני השינוי הוא 80 מ"ר, כמה שטח צריך אורי להעביר מהשטח המיועד לבנייה, אל הגינה, כדי לעמוד בבקשה החדשה?</p>
         <div class="viq-answers">
           <div class="viq-answer-row">
             <span class="viq-answer-label">השטח שצריך להעביר הוא</span>
@@ -366,7 +351,29 @@
         <div id="s2-p5-feedbox" class="scq-fb-box is-static">
           <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
           <p class="scq-fb-body"></p>
-          <button class="scq-fb-reveal-btn" id="s2-p5-reveal-btn" type="button" hidden onclick="viqToggleReveal('s2p5')">התשובה הנכונה</button>
+        </div>
+      </div>
+
+      <!-- סעיף ג (שאלה 1 מקומית) -->
+      <div class="s3-part" id="s2-part-4">
+        <p class="scq-qtext-em">ד. כמה שטח צריך אורי להעביר מהשטח המיועד לגינה אל השטח המיועד לבנייה כדי לעמוד בבקשתם?</p>
+        <div class="viq-answers">
+          <div class="viq-answer-row">
+            <span class="viq-answer-label">השטח שצריך להעביר הוא</span>
+            <input class="viq-input" id="s2-p4-input" type="number" inputmode="numeric" dir="ltr" placeholder=" " aria-label="השטח שצריך להעביר, במטרים רבועים" oninput="s2P4OnInput()">
+            <span class="viq-answer-unit">מ"ר</span>
+          </div>
+        </div>
+        <div class="btn-hint-row">
+          <button class="btn-hint" id="s2-p4-hint-btn" onclick="s2P4HintOpen()">
+            <img class="scq-hint-icon" src="assets/images/icon-hint-purple.svg" alt="" aria-hidden="true">
+            אפשר רמז?
+          </button>
+          <button class="btn-continue" id="s2-p4-check" disabled onclick="s2P4Check()">צדקתי?</button>
+        </div>
+        <div id="s2-p4-feedbox" class="scq-fb-box is-static">
+          <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
+          <p class="scq-fb-body"></p>
         </div>
       </div>
 
@@ -422,10 +429,13 @@
       </div>
     </div>
 
+    <!-- ⚠️ הוסר כפתור "המשך" (23.09.2026, לפי בקשה מפורשת) — זהו מסך-הסיום
+         האחרון של היחידה, אין מסך הבא ללכת אליו (goTo(6) היה no-op ממילא,
+         ר' הערה ליד .bar-actions הגלובלית). .bar-back נשאר לבד; מ-space-
+         between ב-.bottom-bar-inner הוא ממוקם נכון גם ילד יחיד. -->
     <div class="bottom-bar">
       <div class="bottom-bar-inner">
         <div class="bar-back"><button class="btn-back" id="s5-back" onclick="goTo(4)">חזרה</button></div>
-        <div class="bar-actions"><button class="btn-continue" id="s5-continue" onclick="goTo(6)">המשך</button></div>
       </div>
     </div>
   </section>

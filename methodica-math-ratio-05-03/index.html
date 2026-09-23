@@ -150,7 +150,6 @@
         <div id="s1-p1-feedbox" class="scq-fb-box is-static">
           <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
           <p class="scq-fb-body"></p>
-          <button class="scq-fb-reveal-btn" id="s1-p1-reveal-btn" type="button" hidden onclick="s1MixToggleReveal('p1')">התשובה הנכונה</button>
         </div>
       </div>
 
@@ -187,7 +186,6 @@
         <div id="s1-p2-feedbox" class="scq-fb-box is-static">
           <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
           <p class="scq-fb-body"></p>
-          <button class="scq-fb-reveal-btn" id="s1-p2-reveal-btn" type="button" hidden onclick="s1MixToggleReveal('p2')">התשובה הנכונה</button>
         </div>
       </div>
 
@@ -419,7 +417,6 @@
         <div id="s3-p1-feedbox" class="scq-fb-box is-static">
           <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
           <p class="scq-fb-body"></p>
-          <button class="scq-fb-reveal-btn" id="s3-p1-reveal-btn" type="button" hidden onclick="viqToggleReveal('s3p1')">התשובה הנכונה</button>
         </div>
       </div>
 
@@ -536,17 +533,15 @@
        בסיין 1 (#s6-continue→goTo(7)) ובסיין 2 (#s4-continue→goTo(5)).
        ========================================================= -->
   <section class="screen" data-screen="5" id="s5">
-    <nav class="progress-question" id="s5-progress" aria-label="ניווט שאלות">
-      <div class="progress-question__item" data-question="1">
-        <div class="progress-question__icon"></div>
-        <span class="progress-question__label">שאלה 1</span>
-      </div>
-      <div class="progress-question__connector" data-connector="1"></div>
-      <div class="progress-question__item" data-question="2">
-        <div class="progress-question__icon"></div>
-        <span class="progress-question__label">שאלה 2</span>
-      </div>
-    </nav>
+    <!-- ⚠️ הוסר (23.09.2026, בקשה מפורשת: "סרגל ההתקדמות למעלה צריך
+         להוריד לגמרי, לא צריך אותו") — .progress-question הוא
+         position:absolute עצמאי (top:48px, לא בזרימה רגילה), ואף
+         אלמנט אחר במסך הזה לא ממוקם ביחס אליו (.s5-fixed-images/
+         .s3-scroll-area שניהם position:absolute עם top קבוע משלהם) —
+         ההסרה לא מזיזה שום דבר אחר. syncPracticeProgressNav (script.js)
+         כבר null-safe (querySelector('.progress-question') מחזיר null,
+         ה-if מדלג) — לא צריך שינוי-JS נלווה. -->
+
 
     <div class="gesture-hint-scroll-wrap" id="s5-scroll-gesture" hidden>
       <div class="gesture-hint">
@@ -599,7 +594,6 @@
         <div id="s5-p1-feedbox" class="scq-fb-box is-static">
           <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
           <p class="scq-fb-body"></p>
-          <button class="scq-fb-reveal-btn" id="s5-p1-reveal-btn" type="button" hidden onclick="viqToggleReveal('s5p1')">התשובה הנכונה</button>
         </div>
       </div>
 
@@ -634,7 +628,11 @@
       </div>
 
       <div class="s3-part" id="s5-part-3">
-        <p class="s3-body">2. מיה ועומר זכו ב-90 ש"ח, האם הם יכולים לחלק את הכסף ביחס הנתון (5 : 2) כך שכל אחד מהם יקבל כסף בשטרות?</p>
+        <!-- ⚠️ תוקן (23.09.2026, בקשה מפורשת: "שאלה 2 התחתונה צריכה
+             להיות סעיף ג ותהיה מובלטת כמו סעיף א וב") — "2." (s3-body,
+             לא-מודגש) → "ג." (scq-qtext-em, אותה מוסכמת-הדגשה בדיוק
+             כמו סעיפים א'/ב' למעלה במסך הזה). -->
+        <p class="scq-qtext-em">ג. מיה ועומר הרוויחו 90 ש"ח, האם הם יכולים לחלק את הכסף ביחס הנתון (5 : 2) כך שכל אחד מהם יקבל כסף בשטרות?</p>
         <div class="scq-answers" role="radiogroup" aria-label="אפשרויות תשובה">
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="a" onclick="s5P3Select('a')">
             <span class="scq-opt-text">כן</span>

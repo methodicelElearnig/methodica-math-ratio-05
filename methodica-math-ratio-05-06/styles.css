@@ -420,21 +420,6 @@ img { display: block; max-width: none; }
   text-align: right;
   white-space: pre-line;
 }
-.scq-fb-reveal-btn {
-  align-self: flex-start;
-  background: #fff;
-  color: var(--subject-500);
-  border: 1.5px solid var(--subject-500);
-  border-radius: 1000px;
-  font-family: 'Assistant', sans-serif;
-  font-size: 20px;
-  font-weight: 400;
-  padding: 10px 24px;
-  cursor: pointer;
-}
-.scq-fb-reveal-btn[hidden] { display: none; }
-.scq-fb-reveal-btn:hover { background: #f0f8ff; }
-
 /* ════════════════════════════════════════════════════════
    GLOBAL — Hint overlay (_global-components.md — outside .screen,
    direct child of #app). 4 מופעים במסך 3 (s2-p1/p2/p4/p5-hint-overlay).

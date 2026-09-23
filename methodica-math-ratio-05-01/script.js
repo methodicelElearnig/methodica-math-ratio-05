@@ -57,16 +57,39 @@ window.lomdaState = {
    clampPopupPosition (למטה) קוראים מכאן, לא מגדירים בעצמם. */
 const CANVAS_W = 1280, CANVAS_H = 710;
 
+/* ⚠️ תוקן (23.09.2026, דיווח לקוח: "יש מלא שטח מת למעלה ולמטה, אנחנו
+   סתם מקטינים את שטח היחידה") — scaleApp() ממרכז-עם-שוליים הוחלף
+   במתיחת-הקנבס-עצמו למילוי-מדויק של ה-viewport, אותה נוסחה בדיוק כמו
+   methodica-math-percent-02 (unit-js/15-ui.js), שהלקוח אישר כתקינה.
+   ה-scale עדיין Math.min של שני היחסים (לא נוגעים בפרופורציית-התוכן),
+   אבל אז #app עצמו מתרחב ל-canvasW/canvasH (במקום להישאר נעול ל-
+   1280×710 עם left/top ממורכזים) — כך שאחרי ה-transform:scale() הוא
+   ממלא את הוויופורט בדיוק, אפס שוליים-מתים, בכל יחס-גובה-רוחב. תוכן-
+   מסכים לא נבנה מחדש: אותה שיטת מיקום-אבסולוטי-קבוע-פיקסלים ביחס
+   לרשת-1280 בשני הפרויקטים (ראו ARCHITECTURE.md אם קיים סעיף ייעודי).
+   getCanvasSize() למטה (גם היא מועתקת מאותו מקור) היא מקור-האמת
+   לגודל-הקנבס *בפועל* מרגע זה — currentCanvasScale/clampPopupPosition
+   עודכנו לקרוא לה במקום ל-CANVAS_W/CANVAS_H הקבועים ישירות. */
 function scaleApp() {
   const app = document.getElementById('app');
   const scale = Math.min(window.innerWidth / CANVAS_W, window.innerHeight / CANVAS_H);
-  const left = (window.innerWidth - CANVAS_W * scale) / 2;
-  const top = (window.innerHeight - CANVAS_H * scale) / 2;
+  const canvasW = window.innerWidth / scale;
+  const canvasH = window.innerHeight / scale;
+  app.style.width = canvasW + 'px';
+  app.style.height = canvasH + 'px';
   app.style.transform = 'scale(' + scale + ')';
-  app.style.left = left + 'px';
-  app.style.top = top + 'px';
+  app.style.left = '0px';
+  app.style.top = '0px';
 }
 window.addEventListener('resize', scaleApp);
+
+function getCanvasSize() {
+  const app = document.getElementById('app');
+  return {
+    w: parseFloat(app.style.width) || CANVAS_W,
+    h: parseFloat(app.style.height) || CANVAS_H
+  };
+}
 
 /* ⚠️ נוסף (07.09.2026, בדיקה מקיפה: "כפתור 'צדקתי?' לא תמיד מיושר
    לשמאל") — הועתק/הותאם מ-methodica-math-ratio-05-05/script.js
@@ -77,7 +100,11 @@ window.addEventListener('resize', scaleApp);
    מרוחב #app בפועל) כדי לקבל בחזרה יחידות מקומיות נכונות. */
 function currentCanvasScale() {
   const appEl = document.getElementById('app');
-  return appEl ? (appEl.getBoundingClientRect().width / CANVAS_W) : 1;
+  // ⚠️ עודכן (23.09.2026) — מחלקים ב-getCanvasSize().w (הרוחב הדינמי
+  // בפועל שנקבע ב-scaleApp(), עשוי לחרוג מ-1280), לא ב-CANVAS_W הקבוע
+  // — אחרת ה-scale היה יוצא שגוי בכל viewport שבו הקנבס התרחב מעבר
+  // לגודל-העיצוב (ראו ההערה המלאה ליד scaleApp()).
+  return appEl ? (appEl.getBoundingClientRect().width / getCanvasSize().w) : 1;
 }
 
 /* ⚠️ נוסף (07.09.2026, בדיקה מקיפה) — #s2-e-check (.s2-check-btn,
@@ -848,6 +875,11 @@ function s2EDrop(e, targetId) {
   s2EDropHandled = true;
   s2ERender();
   s2ECheckEnable();
+  // ⚠️ נוסף (22.09.2026, דיווח: "אין משוב אחרי ניסיון ראשון שגוי, וכפתור
+  // צדקתי נשאר דלוק בלי לשנות תשובה") — סידור-מחדש אחרי ניסיון שגוי
+  // ראשון (ראו s2ECheck) חייב לאפס את המשוב הישן, אותו דפוס בדיוק כמו
+  // s6OnInput (fb.classList.remove('visible')).
+  document.getElementById('s2-e-feedbox').classList.remove('visible');
   s2HideDragGesture(); // ניסיון-גרירה-מוצלח ראשון — מסתיר את ה-gesture hint (לא תלוי-הצלחה/דיוק)
 }
 
@@ -858,13 +890,10 @@ const S2_E_FEEDBACK = {
   correct: { title: 'כל הכבוד!', body: 'כשגודל הקבוצה והיחס בין החלקים בה ידועים לנו, זוהי הדרך בה נחשב את גדלי החלקים השונים.' },
   wrong:   { title: 'זה לא מדויק, התשובה הנכונה מוצגת', body: 'כשגודל הקבוצה והיחס בין החלקים בה ידועים לנו, זוהי הדרך בה נחשב את גדלי החלקים השונים.' }
 };
-/* ⚠️ נוסף (31.08.2026, לפי הנחיות-כפתור-התשובה-הנכונה.md) — עד כה
-   הניסיון-האחרון-השגוי קרא ל-s2ERevealCorrect() אוטומטית וזהו (בדיוק
-   התיאור "ההתנהגות השגויה הנפוצה" בקובץ-ההנחיות) — הלומד/ת לא יכלו
-   לראות את הסידור שהם עצמם ביצעו. עכשיו: כפתור-טוגל, כמו ב-s6. */
-const S2_E_PENDING_FEEDBACK = { title: 'התשובה אינה נכונה.', body: 'רוצים לראות את הפתרון הנכון?' };
-let s2EPlacementSnapshot = null;
-let s2ERevealed = false;
+/* ⚠️ נוסף (22.09.2026, דיווח: "אין משוב, וכפתור צדקתי נשאר דלוק אחרי
+   ניסיון ראשון שגוי בלי לשנות תשובה") — אותו טקסט-משוב מדויק שכבר
+   בשימוש ב-s6Check (wrongOnce) לניסיון-ראשון-שגוי בשאר הפרויקט. */
+const S2_E_WRONG_ONCE = { title: 'התשובה אינה נכונה.', body: 'נסו שוב.' };
 
 function s2EMarkResult() {
   Object.keys(S2_DDQ_CORRECT).forEach(function (t) {
@@ -899,17 +928,13 @@ function s2ECheck() {
     olySetFeedback(document.getElementById('s2-e-feedbox'), true, S2_E_FEEDBACK.correct);
   } else if (s2EAttempts < 2) {
     s2EMarkResult(); // מסמן אדום זמנית — הגרירה עדיין פתוחה לתיקון (לא ננעל)
+    olySetFeedback(document.getElementById('s2-e-feedbox'), false, S2_E_WRONG_ONCE);
+    document.getElementById('s2-e-check').disabled = true; // נעול עד לסידור-מחדש (s2EDrop קורא ל-s2ECheckEnable מחדש)
   } else {
-    /* ⚠️ תוקן (31.08.2026) — לא עוד reveal אוטומטי. הסידור של הלומד/ת
-       עצמם נשמר (snapshot) ומוצג עם סימון-נכון/שגוי ביחס-אליו; כפתור
-       "התשובה הנכונה" נחשף לטוגל עצמאי — ראו s2EToggleReveal. */
     s2EChecked = true;
     s2EDone = true;
-    s2EPlacementSnapshot = Object.assign({}, s2EPlacement);
-    s2ERevealed = false;
-    olySetFeedback(document.getElementById('s2-e-feedbox'), false, S2_E_PENDING_FEEDBACK);
-    const revealBtn = document.getElementById('s2-e-reveal-btn');
-    if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
+    s2ERevealCorrect();
+    olySetFeedback(document.getElementById('s2-e-feedbox'), false, S2_E_FEEDBACK.wrong);
   }
   if (s2EChecked) {
     document.getElementById('s2-e-check').disabled = true;
@@ -926,29 +951,6 @@ function s2ECheck() {
     s2EMarkResult();
     const continueBtn = document.getElementById('s2-continue');
     if (continueBtn) continueBtn.disabled = false;
-  }
-}
-
-/* ⚠️ נוסף (31.08.2026, לפי הנחיות-כפתור-התשובה-הנכונה.md, וריאנט 2) —
-   טוגל: לחיצה ראשונה חושפת את הסידור הנכון בפועל (s2ERevealCorrect
-   הקיימת, בלי שינוי), מציגה את S2_E_FEEDBACK.wrong הקיים ללא שינוי;
-   לחיצה שנייה משחזרת בדיוק את הסידור שהלומד/ת עצמם ביצעו (מ-snapshot). */
-function s2EToggleReveal() {
-  const revealBtn = document.getElementById('s2-e-reveal-btn');
-  if (!s2ERevealed) {
-    s2ERevealCorrect();
-    s2ERender();
-    s2EMarkResult();
-    olySetFeedback(document.getElementById('s2-e-feedbox'), false, S2_E_FEEDBACK.wrong);
-    s2ERevealed = true;
-    if (revealBtn) revealBtn.textContent = 'התשובה שלי';
-  } else {
-    s2EPlacement = Object.assign({}, s2EPlacementSnapshot);
-    s2ERender();
-    s2EMarkResult();
-    olySetFeedback(document.getElementById('s2-e-feedbox'), false, S2_E_PENDING_FEEDBACK);
-    s2ERevealed = false;
-    if (revealBtn) revealBtn.textContent = 'התשובה הנכונה';
   }
 }
 
@@ -1065,16 +1067,6 @@ function resetScreenState2() {
     s2EMarkResult();
     const isAllCorrectE = s2EIsAllCorrect();
     olySetFeedback(fbe, isAllCorrectE, isAllCorrectE ? S2_E_FEEDBACK.correct : S2_E_FEEDBACK.wrong);
-    /* ⚠️ נוסף (31.08.2026, דיווח: "אין את הכפתור של הצגת התשובה
-       הנכונה") — כפתור-החשיפה גם הוא לא שוחזר ב-resume: נשאר hidden
-       (ברירת-המחדל ב-HTML) גם כשהניסיונות נגמרו-בטעות במצב-שגוי לפני
-       המעבר-מהמסך. גלוי רק כשנבדק וטרם נפתר נכון (עקבי עם s2ECheck —
-       שם הכפתור נחשף רק בענף הניסיון-האחרון-שגוי, לא בענף isCorrect). */
-    const revealBtnE = document.getElementById('s2-e-reveal-btn');
-    if (revealBtnE) {
-      revealBtnE.hidden = isAllCorrectE;
-      revealBtnE.textContent = s2ERevealed ? 'התשובה שלי' : 'התשובה הנכונה';
-    }
   } else {
     fbe.classList.remove('visible', 'is-correct', 'is-wrong');
   }
@@ -1532,19 +1524,12 @@ function resetScreenState5() {
    נפרד, לפי אותה מוסכמה "תיבת-משוב חושפת את התשובה בעצמה" שכבר
    קיימת במסכים 2/3/5 של הפרויקט הזה). ראו ARCHITECTURE.md § "מסך 7".
    ========================================================= */
-/* ⚠️ נוסף (31.08.2026, לפי הנחיות-כפתור-התשובה-הנכונה.md) — הודעת-
-   ביניים משותפת לשני השאלות, לשימוש חוזר גם בניסיון-אחרון-שגוי וגם
-   בכל טוגל חזרה אליה. אין לשנות טקסטי-משוב קיימים (wrongOnce/
-   correctMsg/wrongFinal) כדי לממש את זה — רק הודעת-הביניים הזו חדשה. */
-const S6_PENDING_FEEDBACK = { title: 'התשובה אינה נכונה.', body: 'רוצים לראות את הפתרון הנכון?' };
-
 const S6_Q = {
   1: {
     inputs: ['s6-q1-a', 's6-q1-b', 's6-q1-c'],
     correct: [12, 24, 36],
     checkBtn: 's6-q1-check',
     feedbox: 's6-q1-feedbox',
-    revealBtn: 's6-q1-reveal-btn',
     next: 2,
     wrongOnce: { title: 'התשובה אינה נכונה.', body: 'נסו שוב.' },
     correctMsg: {
@@ -1561,7 +1546,6 @@ const S6_Q = {
     correct: [18, 72],
     checkBtn: 's6-q2-check',
     feedbox: 's6-q2-feedbox',
-    revealBtn: 's6-q2-reveal-btn',
     hintBtn: 's6-q2-hint-btn',
     next: null,
     wrongOnce: { title: 'התשובה אינה נכונה.', body: 'נסו שוב.' },
@@ -1577,12 +1561,6 @@ const S6_Q = {
 };
 const s6Attempts = {};
 const s6Outcome = { 1: null, 2: null }; // 'success' | 'fail' | null — resume-state + qnav מקור-אמת
-/* ⚠️ נוסף (31.08.2026, לפי הנחיות-כפתור-התשובה-הנכונה.md) — snapshot
-   של הערכים שהלומד/ת עצמם הקלידו ברגע הניסיון-האחרון-השגוי (לפני כל
-   reveal), כדי שכפתור "התשובה שלי" יוכל לשחזר אותם. revealed עוקב
-   אחרי מצב-הטוגל הנוכחי לכל שאלה בנפרד. */
-const s6AnswerSnapshot = { 1: null, 2: null };
-const s6Revealed = { 1: false, 2: false };
 
 function s6OnInput(n) {
   const cfg = S6_Q[n];
@@ -1644,68 +1622,22 @@ function s6Check(n) {
     document.getElementById(cfg.checkBtn).disabled = true; // נעול עד ש-s6OnInput יופעל מחדש ע"י שינוי ערך
     if (cfg.hintBtn) document.getElementById(cfg.hintBtn).disabled = false;
   } else {
-    /* ⚠️ תוקן (31.08.2026, לפי דיווח: "כשמוצגת התשובה הנכונה עדיין יש
-       את האייקון של X", ולפי הנחיות-כפתור-התשובה-הנכונה.md) — קודם:
-       ניסיון-אחרון-שגוי דרס את הערכים בתשובה-הנכונה מיד (input.value=
-       cfg.correct[i]) אבל השאיר .wrong (מהערכת-הניסיון-הכושל) — התשובה
-       הנכונה הוצגה עם אייקון-שגיאה. עכשיו: הערכים של הלומד/ת עצמם
-       נשארים (עם .correct/.wrong ביחס-אליהם), נלקח snapshot, מוצגת
-       הודעת-ביניים, וכפתור "התשובה הנכונה" נחשף — הלומד/ת בוחרים אם
-       לראות את הפתרון (s6ToggleReveal), לא נכפה עליהם אוטומטית. */
+    /* ⚠️ תוקן (23.09.2026, דיווח: "לא ביקשתי שהתשובה הנכונה תיחשף
+       באופן מידי, לא צריך לחשוף אותה בכלל — היה צריך שתישאר התשובה
+       השגויה שהזין הלומד") — ההערה הקודמת כאן תיארה במפורש את הבאג
+       (דריסת-ערך אוטומטית); לא דורסים יותר — הערך שהלומד/ת הקלידו
+       נשאר, מסומן correct/wrong לפי-שדה בפועל (זהה לענף wrongOnce
+       למעלה), רק ננעל. */
     inputs.forEach(function (input, i) {
-      input.classList.toggle('wrong', Number(input.value) !== cfg.correct[i]);
       input.classList.toggle('correct', Number(input.value) === cfg.correct[i]);
+      input.classList.toggle('wrong', Number(input.value) !== cfg.correct[i]);
       input.disabled = true;
-    });
-    s6AnswerSnapshot[n] = inputs.map(function (input) { return input.value; });
-    s6Revealed[n] = false;
-    fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.innerHTML = S6_PENDING_FEEDBACK.title;
-    bodyEl.innerHTML = S6_PENDING_FEEDBACK.body;
-    if (cfg.revealBtn) {
-      const revealBtn = document.getElementById(cfg.revealBtn);
-      if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
-    }
-    s6Outcome[n] = 'fail';
-    s6Finish(n);
-  }
-}
-
-/* ⚠️ נוסף (31.08.2026, לפי הנחיות-כפתור-התשובה-הנכונה.md, וריאנט 2 —
-   מסך כתוב-ידני) — טוגל: לחיצה ראשונה חושפת את התשובה הנכונה בפועל
-   (מעדכנת את הערכים, מסמנת .correct, מציגה את wrongFinal הקיים ללא
-   שינוי), לחיצה שנייה משחזרת בדיוק את מה שהלומד/ת עצמם הקלידו
-   (מ-snapshot) עם .correct/.wrong ביחס-אליו, וחוזרת להודעת-הביניים. */
-function s6ToggleReveal(n) {
-  const cfg = S6_Q[n];
-  const inputs = cfg.inputs.map(function (id) { return document.getElementById(id); });
-  const fb = document.getElementById(cfg.feedbox);
-  const titleEl = fb.querySelector('.scq-fb-title-text');
-  const bodyEl = fb.querySelector('.scq-fb-body');
-  const revealBtn = document.getElementById(cfg.revealBtn);
-  if (!s6Revealed[n]) {
-    inputs.forEach(function (input, i) {
-      input.value = cfg.correct[i];
-      input.classList.remove('wrong');
-      input.classList.add('correct');
     });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
     titleEl.innerHTML = cfg.wrongFinal.title;
     bodyEl.innerHTML = cfg.wrongFinal.body;
-    s6Revealed[n] = true;
-    if (revealBtn) revealBtn.textContent = 'התשובה שלי';
-  } else {
-    const snapshot = s6AnswerSnapshot[n];
-    inputs.forEach(function (input, i) {
-      input.value = snapshot[i];
-      input.classList.toggle('correct', Number(snapshot[i]) === cfg.correct[i]);
-      input.classList.toggle('wrong', Number(snapshot[i]) !== cfg.correct[i]);
-    });
-    fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.innerHTML = S6_PENDING_FEEDBACK.title;
-    bodyEl.innerHTML = S6_PENDING_FEEDBACK.body;
-    s6Revealed[n] = false;
-    if (revealBtn) revealBtn.textContent = 'התשובה הנכונה';
+    s6Outcome[n] = 'fail';
+    s6Finish(n);
   }
 }
 
@@ -1786,16 +1718,6 @@ function resetScreenState6() {
     const fb = document.getElementById(cfg.feedbox);
     if (fb) fb.classList.remove('visible', 'is-correct', 'is-wrong');
     s6Attempts[n] = 0;
-    /* ⚠️ נוסף (31.08.2026) — איפוס snapshot/טוגל+כפתור-חשיפה, לפי
-       הנחיות-כפתור-התשובה-הנכונה.md § "רשימת בדיקה". אין isOutcome!==null
-       guard נוסף כאן — כבר בתוך התנאי הזה (למעלה), שרץ רק על שאלות
-       שעדיין לא נענו. */
-    s6AnswerSnapshot[n] = null;
-    s6Revealed[n] = false;
-    if (cfg.revealBtn) {
-      const revealBtn = document.getElementById(cfg.revealBtn);
-      if (revealBtn) { revealBtn.hidden = true; revealBtn.textContent = 'התשובה הנכונה'; }
-    }
   });
   document.getElementById('s6-continue').disabled = (s6Outcome[2] === null);
   updateS6Qnav();
@@ -1817,8 +1739,13 @@ const BOTTOM_BAR_H = 74;
 
 function clampPopupPosition(x, y, popupEl) {
   const w = popupEl.offsetWidth, h = popupEl.offsetHeight;
-  const minX = 0, maxX = CANVAS_W - w;
-  const minY = 0, maxY = (CANVAS_H - BOTTOM_BAR_H) - h; // top edge of the bottom bar
+  // ⚠️ עודכן (23.09.2026) — גבולות ביחס לגודל-הקנבס *בפועל*
+  // (getCanvasSize(), עשוי לחרוג מ-1280×710), לא ביחס ל-CANVAS_W/
+  // CANVAS_H הקבועים — אחרת פופ-אפ נגרר היה נשאר נעול לתוך המלבן
+  // הישן-הקטן גם כש-#app כבר גדול יותר (ראו ההערה המלאה ליד scaleApp()).
+  const canvas = getCanvasSize();
+  const minX = 0, maxX = canvas.w - w;
+  const minY = 0, maxY = (canvas.h - BOTTOM_BAR_H) - h; // top edge of the bottom bar
   return {
     x: Math.min(Math.max(x, minX), maxX),
     y: Math.min(Math.max(y, minY), maxY)
@@ -1841,7 +1768,6 @@ function scqFbMakeDraggable(boxId) {
   let startX = 0, startY = 0, startLeft = 0, startTop = 0;
 
   box.addEventListener('mousedown', function (e) {
-    if (e.target.closest('.scq-fb-reveal-btn')) return;
     const parent = box.offsetParent || box.parentElement;
     const boxRect = box.getBoundingClientRect();
     const parentRect = parent.getBoundingClientRect();
@@ -1863,7 +1789,9 @@ function scqFbMakeDraggable(boxId) {
     const parentRect = parent.getBoundingClientRect();
     // pointer delta lives in raw viewport px — convert to canvas-space
     // (divide by the current scaleApp() zoom factor) before clamping.
-    const scale = parentRect.width / CANVAS_W;
+    // ⚠️ עודכן (23.09.2026) — getCanvasSize().w, לא CANVAS_W הקבוע (ראו
+    // ההערה המלאה ליד scaleApp()/currentCanvasScale()).
+    const scale = parentRect.width / getCanvasSize().w;
     const dx = (e.clientX - startX) / scale;
     const dy = (e.clientY - startY) / scale;
     const clamped = clampPopupPosition(startLeft + dx, startTop + dy, box);

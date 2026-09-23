@@ -57,16 +57,31 @@ window.lomdaState = {
    clampPopupPosition (למטה) קוראים מכאן, לא מגדירים בעצמם. */
 const CANVAS_W = 1280, CANVAS_H = 710;
 
+/* ⚠️ תוקן (23.09.2026, דיווח לקוח על methodica-math-ratio-05-01: "יש מלא
+   שטח מת למעלה ולמטה, אנחנו סתם מקטינים את שטח היחידה") — אותו תיקון
+   הועתק לכאן: scaleApp() ממרכז-עם-שוליים הוחלף במתיחת-הקנבס-עצמו
+   למילוי-מדויק של ה-viewport (אפס שוליים-מתים, בכל יחס-גובה-רוחב).
+   getCanvasSize() למטה היא מקור-האמת לגודל-הקנבס בפועל מרגע זה. */
 function scaleApp() {
   const app = document.getElementById('app');
   const scale = Math.min(window.innerWidth / CANVAS_W, window.innerHeight / CANVAS_H);
-  const left = (window.innerWidth - CANVAS_W * scale) / 2;
-  const top = (window.innerHeight - CANVAS_H * scale) / 2;
+  const canvasW = window.innerWidth / scale;
+  const canvasH = window.innerHeight / scale;
+  app.style.width = canvasW + 'px';
+  app.style.height = canvasH + 'px';
   app.style.transform = 'scale(' + scale + ')';
-  app.style.left = left + 'px';
-  app.style.top = top + 'px';
+  app.style.left = '0px';
+  app.style.top = '0px';
 }
 window.addEventListener('resize', scaleApp);
+
+function getCanvasSize() {
+  const app = document.getElementById('app');
+  return {
+    w: parseFloat(app.style.width) || CANVAS_W,
+    h: parseFloat(app.style.height) || CANVAS_H
+  };
+}
 
 /* ---------- closeAllPopupsAndHints() — bug-fixed version (מקורה מ-
    סיין 1, לפי סיכום-תהליך-בניית-הלומדה.md) ----------
@@ -270,8 +285,12 @@ const BOTTOM_BAR_H = 74;
 
 function clampPopupPosition(x, y, popupEl) {
   const w = popupEl.offsetWidth, h = popupEl.offsetHeight;
-  const minX = 0, maxX = CANVAS_W - w;
-  const minY = 0, maxY = (CANVAS_H - BOTTOM_BAR_H) - h; // top edge of the bottom bar
+  // ⚠️ עודכן (23.09.2026) — getCanvasSize().w/.h, לא CANVAS_W/CANVAS_H
+  // הקבועים: #app יכול כעת להיות רחב/גבוה יותר מגודל-העיצוב (ראו הערה
+  // ליד scaleApp()), אחרת פופ-אפ נגרר היה נשאר נעול לתוך המלבן הישן-הקטן.
+  const canvas = getCanvasSize();
+  const minX = 0, maxX = canvas.w - w;
+  const minY = 0, maxY = (canvas.h - BOTTOM_BAR_H) - h; // top edge of the bottom bar
   return {
     x: Math.min(Math.max(x, minX), maxX),
     y: Math.min(Math.max(y, minY), maxY)
@@ -316,7 +335,9 @@ function scqFbMakeDraggable(boxId) {
     const parentRect = parent.getBoundingClientRect();
     // pointer delta lives in raw viewport px — convert to canvas-space
     // (divide by the current scaleApp() zoom factor) before clamping.
-    const scale = parentRect.width / CANVAS_W;
+    // ⚠️ עודכן (23.09.2026) — getCanvasSize().w, לא CANVAS_W הקבוע (ראו
+    // ההערה המלאה ליד scaleApp()/clampPopupPosition()).
+    const scale = parentRect.width / getCanvasSize().w;
     const dx = (e.clientX - startX) / scale;
     const dy = (e.clientY - startY) / scale;
     const clamped = clampPopupPosition(startLeft + dx, startTop + dy, box);
