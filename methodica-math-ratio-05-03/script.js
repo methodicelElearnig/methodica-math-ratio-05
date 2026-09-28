@@ -584,8 +584,44 @@ function viqCheck(key) {
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
     titleEl.innerHTML = cfg.wrongFinal.title;
     bodyEl.innerHTML = cfg.wrongFinal.body;
+    st.snapshot = inputs.map(function (input) { return input.value; });
+    st.revealed = false;
+    if (cfg.revealBtn) {
+      const revealBtn = document.getElementById(cfg.revealBtn);
+      if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
+    }
     st.outcome = 'fail';
     viqFinish(key);
+  }
+}
+
+/* טוגל: לחיצה ראשונה מציגה את הערכים הנכונים בפועל בשדות, לחיצה שנייה
+   משחזרת בדיוק את מה שהלומד/ת הקלידו (מ-snapshot). המשוב המלא
+   (wrongFinal) נשאר קבוע על המסך לאורך כל הטוגל — רק ערכי השדות
+   וטקסט הכפתור מתחלפים. */
+function viqToggleReveal(key) {
+  const cfg = VIQ_CFG[key];
+  const st = viqState[key];
+  const inputs = cfg.inputs.map(function (id) { return document.getElementById(id); });
+  const revealBtn = document.getElementById(cfg.revealBtn);
+  if (!st.revealed) {
+    inputs.forEach(function (input, i) {
+      input.value = cfg.correct[i];
+      input.classList.remove('wrong');
+      input.classList.add('correct');
+    });
+    st.revealed = true;
+    if (revealBtn) revealBtn.textContent = 'התשובה שלי';
+  } else {
+    const snapshot = st.snapshot;
+    inputs.forEach(function (input, i) {
+      input.value = snapshot[i];
+      const ok = Number(snapshot[i]) === cfg.correct[i];
+      input.classList.toggle('correct', ok);
+      input.classList.toggle('wrong', !ok);
+    });
+    st.revealed = false;
+    if (revealBtn) revealBtn.textContent = 'התשובה הנכונה';
   }
 }
 
@@ -636,7 +672,7 @@ function resetScreenState0() {
 const S1MIX_CFG = {
   p1: {
     whiteId: 's1-p1-white', darkId: 's1-p1-dark', ynYesId: 's1-p1-yes', ynNoId: 's1-p1-no',
-    checkBtn: 's1-p1-check', feedbox: 's1-p1-feedbox',
+    checkBtn: 's1-p1-check', feedbox: 's1-p1-feedbox', revealBtn: 's1-p1-reveal-btn',
     correct: { white: 5, dark: 45, yn: 'no' },
     correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'בכל שורה נשים פרח שוקולד לבן אחד, ו-9 פרחי שוקולד מריר,\nסה"כ 10 פרחים בשורה. נקבל 5 שורות מכיוון ש: <span dir="">5 = 10 : 50</span>.\nמספר פרחי שוקולד לבן בכל התבנית הוא: 5,\nמספר פרחי שוקולד המריר בכל התבנית הוא: 45.\nמאחר ו- <span dir="">50 = 5 + 45</span>, אז לא נשארו שקעים ריקים.' },
     wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
@@ -644,7 +680,7 @@ const S1MIX_CFG = {
   },
   p2: {
     whiteId: 's1-p2-white', darkId: 's1-p2-dark', ynYesId: 's1-p2-yes', ynNoId: 's1-p2-no',
-    checkBtn: 's1-p2-check', feedbox: 's1-p2-feedbox',
+    checkBtn: 's1-p2-check', feedbox: 's1-p2-feedbox', revealBtn: 's1-p2-reveal-btn',
     correct: { white: 12, dark: 36, yn: 'yes' },
     correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'על כל משבצת לבנה נסמן 3 משבצות חומות. נקבל סך הכל 12 פרחי שוקולד לבן, 36 פרחי שוקולד מריר ו-2 משבצות ריקות. חשבו איך כדאי לכם למלא את התבניות לפי היחס הנתון.' },
     wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
@@ -763,8 +799,55 @@ function s1MixCheck(key) {
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
     titleEl.innerHTML = cfg.wrongFinal.title;
     bodyEl.innerHTML = cfg.wrongFinal.body;
+    st.snapshot = { white: whiteInput.value, dark: darkInput.value };
+    st.revealed = false;
+    if (cfg.revealBtn) {
+      const revealBtn = document.getElementById(cfg.revealBtn);
+      if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
+    }
     st.outcome = 'fail';
     s1MixFinish(key);
+  }
+}
+
+/* טוגל: לחיצה ראשונה מציגה את הערכים הנכונים בפועל (white/dark/yn),
+   לחיצה שנייה משחזרת בדיוק את מה שהלומד/ת הקלידו/בחרו (מ-snapshot).
+   המשוב המלא (wrongFinal) נשאר קבוע על המסך לאורך כל הטוגל. */
+function s1MixToggleReveal(key) {
+  const cfg = S1MIX_CFG[key];
+  const st = s1MixState[key];
+  const whiteInput = document.getElementById(cfg.whiteId);
+  const darkInput = document.getElementById(cfg.darkId);
+  const yesEl = document.getElementById(cfg.ynYesId);
+  const noEl = document.getElementById(cfg.ynNoId);
+  const chosenEl = st.yn === 'yes' ? yesEl : noEl;
+  const correctYNEl = cfg.correct.yn === 'yes' ? yesEl : noEl;
+  const revealBtn = document.getElementById(cfg.revealBtn);
+  if (!st.revealed) {
+    whiteInput.value = cfg.correct.white;
+    darkInput.value = cfg.correct.dark;
+    whiteInput.classList.remove('wrong'); whiteInput.classList.add('correct');
+    darkInput.classList.remove('wrong'); darkInput.classList.add('correct');
+    yesEl.classList.remove('correct', 'wrong');
+    noEl.classList.remove('correct', 'wrong');
+    correctYNEl.classList.add('correct');
+    st.revealed = true;
+    if (revealBtn) revealBtn.textContent = 'התשובה שלי';
+  } else {
+    const snap = st.snapshot;
+    whiteInput.value = snap.white;
+    darkInput.value = snap.dark;
+    const whiteOk = Number(snap.white) === cfg.correct.white;
+    const darkOk = Number(snap.dark) === cfg.correct.dark;
+    whiteInput.classList.toggle('correct', whiteOk); whiteInput.classList.toggle('wrong', !whiteOk);
+    darkInput.classList.toggle('correct', darkOk); darkInput.classList.toggle('wrong', !darkOk);
+    const ynOk = st.yn === cfg.correct.yn;
+    yesEl.classList.remove('correct', 'wrong');
+    noEl.classList.remove('correct', 'wrong');
+    if (!ynOk) { chosenEl.classList.add('wrong'); correctYNEl.classList.add('correct'); }
+    else { chosenEl.classList.add('correct'); }
+    st.revealed = false;
+    if (revealBtn) revealBtn.textContent = 'התשובה הנכונה';
   }
 }
 
@@ -1005,7 +1088,7 @@ function resetScreenState2() {
    בלבד, ב-onDone של s3p2).
    ========================================================= */
 VIQ_CFG_REGISTER('s3p1', {
-  inputs: ['s3-p1-a', 's3-p1-b'], correct: [5, 7], checkBtn: 's3-p1-check', feedbox: 's3-p1-feedbox', nextScreen: null,
+  inputs: ['s3-p1-a', 's3-p1-b'], correct: [5, 7], checkBtn: 's3-p1-check', feedbox: 's3-p1-feedbox', revealBtn: 's3-p1-reveal-btn', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'רועי שילם 5 ש"ח ועינת שילמה 7 ש"ח, לכן יחס ההשקעה הוא 7 : 5.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
   wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'רועי שילם 5 ש"ח ועינת שילמה 7 ש"ח, לכן יחס ההשקעה הוא 7 : 5.' },
@@ -1174,7 +1257,7 @@ function resetScreenState4() {
    goTo(5)) — יעד-ניווט אמיתי לסוף-היחידה דורש אישור-מוצר, לא הומצא כאן.
    ========================================================= */
 VIQ_CFG_REGISTER('s5p1', {
-  inputs: ['s5-p1-a', 's5-p1-b'], correct: [60, 150], checkBtn: 's5-p1-check', feedbox: 's5-p1-feedbox', nextScreen: null,
+  inputs: ['s5-p1-a', 's5-p1-b'], correct: [60, 150], checkBtn: 's5-p1-check', feedbox: 's5-p1-feedbox', revealBtn: 's5-p1-reveal-btn', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'היחס בין מספר השעות שעבדה נעמי למספר השעות שעבד יוני הוא 2:5.<br>מספר החלקים הוא <span dir="ltr">2 + 5 = 7</span>.<br>אם נועה ויוני הרוויחו 210 ₪ והם מתכוונים לחלק את הכסף לפי מספר השעות היחסי אז:<br>נועה תקבל <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span> · 210 = 60</span>,<br>ויוני יקבל <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> · 210 = 150</span>.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
   wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'היחס בין מספר השעות שעבדה נעמי למספר השעות שעבד יוני הוא 2:5.<br>מספר החלקים הוא <span dir="ltr"> 2 + 5 = 7</span>.<br>אם נועה ויוני הרוויחו 210 ₪ והם מתכוונים לחלק את הכסף לפי מספר השעות היחסי אז:<br>נועה תקבל <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span> · 210 = 60</span>,<br>ויוני יקבל <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> · 210 = 150</span>.' },

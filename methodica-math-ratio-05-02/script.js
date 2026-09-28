@@ -446,8 +446,44 @@ function viqCheck(key) {
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
     titleEl.innerHTML = cfg.wrongFinal.title;
     bodyEl.innerHTML = cfg.wrongFinal.body;
+    st.snapshot = inputs.map(function (input) { return input.value; });
+    st.revealed = false;
+    if (cfg.revealBtn) {
+      const revealBtn = document.getElementById(cfg.revealBtn);
+      if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
+    }
     st.outcome = 'fail';
     viqFinish(key);
+  }
+}
+
+/* טוגל: לחיצה ראשונה מציגה את הערכים הנכונים בפועל בשדות, לחיצה שנייה
+   משחזרת בדיוק את מה שהלומד/ת הקלידו (מ-snapshot). המשוב המלא
+   (wrongFinal) נשאר קבוע על המסך לאורך כל הטוגל — רק ערכי השדות
+   וטקסט הכפתור מתחלפים. */
+function viqToggleReveal(key) {
+  const cfg = VIQ_CFG[key];
+  const st = viqState[key];
+  const inputs = cfg.inputs.map(function (id) { return document.getElementById(id); });
+  const revealBtn = document.getElementById(cfg.revealBtn);
+  if (!st.revealed) {
+    inputs.forEach(function (input, i) {
+      input.value = cfg.correct[i];
+      input.classList.remove('wrong');
+      input.classList.add('correct');
+    });
+    st.revealed = true;
+    if (revealBtn) revealBtn.textContent = 'התשובה שלי';
+  } else {
+    const snapshot = st.snapshot;
+    inputs.forEach(function (input, i) {
+      input.value = snapshot[i];
+      const ok = Number(snapshot[i]) === cfg.correct[i];
+      input.classList.toggle('correct', ok);
+      input.classList.toggle('wrong', !ok);
+    });
+    st.revealed = false;
+    if (revealBtn) revealBtn.textContent = 'התשובה הנכונה';
   }
 }
 
@@ -470,7 +506,7 @@ function viqFinish(key) {
 
 const VIQ_CFG = {
   s1: {
-    inputs: ['s1-a', 's1-b'], correct: [21, 9], checkBtn: 's1-check', feedbox: 's1-feedbox', nextScreen: 2,
+    inputs: ['s1-a', 's1-b'], correct: [21, 9], checkBtn: 's1-check', feedbox: 's1-feedbox', revealBtn: 's1-reveal-btn', nextScreen: 2,
     correctMsg: { title: 'נכון!', body: 'א. היחס בין מספר העורכים למספר השחקנים בערוץ הוא 7 : 3 .<br>מספר החלקים ה"שלם" הוא: <span dir="">10 = 3 + 7</span>.<br>נחשב את מספר השחקנים : <span dir="ltr"><span class="frac"><span class="frac-num">7</span><span class="frac-den">10</span></span> · 30 = 21</span><br><br>ב. נחשב את מספר העורכים : <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">10</span></span> · 30 = 9</span>' },
     wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
     wrongFinal: { title: 'לא נכון.', body: 'א. היחס בין מספר העורכים למספר השחקנים בערוץ הוא 7 : 3 .<br>מספר החלקים ה"שלם" הוא: <span dir="">10 = 3 + 7</span>.<br>נחשב את מספר השחקנים : <span dir="ltr"><span class="frac"><span class="frac-num">7</span><span class="frac-den">10</span></span> · 30 = 21</span><br><br>ב. נחשב את מספר העורכים : <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">10</span></span> · 30 = 9</span>' },
@@ -480,7 +516,7 @@ const VIQ_CFG = {
     }
   },
   s2: {
-    inputs: ['s2-a-x', 's2-a-y', 's2-b-x', 's2-b-y'], correct: [5, 25, 25, 25], checkBtn: 's2-check', feedbox: 's2-feedbox', nextScreen: 3,
+    inputs: ['s2-a-x', 's2-a-y', 's2-b-x', 's2-b-y'], correct: [5, 25, 25, 25], checkBtn: 's2-check', feedbox: 's2-feedbox', revealBtn: 's2-reveal-btn', nextScreen: 3,
     correctMsg: { title: 'נכון!', body: 'א. היחס בין מספר הבנים למספר הבנות הוא 5 : 1.<br>נחשב את מספר הבנים: <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">6</span></span> · 30 = 5</span><br>נחשב את מספר הבנות: <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">6</span></span> · 30 = 25</span><br>שיעורי נקודה A הם (5,25).<br><br>ב. בחצי השעה השנייה התווספו רק בנים, והיחס החדש הוא 1 : 1. מספר הבנות לא השתנה, לכן מספר הבנים החדש הוא 25.<br>שיעורי נקודה B הם (25,25).' },
     wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
     wrongFinal: { title: 'לא נכון.', body: 'א. היחס בין מספר הבנים למספר הבנות הוא 5 : 1.<br>נחשב את מספר הבנים: <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">6</span></span> · 30 = 5</span><br>נחשב את מספר הבנות: <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">6</span></span> · 30 = 25</span><br>שיעורי נקודה A הם (5,25).<br><br>ב. בחצי השעה השנייה התווספו רק בנים, והיחס החדש הוא 1 : 1. מספר הבנות לא השתנה, לכן מספר הבנים החדש הוא 25.<br>שיעורי נקודה B הם (25,25).' },
@@ -490,7 +526,7 @@ const VIQ_CFG = {
     }
   },
   s4p3: {
-    inputs: ['s4-p3-a', 's4-p3-b'], correct: [20, 32], checkBtn: 's4-p3-check', feedbox: 's4-p3-feedbox', nextScreen: null,
+    inputs: ['s4-p3-a', 's4-p3-b'], correct: [20, 32], checkBtn: 's4-p3-check', feedbox: 's4-p3-feedbox', revealBtn: 's4-p3-reveal-btn', nextScreen: null,
     correctMsg: { title: 'נכון!', body: 'ג. נתון כי דניאל ניצח ב-12 מישחים שהם <span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> מכלל המישחים שהוא השתתף בהם.<br>נסמן את כלל המישחים ב-x ונבנה את המשוואה: <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> · x = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> ונקבל: <span dir="ltr">x = 20</span>.<br><strong>לכן, דניאל שחה 20 מישחים בכל העונה.</strong><br>נתון כי נופר ודניאל השיגו את אותו מספר ניצחונות לכן נופר ניצחה ב-12 מישחים שהם <span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> מכלל המישחים בהם השתתפה.<br>נסמן את כלל המישחים ששחתה נופר ב-y ונבנה את המשוואה:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> · y = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> ונקבל: <span dir="ltr">y = 32</span>.<br><strong>לכן, נופר שחתה 32 מישחים בכל העונה.</strong>' },
     wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
     wrongFinal: { title: 'לא נכון.', body: 'ג. נתון כי דניאל ניצח ב-12 מישחים שהם <span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> מכלל המישחים שהוא השתתף בהם.<br>נסמן את כלל המישחים ב-x ונבנה את המשוואה: <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> · x = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> ונקבל: <span dir="ltr">x = 20</span>.<br><strong>לכן, דניאל שחה 20 מישחים בכל העונה.</strong><br>נתון כי נופר ודניאל השיגו את אותו מספר ניצחונות לכן נופר ניצחה ב-12 מישחים שהם <span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> מכלל המישחים בהם השתתפה.<br>נסמן את כלל המישחים ששחתה נופר ב-y ונבנה את המשוואה:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> · y = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> ונקבל: <span dir="ltr">y = 32</span>.<br><strong>לכן, נופר שחתה 32 מישחים בכל העונה.</strong>' },
@@ -838,6 +874,29 @@ function equalizeScqOptWidths() {
   });
 }
 
+/* ⚠️ נוסף (28.09.2026, דיווח: "בסעיף ג' הכפתור 'צדקתי?' בורח שמאלה,
+   לא מיושר לקו השמאלי של השאלה") — אותו באג-מקור בדיוק כמו
+   equalizeScqOptWidths/tf-rows למעלה: .s3-inline-btn מיושר ב-
+   align-self:flex-end (כלל גלובלי) לקצה-השמאלי של .s4-part *המלא*
+   (100%), לא לקצה-השמאלי בפועל של .viq-answers — ש-width:100% גם
+   הוא (בניגוד ל-.scq-opt שכבר צומצם ע"י equalizeScqOptWidths), אז
+   מדידת ה-group עצמו לא מספיקה; נמדדים שדות-הקלט (.viq-input)
+   בפועל בתוכו — המינימלי (הכי-שמאלי, כלומר השורה עם התווית הארוכה
+   ביותר) — ואותה שיטת חלוקה-ב-scale בדיוק כמו למעלה. */
+function alignViqInlineCheckBtn() {
+  document.querySelectorAll('.viq-answers').forEach(function (group) {
+    const checkBtn = group.nextElementSibling;
+    if (!checkBtn || !checkBtn.classList.contains('s3-inline-btn')) return;
+    const fields = Array.prototype.slice.call(group.querySelectorAll('.viq-input, .viq-coord'));
+    if (!fields.length) return;
+    const appEl = document.getElementById('app');
+    const scale = appEl ? (appEl.getBoundingClientRect().width / getCanvasSize().w) : 1;
+    const minLeft = Math.min.apply(null, fields.map(function (el) { return el.getBoundingClientRect().left; }));
+    const partRect = group.parentElement.getBoundingClientRect();
+    checkBtn.style.marginLeft = Math.max(0, (minLeft - partRect.left) / scale) + 'px';
+  });
+}
+
 function resetScreenState4() {
   setCurrentQuestion(3);
   syncPracticeProgressNav(document.getElementById('s4'));
@@ -846,6 +905,7 @@ function resetScreenState4() {
      equalizeTfBtnWidths (resetScreenState3 למעלה): המסך עדיין
      display:none כש-resetScreenState רץ, אז offsetWidth היה 0. */
   requestAnimationFrame(equalizeScqOptWidths);
+  requestAnimationFrame(alignViqInlineCheckBtn);
 }
 
 /* =========================================================
@@ -889,6 +949,12 @@ function scqFbMakeDraggable(boxId) {
   let startX = 0, startY = 0, startLeft = 0, startTop = 0;
 
   box.addEventListener('mousedown', function (e) {
+    /* ⚠️ נוסף (28.09.2026, דיווח: "לא מתאפשרת לחיצה על כפתור 'התשובה
+       הנכונה', המשוב תמיד בורח") — הכפתור יושב בתוך תיבת-המשוב הנגררת;
+       בלי היציאה הזו, mousedown על הכפתור עצמו הופעל תמיד כתחילת-גרירה
+       (הקופסה "בורחת" עם העכבר), ומנע מהקליק על הכפתור להירשם. אותו
+       תיקון כבר קיים ב-methodica-math-ratio-05-04/script.js. */
+    if (e.target.closest('.scq-fb-reveal-btn')) return;
     const parent = box.offsetParent || box.parentElement;
     const boxRect = box.getBoundingClientRect();
     const parentRect = parent.getBoundingClientRect();

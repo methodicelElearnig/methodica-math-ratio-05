@@ -772,6 +772,8 @@ let s2EDone = false;
 let s2EAttempts = 0;
 let s2EDragActive = null;
 let s2EDropHandled = false;
+let s2ERevealed = false;
+let s2EPlacementSnapshot = {};
 
 /* ⚠️ הוסר (18.08.2026) — הייתה כאן s2ERenderLines(), פונקציה שציירה
    קווי-חיבור SVG בין כל משבצת למספר שלה (getBoundingClientRect-based).
@@ -933,8 +935,11 @@ function s2ECheck() {
   } else {
     s2EChecked = true;
     s2EDone = true;
-    s2ERevealCorrect();
+    s2EPlacementSnapshot = Object.assign({}, s2EPlacement);
+    s2ERevealed = false;
     olySetFeedback(document.getElementById('s2-e-feedbox'), false, S2_E_FEEDBACK.wrong);
+    const revealBtn = document.getElementById('s2-e-reveal-btn');
+    if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
   }
   if (s2EChecked) {
     document.getElementById('s2-e-check').disabled = true;
@@ -951,6 +956,27 @@ function s2ECheck() {
     s2EMarkResult();
     const continueBtn = document.getElementById('s2-continue');
     if (continueBtn) continueBtn.disabled = false;
+  }
+}
+
+/* טוגל: לחיצה ראשונה חושפת את הסידור הנכון בפועל (s2ERevealCorrect),
+   מציגה את S2_E_FEEDBACK.wrong הקיים ללא שינוי; לחיצה שנייה משחזרת
+   בדיוק את הסידור שהלומד/ת עצמם ביצעו (מ-snapshot). המשוב המלא נשאר
+   קבוע על המסך לאורך כל הטוגל — רק סידור-היעדים וטקסט הכפתור מתחלפים. */
+function s2EToggleReveal() {
+  const revealBtn = document.getElementById('s2-e-reveal-btn');
+  if (!s2ERevealed) {
+    s2ERevealCorrect();
+    s2ERender();
+    s2EMarkResult();
+    s2ERevealed = true;
+    if (revealBtn) revealBtn.textContent = 'התשובה שלי';
+  } else {
+    s2EPlacement = Object.assign({}, s2EPlacementSnapshot);
+    s2ERender();
+    s2EMarkResult();
+    s2ERevealed = false;
+    if (revealBtn) revealBtn.textContent = 'התשובה הנכונה';
   }
 }
 
@@ -1067,6 +1093,11 @@ function resetScreenState2() {
     s2EMarkResult();
     const isAllCorrectE = s2EIsAllCorrect();
     olySetFeedback(fbe, isAllCorrectE, isAllCorrectE ? S2_E_FEEDBACK.correct : S2_E_FEEDBACK.wrong);
+    const revealBtnE = document.getElementById('s2-e-reveal-btn');
+    if (revealBtnE) {
+      revealBtnE.hidden = isAllCorrectE;
+      revealBtnE.textContent = s2ERevealed ? 'התשובה שלי' : 'התשובה הנכונה';
+    }
   } else {
     fbe.classList.remove('visible', 'is-correct', 'is-wrong');
   }
@@ -1530,6 +1561,7 @@ const S6_Q = {
     correct: [12, 24, 36],
     checkBtn: 's6-q1-check',
     feedbox: 's6-q1-feedbox',
+    revealBtn: 's6-q1-reveal-btn',
     next: 2,
     wrongOnce: { title: 'התשובה אינה נכונה.', body: 'נסו שוב.' },
     correctMsg: {
@@ -1546,6 +1578,7 @@ const S6_Q = {
     correct: [18, 72],
     checkBtn: 's6-q2-check',
     feedbox: 's6-q2-feedbox',
+    revealBtn: 's6-q2-reveal-btn',
     hintBtn: 's6-q2-hint-btn',
     next: null,
     wrongOnce: { title: 'התשובה אינה נכונה.', body: 'נסו שוב.' },
@@ -1561,6 +1594,8 @@ const S6_Q = {
 };
 const s6Attempts = {};
 const s6Outcome = { 1: null, 2: null }; // 'success' | 'fail' | null — resume-state + qnav מקור-אמת
+const s6AnswerSnapshot = {};
+const s6Revealed = {};
 
 function s6OnInput(n) {
   const cfg = S6_Q[n];
@@ -1636,8 +1671,42 @@ function s6Check(n) {
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
     titleEl.innerHTML = cfg.wrongFinal.title;
     bodyEl.innerHTML = cfg.wrongFinal.body;
+    s6AnswerSnapshot[n] = inputs.map(function (input) { return input.value; });
+    s6Revealed[n] = false;
+    if (cfg.revealBtn) {
+      const revealBtn = document.getElementById(cfg.revealBtn);
+      if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
+    }
     s6Outcome[n] = 'fail';
     s6Finish(n);
+  }
+}
+
+/* טוגל: לחיצה ראשונה מציגה את הערכים הנכונים בפועל בשדות, לחיצה שנייה
+   משחזרת בדיוק את מה שהלומד/ת הקלידו (מ-snapshot). המשוב המלא
+   (wrongFinal) נשאר קבוע על המסך לאורך כל הטוגל — רק ערכי השדות
+   וטקסט הכפתור מתחלפים. */
+function s6ToggleReveal(n) {
+  const cfg = S6_Q[n];
+  const inputs = cfg.inputs.map(function (id) { return document.getElementById(id); });
+  const revealBtn = document.getElementById(cfg.revealBtn);
+  if (!s6Revealed[n]) {
+    inputs.forEach(function (input, i) {
+      input.value = cfg.correct[i];
+      input.classList.remove('wrong');
+      input.classList.add('correct');
+    });
+    s6Revealed[n] = true;
+    if (revealBtn) revealBtn.textContent = 'התשובה שלי';
+  } else {
+    const snapshot = s6AnswerSnapshot[n];
+    inputs.forEach(function (input, i) {
+      input.value = snapshot[i];
+      input.classList.toggle('correct', Number(snapshot[i]) === cfg.correct[i]);
+      input.classList.toggle('wrong', Number(snapshot[i]) !== cfg.correct[i]);
+    });
+    s6Revealed[n] = false;
+    if (revealBtn) revealBtn.textContent = 'התשובה הנכונה';
   }
 }
 
@@ -1718,6 +1787,12 @@ function resetScreenState6() {
     const fb = document.getElementById(cfg.feedbox);
     if (fb) fb.classList.remove('visible', 'is-correct', 'is-wrong');
     s6Attempts[n] = 0;
+    s6AnswerSnapshot[n] = null;
+    s6Revealed[n] = false;
+    if (cfg.revealBtn) {
+      const revealBtn = document.getElementById(cfg.revealBtn);
+      if (revealBtn) { revealBtn.hidden = true; revealBtn.textContent = 'התשובה הנכונה'; }
+    }
   });
   document.getElementById('s6-continue').disabled = (s6Outcome[2] === null);
   updateS6Qnav();

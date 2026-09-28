@@ -304,8 +304,44 @@ function viqCheck(key) {
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
     titleEl.innerHTML = cfg.wrongFinal.title;
     bodyEl.innerHTML = cfg.wrongFinal.body;
+    st.snapshot = inputs.map(function (input) { return input.value; });
+    st.revealed = false;
+    if (cfg.revealBtn) {
+      const revealBtn = document.getElementById(cfg.revealBtn);
+      if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
+    }
     st.outcome = 'fail';
     viqFinish(key);
+  }
+}
+
+/* טוגל: לחיצה ראשונה מציגה את הערכים הנכונים בפועל בשדות, לחיצה שנייה
+   משחזרת בדיוק את מה שהלומד/ת הקלידו (מ-snapshot). המשוב המלא
+   (wrongFinal) נשאר קבוע על המסך לאורך כל הטוגל — רק ערכי השדות
+   וטקסט הכפתור מתחלפים. */
+function viqToggleReveal(key) {
+  const cfg = VIQ_CFG[key];
+  const st = viqState[key];
+  const inputs = cfg.inputs.map(function (id) { return document.getElementById(id); });
+  const revealBtn = document.getElementById(cfg.revealBtn);
+  if (!st.revealed) {
+    inputs.forEach(function (input, i) {
+      input.value = cfg.correct[i];
+      input.classList.remove('wrong');
+      input.classList.add('correct');
+    });
+    st.revealed = true;
+    if (revealBtn) revealBtn.textContent = 'התשובה שלי';
+  } else {
+    const snapshot = st.snapshot;
+    inputs.forEach(function (input, i) {
+      input.value = snapshot[i];
+      const ok = Number(snapshot[i]) === cfg.correct[i];
+      input.classList.toggle('correct', ok);
+      input.classList.toggle('wrong', !ok);
+    });
+    st.revealed = false;
+    if (revealBtn) revealBtn.textContent = 'התשובה הנכונה';
   }
 }
 
@@ -487,7 +523,7 @@ function resetScreenState1() {
    ה-dir="ltr" החיצוני שנשאר כמו שהוא. "שטח החלקה כולה הוא" (הטקסט-
    המוביל) לא נגעתי בו — לא סומן בדיווח. */
 VIQ_CFG_REGISTER('s2p1', {
-  inputs: ['s2-p1-input'], correct: [216], checkBtn: 's2-p1-check', feedbox: 's2-p1-feedbox', nextScreen: null,
+  inputs: ['s2-p1-input'], correct: [216], checkBtn: 's2-p1-check', feedbox: 's2-p1-feedbox', revealBtn: 's2-p1-reveal-btn', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'היחס בין AB ל-AE הוא 2 : 1, לכן <span dir="ltr">AE = 10</span>.<br>נחשב את שטח המלבן AEDB:<br><span dir="ltr"> 20 ⋅ 10 = 200</span>.<br>נחשב את שטח הריבוע GHCD:<br><span dir="ltr"> 4 ⋅ 4 = 16</span>.<br>שטח החלקה כולה הוא <span dir="ltr">200 + 16 = <span dir="rtl">216 מ"ר</span></span>.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
   wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'היחס בין AB ל-AE הוא 2 : 1, לכן <span dir="ltr">AE = 10</span>.<br>נחשב את שטח המלבן AEDB:<br><span dir="ltr"> 20  ⋅10 = 200</span>.<br>נחשב את שטח הריבוע GHCD:<br><span dir="ltr"> 4 ⋅ 4 = 16</span>.<br>שטח החלקה כולה הוא <span dir="ltr">200 + 16 = <span dir="rtl">216 מ"ר</span></span>.' },
@@ -509,7 +545,7 @@ function s2P1HintClose() { document.getElementById('s2-p1-hint-overlay').hidden 
    בשאלת-ערבוב-הצבעים של methodica-math-ratio-01-05), משעתקים את הטקסט
    הנתון מילה-במילה ולא "מתקנים" אותו. */
 VIQ_CFG_REGISTER('s2p2', {
-  inputs: ['s2-p2-input'], correct: [80], checkBtn: 's2-p2-check', feedbox: 's2-p2-feedbox', nextScreen: null,
+  inputs: ['s2-p2-input'], correct: [80], checkBtn: 's2-p2-check', feedbox: 's2-p2-feedbox', revealBtn: 's2-p2-reveal-btn', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'ידוע כי מ\' <span dir="ltr">AB = 20</span>. היחס בין AT ל-TB הוא 3 : 2.<br>נחשב את AT: <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">5</span></span> ⋅ 20 = 8</span>,<br>לכן שטח הגינה הוא <span dir="ltr"> 10 ⋅ 8 = <span dir="rtl">80 מ"ר</span></span>.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
   wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'ידוע כי מ\' <span dir="ltr">AB = 20</span>. היחס בין AT ל-TB הוא 3 : 2.<br>נחשב את AT: <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">5</span></span> ⋅ 20 = 8</span>,<br>לכן שטח הגינה הוא <span dir="ltr"> 10 ⋅ 8 = <span dir="rtl">80 מ"ר</span></span>.' },
@@ -533,7 +569,7 @@ function s2P2HintClose() { document.getElementById('s2-p2-hint-overlay').hidden 
    (לא משותפת עם מסך 3), קבועה וזהה בשני הסעיפים. ⚠️ נוסף (07.09.2026,
    לפי בקשה מפורשת) — הועבר ממסך 3 (s2) הישן, ראו ההערה שם. */
 VIQ_CFG_REGISTER('s2p4', {
-  inputs: ['s2-p4-input'], correct: [26], checkBtn: 's2-p4-check', feedbox: 's2-p4-feedbox', nextScreen: null,
+  inputs: ['s2-p4-input'], correct: [26], checkBtn: 's2-p4-check', feedbox: 's2-p4-feedbox', revealBtn: 's2-p4-reveal-btn', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'שטח המגרש הוא 216 מ"ר. היחס המבוקש הוא 3 : 1.<br>נחשב את השטח המיועד לבנייה לפי היחס המבוקש:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">4</span></span> ⋅ 216 = 162</span><br>ואת השטח המיועד לגינה: <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">4</span></span>  ⋅216 = 54</span>.<br>שטח הגינה שמצאנו בסעיף ב\' הוא 80 מ"ר.<br>לכן, עלינו להעביר <span dir="ltr">80 - 54 = <span dir="rtl">26 מ"ר</span></span> לשטח המיועד לבנייה.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
   wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'שטח המגרש הוא 216 מ"ר. היחס המבוקש הוא 3 : 1.<br>נחשב את השטח המיועד לבנייה לפי היחס המבוקש:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">4</span></span> ⋅ 216 = 162</span><br>ואת השטח המיועד לגינה: <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">4</span></span> ⋅ 216 = 54</span>.<br>שטח הגינה שמצאנו בסעיף ב\' הוא 80 מ"ר.<br>לכן, עלינו להעביר <span dir="ltr">80 - 54 = <span dir="rtl">26 מ"ר</span></span> לשטח המיועד לבנייה.' },
@@ -562,7 +598,7 @@ function s2P4HintClose() { document.getElementById('s2-p4-hint-overlay').hidden 
    נוסף dir="rtl" מקונן סביב "108 מ"ר"/"28 מ"ר" (סדר-מקור מספר-ואז-
    יחידה), בתוך ה-dir="ltr" החיצוני שנשאר כמו שהוא. */
 VIQ_CFG_REGISTER('s2p5', {
-  inputs: ['s2-p5-input'], correct: [28], checkBtn: 's2-p5-check', feedbox: 's2-p5-feedbox', nextScreen: null,
+  inputs: ['s2-p5-input'], correct: [28], checkBtn: 's2-p5-check', feedbox: 's2-p5-feedbox', revealBtn: 's2-p5-reveal-btn', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'שטח הגינה כולה הוא 216 מ"ר.<br>אם נרצה לחלק את השטחים ביחס של 1:1, בעצם נרצה ששני השטחים יהיו שווים.<br>לכן, שטח הבנייה ושטח הגינה יהיו:<br><span dir="ltr">216 : 2 = <span dir="rtl">108 מ"ר</span></span>.<br>שטח הגינה הוא 80 מ"ר, לכן נרצה להעביר <span dir="ltr">108 - 80 = <span dir="rtl">28 מ"ר</span></span> משטח הבנייה לשטח הגינה.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
   wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'שטח הגינה כולה הוא 216 מ"ר.<br>אם נרצה לחלק את השטחים ביחס של 1:1, בעצם נרצה ששני השטחים יהיו שווים.<br>לכן, שטח הבנייה ושטח הגינה יהיו:<br><span dir="ltr">216 : 2 = <span dir="rtl">108 מ"ר</span></span>.<br>שטח הגינה הוא 80 מ"ר, לכן נרצה להעביר <span dir="ltr">108 - 80 = <span dir="rtl">28 מ"ר</span></span> משטח הבנייה לשטח הגינה.' },

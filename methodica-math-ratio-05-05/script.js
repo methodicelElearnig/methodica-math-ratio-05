@@ -401,8 +401,44 @@ function viqCheck(key) {
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
     titleEl.textContent = cfg.wrongFinal.title;
     bodyEl.innerHTML = cfg.wrongFinal.body;
+    st.snapshot = inputs.map(function (input) { return input.value; });
+    st.revealed = false;
+    if (cfg.revealBtn) {
+      const revealBtn = document.getElementById(cfg.revealBtn);
+      if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
+    }
     st.outcome = 'fail';
     viqFinish(key);
+  }
+}
+
+/* טוגל: לחיצה ראשונה מציגה את הערכים הנכונים בפועל בשדות, לחיצה שנייה
+   משחזרת בדיוק את מה שהלומד/ת הקלידו (מ-snapshot). המשוב המלא
+   (wrongFinal) נשאר קבוע על המסך לאורך כל הטוגל — רק ערכי השדות
+   וטקסט הכפתור מתחלפים. */
+function viqToggleReveal(key) {
+  const cfg = VIQ_CFG[key];
+  const st = viqState[key];
+  const inputs = cfg.inputs.map(function (id) { return document.getElementById(id); });
+  const revealBtn = document.getElementById(cfg.revealBtn);
+  if (!st.revealed) {
+    inputs.forEach(function (input, i) {
+      input.value = cfg.correct[i];
+      input.classList.remove('wrong');
+      input.classList.add('correct');
+    });
+    st.revealed = true;
+    if (revealBtn) revealBtn.textContent = 'התשובה שלי';
+  } else {
+    const snapshot = st.snapshot;
+    inputs.forEach(function (input, i) {
+      input.value = snapshot[i];
+      const ok = Number(snapshot[i]) === cfg.correct[i];
+      input.classList.toggle('correct', ok);
+      input.classList.toggle('wrong', !ok);
+    });
+    st.revealed = false;
+    if (revealBtn) revealBtn.textContent = 'התשובה הנכונה';
   }
 }
 
@@ -460,7 +496,7 @@ const VIQ_CFG_S1P1_BODY = 'א. סכום זוויות במשולש הוא <span d
    שהגלילה תזוהה נכון מיד בכניסה למסך (התוכן המלא כבר גלוי). */
 
 const VIQ_CFG_S1P1 = {
-  inputs: ['s1-a', 's1-b', 's1-c'], correct: [45, 67.5, 67.5], checkBtn: 's1-p1-check', feedbox: 's1-p1-feedbox', nextScreen: null,
+  inputs: ['s1-a', 's1-b', 's1-c'], correct: [45, 67.5, 67.5], checkBtn: 's1-p1-check', feedbox: 's1-p1-feedbox', revealBtn: 's1-p1-reveal-btn', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: VIQ_CFG_S1P1_BODY },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
   wrongFinal: { title: 'לא נכון.', body: VIQ_CFG_S1P1_BODY }
@@ -577,7 +613,7 @@ const VIQ_CFG_S2_BODY = 'היחס בין שטח משולש ACD לשטח משול
    ה-viqCheck הקיים-ומוכן ("אם כבר נענה, לחיצה נוספת = goTo(nextScreen)"
    — ראו תחילת viqCheck) — כך אותו כפתור-יחיד גם בודק וגם ממשיך. */
 const VIQ_CFG_S2 = {
-  inputs: ['s2-cd', 's2-db'], correct: [12, 4], checkBtn: 's2-continue', feedbox: 's2-feedbox', nextScreen: 3,
+  inputs: ['s2-cd', 's2-db'], correct: [12, 4], checkBtn: 's2-continue', feedbox: 's2-feedbox', revealBtn: 's2-reveal-btn', nextScreen: 3,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: VIQ_CFG_S2_BODY },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
   wrongFinal: { title: 'לא נכון.', body: VIQ_CFG_S2_BODY },
@@ -615,7 +651,7 @@ const VIQ_CFG_S3P1_BODY = 'א. נסמן ב-x את סך הליטרים של הצ�
    ישירות. */
 
 const VIQ_CFG_S3P1 = {
-  inputs: ['s3-total', 's3-yellow', 's3-blue'], correct: [60, 30, 18], checkBtn: 's3-p1-check', feedbox: 's3-p1-feedbox', nextScreen: null,
+  inputs: ['s3-total', 's3-yellow', 's3-blue'], correct: [60, 30, 18], checkBtn: 's3-p1-check', feedbox: 's3-p1-feedbox', revealBtn: 's3-p1-reveal-btn', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: VIQ_CFG_S3P1_BODY },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
   wrongFinal: { title: 'לא נכון.', body: VIQ_CFG_S3P1_BODY }
@@ -805,6 +841,12 @@ function scqFbMakeDraggable(boxId) {
   let startX = 0, startY = 0, startLeft = 0, startTop = 0;
 
   box.addEventListener('mousedown', function (e) {
+    /* ⚠️ נוסף (28.09.2026, דיווח: "לא מתאפשרת לחיצה על כפתור 'התשובה
+       הנכונה', המשוב תמיד בורח") — הכפתור יושב בתוך תיבת-המשוב הנגררת;
+       בלי היציאה הזו, mousedown על הכפתור עצמו הופעל תמיד כתחילת-גרירה
+       (הקופסה "בורחת" עם העכבר), ומנע מהקליק על הכפתור להירשם. אותו
+       תיקון כבר קיים ב-methodica-math-ratio-05-04/script.js. */
+    if (e.target.closest('.scq-fb-reveal-btn')) return;
     const parent = box.offsetParent || box.parentElement;
     const boxRect = box.getBoundingClientRect();
     const parentRect = parent.getBoundingClientRect();

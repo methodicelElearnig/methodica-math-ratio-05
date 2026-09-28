@@ -392,6 +392,23 @@
   .juice-app__action-btn--reset:hover { background: #2F2478; }
   .juice-app__action-btn:focus-visible { outline: 2px solid #3B2FC2; outline-offset: 2px; }
 
+  /* ⚠️ נוסף (28.09.2026, בעקבות דיווח לקוח: "מייאש לגרור 60 בקבוקים") —
+     כפתור "הוסף מדף זהה", יושב ליד "איפוס" (שניהם flex:1 באותה
+     .juice-app__actions, אז "איפוס" מצטמצם אוטומטית לחצי-רוחב במקום
+     למלוא-הרוחב כמו קודם). לבן/מסגרת-סגולה (secondary) כדי להישאר
+     משני ל"איפוס" (primary, מלא-סגול). דיסאבל עד שיש מדף אחד שלם
+     ונכון (2 תות + 3 מנגו) — ר' updateDuplicateButton ב-JS. */
+  .juice-app__action-btn--duplicate {
+    background: #fff;
+    color: #3B2FC2;
+    border: 1.5px solid #3B2FC2;
+  }
+  .juice-app__action-btn--duplicate:hover:not(:disabled) { background: #F0F4FF; }
+  .juice-app__action-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
   /* ⚠️ נוסף (10.09.2026, לפי בקשה מפורשת: "הטקסט המסומן צריך להיות
      יותר גדול במסך הגדול של הגדלת היישומון") — ה-iframe הזה מסמך-נפרד
      לגמרי, אז אין לו דרך ישירה לדעת שהאב (.s6-applet-wrap) במצב
@@ -487,12 +504,18 @@
     </div>
 
     <div class="juice-app__actions">
-      <!-- ⚠️ תוקן (07.09.2026, דיווח: "למה יש שני כפתורים ששניהם עושים
-           איפוס, הייתי מורידה את 'נקה מדפים' כדי לפנות מקום למדפים")
-           — הוסר כפתור "נקה את המדפים" (היה מפעיל בדיוק את אותה
-           פונקציית-איפוס-מלאה (clearAll) כמו "איפוס", ללא הבדל-בפועל
-           — תועד קודם כפישוט-מכוון, ראו ARCHITECTURE.md; עכשיו הוסר
-           לגמרי לפי בקשה מפורשת, לא רק תועד). נשאר כפתור "איפוס" יחיד. -->
+      <!-- ⚠️ עודכן (28.09.2026, לפי בקשה מפורשת: "איפוס בצד שמאל, הוספה
+           בצד ימין") — dir="rtl" גלובלי (למעלה בקובץ), אז בציר-flex
+           הרגיל (row) הילד-ה-DOM-ראשון יושב בצד ימין; "הוסף מדף זהה"
+           הועבר להיות ראשון ב-DOM (ימין), "איפוס" שני (שמאל). ר' גם
+           הערה מקורית (07.09.2026) לגבי הסרת כפתור-כפול — עדיין רלוונטית,
+           נשאר רק כפתור-איפוס יחיד + כפתור-ההוספה החדש. -->
+      <button type="button" class="juice-app__action-btn juice-app__action-btn--duplicate" id="duplicateRowBtn" aria-label="הוסף מדף זהה" disabled>
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        הוסף מדף זהה
+      </button>
       <button type="button" class="juice-app__action-btn juice-app__action-btn--reset" id="resetBtn" aria-label="איפוס ליישומון">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M20 12a8 8 0 1 1-2.34-5.66" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -523,6 +546,8 @@
   var crateMango = document.getElementById('crateMango');
   var crateStrawberry = document.getElementById('crateStrawberry');
   var resetBtn = document.getElementById('resetBtn');
+  var duplicateRowBtn = document.getElementById('duplicateRowBtn');
+  var RATIO = { strawberry: 2, mango: 3 }; // 2 תות : 3 מנגו = 5 (SHELF_CAPACITY) לכל מדף
 
   var dragState = null; // {flavor, fromRow, fromIndex, el, ghost, pointerId}
 
@@ -565,6 +590,47 @@
     if (scrollGestureEl) scrollGestureEl.hidden = true;
   }
 
+  function isRowComplete(row) {
+    if (row.length !== SHELF_CAPACITY) return false;
+    var straw = 0, mango = 0;
+    for (var i = 0; i < row.length; i++) {
+      if (row[i].flavor === 'strawberry') straw++; else mango++;
+    }
+    return straw === RATIO.strawberry && mango === RATIO.mango;
+  }
+
+  function hasCompleteRow() {
+    for (var i = 0; i < shelves.length; i++) {
+      if (isRowComplete(shelves[i])) return true;
+    }
+    return false;
+  }
+
+  /* ⚠️ נוסף (28.09.2026) — כפתור "הוסף מדף זהה" נדלק רק אחרי שיש
+     בפועל מדף אחד שלם ונכון (2 תות+3 מנגו, לא סתם 5 בקבוקים), וכל
+     עוד נשאר מספיק תקציב (BUDGET) למדף שלם נוסף. */
+  function updateDuplicateButton() {
+    if (!duplicateRowBtn) return;
+    var remaining = BUDGET - totalDragged();
+    duplicateRowBtn.disabled = !(hasCompleteRow() && remaining >= SHELF_CAPACITY);
+  }
+
+  function duplicateRow() {
+    var remaining = BUDGET - totalDragged();
+    if (remaining < SHELF_CAPACITY || !hasCompleteRow()) return;
+    var newRow = [];
+    for (var i = 0; i < RATIO.strawberry; i++) newRow.push({ flavor: 'strawberry' });
+    for (var j = 0; j < RATIO.mango; j++) newRow.push({ flavor: 'mango' });
+    // מוכנס לפני המדף הריק האחרון (מיקום-הגרירה הפתוח), כדי לא לפגוע בו
+    if (shelves.length && shelves[shelves.length - 1].length === 0) {
+      shelves.splice(shelves.length - 1, 0, newRow);
+    } else {
+      shelves.push(newRow);
+    }
+    rebalanceShelves();
+    render();
+  }
+
   function rebalanceShelves() {
     while (shelves.length > 1 &&
            shelves[shelves.length - 1].length === 0 &&
@@ -605,6 +671,7 @@
     }
     shelvesContainer.appendChild(frag);
     updateCounts();
+    updateDuplicateButton();
     maybeShowScrollGesture();
   }
 
@@ -726,6 +793,7 @@
   attachCrateDrag(crateMango, 'mango');
   attachCrateDrag(crateStrawberry, 'strawberry');
   resetBtn.addEventListener('click', clearAll);
+  duplicateRowBtn.addEventListener('click', duplicateRow);
 
   render();
 })();
