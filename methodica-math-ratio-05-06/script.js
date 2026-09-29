@@ -249,6 +249,14 @@ function viqOnInput(key) {
   if (fb) fb.classList.remove('visible');
 }
 
+/* משוב שגוי סופי (הפתרון הנכון מוצג): משפט הכותרת (בולד) מקבל נקודה בסוף אם חסרה
+   (נקודתיים בסוף מוחלפות בנקודה), ואחריו "התשובה הנכונה מוצגת." (29.09.2026, חידוד לקוח). */
+function fbCorrectShown(title) {
+  let t = String(title).replace(/\s+$/, '').replace(/[:,;]$/, '');
+  if (!/[.!?]$/.test(t)) t += '.';
+  return t + ' התשובה הנכונה מוצגת.';
+}
+
 function viqCheck(key) {
   const cfg = VIQ_CFG[key];
   viqState[key] = viqState[key] || { attempts: 0, outcome: null };
@@ -302,13 +310,15 @@ function viqCheck(key) {
       input.disabled = true;
     });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.innerHTML = cfg.wrongFinal.title;
+    titleEl.innerHTML = fbCorrectShown(cfg.wrongFinal.title);
     bodyEl.innerHTML = cfg.wrongFinal.body;
     st.snapshot = inputs.map(function (input) { return input.value; });
     st.revealed = false;
     if (cfg.revealBtn) {
       const revealBtn = document.getElementById(cfg.revealBtn);
       if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
+      /* עודכן (29.09.2026, חידוד לקוח): הפתרון הנכון מוצג מיד עם המשוב הסופי, הכפתור ב"התשובה שלי". */
+      viqToggleReveal(key);
     }
     st.outcome = 'fail';
     viqFinish(key);

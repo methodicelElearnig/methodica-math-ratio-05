@@ -361,9 +361,17 @@ function olyOptKey(event, el) {
    לא בתיבה סטטית מוטבעת. scqFbResetPosition נקרא בכל פתיחה (גם
    פתיחה-מחדש בחזרה למסך) כדי לממש "resets to default position on
    every open", לפי _global-components.md → Feedback popup system. */
+/* משוב שגוי סופי (הפתרון הנכון מוצג): משפט הכותרת (בולד) מקבל נקודה בסוף אם חסרה
+   (נקודתיים בסוף מוחלפות בנקודה), ואחריו "התשובה הנכונה מוצגת." (29.09.2026, חידוד לקוח). */
+function fbCorrectShown(title) {
+  let t = String(title).replace(/\s+$/, '').replace(/[:,;]$/, '');
+  if (!/[.!?]$/.test(t)) t += '.';
+  return t + ' התשובה הנכונה מוצגת.';
+}
+
 function olySetFeedback(feedboxEl, isCorrect, text) {
   scqFbResetPosition(feedboxEl.id);
-  feedboxEl.querySelector('.scq-fb-title-text').textContent = text.title;
+  feedboxEl.querySelector('.scq-fb-title-text').textContent = (!isCorrect && text !== S2_E_WRONG_ONCE) ? fbCorrectShown(text.title) : text.title;
   /* QA 20.08.2026: הוחלף מ-textContent ל-innerHTML — לפי בקשה מפורשת
      לתקן הדגשות-בולד חסרות "גם במשובים". התסריט (שקף 6) כולל הדגשה-
      חלקית אמיתית בתוך גוף-משוב אחד (S1_Q3_FEEDBACK.wrong: "משלחת א'"
@@ -890,7 +898,7 @@ function s2EDrop(e, targetId) {
    שורת הפתיחה שונה, כמו כל משוב אחר בפרויקט הזה. */
 const S2_E_FEEDBACK = {
   correct: { title: 'כל הכבוד!', body: 'כשגודל הקבוצה והיחס בין החלקים בה ידועים לנו, זוהי הדרך בה נחשב את גדלי החלקים השונים.' },
-  wrong:   { title: 'זה לא מדויק, התשובה הנכונה מוצגת', body: 'כשגודל הקבוצה והיחס בין החלקים בה ידועים לנו, זוהי הדרך בה נחשב את גדלי החלקים השונים.' }
+  wrong:   { title: 'זה לא מדויק', body: 'כשגודל הקבוצה והיחס בין החלקים בה ידועים לנו, זוהי הדרך בה נחשב את גדלי החלקים השונים.' }
 };
 /* ⚠️ נוסף (22.09.2026, דיווח: "אין משוב, וכפתור צדקתי נשאר דלוק אחרי
    ניסיון ראשון שגוי בלי לשנות תשובה") — אותו טקסט-משוב מדויק שכבר
@@ -940,6 +948,8 @@ function s2ECheck() {
     olySetFeedback(document.getElementById('s2-e-feedbox'), false, S2_E_FEEDBACK.wrong);
     const revealBtn = document.getElementById('s2-e-reveal-btn');
     if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
+    /* עודכן (29.09.2026, חידוד לקוח): הסידור הנכון מוצג מיד עם המשוב הסופי, הכפתור ב"התשובה שלי". */
+    s2EToggleReveal();
   }
   if (s2EChecked) {
     document.getElementById('s2-e-check').disabled = true;
@@ -1669,13 +1679,15 @@ function s6Check(n) {
       input.disabled = true;
     });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.innerHTML = cfg.wrongFinal.title;
+    titleEl.innerHTML = fbCorrectShown(cfg.wrongFinal.title);
     bodyEl.innerHTML = cfg.wrongFinal.body;
     s6AnswerSnapshot[n] = inputs.map(function (input) { return input.value; });
     s6Revealed[n] = false;
     if (cfg.revealBtn) {
       const revealBtn = document.getElementById(cfg.revealBtn);
       if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
+      /* עודכן (29.09.2026, חידוד לקוח): הפתרון הנכון מוצג מיד עם המשוב הסופי, הכפתור ב"התשובה שלי". */
+      s6ToggleReveal(n);
     }
     s6Outcome[n] = 'fail';
     s6Finish(n);

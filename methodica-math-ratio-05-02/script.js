@@ -272,6 +272,14 @@ function scqLockOptions(containerSel) {
   });
 }
 
+/* משוב שגוי סופי (הפתרון הנכון מוצג): משפט הכותרת (בולד) מקבל נקודה בסוף אם חסרה
+   (נקודתיים בסוף מוחלפות בנקודה), ואחריו "התשובה הנכונה מוצגת." (29.09.2026, חידוד לקוח). */
+function fbCorrectShown(title) {
+  let t = String(title).replace(/\s+$/, '').replace(/[:,;]$/, '');
+  if (!/[.!?]$/.test(t)) t += '.';
+  return t + ' התשובה הנכונה מוצגת.';
+}
+
 function scqCheck(key) {
   const cfg = SCQ_CFG[key];
   const st = scqState[key];
@@ -311,7 +319,7 @@ function scqCheck(key) {
     if (correctEl) correctEl.classList.add('correct');
     scqLockOptions(cfg.containerSel);
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.innerHTML = cfg.wrongFinal.title;
+    titleEl.innerHTML = fbCorrectShown(cfg.wrongFinal.title);
     bodyEl.innerHTML = cfg.wrongFinal.body;
     st.outcome = 'fail';
     scqFinish(key);
@@ -444,13 +452,17 @@ function viqCheck(key) {
       input.disabled = true;
     });
     fb.classList.remove('is-correct'); fb.classList.add('is-wrong');
-    titleEl.innerHTML = cfg.wrongFinal.title;
+    titleEl.innerHTML = fbCorrectShown(cfg.wrongFinal.title);
     bodyEl.innerHTML = cfg.wrongFinal.body;
     st.snapshot = inputs.map(function (input) { return input.value; });
     st.revealed = false;
     if (cfg.revealBtn) {
       const revealBtn = document.getElementById(cfg.revealBtn);
       if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
+      /* ⚠️ עודכן (29.09.2026, חידוד לקוח): במשוב הסופי הפתרון הנכון
+         מוצג מיד יחד עם המשוב, והכפתור במצב "התשובה שלי" (טוגל חזרה
+         לתשובות הלומד/ת). מחליף את ההחלטה הקודמת (23.09) שלא לחשוף. */
+      viqToggleReveal(key);
     }
     st.outcome = 'fail';
     viqFinish(key);
