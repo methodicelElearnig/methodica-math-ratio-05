@@ -34,7 +34,7 @@
    עצמאי לחלוטין, לפי כלל העצמאות של הפרויקט) ---------- */
 @font-face {
   font-family: 'Assistant';
-  src: url('assets/fonts/assistant-hebrew.woff2') format('woff2');
+  src: url('../unit-assets/fonts/assistant-hebrew.woff2') format('woff2');
   font-weight: 400 800;
   font-style: normal;
   font-display: swap;
@@ -42,7 +42,7 @@
 }
 @font-face {
   font-family: 'Assistant';
-  src: url('assets/fonts/assistant-latin.woff2') format('woff2');
+  src: url('../unit-assets/fonts/assistant-latin.woff2') format('woff2');
   font-weight: 400 800;
   font-style: normal;
   font-display: swap;
@@ -217,8 +217,8 @@ img { display: block; max-width: none; }
   width: 26px;
   height: 24px;
   background-color: currentColor;
-  -webkit-mask: url('assets/images/icon-bulb-outline-white.svg') center / contain no-repeat;
-  mask: url('assets/images/icon-bulb-outline-white.svg') center / contain no-repeat;
+  -webkit-mask: url('../unit-assets/img/icon-bulb-outline-white.svg') center / contain no-repeat;
+  mask: url('../unit-assets/img/icon-bulb-outline-white.svg') center / contain no-repeat;
 }
 .btn-hint:disabled { color: #aeaeae; border-color: #aeaeae; cursor: not-allowed; }
 .btn-hint:hover { background: #f0f8ff; }

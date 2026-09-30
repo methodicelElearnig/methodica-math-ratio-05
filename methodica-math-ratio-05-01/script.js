@@ -1006,8 +1006,8 @@ function s2EToggleReveal() {
    שני נכסים ספציפיים סופקו). שם-הקובץ "yellow-avatr-asking.mp4" הוא
    ככתבו-וכלשונו על הדיסק (שגיאת-כתיב בפועל בשם הקובץ) — לא לתקן. */
 const S2_C_AVATAR_ASSETS = {
-  'character-1': 'assets/videos/boy-avatar-thinking.mp4',
-  'character-2': 'assets/videos/yellow-avatr-asking.mp4'
+  'character-1': '../unit-assets/video/boy-avatar-thinking.mp4',
+  'character-2': '../unit-assets/video/yellow-avatr-asking.mp4'
 };
 
 /* ⚠️ נוסף (07.09.2026, לפי בקשה מפורשת: "אפשרות הגדלה כמו היישומון של

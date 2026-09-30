@@ -560,8 +560,8 @@ function s4P3Check() { viqCheck('s4p3'); }
    שתועדה קודם כטרם-מאושרת מול המפיקה.
    ========================================================= */
 const S0_AVATAR_ASSETS = {
-  'character-1': 'assets/videos/boy-avatar-work-out.mp4',
-  'character-2': 'assets/videos/yellow-avatar-work-out.mp4'
+  'character-1': '../unit-assets/video/boy-avatar-work-out.mp4',
+  'character-2': '../unit-assets/video/yellow-avatar-work-out.mp4'
 };
 function resetScreenState0() {
   resolveCharBubbleVideo('s0-avatar', S0_AVATAR_ASSETS);

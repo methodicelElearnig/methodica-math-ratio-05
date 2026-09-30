@@ -145,8 +145,8 @@ function resetScreenState0() {
    בסביבה" בנכסים הקיימים).
    ========================================================= */
 const S1_CHAR_ASSETS = {
-  'character-1': 'assets/videos/boy-avatar-thinking.mp4',
-  'character-2': 'assets/videos/yellow-avatr-asking.mp4'
+  'character-1': '../unit-assets/video/boy-avatar-thinking.mp4',
+  'character-2': '../unit-assets/video/yellow-avatr-asking.mp4'
 };
 /* Gesture Hint — Cursor Scroll (SELF-QA-lomda.md §7). נוסף (31.08.2026,
    בדיקה מקיפה של כל מסכי-הגלילה) — מסך זה גולל אבל לא קיבל את הרכיב
@@ -194,8 +194,8 @@ function s2OnInput() {
   document.getElementById('s2-continue').disabled = !allFilled;
 }
 const S2_CHAR_ASSETS = {
-  'character-1': 'assets/videos/boy-avatar-thinking.mp4',
-  'character-2': 'assets/videos/yellow-avatr-asking.mp4'
+  'character-1': '../unit-assets/video/boy-avatar-thinking.mp4',
+  'character-2': '../unit-assets/video/yellow-avatr-asking.mp4'
 };
 /* Gesture Hint — Cursor Scroll (SELF-QA-lomda.md §7). ראו ההערה המלאה
    ליד s1MaybeShowScrollGesture (מסך 2) — אותו מנגנון בדיוק. */

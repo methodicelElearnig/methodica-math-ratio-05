@@ -32,7 +32,7 @@
    עצמאי לחלוטין, לפי כלל העצמאות של הפרויקט) ---------- */
 @font-face {
   font-family: 'Assistant';
-  src: url('assets/fonts/assistant-hebrew.woff2') format('woff2');
+  src: url('../unit-assets/fonts/assistant-hebrew.woff2') format('woff2');
   font-weight: 400 800;
   font-style: normal;
   font-display: swap;
@@ -40,7 +40,7 @@
 }
 @font-face {
   font-family: 'Assistant';
-  src: url('assets/fonts/assistant-latin.woff2') format('woff2');
+  src: url('../unit-assets/fonts/assistant-latin.woff2') format('woff2');
   font-weight: 400 800;
   font-style: normal;
   font-display: swap;
@@ -215,8 +215,8 @@ img { display: block; max-width: none; }
   width: 26px;
   height: 24px;
   background-color: currentColor;
-  -webkit-mask: url('assets/images/icon-bulb-outline-white.svg') center / contain no-repeat;
-  mask: url('assets/images/icon-bulb-outline-white.svg') center / contain no-repeat;
+  -webkit-mask: url('../unit-assets/img/icon-bulb-outline-white.svg') center / contain no-repeat;
+  mask: url('../unit-assets/img/icon-bulb-outline-white.svg') center / contain no-repeat;
 }
 .btn-hint:disabled { color: #aeaeae; border-color: #aeaeae; cursor: not-allowed; }
 .btn-hint:hover { background: #f0f8ff; }
@@ -615,7 +615,7 @@ img { display: block; max-width: none; }
   content: '';
   width: 12px; height: 9px;
   background: none;
-  background-image: url('assets/images/icon-check-white.svg');
+  background-image: url('../unit-assets/img/icon-check-white.svg');
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
@@ -625,7 +625,7 @@ img { display: block; max-width: none; }
   content: '';
   width: 10px; height: 10px;
   background: none;
-  background-image: url('assets/images/icon-x-white.svg');
+  background-image: url('../unit-assets/img/icon-x-white.svg');
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
@@ -789,14 +789,14 @@ img { display: block; max-width: none; }
   background: #edf8ed;
 }
 .scq-opt.correct .scq-radio { border-color: #609e12; background: #609e12; }
-.scq-opt.correct .scq-radio::after { background-image: url('assets/images/icon-check-white.svg'); background-size: 12px 9px; }
+.scq-opt.correct .scq-radio::after { background-image: url('../unit-assets/img/icon-check-white.svg'); background-size: 12px 9px; }
 .scq-opt.wrong {
   border-width: 1.5px;
   border-color: #b20010;
   background: #fff0f4;
 }
 .scq-opt.wrong .scq-radio { border-color: #b20010; background: #b20010; }
-.scq-opt.wrong .scq-radio::after { background-image: url('assets/images/icon-x-white.svg'); background-size: 10px 10px; }
+.scq-opt.wrong .scq-radio::after { background-image: url('../unit-assets/img/icon-x-white.svg'); background-size: 10px 10px; }
 .scq-opt.disabled { cursor: default; }
 /* ⚠️ נוסף (06.09.2026, דיווח: "המלבנים ממורחים על כל רוחב המסך") —
    .scq-opt הבסיסי (width:100%, למעלה) הוא הרפרנס-הגלובלי המשותף לכל
@@ -883,13 +883,13 @@ img { display: block; max-width: none; }
 .viq-input.correct {
   border: 1px solid #609e12;
   background-color: #fff;
-  background-image: url('assets/images/icon-check-green-16.svg');
+  background-image: url('../unit-assets/img/icon-check-green-16.svg');
   padding-inline-end: 42px; /* 16(בסיס) + 16(אייקון) + 10(רווח) */
 }
 .viq-input.wrong {
   border: 1px solid #b20010;
   background-color: #fff;
-  background-image: url('assets/images/icon-x-red-16.svg');
+  background-image: url('../unit-assets/img/icon-x-red-16.svg');
   padding-inline-end: 42px;
 }
 
@@ -1065,12 +1065,12 @@ img { display: block; max-width: none; }
 }
 .tf-btn.correct::after {
   border-color: #609e12;
-  background: #609e12 url('assets/images/icon-check-white.svg') no-repeat center;
+  background: #609e12 url('../unit-assets/img/icon-check-white.svg') no-repeat center;
   background-size: 12px 9px;
 }
 .tf-btn.wrong::after {
   border-color: #b20010;
-  background: #b20010 url('assets/images/icon-x-white.svg') no-repeat center;
+  background: #b20010 url('../unit-assets/img/icon-x-white.svg') no-repeat center;
   background-size: 10px 10px;
 }
 .tf-btn:disabled { cursor: default; }

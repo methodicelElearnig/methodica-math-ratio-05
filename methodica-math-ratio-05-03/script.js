@@ -1239,8 +1239,8 @@ function resetScreenState3() {
    סיין 3 (כל חלק הוא תיקייה עצמאית לפריסה).
    ========================================================= */
 const S4_AVATAR_ASSETS = {
-  'character-1': 'assets/videos/boy-avatar-work-out.mp4',
-  'character-2': 'assets/videos/yellow-avatar-work-out.mp4'
+  'character-1': '../unit-assets/video/boy-avatar-work-out.mp4',
+  'character-2': '../unit-assets/video/yellow-avatar-work-out.mp4'
 };
 function resetScreenState4() {
   resolveCharBubbleVideo('s4-avatar', S4_AVATAR_ASSETS);

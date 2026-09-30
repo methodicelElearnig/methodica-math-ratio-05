@@ -35,7 +35,7 @@
    עצמאי לחלוטין, לפי כלל העצמאות של הפרויקט) ---------- */
 @font-face {
   font-family: 'Assistant';
-  src: url('assets/fonts/assistant-hebrew.woff2') format('woff2');
+  src: url('../unit-assets/fonts/assistant-hebrew.woff2') format('woff2');
   font-weight: 400 800;
   font-style: normal;
   font-display: swap;
@@ -43,7 +43,7 @@
 }
 @font-face {
   font-family: 'Assistant';
-  src: url('assets/fonts/assistant-latin.woff2') format('woff2');
+  src: url('../unit-assets/fonts/assistant-latin.woff2') format('woff2');
   font-weight: 400 800;
   font-style: normal;
   font-display: swap;
@@ -445,7 +445,7 @@ img { display: block; max-width: none; }
   background: #609e12;
 }
 .scq-opt.correct .scq-radio::after {
-  background-image: url('assets/images/icon-check-white.svg');
+  background-image: url('../unit-assets/img/icon-check-white.svg');
   background-size: 12px 9px;
 }
 .scq-opt.wrong {
@@ -458,7 +458,7 @@ img { display: block; max-width: none; }
   background: #b20010;
 }
 .scq-opt.wrong .scq-radio::after {
-  background-image: url('assets/images/icon-x-white.svg');
+  background-image: url('../unit-assets/img/icon-x-white.svg');
   background-size: 10px 10px;
 }
 .scq-opt.disabled { cursor: default; }
@@ -1627,12 +1627,12 @@ img { display: block; max-width: none; }
 }
 .s2-eq-target.correct .s2-eq-placed-card::after {
   background-color: #609e12;
-  background-image: url('assets/images/icon-check-white.svg');
+  background-image: url('../unit-assets/img/icon-check-white.svg');
   background-size: 14px 12px;
 }
 .s2-eq-target.wrong .s2-eq-placed-card::after {
   background-color: #b20010;
-  background-image: url('assets/images/icon-x-white.svg');
+  background-image: url('../unit-assets/img/icon-x-white.svg');
   background-size: 13px 13px;
 }
 
@@ -2531,13 +2531,13 @@ img { display: block; max-width: none; }
 .viq-input.correct {
   border: 1px solid #609e12;
   background-color: #fff;
-  background-image: url('assets/images/icon-check-green-16.svg');
+  background-image: url('../unit-assets/img/icon-check-green-16.svg');
   padding-inline-end: 42px;
 }
 .viq-input.wrong {
   border: 1px solid #b20010;
   background-color: #fff;
-  background-image: url('assets/images/icon-x-red-16.svg');
+  background-image: url('../unit-assets/img/icon-x-red-16.svg');
   padding-inline-end: 42px;
 }
 
@@ -2587,7 +2587,7 @@ input[type=number] { -moz-appearance: textfield; }
   display: block;
   background-repeat: no-repeat;
   background-position: center;
-  background-image: url('assets/images/icon-check-white.svg');
+  background-image: url('../unit-assets/img/icon-check-white.svg');
   background-size: 10px 8px;
 }
 .qnav-icon.qnav-fail { background: var(--subject-500); border: 2px solid var(--subject-500); }
@@ -2597,7 +2597,7 @@ input[type=number] { -moz-appearance: textfield; }
   display: block;
   background-repeat: no-repeat;
   background-position: center;
-  background-image: url('assets/images/icon-x-white.svg');
+  background-image: url('../unit-assets/img/icon-x-white.svg');
   background-size: 9px 9px;
 }
 /* ⚠️ תוקן (18.08.2026) — 15px לא היה בטבלת-הטוקנים המאושרת (→20px);
