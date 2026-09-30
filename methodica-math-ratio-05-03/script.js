@@ -1357,7 +1357,7 @@ function s5UpdatePhotoByScroll() {
   }
 
   const parts = [
-    { el: document.getElementById('s5-part-2'), src: 'assets/images/girl-washing-car.jpeg', alt: 'ילדה שוטפת מכונית' }
+    { el: document.getElementById('s5-part-2'), src: 'assets/images/girl-washing-car.jpg', alt: 'ילדה שוטפת מכונית' }
   ];
   let active = null;
   parts.forEach(function (p) {
@@ -1366,7 +1366,7 @@ function s5UpdatePhotoByScroll() {
     if (r.top <= midpoint) active = p;
   });
   if (active) s5SetPhoto(active.src, active.alt);
-  else s5SetPhoto('assets/images/boy-washing-car.jpeg', 'ילד שוטף מכונית');
+  else s5SetPhoto('assets/images/boy-washing-car.jpg', 'ילד שוטף מכונית');
 }
 let s5PhotoScrollWired = false;
 function s5WirePhotoScroll() {
