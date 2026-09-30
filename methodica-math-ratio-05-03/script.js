@@ -714,3 +714,20 @@ var XAPI_COMP_ID   = XAPI_ID_PREFIX + XAPI_COMP_SLUG + '/';
 var XAPI_METADATA_FILE = '../metadata/methodica-math-ratio-05-03.json';
 var SCREEN_TO_SUBCONTENT = { 0: ['001', 1], 1: ['001', 2], 2: ['002', 1], 3: ['003', 1], 4: ['004', 1], 5: ['004', 2] };
 var XAPI_EVAL_ITEMS = { '001': 1, '002': 1, '003': 1, '004': 1 };   /* items with code-graded questions */
+
+/* ═══════════════ Resume — this component's own answer variables (45-resume-part.js) ═══════════════ */
+function partCaptureVars() {
+  const mcq = {};
+  Object.keys(mcqState).forEach(function (k) {
+    mcq[k] = Object.assign({}, mcqState[k], { selected: Array.from(mcqState[k].selected || []) });
+  });
+  return { mix: s1MixState, s2Tf: s2TfState, mcq: mcq, progress2: practiceProgress2 };
+}
+function partApplyVars(v) {
+  if (v.mix) Object.keys(v.mix).forEach(function (k) { s1MixState[k] = v.mix[k]; });
+  if (v.s2Tf) { Object.assign(s2TfState.selected, v.s2Tf.selected); s2TfState.attempts = v.s2Tf.attempts; s2TfState.outcome = v.s2Tf.outcome; }
+  if (v.mcq) Object.keys(v.mcq).forEach(function (k) {
+    mcqState[k] = Object.assign({}, v.mcq[k], { selected: new Set(v.mcq[k].selected || []) });
+  });
+  if (v.progress2) practiceProgress2.questions.forEach(function (q, i) { if (v.progress2.questions[i]) Object.assign(q, v.progress2.questions[i]); });
+}

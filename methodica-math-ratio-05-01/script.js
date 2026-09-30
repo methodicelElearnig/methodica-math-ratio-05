@@ -12,8 +12,7 @@ function s2EAlignCheckBtn() {
 
 /* s6 (juice-store ValueInputQuestion) intentionally keeps its own engine
    (S6_Q/s6Check...): unlike the shared VIQ it enables a hint button after
-   the first wrong try, resets unfinished inputs on every entry and drives
-   the older qnav bar markup. */
+   the first wrong try and drives the older qnav bar markup. */
 
 /* Called by the shared closeAllPopupsAndHints() on every screen change:
    collapses the expanded simulation (s2) and applet (s6). */
@@ -43,10 +42,9 @@ function selectOption(cardEl) {
   });
   cardEl.classList.add('selected');
   cardEl.setAttribute('aria-checked', 'true');
-  window.lomdaState.selectedCharacter = cardEl.dataset.value;
-  // try/catch: ראו הערה למעלה על SecurityError/opaque origin — שמירת
-  // ההעדפה בין הסינים היא nice-to-have, אין להפיל את המסך אם היא נכשלת.
-  try { localStorage.setItem(CHARACTER_STORAGE_KEY, cardEl.dataset.value); } catch (e) {}
+  /* The state document is the authority (it follows the learner across devices); localStorage
+     stays the synchronous cache that later components read before their document arrives. */
+  setUnitCharacter(cardEl.dataset.value);
   const btn = document.getElementById('s0-continue');
   if (btn) btn.disabled = false;
 }
@@ -1177,28 +1175,9 @@ function s6HintClose() { document.getElementById('s6-q2-hint-overlay').hidden = 
 
 const S6_GESTURE = makeScrollGestureHint('s6-scroll-gesture', 's6-scroll-area');
 
+/* An unfinished question keeps its inputs and its attempt count on re-entry (and across a
+   resume) — until 2026-09-30 it was wiped here, which handed out fresh attempts on every visit. */
 function resetScreenState6() {
-  [1, 2].forEach(function (n) {
-    const cfg = S6_Q[n];
-    if (s6Outcome[n] !== null) return;
-    cfg.inputs.forEach(function (id) {
-      const input = document.getElementById(id);
-      input.value = '';
-      input.disabled = false;
-      input.classList.remove('correct', 'wrong');
-    });
-    document.getElementById(cfg.checkBtn).disabled = true;
-    if (cfg.hintBtn) document.getElementById(cfg.hintBtn).disabled = true;
-    const fb = document.getElementById(cfg.feedbox);
-    if (fb) fb.classList.remove('visible', 'is-correct', 'is-wrong');
-    s6Attempts[n] = 0;
-    s6AnswerSnapshot[n] = null;
-    s6Revealed[n] = false;
-    if (cfg.revealBtn) {
-      const revealBtn = document.getElementById(cfg.revealBtn);
-      if (revealBtn) { revealBtn.hidden = true; revealBtn.textContent = 'התשובה הנכונה'; }
-    }
-  });
   document.getElementById('s6-continue').disabled = (s6Outcome[2] === null);
   updateS6Qnav();
   S6_GESTURE.maybeShow();
@@ -1225,3 +1204,37 @@ var XAPI_COMP_ID   = XAPI_ID_PREFIX + XAPI_COMP_SLUG + '/';
 var XAPI_METADATA_FILE = '../metadata/methodica-math-ratio-05-01.json';
 var SCREEN_TO_SUBCONTENT = { 0: ['001', 1], 1: ['002', 1], 2: ['003', 1], 3: ['004', 1], 4: ['004', 2], 5: ['005', 1], 6: ['005', 2] };
 var XAPI_EVAL_ITEMS = { '002': 1, '003': 1, '004': 1, '005': 1 };   /* items with code-graded questions */
+
+/* ═══════════════ Resume — this component's own answer variables (45-resume-part.js) ═══════════════ */
+function partCaptureVars() {
+  return {
+    s1: s1State, s1Page: s1CurrentPage, s2: s2State,
+    s2E: { placement: s2EPlacement, checked: s2EChecked, done: s2EDone, attempts: s2EAttempts,
+           revealed: s2ERevealed, snapshot: s2EPlacementSnapshot },
+    s4: s4State,
+    s6: { attempts: s6Attempts, outcome: s6Outcome, snapshot: s6AnswerSnapshot, revealed: s6Revealed }
+  };
+}
+function partApplyVars(v) {
+  if (v.s1) Object.keys(s1State).forEach(function (k) { if (v.s1[k]) Object.assign(s1State[k], v.s1[k]); });
+  if (typeof v.s1Page === 'number') s1CurrentPage = v.s1Page;
+  if (v.s2) Object.keys(s2State).forEach(function (k) { if (v.s2[k]) Object.assign(s2State[k], v.s2[k]); });
+  if (v.s2E) {
+    s2EPlacement = v.s2E.placement || s2EPlacement;
+    s2EChecked = !!v.s2E.checked; s2EDone = !!v.s2E.done; s2EAttempts = v.s2E.attempts || 0;
+    s2ERevealed = !!v.s2E.revealed; s2EPlacementSnapshot = v.s2E.snapshot || {};
+  }
+  if (v.s4) s4State = v.s4;
+  if (v.s6) {
+    [s6Attempts, s6Outcome, s6AnswerSnapshot, s6Revealed].forEach(function (o, i) {
+      const src = [v.s6.attempts, v.s6.outcome, v.s6.snapshot, v.s6.revealed][i] || {};
+      Object.keys(src).forEach(function (k) { o[k] = src[k]; });
+    });
+  }
+}
+/* The drag board and the qnav bar are built from variables, not markup. */
+function partAfterRestore() {
+  s2ERender();
+  if (s2EChecked) s2EMarkResult();
+  updateS6Qnav();
+}

@@ -21,6 +21,8 @@ function goTo(n) {
   try { xapiOnScreen(n); } catch (e) {}   // item initialized / completed (20-xapi.js)
   resetScreenState(n);
   target.classList.add('active');
+  try { restoreEndedButton(); } catch (e) {}   // a finished component's last button stays disabled
+  try { scheduleResumeSave(); } catch (e) {}   // resume: debounced, suppressed while restoring
 }
 
 function resetScreenState(n) {

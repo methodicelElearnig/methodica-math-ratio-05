@@ -69,4 +69,5 @@ function buildItemResults() {
 function reportQ(ref, correct, isLast, answer) {
   if (!ref) return;
   xapiAnswered(ref[0], ref[1], correct, isLast, answer);
+  try { flushAfterCommit(); } catch (e) {}   // resume: the answer is committed — save once the handler ends
 }

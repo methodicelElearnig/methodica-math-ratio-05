@@ -4,11 +4,28 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 2</title>
-<link rel="stylesheet" href="../unit-css/common.css?v=20260930b">
-<link rel="stylesheet" href="styles.css?v=20260930b">
-<link rel="stylesheet" href="../unit-css/25-report.css?v=20260930b">
+<link rel="stylesheet" href="../unit-css/common.css?v=20260930c">
+<link rel="stylesheet" href="styles.css?v=20260930c">
+<link rel="stylesheet" href="../unit-css/25-report.css?v=20260930c">
 </head>
 <body>
+<!-- Boot cover (resume): hides the first screen until it is known which screen to draw.
+     A sibling of #app (not scaled). 50-loader.js / 40-resume.js dropBootCover() removes it on every
+     exit path; this inline net removes it after 800 ms, or — while a restore is in flight
+     (window.__resumeInFlight) — after at most 11 s. Copied from methodica-math-ratio-01. -->
+<div id="boot-cover" style="position:fixed;inset:0;z-index:9999;background:#ffffff"></div>
+<script>
+(function () {
+  var t0 = Date.now();
+  function tick() {
+    var c = document.getElementById('boot-cover');
+    if (!c || !c.parentNode) return;
+    if (window.__resumeInFlight && Date.now() - t0 < 11000) { setTimeout(tick, 100); return; }
+    c.parentNode.removeChild(c);
+  }
+  setTimeout(tick, 800);
+})();
+</script>
 <div id="app">
 
   <!-- =========================================================
@@ -586,19 +603,20 @@
   </div>
 
 </div>
-<script src="../unit-js/10-identity.js?v=20260930b"></script>
-<script src="../unit-js/15-ui.js?v=20260930b"></script>
-<script src="../unit-js/20-xapi.js?v=20260930b"></script>
-<script src="../unit-js/22-scoring.js?v=20260930b"></script>
-<script src="../unit-js/25-report.js?v=20260930b"></script>
-<script src="../unit-js/28-feedback-drag.js?v=20260930b"></script>
-<script src="../unit-js/30-nav.js?v=20260930b"></script>
-<script src="../unit-js/32-progress.js?v=20260930b"></script>
-<script src="../unit-js/35-questions.js?v=20260930b"></script>
-<script src="../unit-js/40-resume.js?v=20260930b"></script>
-<script src="../unit-js/50-loader.js?v=20260930b"></script>
-<script src="../unit-js/60-devbridge.js?v=20260930b"></script>
-<script src="script.js?v=20260930b"></script>
-<script src="../unit-js/90-boot.js?v=20260930b"></script>
+<script src="../unit-js/10-identity.js?v=20260930c"></script>
+<script src="../unit-js/15-ui.js?v=20260930c"></script>
+<script src="../unit-js/20-xapi.js?v=20260930c"></script>
+<script src="../unit-js/22-scoring.js?v=20260930c"></script>
+<script src="../unit-js/25-report.js?v=20260930c"></script>
+<script src="../unit-js/28-feedback-drag.js?v=20260930c"></script>
+<script src="../unit-js/30-nav.js?v=20260930c"></script>
+<script src="../unit-js/32-progress.js?v=20260930c"></script>
+<script src="../unit-js/35-questions.js?v=20260930c"></script>
+<script src="../unit-js/40-resume.js?v=20260930c"></script>
+<script src="../unit-js/45-resume-part.js?v=20260930c"></script>
+<script src="../unit-js/50-loader.js?v=20260930c"></script>
+<script src="../unit-js/60-devbridge.js?v=20260930c"></script>
+<script src="script.js?v=20260930c"></script>
+<script src="../unit-js/90-boot.js?v=20260930c"></script>
 </body>
 </html>
