@@ -92,6 +92,23 @@ all 720 units use (`REPORT_FIELDS` must not change) with unit / component / item
 - A white boot cover hides the first screen until the restore has decided where to land.
 - `?resetState` wipes the document and the caches (QA).
 
+## Packaging and deployment
+- `pwsh -File docs-and-tools/build-package.ps1 -DryRun` lists what ships and what does not;
+  without `-DryRun` it cuts `../../deployments/<yyyy-mm-dd>/` from a **clean, committed** tree and
+  verifies itself. `docs-and-tools/verify-package.ps1` re-checks a package (FORWARD / REVERSE /
+  HYGIENE / COMMIT). What ships is defined only in `docs-and-tools/package-allowlist.ps1` (an
+  allowlist): `metadata/`, `unit-js/`, `unit-css/`, `unit-assets/`, and per component `index.html`,
+  `script.js`, `styles.css`, `assets/` and its iframe-app folders. Never: `_test/`, `docs*/`,
+  `index_dev.html`, `*.md`, a root `index.html`.
+- Before a package: `node _test/verify-static.js`, `_test/flow.js`, `_test/resume.js` (see `_test/README.md`).
+- Every change to shipped code bumps the one `?v=` in all six `index.html`; a changed media file gets
+  a new name. The MOE CDN answers **200 with 0 bytes** for a missing path — verify an upload by size.
+- `docs-and-tools/reset-state.html` (from ratio-01): GET / DELETE one learner's state document on Kata
+  by `?registration` (QA). Kata's CORS was verified only from `lomdot.education.gov.il`.
+- Not ported from ratio-01: `save-restore-state.html` (still written for the older v5 document
+  shape) and the Kata metadata scripts (`send-metadata.ps1` / `retrieve-metadata.ps1`, which need the
+  API key) — pushing metadata to Kata was out of scope for this branch.
+
 ## Open items
 - `methodica-math-ratio-05-06/assets/videos/boy-avatar-climbing.mp4` is missing (06 screen 1,
   character-1 shows no avatar). Asset to be supplied.
