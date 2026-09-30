@@ -10,13 +10,22 @@
 /* ---------- Companion character (character-1 / character-2) ----------
    One key for the whole unit, so a choice made in component 01 applies
    in every later component (each component is a separate page load).
-   localStorage may throw (file://, privacy modes) — fall back to null. */
-const CHARACTER_STORAGE_KEY = 'math-ratio-01_selectedCharacter';
+   The key carries this unit's slug (guide D-6) — the pre-2026-09-30 key
+   'math-ratio-01_selectedCharacter' was shared with other units and is
+   read only as a fallback. localStorage may throw (file://, privacy modes).
+   Since resume, the state document is the authority and this is a cache
+   (40-resume.js: getUnitCharacter / setUnitCharacter / adoptUnitCharacter). */
+const CHARACTER_STORAGE_KEY = 'methodica_math_ratio_05_selectedCharacter';
+const LEGACY_CHARACTER_STORAGE_KEY = 'math-ratio-01_selectedCharacter';
 const KNOWN_CHARACTER_IDS = ['character-1', 'character-2'];
 
 let savedCharacter = null;
 try {
   savedCharacter = localStorage.getItem(CHARACTER_STORAGE_KEY);
+  if (KNOWN_CHARACTER_IDS.indexOf(savedCharacter) === -1) {
+    savedCharacter = localStorage.getItem(LEGACY_CHARACTER_STORAGE_KEY);
+    if (KNOWN_CHARACTER_IDS.indexOf(savedCharacter) !== -1) localStorage.setItem(CHARACTER_STORAGE_KEY, savedCharacter);
+  }
 } catch (e) { /* storage blocked — continue without persistence */ }
 if (KNOWN_CHARACTER_IDS.indexOf(savedCharacter) === -1) savedCharacter = null;
 window.lomdaState = {

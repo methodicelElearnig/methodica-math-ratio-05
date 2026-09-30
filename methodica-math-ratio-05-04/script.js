@@ -48,3 +48,12 @@ function resetScreenState2() {
   resolveCharBubbleVideo('s2-char-img', S2_CHAR_ASSETS);
   S2_GESTURE.maybeShow();
 }
+
+/* ═══════════════ xAPI — this component's reporting seam ═══════════════
+   Ids come from ../metadata/methodica-math-ratio-05-04.json (checked on every load by 50-loader.js).
+   SCREEN_TO_SUBCONTENT: screen → [item suffix, page-in-item]; exactly TOTAL_SCREENS keys. */
+var XAPI_COMP_SLUG = 'methodica-math-ratio-05-04';
+var XAPI_COMP_ID   = XAPI_ID_PREFIX + XAPI_COMP_SLUG + '/';
+var XAPI_METADATA_FILE = '../metadata/methodica-math-ratio-05-04.json';
+var SCREEN_TO_SUBCONTENT = { 0: ['001', 1], 1: ['001', 2], 2: ['002', 1] };
+var XAPI_EVAL_ITEMS = {  };   /* items with code-graded questions */

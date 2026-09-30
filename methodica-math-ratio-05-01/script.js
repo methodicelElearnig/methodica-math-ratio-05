@@ -170,6 +170,7 @@ function olyQ1Check() {
   olySetFeedback(document.getElementById('s1-q1-feedbox'), isCorrect, isCorrect ? S1_Q1_FEEDBACK.correct : S1_Q1_FEEDBACK.wrong);
   document.getElementById('s1-q1-check').disabled = true;
   s1State.q1.done = true;
+  reportQ(['002', 'q1'], isCorrect, true, xapiAnswerText(document.querySelector('#s1-q1 .scq-opt.selected')));   /* one attempt */
 
   document.getElementById('s1-q2').hidden = false;
   S1_GESTURE.maybeShow();
@@ -210,6 +211,7 @@ function olyQ2Check() {
   olySetFeedback(document.getElementById('s1-q2-feedbox'), isCorrect, isCorrect ? S1_Q2_FEEDBACK.correct : S1_Q2_FEEDBACK.wrong);
   document.getElementById('s1-q2-check').disabled = true;
   s1State.q2.done = true;
+  reportQ(['002', 'q2'], isCorrect, true, xapiAnswerText(document.querySelector('#s1-q2 .scq-opt.selected')));   /* one attempt */
 
   document.getElementById('s1-q3').hidden = false;
   S1_GESTURE.maybeShow();
@@ -265,6 +267,7 @@ function olyQ3Check() {
   olySetFeedback(document.getElementById('s1-q3-feedbox'), isCorrect, isCorrect ? S1_Q3_FEEDBACK.correct : S1_Q3_FEEDBACK.wrong);
   document.getElementById('s1-q3-check').disabled = true;
   s1State.q3.done = true;
+  reportQ(['002', 'q3'], isCorrect, true, xapiAnswerText(document.querySelector('#s1-q3 .scq-opt.selected')));   /* one attempt */
   s1ShowOutro();
 
   const continueBtn = document.getElementById('s1-continue');
@@ -418,6 +421,7 @@ function s2CCheck() {
   olySetFeedback(document.getElementById('s2-c-feedbox'), isCorrect, isCorrect ? S2_C_FEEDBACK.correct : S2_C_FEEDBACK.wrong);
   document.getElementById('s2-c-check').disabled = true;
   s2State.c.done = true;
+  reportQ(['003', 'q1'], isCorrect, true, xapiAnswerText(document.querySelector('#s2-sec-c .scq-opt.selected')));   /* one attempt */
   // תמונת-המשוב (שקף 12: "התמונה עולה יחד עם המשוב") מחליפה את
   // הדמות+בועית באותו מקום פיזי בדיוק — לא מופיעה לצידה.
   document.getElementById('s2-c-char').hidden = true;
@@ -577,10 +581,19 @@ function s2EIsAllCorrect() {
   });
 }
 
+/* The learner's placements, target by target: 'targetLabel: card | …' */
+function s2EAnswerText() {
+  return Object.keys(S2_DDQ_CORRECT).map(function (t) {
+    const placed = Object.keys(s2EPlacement).find(function (k) { return s2EPlacement[k] === t; });
+    return t.replace(/^s2-target-/, '') + ': ' + (placed ? xapiAnswerText(document.getElementById(placed)) : '—');
+  }).join(' | ');
+}
+
 function s2ECheck() {
   if (s2EChecked) return;
   s2EAttempts++;
   const isCorrect = s2EIsAllCorrect();
+  reportQ(['003', 'q2'], isCorrect, isCorrect || s2EAttempts >= 2, s2EAnswerText());
   if (isCorrect) {
     s2EChecked = true;
     s2EDone = true;
@@ -780,6 +793,8 @@ function s4CheckStep(stepNum) {
   if (!id) return;
   const stepDef = S4_STEPS[stepNum];
   s4State.answers[stepNum] = id;
+  reportQ(['004', 'q' + stepNum], id === stepDef.correct, true,   /* guided: one attempt per step */
+    xapiAnswerText(document.querySelector('#s4-pills-' + stepNum + ' .s4-pill[data-id="' + id + '"]')));
   document.querySelectorAll('#s4-pills-' + stepNum + ' .s4-pill').forEach(function (b) {
     b.disabled = true;
     b.classList.remove('selected');
@@ -988,6 +1003,7 @@ function resetScreenState5() {
 const S6_Q = {
   1: {
     inputs: ['s6-q1-a', 's6-q1-b', 's6-q1-c'],
+    xapi: [['005', 'q1'], ['005', 'q2'], ['005', 'q3']],
     correct: [12, 24, 36],
     checkBtn: 's6-q1-check',
     feedbox: 's6-q1-feedbox',
@@ -1005,6 +1021,7 @@ const S6_Q = {
   },
   2: {
     inputs: ['s6-q2-a', 's6-q2-b'],
+    xapi: [['005', 'q4'], ['005', 'q5']],
     correct: [18, 72],
     checkBtn: 's6-q2-check',
     feedbox: 's6-q2-feedbox',
@@ -1049,6 +1066,9 @@ function s6Check(n) {
   const inputs = cfg.inputs.map(function (id) { return document.getElementById(id); });
   const isCorrect = inputs.every(function (input, i) { return Number(input.value) === cfg.correct[i]; });
   s6Attempts[n] = (s6Attempts[n] || 0) + 1;
+  inputs.forEach(function (input, i) {   /* item 005: one question per input (q1..q3, q4..q5) */
+    reportQ(cfg.xapi[i], Number(input.value) === cfg.correct[i], isCorrect || s6Attempts[n] >= 2, input.value);
+  });
 
   const fb = document.getElementById(cfg.feedbox);
   const titleEl = fb.querySelector('.scq-fb-title-text');
@@ -1152,7 +1172,7 @@ function updateS6Qnav() {
   if (line) { line.className = 'qnav-line'; if (s6Outcome[1] !== null) line.classList.add('line-done'); }
 }
 
-function s6HintOpen() { document.getElementById('s6-q2-hint-overlay').hidden = false; }
+function s6HintOpen() { document.getElementById('s6-q2-hint-overlay').hidden = false; xapiRequestedHint('005', 'q4'); }
 function s6HintClose() { document.getElementById('s6-q2-hint-overlay').hidden = true; }
 
 const S6_GESTURE = makeScrollGestureHint('s6-scroll-gesture', 's6-scroll-area');
@@ -1196,3 +1216,12 @@ document.addEventListener('keydown', function (e) {
   const simWrap = document.getElementById('s2-sim-wrap');
   if (simWrap && simWrap.classList.contains('is-expanded')) s2SimExpandToggle(false);
 });
+
+/* ═══════════════ xAPI — this component's reporting seam ═══════════════
+   Ids come from ../metadata/methodica-math-ratio-05-01.json (checked on every load by 50-loader.js).
+   SCREEN_TO_SUBCONTENT: screen → [item suffix, page-in-item]; exactly TOTAL_SCREENS keys. */
+var XAPI_COMP_SLUG = 'methodica-math-ratio-05-01';
+var XAPI_COMP_ID   = XAPI_ID_PREFIX + XAPI_COMP_SLUG + '/';
+var XAPI_METADATA_FILE = '../metadata/methodica-math-ratio-05-01.json';
+var SCREEN_TO_SUBCONTENT = { 0: ['001', 1], 1: ['002', 1], 2: ['003', 1], 3: ['004', 1], 4: ['004', 2], 5: ['005', 1], 6: ['005', 2] };
+var XAPI_EVAL_ITEMS = { '002': 1, '003': 1, '004': 1, '005': 1 };   /* items with code-graded questions */

@@ -41,6 +41,7 @@ function resetScreenState1() {
 
 /* מסך 3 — מסך גלילה, "שאלת השיא" סעיפים א+ב (שקפים 64/65), data-screen="2", */
 VIQ_CFG_REGISTER('s2p1', {
+  xapi: ['001', 'q1'],
   inputs: ['s2-p1-input'], correct: [216], checkBtn: 's2-p1-check', feedbox: 's2-p1-feedbox', revealBtn: 's2-p1-reveal-btn', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'היחס בין AB ל-AE הוא 2 : 1, לכן <span dir="ltr">AE = 10</span>.<br>נחשב את שטח המלבן AEDB:<br><span dir="ltr"> 20 ⋅ 10 = 200</span>.<br>נחשב את שטח הריבוע GHCD:<br><span dir="ltr"> 4 ⋅ 4 = 16</span>.<br>שטח החלקה כולה הוא <span dir="ltr">200 + 16 = <span dir="rtl">216 מ"ר</span></span>.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
@@ -53,10 +54,11 @@ VIQ_CFG_REGISTER('s2p1', {
 });
 function s2P1OnInput() { viqOnInput('s2p1'); }
 function s2P1Check() { viqCheck('s2p1'); }
-function s2P1HintOpen() { document.getElementById('s2-p1-hint-overlay').hidden = false; }
+function s2P1HintOpen() { document.getElementById('s2-p1-hint-overlay').hidden = false; xapiRequestedHint('001', 'q1'); }
 function s2P1HintClose() { document.getElementById('s2-p1-hint-overlay').hidden = true; }
 
 VIQ_CFG_REGISTER('s2p2', {
+  xapi: ['001', 'q2'],
   inputs: ['s2-p2-input'], correct: [80], checkBtn: 's2-p2-check', feedbox: 's2-p2-feedbox', revealBtn: 's2-p2-reveal-btn', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'ידוע כי מ\' <span dir="ltr">AB = 20</span>. היחס בין AT ל-TB הוא 3 : 2.<br>נחשב את AT: <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">5</span></span> ⋅ 20 = 8</span>,<br>לכן שטח הגינה הוא <span dir="ltr"> 10 ⋅ 8 = <span dir="rtl">80 מ"ר</span></span>.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
@@ -70,11 +72,12 @@ VIQ_CFG_REGISTER('s2p2', {
 });
 function s2P2OnInput() { viqOnInput('s2p2'); }
 function s2P2Check() { viqCheck('s2p2'); }
-function s2P2HintOpen() { document.getElementById('s2-p2-hint-overlay').hidden = false; }
+function s2P2HintOpen() { document.getElementById('s2-p2-hint-overlay').hidden = false; xapiRequestedHint('001', 'q2'); }
 function s2P2HintClose() { document.getElementById('s2-p2-hint-overlay').hidden = true; }
 
 /* מסך 5 — מסך גלילה, "שאלת השיא" סעיפים ג+ד (שקפים 67/68), data-screen="4", */
 VIQ_CFG_REGISTER('s2p4', {
+  xapi: ['001', 'q4'],
   inputs: ['s2-p4-input'], correct: [26], checkBtn: 's2-p4-check', feedbox: 's2-p4-feedbox', revealBtn: 's2-p4-reveal-btn', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'שטח המגרש הוא 216 מ"ר. היחס המבוקש הוא 3 : 1.<br>נחשב את השטח המיועד לבנייה לפי היחס המבוקש:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">4</span></span> ⋅ 216 = 162</span><br>ואת השטח המיועד לגינה: <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">4</span></span>  ⋅216 = 54</span>.<br>שטח הגינה שמצאנו בסעיף ב\' הוא 80 מ"ר.<br>לכן, עלינו להעביר <span dir="ltr">80 - 54 = <span dir="rtl">26 מ"ר</span></span> לשטח המיועד לבנייה.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
@@ -87,10 +90,11 @@ VIQ_CFG_REGISTER('s2p4', {
 });
 function s2P4OnInput() { viqOnInput('s2p4'); }
 function s2P4Check() { viqCheck('s2p4'); }
-function s2P4HintOpen() { document.getElementById('s2-p4-hint-overlay').hidden = false; }
+function s2P4HintOpen() { document.getElementById('s2-p4-hint-overlay').hidden = false; xapiRequestedHint('001', 'q4'); }
 function s2P4HintClose() { document.getElementById('s2-p4-hint-overlay').hidden = true; }
 
 VIQ_CFG_REGISTER('s2p5', {
+  xapi: ['001', 'q3'],
   inputs: ['s2-p5-input'], correct: [28], checkBtn: 's2-p5-check', feedbox: 's2-p5-feedbox', revealBtn: 's2-p5-reveal-btn', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'שטח הגינה כולה הוא 216 מ"ר.<br>אם נרצה לחלק את השטחים ביחס של 1:1, בעצם נרצה ששני השטחים יהיו שווים.<br>לכן, שטח הבנייה ושטח הגינה יהיו:<br><span dir="ltr">216 : 2 = <span dir="rtl">108 מ"ר</span></span>.<br>שטח הגינה הוא 80 מ"ר, לכן נרצה להעביר <span dir="ltr">108 - 80 = <span dir="rtl">28 מ"ר</span></span> משטח הבנייה לשטח הגינה.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
@@ -103,7 +107,7 @@ VIQ_CFG_REGISTER('s2p5', {
 });
 function s2P5OnInput() { viqOnInput('s2p5'); }
 function s2P5Check() { viqCheck('s2p5'); }
-function s2P5HintOpen() { document.getElementById('s2-p5-hint-overlay').hidden = false; }
+function s2P5HintOpen() { document.getElementById('s2-p5-hint-overlay').hidden = false; xapiRequestedHint('001', 'q3'); }
 function s2P5HintClose() { document.getElementById('s2-p5-hint-overlay').hidden = true; }
 
 const S2_GESTURE = makeScrollGestureHint('s2-scroll-gesture', 's2-scroll-area');
@@ -153,6 +157,18 @@ const S5_AVATAR_ASSETS = {
   'character-1': 'assets/videos/boy-avatar-jumping-happily.mp4',
   'character-2': 'assets/videos/yellow-avatar-jumping (1).mp4'
 };
+/* The last screen has no button of its own: arriving here ends the component. */
 function resetScreenState5() {
   resolveCharBubbleVideo('s5-avatar', S5_AVATAR_ASSETS);
+  finishComponent(null);
 }
+
+/* ═══════════════ xAPI — this component's reporting seam ═══════════════
+   Ids come from ../metadata/methodica-math-ratio-05-06.json (checked on every load by 50-loader.js).
+   SCREEN_TO_SUBCONTENT: screen → [item suffix, page-in-item]; exactly TOTAL_SCREENS keys. */
+var XAPI_COMP_SLUG = 'methodica-math-ratio-05-06';
+var XAPI_COMP_ID   = XAPI_ID_PREFIX + XAPI_COMP_SLUG + '/';
+var XAPI_METADATA_FILE = '../metadata/methodica-math-ratio-05-06.json';
+var SCREEN_TO_SUBCONTENT = { 0: ['001', 1], 1: ['001', 2], 2: ['001', 3], 3: ['001', 4], 4: ['001', 5], 5: ['001', 6] };
+var XAPI_EVAL_ITEMS = { '001': 1 };   /* items with code-graded questions */
+var XAPI_PASS_SCALED = 0.5;   /* "עליכם לענות נכון על 2 לפחות" (screen 0): 2 of 4 */

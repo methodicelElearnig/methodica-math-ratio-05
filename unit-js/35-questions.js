@@ -15,7 +15,8 @@ function VIQ_CFG_REGISTER(key, cfg) { VIQ_CFG[key] = cfg; }
 
 /* ---------- SingleChoiceQuestion ----------
    cfg: { containerSel, correctId, checkBtnId, feedboxId,
-          correctMsg, wrongOnce, wrongFinal: {title, body}, onDone? } */
+          correctMsg, wrongOnce, wrongFinal: {title, body}, onDone?,
+          xapi?: [itemSuffix, qKey] — reported as answered / answered.last } */
 const scqState = {};
 
 function scqSelect(key, id) {
@@ -60,6 +61,7 @@ function scqCheck(key) {
 
   const chosenEl = document.querySelector(cfg.containerSel + ' [data-id="' + st.selected + '"]');
   const correctEl = document.querySelector(cfg.containerSel + ' [data-id="' + cfg.correctId + '"]');
+  reportQ(cfg.xapi, isCorrect, isCorrect || st.attempts >= 2, xapiAnswerText(chosenEl));
 
   if (isCorrect) {
     if (chosenEl) chosenEl.classList.add('correct');
@@ -98,7 +100,9 @@ function scqFinish(key) {
           nextScreen?, correctMsg, wrongOnce, wrongFinal, onDone? }
    After the final wrong attempt the correct values are shown at once and
    the reveal button toggles between them and the learner's own answer.
-   A check button in the bottom bar turns into "המשך" (→ nextScreen). */
+   A check button in the bottom bar turns into "המשך" (→ nextScreen).
+   xapi?: [itemSuffix, qKey] when all inputs form one question, or one ref per
+   input (inputs sharing a ref form one question, e.g. a point's x and y). */
 const viqState = {};
 
 function viqOnInput(key) {
@@ -126,6 +130,7 @@ function viqCheck(key) {
   const correctFlags = inputs.map(function (input, i) { return Number(input.value) === cfg.correct[i]; });
   const isCorrect = correctFlags.every(Boolean);
   st.attempts++;
+  viqReport(cfg, inputs, correctFlags, isCorrect || st.attempts >= 2);
 
   const fb = document.getElementById(cfg.feedbox);
   const titleEl = fb.querySelector('.scq-fb-title-text');
@@ -172,6 +177,23 @@ function viqCheck(key) {
     st.outcome = 'fail';
     viqFinish(key);
   }
+}
+
+/* One answered statement per question of a ValueInput instance (see cfg.xapi above). */
+function viqReport(cfg, inputs, correctFlags, isLast) {
+  if (!cfg.xapi) return;
+  const refs = Array.isArray(cfg.xapi[0]) ? cfg.xapi : inputs.map(function () { return cfg.xapi; });
+  const groups = {}, order = [];
+  refs.forEach(function (ref, i) {
+    const k = ref.join('/');
+    if (!groups[k]) { groups[k] = { ref: ref, ok: true, ids: [] }; order.push(k); }
+    groups[k].ok = groups[k].ok && correctFlags[i];
+    groups[k].ids.push(inputs[i].id);
+  });
+  order.forEach(function (k) {
+    const g = groups[k];
+    reportQ(g.ref, g.ok, isLast, xapiFieldsAnswer(g.ids));
+  });
 }
 
 /* Toggle: correct values ⇄ the learner's own answer (from snapshot).

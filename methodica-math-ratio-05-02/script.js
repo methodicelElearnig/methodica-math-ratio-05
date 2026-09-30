@@ -16,6 +16,7 @@ const practiceProgress = {
 
 Object.assign(SCQ_CFG, {
   s3p2: {
+    xapi: ['003', 'q1'],
     containerSel: '#s3-part-2',
     correctId: 'b',
     checkBtnId: 's3-p2-check',
@@ -25,6 +26,7 @@ Object.assign(SCQ_CFG, {
     wrongFinal: { title: 'לא נכון.', body: 'ידוע כי <span dir="ltr">∢BAC=60°</span> .<br>סכום הזוויות במשולש הוא <span dir="ltr">180°</span><br>לכן גודל שתי הזוויות האחרות של המשולש הוא<br><span dir="ltr">180° − 60° = 120°</span><br>היחס בין שתי הזוויות הוא 5 : 3 .<br>נחשב כל אחת מהזוויות: <br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> · 120 = 45°</span><br><span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">8</span></span> · 120 = 75°</span><br>גודלן של שתי הזוויות האחרות במשולש הוא <span dir="">45°, 75°</span>.' }
   },
   s4p1: {
+    xapi: ['004', 'q1'],
     containerSel: '#s4-part-1',
     correctId: 'b',
     checkBtnId: 's4-p1-check',
@@ -34,6 +36,7 @@ Object.assign(SCQ_CFG, {
     wrongFinal: { title: 'טעיתם, בואו נסביר:', body: '<strong>נופר השתתפה ביותר מישחים - </strong>לשניהם אותו מספר ניצחונות, אך נופר נדרשה ל-8 מישחים על כל 3 ניצחונות (לעומת 5 בלבד אצל דניאל), ולכן עשתה יותר מישחים בסך הכל.' }
   },
   s4p2: {
+    xapi: ['004', 'q2'],
     containerSel: '#s4-part-2',
     correctId: 'a',
     checkBtnId: 's4-p2-check',
@@ -53,6 +56,7 @@ function s4P2Check() { scqCheck('s4p2'); }
 
 Object.assign(VIQ_CFG, {
   s1: {
+    xapi: [['001', 'q1'], ['001', 'q2']],
     inputs: ['s1-a', 's1-b'], correct: [21, 9], checkBtn: 's1-check', feedbox: 's1-feedbox', revealBtn: 's1-reveal-btn', nextScreen: 2,
     correctMsg: { title: 'נכון!', body: 'א. היחס בין מספר העורכים למספר השחקנים בערוץ הוא 7 : 3 .<br>מספר החלקים ה"שלם" הוא: <span dir="">10 = 3 + 7</span>.<br>נחשב את מספר השחקנים : <span dir="ltr"><span class="frac"><span class="frac-num">7</span><span class="frac-den">10</span></span> · 30 = 21</span><br><br>ב. נחשב את מספר העורכים : <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">10</span></span> · 30 = 9</span>' },
     wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
@@ -63,6 +67,7 @@ Object.assign(VIQ_CFG, {
     }
   },
   s2: {
+    xapi: [['002', 'q1'], ['002', 'q1'], ['002', 'q2'], ['002', 'q2']],
     inputs: ['s2-a-x', 's2-a-y', 's2-b-x', 's2-b-y'], correct: [5, 25, 25, 25], checkBtn: 's2-check', feedbox: 's2-feedbox', revealBtn: 's2-reveal-btn', nextScreen: 3,
     correctMsg: { title: 'נכון!', body: 'א. היחס בין מספר הבנים למספר הבנות הוא 5 : 1.<br>נחשב את מספר הבנים: <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">6</span></span> · 30 = 5</span><br>נחשב את מספר הבנות: <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">6</span></span> · 30 = 25</span><br>שיעורי נקודה A הם (5,25).<br><br>ב. בחצי השעה השנייה התווספו רק בנים, והיחס החדש הוא 1 : 1. מספר הבנות לא השתנה, לכן מספר הבנים החדש הוא 25.<br>שיעורי נקודה B הם (25,25).' },
     wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
@@ -73,6 +78,7 @@ Object.assign(VIQ_CFG, {
     }
   },
   s4p3: {
+    xapi: [['004', 'q3'], ['004', 'q4']],
     inputs: ['s4-p3-a', 's4-p3-b'], correct: [20, 32], checkBtn: 's4-p3-check', feedbox: 's4-p3-feedbox', revealBtn: 's4-p3-reveal-btn', nextScreen: null,
     correctMsg: { title: 'נכון!', body: 'ג. נתון כי דניאל ניצח ב-12 מישחים שהם <span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> מכלל המישחים שהוא השתתף בהם.<br>נסמן את כלל המישחים ב-x ונבנה את המשוואה: <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> · x = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">3</span><span class="frac-den">5</span></span> ונקבל: <span dir="ltr">x = 20</span>.<br><strong>לכן, דניאל שחה 20 מישחים בכל העונה.</strong><br>נתון כי נופר ודניאל השיגו את אותו מספר ניצחונות לכן נופר ניצחה ב-12 מישחים שהם <span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> מכלל המישחים בהם השתתפה.<br>נסמן את כלל המישחים ששחתה נופר ב-y ונבנה את המשוואה:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> · y = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> ונקבל: <span dir="ltr">y = 32</span>.<br><strong>לכן, נופר שחתה 32 מישחים בכל העונה.</strong>' },
     wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
@@ -149,6 +155,10 @@ function s3P3Check() {
   fb.classList.add('visible');
 
   const allCorrect = [1, 2, 3].every(function (r) { return s3TfState.selected[r] === s3TfCorrect[r]; });
+  [1, 2, 3].forEach(function (r) {   /* item 003: q2..q4 are the three statements */
+    reportQ(['003', 'q' + (r + 1)], s3TfState.selected[r] === s3TfCorrect[r], allCorrect || s3TfState.attempts >= 2,
+      xapiAnswerText(document.getElementById('s3-p3-r' + r + '-' + s3TfState.selected[r])));
+  });
   const explain = '1. אם זווית <span dir="ltr">∢BAC</span> תהיה בת 100°, אז סכום שתי האחרות יהיה <span dir="ltr">180° − 100° = 80°</span>.<br>אם היחס הוא 3 : 5, אז גודל הזווית הקטנה מבין השתיים הוא : <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> · 80 = 30°</span>.<br><br>2. מאחר והיחס הוא 3 : 5, כדי לקבל זוויות שלמות עלינו לקבל שסכום שתי הזוויות האחרות מתחלק ב-8 (8 = 3 + 5).<br><br>3. אם <span dir="ltr">∢BAC</span> תהיה בת 20°, אז גודלן של שתי האחרות הוא <span dir="">160° = 20 - 180</span>. מכיוון שהיחס הוא 5 : 3, אז נקבל:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> · 160 = 60°</span> או <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">8</span></span> · 160 = 100°</span><br>ולא זווית ישרה (90°).';
 
   if (allCorrect) {
@@ -251,3 +261,12 @@ function resetScreenState4() {
 }
 
 ['s1-feedbox', 's2-feedbox'].forEach(scqFbMakeDraggable);
+
+/* ═══════════════ xAPI — this component's reporting seam ═══════════════
+   Ids come from ../metadata/methodica-math-ratio-05-02.json (checked on every load by 50-loader.js).
+   SCREEN_TO_SUBCONTENT: screen → [item suffix, page-in-item]; exactly TOTAL_SCREENS keys. */
+var XAPI_COMP_SLUG = 'methodica-math-ratio-05-02';
+var XAPI_COMP_ID   = XAPI_ID_PREFIX + XAPI_COMP_SLUG + '/';
+var XAPI_METADATA_FILE = '../metadata/methodica-math-ratio-05-02.json';
+var SCREEN_TO_SUBCONTENT = { 0: ['001', 1], 1: ['001', 2], 2: ['002', 1], 3: ['003', 1], 4: ['004', 1] };
+var XAPI_EVAL_ITEMS = { '001': 1, '002': 1, '003': 1, '004': 1 };   /* items with code-graded questions */

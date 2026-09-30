@@ -97,6 +97,8 @@ function mcqCheck(key) {
   const correctSet = new Set(cfg.correctIds);
   const isCorrect = setsEqual(st.selected, correctSet);
   st.attempts++;
+  reportQ(cfg.xapi, isCorrect, isCorrect || st.attempts >= 2,
+    xapiMultiAnswer(Array.from(st.selected), function (id) { return document.querySelector(cfg.containerSel + ' [data-id="' + id + '"]'); }));
 
   const fb = document.getElementById(cfg.feedboxId);
   const titleEl = fb.querySelector('.scq-fb-title-text');
@@ -174,6 +176,7 @@ function resetScreenState0() {
    ========================================================= */
 const S1MIX_CFG = {
   p1: {
+    xapi: ['001', 'q1'],
     whiteId: 's1-p1-white', darkId: 's1-p1-dark', ynYesId: 's1-p1-yes', ynNoId: 's1-p1-no',
     checkBtn: 's1-p1-check', feedbox: 's1-p1-feedbox', revealBtn: 's1-p1-reveal-btn',
     correct: { white: 5, dark: 45, yn: 'no' },
@@ -182,6 +185,7 @@ const S1MIX_CFG = {
     wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'בכל שורה נשים פרח שוקולד לבן אחד, ו-9 פרחי שוקולד מריר,\nסה"כ 10 פרחים בשורה. נקבל 5 שורות מכיוון ש: <span dir="">5 = 10 : 50</span>.\nמספר פרחי שוקולד לבן בכל התבנית הוא: 5,\nמספר פרחי שוקולד המריר בכל התבנית הוא: 45.\nמאחר ו- <span dir="">50 = 5 + 45</span>, אז לא נשארו שקעים ריקים.' }
   },
   p2: {
+    xapi: ['001', 'q2'],
     whiteId: 's1-p2-white', darkId: 's1-p2-dark', ynYesId: 's1-p2-yes', ynNoId: 's1-p2-no',
     checkBtn: 's1-p2-check', feedbox: 's1-p2-feedbox', revealBtn: 's1-p2-reveal-btn',
     correct: { white: 12, dark: 36, yn: 'yes' },
@@ -254,6 +258,8 @@ function s1MixCheck(key) {
   const ynOk = st.yn === cfg.correct.yn;
   const isCorrect = whiteOk && darkOk && ynOk;
   st.attempts++;
+  reportQ(cfg.xapi, isCorrect, isCorrect || st.attempts >= 2,
+    xapiFieldsAnswer([cfg.whiteId, cfg.darkId]) + ' | ' + (xapiAnswerText(document.getElementById(st.yn === 'yes' ? cfg.ynYesId : cfg.ynNoId)) || '—'));
 
   const fb = document.getElementById(cfg.feedbox);
   const titleEl = fb.querySelector('.scq-fb-title-text');
@@ -354,6 +360,7 @@ function s1MixFinish(key) {
 }
 
 SCQ_CFG_REGISTER('s1p3', {
+  xapi: ['001', 'q3'],
   containerSel: '#s1-part-3',
   correctId: 'a',
   checkBtnId: 's1-p3-check',
@@ -424,6 +431,10 @@ function s2P1Check() {
   fb.classList.add('visible');
 
   const allCorrect = [1, 2, 3, 4].every(function (r) { return s2TfState.selected[r] === s2TfCorrect[r]; });
+  [1, 2, 3, 4].forEach(function (r) {   /* item 002: q1..q4 are the four statements */
+    reportQ(['002', 'q' + r], s2TfState.selected[r] === s2TfCorrect[r], allCorrect || s2TfState.attempts >= 2,
+      xapiAnswerText(document.getElementById('s2-r' + r + '-' + s2TfState.selected[r])));
+  });
   const explain = 'זוויות α ו-β הן זוויות צמודות ולכן סכומן הוא 180°, היחס בין α ל-β הוא 7 : 2.<br>לכן, גודלה של זווית β הוא <span dir="">140° = 180 · <span class="frac"><span class="frac-num">7</span><span class="frac-den">9</span></span></span>.<br>גודלה של זווית α הוא 40°, מכיוון ש:<br><span dir="ltr">180° − 40° = 140°</span>.';
 
   if (allCorrect) {
@@ -492,6 +503,7 @@ function resetScreenState2() {
    בלבד, ב-onDone של s3p2).
    ========================================================= */
 VIQ_CFG_REGISTER('s3p1', {
+  xapi: ['003', 'q1'],
   inputs: ['s3-p1-a', 's3-p1-b'], correct: [5, 7], checkBtn: 's3-p1-check', feedbox: 's3-p1-feedbox', revealBtn: 's3-p1-reveal-btn', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'רועי שילם 5 ש"ח ועינת שילמה 7 ש"ח, לכן יחס ההשקעה הוא 7 : 5.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
@@ -502,6 +514,7 @@ function s3P1OnInput() { viqOnInput('s3p1'); }
 function s3P1Check() { viqCheck('s3p1'); }
 
 SCQ_CFG_REGISTER('s3p2', {
+  xapi: ['003', 'q2'],
   containerSel: '#s3-part-2',
   correctId: 'a',
   checkBtnId: 's3-p2-check',
@@ -515,6 +528,7 @@ function s3P2Select(id) { scqSelect('s3p2', id); }
 function s3P2Check() { scqCheck('s3p2'); }
 
 MCQ_CFG_REGISTER('s3p3', {
+  xapi: ['003', 'q3'],
   containerSel: '#s3-part-3',
   correctIds: ['a', 'c'],
   checkBtnId: 's3-p3-check',
@@ -575,6 +589,7 @@ function resetScreenState4() {
 
 /* מסך 6 — מסך גלילה, קבוצת-התקדמות **נפרדת** משלו (practiceProgress2, */
 VIQ_CFG_REGISTER('s5p1', {
+  xapi: ['004', 'q1'],
   inputs: ['s5-p1-a', 's5-p1-b'], correct: [60, 150], checkBtn: 's5-p1-check', feedbox: 's5-p1-feedbox', revealBtn: 's5-p1-reveal-btn', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'היחס בין מספר השעות שעבדה נעמי למספר השעות שעבד יוני הוא 2:5.<br>מספר החלקים הוא <span dir="ltr">2 + 5 = 7</span>.<br>אם נועה ויוני הרוויחו 210 ₪ והם מתכוונים לחלק את הכסף לפי מספר השעות היחסי אז:<br>נועה תקבל <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span> · 210 = 60</span>,<br>ויוני יקבל <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span> · 210 = 150</span>.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
@@ -585,6 +600,7 @@ function s5P1OnInput() { viqOnInput('s5p1'); }
 function s5P1Check() { viqCheck('s5p1'); }
 
 SCQ_CFG_REGISTER('s5p2', {
+  xapi: ['004', 'q2'],
   containerSel: '#s5-part-2',
   correctId: 'a',
   checkBtnId: 's5-p2-check',
@@ -603,6 +619,7 @@ function s5P2Select(id) { scqSelect('s5p2', id); }
 function s5P2Check() { scqCheck('s5p2'); }
 
 SCQ_CFG_REGISTER('s5p3', {
+  xapi: ['004', 'q3'],
   containerSel: '#s5-part-3',
   correctId: 'b',
   checkBtnId: 's5-p3-check',
@@ -688,3 +705,12 @@ document.addEventListener('keydown', function (e) {
 });
 
 scqFbMakeDraggable('s2-feedbox');
+
+/* ═══════════════ xAPI — this component's reporting seam ═══════════════
+   Ids come from ../metadata/methodica-math-ratio-05-03.json (checked on every load by 50-loader.js).
+   SCREEN_TO_SUBCONTENT: screen → [item suffix, page-in-item]; exactly TOTAL_SCREENS keys. */
+var XAPI_COMP_SLUG = 'methodica-math-ratio-05-03';
+var XAPI_COMP_ID   = XAPI_ID_PREFIX + XAPI_COMP_SLUG + '/';
+var XAPI_METADATA_FILE = '../metadata/methodica-math-ratio-05-03.json';
+var SCREEN_TO_SUBCONTENT = { 0: ['001', 1], 1: ['001', 2], 2: ['002', 1], 3: ['003', 1], 4: ['004', 1], 5: ['004', 2] };
+var XAPI_EVAL_ITEMS = { '001': 1, '002': 1, '003': 1, '004': 1 };   /* items with code-graded questions */
