@@ -1,0 +1,70 @@
+{
+  "id": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-06/",
+  "title": "שאלת שיא",
+  "learningUnitId": "methodica-math-ratio-05",
+  "componentPurpose": "practice",
+  "isAssessment": true,
+  "recommendedAfterFail": [],
+  "isRequired": true,
+  "relativeDifficulty": 5,
+  "masteryLevel": null,
+  "order": 6,
+  "depthLevel": "core-curriculum-basic",
+  "cognitiveLevels": [
+    "interpretation-and-reasoning"
+  ],
+  "languages": [
+    "Hebrew"
+  ],
+  "skills": [],
+  "estimatedTimeInMinutes": 8,
+  "createdAt": "2026-09-28T00:00:00.000Z",
+  "updatedAt": "2026-09-28T00:00:00.000Z",
+  "subContent": [
+    {
+      "id": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-06/methodica-math-ratio-05-06-001/",
+      "title": "חלוקת מגרש בין בית לגינה — משפחת לוי (4 סעיפים)",
+      "informationToBot": "מטרת הפריט: שאלת השיא של יחידת יחס (מועד א', היחיד ביחידה) - בדיקת יכולת התלמיד ליישם יחס וחלוקה יחסית של שטח מלבני מורכב (עם פינה חתוכה) בתרחיש רב-שלבי מציאותי, כשכל סעיף בונה על תוצאת הסעיף הקודם. מה התלמיד אמור להבין/לתרגל: א. חישוב שטח מגרש מלבני מורכב (מלבן + ריבוע חתוך) מתוך יחס נתון בין שני צלעות (AB:AE=2:1). ב. חלוקת קטע (AB) ביחס נתון (3:2) כדי למצוא את השטח המיועד לגינה מתוך השטח הכולל שחושב בסעיף א'. ג/ד. עדכון חלוקת שטח קיימת (בית/גינה) ליחס חדש (3:1 ואז 1:1), וחישוב כמות השטח שיש להעביר בין החלקות כדי לעמוד ביחס המבוקש, תוך שימוש בתוצאות הסעיפים הקודמים (שטח כולל=216, שטח גינה מקורי=80). כיווני חשיבה ואסטרטגיות: לפרק את המגרש למלבן+ריבוע ולחבר שטחים (סעיף א'); לתרגם יחס חלוקת קטע לשבר מהאורך הכולל (סעיף ב'); לחשב מחדש את שני השטחים לפי היחס המבוקש (לא רק אחד מהם) ואז להשוות לגדלים המקוריים כדי לדעת כמה להעביר ובאיזה כיוון (סעיפים ג'-ד'). טעויות נפוצות: בלבול איזה קטע מתאים לאיזה יחס בסעיף ב'; שכחה שסעיפים ג'/ד' דורשים לחשב את שני השטחים החדשים ולא רק אחד; בלבול בכיוון ההעברה (מבנייה לגינה בסעיף ג' לעומת מגינה לבנייה בסעיף ד') - התשובות הנכונות שונות (28 בסעיף ג', 26 בסעיף ד') בגלל יחסי היעד השונים (1:1 מול 3:1) ושטחי המוצא השונים בכל סעיף. מידע נוסף: כל 4 הסעיפים חולקים דיאגרמת מגרש קבועה אחת (איור-עזר, לא תלוי-תמונה - כל הנתונים המספריים קיימים כטקסט); יש רמזים ייעודיים לכל סעיף; מותר עד 2 טעויות בכלל השאלה (4 סעיפים, עובר עם 2 לפחות נכונים). צילום מסך: לא צורף.",
+      "contentType": "practice",
+      "mediaFormat": "interactive-content",
+      "questions": [
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-06/methodica-math-ratio-05-06-001/q1",
+          "questionType": "numeric",
+          "questionText": "א. לפני שאורי יוכל להתחיל בתכנון, עליו לדעת מהו שטח המגרש כולו. חשבו את שטח המגרש.",
+          "answers": [],
+          "correctAnswers": [
+            216
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-06/methodica-math-ratio-05-06-001/q2",
+          "questionType": "numeric",
+          "questionText": "ב. חשבו את השטח המיועד לגינה.",
+          "answers": [],
+          "correctAnswers": [
+            80
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-06/methodica-math-ratio-05-06-001/q3",
+          "questionType": "numeric",
+          "questionText": "ג. בהנחה ששטח הגינה לפני השינוי הוא 80 מ\"ר, כמה שטח צריך אורי להעביר מהשטח המיועד לבנייה, אל הגינה, כדי לעמוד בבקשה החדשה?",
+          "answers": [],
+          "correctAnswers": [
+            28
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-06/methodica-math-ratio-05-06-001/q4",
+          "questionType": "numeric",
+          "questionText": "ד. כמה שטח צריך אורי להעביר מהשטח המיועד לגינה אל השטח המיועד לבנייה כדי לעמוד בבקשתם?",
+          "answers": [],
+          "correctAnswers": [
+            26
+          ]
+        }
+      ]
+    }
+  ]
+}

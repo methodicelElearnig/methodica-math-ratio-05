@@ -1,0 +1,106 @@
+{
+  "id": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-05/",
+  "title": "בואו נאתגר את עצמנו",
+  "learningUnitId": "methodica-math-ratio-05",
+  "componentPurpose": "practice",
+  "isAssessment": false,
+  "recommendedAfterFail": [],
+  "isRequired": false,
+  "relativeDifficulty": 5,
+  "masteryLevel": null,
+  "order": 5,
+  "depthLevel": "core-curriculum-basic",
+  "cognitiveLevels": [
+    "interpretation-and-reasoning"
+  ],
+  "languages": [
+    "Hebrew"
+  ],
+  "skills": [],
+  "estimatedTimeInMinutes": 10,
+  "createdAt": "2026-09-28T00:00:00.000Z",
+  "updatedAt": "2026-09-28T00:00:00.000Z",
+  "subContent": [
+    {
+      "id": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-05/methodica-math-ratio-05-05-001/",
+      "title": "אלמנט הצללה משולש שווה־שוקיים",
+      "informationToBot": "מטרת הפריט: יישום משוואת סכום זוויות המשולש (180°) יחד עם יחס נתון בין זווית הראש לזוויות הבסיס, ובדיקת טענה על אפשרות קיום המשולש. מה התלמיד אמור להבין/לתרגל: פירוק 180° לפי יחס 3:1 בין זווית הראש לסכום שתי זוויות הבסיס השוות, והסקת מסקנה מהתוצאה המספרית. כיווני חשיבה ואסטרטגיות: לחשב תחילה את חלק זווית הראש (¼·180=45°), ואז לחלק את היתרה (135°) שווה בשווה בין שתי זוויות הבסיס השוות (67.5° כל אחת). טעויות נפוצות: בלבול בין 'זווית הראש' לזוויות הבסיס בפירוק היחס; שכחה שזוויות הבסיס שוות זו לזו; החלטה שגויה שהזוויות קהות בלי לחשב בפועל. מידע נוסף: אין. צילום מסך: לא צורף.",
+      "contentType": "practice",
+      "mediaFormat": "interactive-content",
+      "questions": [
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-05/methodica-math-ratio-05-05-001/q1",
+          "questionType": "fill-in",
+          "questionText": "א. משולש שווה-שוקיים ABC (AB=AC), היחס בין זווית הראש לסכום שתי זוויות הבסיס הוא 3:1. חשבו את שלוש זוויות המשולש.",
+          "answers": [],
+          "correctAnswers": [
+            "∢A = 45°, ∢B = 67.5°, ∢C = 67.5°"
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-05/methodica-math-ratio-05-05-001/q2",
+          "questionType": "choice",
+          "questionText": "ב. אדריכל צעיר טוען שזוויות הבסיס קהות ולכן לא ניתן ליצור את המשולש. האם טענתו נכונה?",
+          "answers": [
+            "כן",
+            "לא",
+            "לא ניתן לדעת"
+          ],
+          "correctAnswers": [
+            "לא"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-05/methodica-math-ratio-05-05-002/",
+      "title": "יחס שטחים במשולש ABC",
+      "informationToBot": "מטרת הפריט: תרגול קשר בין יחס שטחים לבין יחס בסיסים במשולשים בעלי אותו גובה. מה התלמיד אמור להבין/לתרגל: חישוב שטחי ACD ו-ADB לפי חלוקת שטח ABC ביחס 3:1, ואז מציאת אורכי הבסיסים CD ו-DB מתוך הגובה המשותף AE=8. כיווני חשיבה ואסטרטגיות: שטח ACD=¾·64=48, שטח ADB=¼·64=16; משטח ACD=½·CD·AE -> CD=12; יחס הבסיסים שווה ליחס השטחים (משותפים באותו גובה) -> DB=CD/3=4. טעויות נפוצות: שימוש ביחס השטחים ישירות על BC כולו במקום על שני המקטעים בנפרד; טעות בנוסחת שטח משולש (חלוקה ב-2). מידע נוסף: מסך זה סטטי (לא גלילה), בניגוד לשני האחרים ברכיב. צילום מסך: לא צורף.",
+      "contentType": "practice",
+      "mediaFormat": "interactive-content",
+      "questions": [
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-05/methodica-math-ratio-05-05-002/q1",
+          "questionType": "fill-in",
+          "questionText": "נקודה D נמצאת על הצלע CB במשולש ABC. יחס שטחי המשולשים ACD:ADB=3:1, שטח משולש ABC=64 סמ\"ר, הגובה AE=8 ס\"מ. השלימו: אורך צלע CD הוא: ___, אורך צלע DB הוא: ___",
+          "answers": [],
+          "correctAnswers": [
+            "אורך צלע CD הוא: 12 ס\"מ, אורך צלע DB הוא: 4 ס\"מ"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-05/methodica-math-ratio-05-05-003/",
+      "title": "ערבוב צבעים במפעל — יחס 2:3:5",
+      "informationToBot": "מטרת הפריט: חישוב כמויות לפי יחס תלת-איברי, ולאחר מכן ניתוח השפעת שינוי כמות של רכיב יחיד על היחס הכולל. מה התלמיד אמור להבין/לתרגל: פירוק 12 ליטר (חלק השחור, 5/10 מהיחס) לגזירת סך הכל (60) ואז שאר הרכיבים (צהוב 2/10·60=30, כחול 60-12-30=18); לאחר הכפלת השחור בלבד - בניית יחס חדש (4:3:5 יחסית) והבנה שהיחס בין הצבעים (ולא רק המספרים) השתנה. כיווני חשיבה ואסטרטגיות: שחור=5 חלקים מתוך 10 -> 12/(5/10)=60; צהוב=2/10·60=30; כחול=3/10·60=18; לחלק ב' - הכפלת רכיב אחד בלבד משנה את היחס גם אם הכמות הכוללת גדלה. טעויות נפוצות: הנחה שגויה שהכפלת רכיב אחד לא משנה את היחס; בלבול איזה צבע תואם לאיזה מספר ביחס 2:3:5. מידע נוסף: יש הערת בדיקה עצמית של תת-הסוכן על ניסוח לא-עקבי בטקסט המשוב הפנימי בקוד (הצהוב/השחור מוחלפים בניסוח המילולי של המשוב לעומת גוף השאלה) - אינו משפיע על correctAnswers שנקבעו לפי ערכי ה-JS (60/30/18), אך מומלץ לדווח למפתחים. צילום מסך: לא צורף.",
+      "contentType": "practice",
+      "mediaFormat": "interactive-content",
+      "questions": [
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-05/methodica-math-ratio-05-05-003/q1",
+          "questionType": "fill-in",
+          "questionText": "א. מפעל מערבב צבעים צהוב:כחול:שחור ביחס של 2:3:5. ידוע כי יש 12 ליטר צבע שחור. השלימו את הכמויות: מהו סך כל הליטרים? כמה ליטרים צהוב? כמה ליטרים כחול?",
+          "answers": [],
+          "correctAnswers": [
+            "סך הכל: 60 ליטר, צהוב: 30 ליטר, כחול: 18 ליטר"
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-05/methodica-math-ratio-05-05-003/q2",
+          "questionType": "choice",
+          "questionText": "ב. הכפילו את כמות הצבע השחור בלבד (פי 2), בעוד הצהוב והכחול נשארו ללא שינוי. איזה מהמשפטים הבאים מתאר נכונה את היחס החדש בין המרכיבים (צהוב, כחול, שחור)?",
+          "answers": [
+            "היחס החדש הוא 4 : 6 : 10, ולכן הגוון נשאר בדיוק אותו הדבר",
+            "היחס החדש הוא 4 : 3 : 5, ולכן חלקו של הצבע השחור בתערובת גדל.",
+            "היחס החדש הוא 4 : 5 : 7, כי הוספנו 2 יחידות לכל צבע כדי לשמור על איזון.",
+            "לא ניתן לדעת את היחס החדש מבלי לדעת את הכמות המדויקת של הליטרים שהוסיפו."
+          ],
+          "correctAnswers": [
+            "היחס החדש הוא 4 : 3 : 5, ולכן חלקו של הצבע השחור בתערובת גדל."
+          ]
+        }
+      ]
+    }
+  ]
+}

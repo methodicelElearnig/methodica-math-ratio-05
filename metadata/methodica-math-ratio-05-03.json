@@ -1,0 +1,215 @@
+{
+  "id": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/",
+  "title": "זמן תרגול 2",
+  "learningUnitId": "methodica-math-ratio-05",
+  "componentPurpose": "practice",
+  "isAssessment": false,
+  "recommendedAfterFail": [
+    "methodica-math-ratio-05-02"
+  ],
+  "isRequired": true,
+  "relativeDifficulty": 2,
+  "masteryLevel": null,
+  "order": 3,
+  "depthLevel": "core-curriculum-basic",
+  "cognitiveLevels": [
+    "algorithmic-thinking"
+  ],
+  "languages": [
+    "Hebrew"
+  ],
+  "skills": [],
+  "estimatedTimeInMinutes": 26,
+  "createdAt": "2026-09-28T00:00:00.000Z",
+  "updatedAt": "2026-09-28T00:00:00.000Z",
+  "subContent": [
+    {
+      "id": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-001/",
+      "title": "פרחי שוקולד — יחס בין שני סוגי שוקולד בתבנית",
+      "informationToBot": "מטרת הפריט: לתרגל חישוב מספרים בפועל מתוך יחס נתון ומגבלת כמות כוללת (50 שקעים), כולל זיהוי מקרה שבו החלוקה אינה מסתיימת בשלמות. מה התלמיד אמור להבין/לתרגל: פירוק יחס למספר חלקים, הכפלה בגורם משותף, ובדיקת שארית. כיווני חשיבה ואסטרטגיות: חישוב סכום חלקי היחס (למשל 9+1=10) וחלוקת 50 בסכום כדי למצוא את גודל 'החלק'; בסעיף ג יש לבדוק אם התוצאה שלמה. טעויות נפוצות: חלוקה לא נכונה של 50 לפי סדר היחס ההפוך; אי-זיהוי שבר (12.5) כמצביע על שקעים ריקים. מידע נוסף: כולל יישומון-עזר אינטראקטיבי מוטמע (iframe) לצביעה חזותית של היחס - לפי הערת קוד מפורשת הוא כלי-עזר בלי ולידציה עצמית, הבדיקה על השאלות עצמן, ולכן contentType נשאר practice ולא simulation. צילום מסך: לא צורף.",
+      "contentType": "practice",
+      "mediaFormat": "interactive-content",
+      "questions": [
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-001/q1",
+          "questionType": "fill-in",
+          "questionText": "א. תבנית בת 50 שקעים, יחס פרחי שוקולד לבן:מריר = 9:1. מלאו: מספר פרחי שוקולד לבנים, מספר פרחי שוקולד מריר, והאם נשארו שקעים ריקים.",
+          "answers": [],
+          "correctAnswers": [
+            "מספר פרחי שוקולד לבנים: 5, מספר פרחי שוקולד מריר: 45, האם נשארו שקעים ריקים: לא"
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-001/q2",
+          "questionType": "fill-in",
+          "questionText": "ב. אותה תבנית, יחס לבן:מריר = 3:1. מלאו: מספר פרחי שוקולד לבנים, מספר פרחי שוקולד מריר, והאם נשארו שקעים ריקים.",
+          "answers": [],
+          "correctAnswers": [
+            "מספר פרחי שוקולד לבנים: 12, מספר פרחי שוקולד מריר: 36, האם נשארו שקעים ריקים: כן"
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-001/q3",
+          "questionType": "choice",
+          "questionText": "ג. האם רונית צודקת?",
+          "answers": [
+            "כן",
+            "לא",
+            "אי אפשר לדעת"
+          ],
+          "correctAnswers": [
+            "כן"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-002/",
+      "title": "זווית ACB המחולקת ע\"י CD ביחס 7:2",
+      "informationToBot": "מטרת הפריט: לתרגל יישום יחס נתון (7:2) על זוויות צמודות כדי לגזור גדלים ומאפייני-זווית. מה התלמיד אמור להבין/לתרגל: זוויות צמודות סכומן 180°, פירוק לפי יחס וחישוב חלק יחסי. כיווני חשיבה ואסטרטגיות: 180°·(7/9) ו-180°·(2/9) לחישוב α ו-β; זיהוי זוויות קודקודיות כלא-רלוונטיות כאן. טעויות נפוצות: בלבול בין 'זוויות צמודות' ל'זוויות קודקודיות'; חלוקה הפוכה של סכום 180° לפי היחס. מידע נוסף: דיאגרמת הזווית היא איור-עזר בלבד, כל הנתונים (יחס 7:2) מופיעים כטקסט; 4 טענות נבדקות בבדיקה אחת (עד 2 ניסיונות). צילום מסך: לא צורף.",
+      "contentType": "practice",
+      "mediaFormat": "interactive-content",
+      "questions": [
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-002/q1",
+          "questionType": "true-false",
+          "questionText": "זוויות α ו-β הן זוויות קודקודיות ולכן הן זוויות שוות.",
+          "answers": [
+            "נכון",
+            "לא נכון"
+          ],
+          "correctAnswers": [
+            "לא נכון"
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-002/q2",
+          "questionType": "true-false",
+          "questionText": "גודלה של זווית α הוא 40°.",
+          "answers": [
+            "נכון",
+            "לא נכון"
+          ],
+          "correctAnswers": [
+            "נכון"
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-002/q3",
+          "questionType": "true-false",
+          "questionText": "גודלה של זווית β הוא 7/9 · 180° = 140°.",
+          "answers": [
+            "נכון",
+            "לא נכון"
+          ],
+          "correctAnswers": [
+            "נכון"
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-002/q4",
+          "questionType": "true-false",
+          "questionText": "זוויות α ו-β הן זוויות צמודות ולכן סכומן הוא 180°.",
+          "answers": [
+            "נכון",
+            "לא נכון"
+          ],
+          "correctAnswers": [
+            "נכון"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-003/",
+      "title": "כרטיס הזהב של פורים — חלוקת פרס לפי יחס השקעה",
+      "informationToBot": "מטרת הפריט: לתרגל גזירת יחס מתוך נתונים ריאליים, וישום היחס לחלוקת סכום פרס. מה התלמיד אמור להבין/לתרגל: קביעת יחס מכמויות נתונות, חלוקה יחסית של סכום כולל, זיהוי טענות שגויות על 'הוגנות' חלוקה שאינה יחסית. כיווני חשיבה ואסטרטגיות: יחס 5:7 (או 7:5) -> סכום חלקים 12 -> כל חלק=10 ש\"ח -> הכפלה בחלק היחסי. טעויות נפוצות: הנחה שחלוקה שווה (חצי-חצי) היא תמיד הוגנת; היפוך סדר היחס. מידע נוסף: סעיף ג הוא שאלת בחירה מרובה (2 מתוך 3 תשובות נכונות); תמונת הקשר בלבד ללא תלות תוכן. צילום מסך: לא צורף.",
+      "contentType": "practice",
+      "mediaFormat": "interactive-content",
+      "questions": [
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-003/q1",
+          "questionType": "fill-in",
+          "questionText": "א. רועי ועינת קנו יחד כרטיס פיס וזכו. מהו יחס ההשקעה בין רועי לעינת?",
+          "answers": [],
+          "correctAnswers": [
+            "5:7",
+            "5 : 7"
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-003/q2",
+          "questionType": "choice",
+          "questionText": "ב. כיצד יש לחלק את הזכייה לפי יחס ההשקעה?",
+          "answers": [
+            "רועי יקבל 50 שקלים ועינת תקבל 70 שקלים",
+            "רועי יקבל 60 שקלים ועינת תקבל 60 שקלים",
+            "רועי יקבל 70 שקלים ועינת תקבל 50 שקלים",
+            "רועי יקבל 20 שקלים ועינת תקבל 100 שקלים"
+          ],
+          "correctAnswers": [
+            "רועי יקבל 50 שקלים ועינת תקבל 70 שקלים"
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-003/q3",
+          "questionType": "choice",
+          "questionText": "ג. עינת מציעה לחלק את הזכייה שווה בשווה (60/60). האם ההצעה הוגנת? בחרו את כל הטענות הנכונות.",
+          "answers": [
+            "ההצעה לא הוגנת כי עינת שילמה יותר כסף בקנייה, ולכן היא צריכה לקבל נתח גדול יותר מכספי הזכייה.",
+            "ההצעה הוגנת, מכיוון שברגע שיש זכייה משותפת, לא משנה כמה כל אחד שילם בהתחלה – הפרס תמיד שייך לשני השותפים באופן שווה לחלוטין.",
+            "ההצעה לא הוגנת, כי היחס בין הכספים שהם שילמו הוא 7 : 5, והסכומים 60 ו-60 מייצגים יחס שונה של 1 : 1."
+          ],
+          "correctAnswers": [
+            "ההצעה לא הוגנת כי עינת שילמה יותר כסף בקנייה, ולכן היא צריכה לקבל נתח גדול יותר מכספי הזכייה.",
+            "ההצעה לא הוגנת, כי היחס בין הכספים שהם שילמו הוא 7 : 5, והסכומים 60 ו-60 מייצגים יחס שונה של 1 : 1."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-004/",
+      "title": "חלוקת רווחים לפי יחס — נעמי ויוני, והאחים בכרטיס הפיס",
+      "informationToBot": "מטרת הפריט: להעלות רמת קושי - יישום יחס לחישוב חלוקה הפוכה (מהחלק אל השלם) בנוסף לחישוב ישיר, וזיהוי מקרה שבו חלוקה יחסית אינה יוצאת במספרים שלמים. מה התלמיד אמור להבין/לתרגל: חישוב חלק יחסי מתוך סכום נתון (סעיף א: 210 ש\"ח ביחס 2:5); שחזור הסכום הכולל מתוך חלק אחד ידוע (סעיף ב) - הכיוון ההפוך; זיהוי תוצאה לא-שלמה (שברי שקל) כמונעת חלוקה בשטרות בלבד (סעיף ג: 90 ש\"ח ביחס 5:2). כיווני חשיבה ואסטרטגיות: סעיף א: 2+5=7 חלקים, 210/7=30 לחלק; סעיף ב: 40 ₪=2/7 מהסכום -> סכום כולל=140; סעיף ג: 2/7·90≈25.71, 5/7·90≈64.29 - שניהם לא שלמים. טעויות נפוצות: החלת אותה נוסחה (חלק->סכום) כשצריך כיוון הפוך (סכום->חלק); בלבול איזה צד של היחס שייך למי; עיגול תוצאה לא-שלמה בהנחה שזה 'מספיק קרוב'. מידע נוסף: פותח ברמז מפורש על עלייה ברמת קושי ('עוד 2 תרגילים ברמת קושי גבוהה יותר'); הפריט מאחד שתי שאלות שנבנו בקוד כשני מסכי-התקדמות נפרדים (הערת-בנייה: 'practiceProgress2, 2 פריטים') - מוזגו כאן לפריט אחד לפי בקשת המשתמש. תמונות הקשר בלבד, אין תלות תוכן. צילום מסך: לא צורף.",
+      "contentType": "practice",
+      "mediaFormat": "interactive-content",
+      "questions": [
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-004/q1",
+          "questionType": "fill-in",
+          "questionText": "א. נעמי ויוני שטפו מכוניות ברחוב וחילקו את הרווח (210 ש\"ח) לפי יחס שעות העבודה שלהם (2:5). כמה יקבל כל אחד?",
+          "answers": [],
+          "correctAnswers": [
+            "נעמי תקבל: 60 ש\"ח, יוני יקבל: 150 ש\"ח"
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-004/q2",
+          "questionType": "choice",
+          "questionText": "ב. בשבוע שאחרי, נעמי קיבלה 40 ש\"ח מתוך הרווח לפי אותו יחס שעות עבודה (2:5). מה ניתן לומר על הרווח הכולל שלהם באותו שבוע?",
+          "answers": [
+            "נעמי ויוני הרוויחו יחד 140 ש\"ח, ונעמי קיבלה 40 ש\"ח",
+            "נעמי קיבלה 50 ש\"ח, כי היא תמיד מקבלת מחצית מהסכום של יוני",
+            "נעמי ויוני הרוויחו יחד 200 ש\"ח, ויוני קיבל 100 ש\"ח.",
+            "נעמי קיבלה 60 ש\"ח, והסכום הכולל שהרוויחו יחד היה 210 ש\"ח"
+          ],
+          "correctAnswers": [
+            "נעמי ויוני הרוויחו יחד 140 ש\"ח, ונעמי קיבלה 40 ש\"ח"
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-004/q3",
+          "questionType": "true-false",
+          "questionText": "ג. אחים קנו יחד כרטיס פיס בזוגי וזכו ב-90 ש\"ח, וצריכים לחלק אותם ביחס 5:2 לפי ההשקעה שלהם. האם ניתן לחלק את הסכום בשטרות שלמים בלבד (ללא צורך בעודף)?",
+          "answers": [
+            "כן",
+            "לא"
+          ],
+          "correctAnswers": [
+            "לא"
+          ]
+        }
+      ]
+    }
+  ]
+}

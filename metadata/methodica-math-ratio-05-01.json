@@ -1,0 +1,252 @@
+{
+  "id": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/",
+  "title": "בואו נלמד משהו חדש",
+  "learningUnitId": "methodica-math-ratio-05",
+  "componentPurpose": "both",
+  "isAssessment": false,
+  "recommendedAfterFail": [],
+  "isRequired": true,
+  "relativeDifficulty": 3,
+  "masteryLevel": null,
+  "order": 1,
+  "depthLevel": "core-curriculum-basic",
+  "cognitiveLevels": [
+    "process-thinking"
+  ],
+  "languages": [
+    "Hebrew"
+  ],
+  "skills": [],
+  "estimatedTimeInMinutes": 29,
+  "createdAt": "2026-09-28T00:00:00.000Z",
+  "updatedAt": "2026-09-28T00:00:00.000Z",
+  "subContent": [
+    {
+      "id": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-001/",
+      "title": "בחירת דמות מלווה",
+      "informationToBot": "מטרת הפריט: לאפשר ללומד/ת לבחור דמות מלווה (character-1/character-2) שתלווה אותם לאורך הסיין. מה התלמיד אמור להבין/לתרגל: אין תוכן לימודי - בחירה טכנית בלבד. כיווני חשיבה ואסטרטגיות: אין. טעויות נפוצות: אין (בחירה בין שתי אפשרויות, כפתור המשך נעול עד לבחירה). מידע נוסף: מסך TwoOptionSelection סטנדרטי; הדמות הנבחרת נשמרת ב-localStorage ומשפיעה על וידאו הדמות במסכים הבאים. צילום מסך: לא צורף.",
+      "contentType": "motivational",
+      "mediaFormat": "interactive-content",
+      "questions": []
+    },
+    {
+      "id": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-002/",
+      "title": "אולימפיאדת המדעים – יחס בין משלחות",
+      "informationToBot": "מטרת הפריט: לחשוף את הלומד/ת לבעיית יחס בהקשר סיפורי (שתי משלחות ספורט עם יחסי מדליות-משתתפים שונים), ולהוביל בסיום להצגת מטרות הלמידה של הרכיב. מה התלמיד אמור להבין/לתרגל: השוואה אינטואיטיבית בין יחסים (1:4 מול 1:8), חישוב כמות לפי יחס נתון (5 מדליות -> 40 משתתפים לפי יחס 1:8), הבחנה בין 'יותר משתתפים' לבין 'יעיל/מצליח יותר יחסית'. כיווני חשיבה ואסטרטגיות: להבין שיחס נמוך יותר (1:4) פירושו הצלחה יחסית גבוהה יותר גם אם המספרים המוחלטים קטנים מהיחס השני. טעויות נפוצות: בלבול בין 'יותר משתתפים' (סעיף א) לבין 'יחס הצלחה גבוה יותר' (סעיף ג); ציפייה שמשלחת עם יותר אנשים היא גם המוצלחת יותר יחסית. מידע נוסף: מסך גלילה מותאם - 3 שאלות חד-ברירה עצמאיות שנחשפות בזו אחר זו; בסיום אאוטרו עם דמות מלווה שמפרט את מטרות הלמידה של הרכיב. צילום מסך: לא צורף.",
+      "contentType": "motivational",
+      "mediaFormat": "interactive-content",
+      "questions": [
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-002/q1",
+          "questionType": "choice",
+          "questionText": "א. באיזו משלחת לדעתכם יש יותר משתתפות ומשתתפים?",
+          "answers": [
+            "משלחת א'",
+            "משלחת ב'"
+          ],
+          "correctAnswers": [
+            "משלחת ב'"
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-002/q2",
+          "questionType": "choice",
+          "questionText": "ב. אם במשלחת א' זכו ב-5 מדליות זהב, כמה משתתפים יש במשלחת ב'?",
+          "answers": [
+            "20",
+            "40",
+            "32"
+          ],
+          "correctAnswers": [
+            "40"
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-002/q3",
+          "questionType": "choice",
+          "questionText": "ג. חשיבה יחסית: איזו משלחת הציגה אחוז הצלחה גבוה יותר (יותר מדליות ביחס לגודל המשלחת)?",
+          "answers": [
+            "משלחת א': כי בה כל 4 משתתפות או משתתפים כבר זכו במדליה (לעומת 8 במשלחת ב')",
+            "משלחת ב': כי על כל מדליה יש בה פי 2 יותר משתתפות ומשתתפים."
+          ],
+          "correctAnswers": [
+            "משלחת א': כי בה כל 4 משתתפות או משתתפים כבר זכו במדליה (לעומת 8 במשלחת ב')"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-003/",
+      "title": "יהב ויעל שותלים גינה – חישוב גודל חלקים לפי יחס",
+      "informationToBot": "מטרת הפריט: ללמד שיטה כללית לחישוב גודל של חלק בקבוצה כאשר ידוע יחס בין חלקים וגודל הקבוצה הכולל, דרך דוגמה קונקרטית (זריעת 70 זרעי צנוניות וחסה ביחס 3:4). מה התלמיד אמור להבין/לתרגל: (1) חישוב 'שלם' מסכום חלקי היחס (3+4=7); (2) שימוש בשבר-חלק (למשל 4/7) לחישוב כמות מתוך סך כולל; (3) זיהוי מרכיבי הנוסחה הכללית (חלק-לפי-יחס/סך-חלקים-לפי-יחס)×גודל-קבוצה=גודל-חלק. כיווני חשיבה ואסטרטגיות: אימות תוצאת היישומון (ניסוי-וטעייה עם סליידר) מול חישוב אלגברי מדויק; זיהוי שהמונה במשוואה הוא החלק שאנו מחפשים והמכנה הוא סך כל חלקי היחס. טעויות נפוצות: היפוך היחס (3:4 מול 4:3); בלבול בין 'החלק הידוע לפי היחס' (המונה, 4) לבין 'סך החלקים לפי היחס' (המכנה, 7); שיוך גודל-הקבוצה (70) לתא הלא-נכון. מידע נוסף: מסך גלילה מותאם עם 5 תת-סעיפים - רק שאלת הבחירה ושאלת הגרירה מוערכות; כולל יישומון-סליידר אינטראקטיבי מרכזי (ניסוי-וטעייה חזותי לפני המענה) - mediaFormat נקבע interactive-content בשל היישומון. שאלת הגרירה מאפשרת 2 ניסיונות. צילום מסך: לא צורף.",
+      "contentType": "instruction",
+      "mediaFormat": "interactive-content",
+      "questions": [
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-003/q1",
+          "questionType": "choice",
+          "questionText": "סמנו לכמה שורות הגעתם:",
+          "answers": [
+            "10",
+            "11",
+            "12"
+          ],
+          "correctAnswers": [
+            "10"
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-003/q2",
+          "questionType": "matching",
+          "questionText": "מה מייצג כל מספר במשוואה? גררו כל הגדרה אל המקום המתאים.",
+          "answers": {
+            "source": [
+              "גודל הקבוצה",
+              "הגודל של החלק הידוע לפי היחס",
+              "החלק הידוע לפי היחס",
+              "סך החלקים לפי היחס"
+            ],
+            "target": [
+              "4",
+              "7",
+              "70",
+              "40"
+            ]
+          },
+          "correctAnswers": [
+            {
+              "source": "החלק הידוע לפי היחס",
+              "target": "4"
+            },
+            {
+              "source": "סך החלקים לפי היחס",
+              "target": "7"
+            },
+            {
+              "source": "גודל הקבוצה",
+              "target": "70"
+            },
+            {
+              "source": "הגודל של החלק הידוע לפי היחס",
+              "target": "40"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-004/",
+      "title": "נפתור יחד: חלוקת גולות אדומות וכחולות ביחס 2:5",
+      "informationToBot": "מטרת הפריט: להדגים ללומד/ת שלב-אחר-שלב, יחד עם דמות מלווה, פתרון מלא של תרגיל חלוקה ביחס (56 גולות ביחס 2:5 בין אורי לדן), כהכנה לתרגול עצמאי בהמשך הרכיב. מה התלמיד אמור להבין/לתרגל: זיהוי החלק היחסי של כל צד (2/7, 5/7) מתוך סכום חלקי היחס (2+5=7); הכפלת השבר בסך הכול לקבלת כמות בפועל; שיטות חלופיות (חיסור, קיבוץ) לאימות התוצאה. כיווני חשיבה ואסטרטגיות: לוודא שסכום שני החלקים (16+40=56) מתאים לסך הכולל; להכיר כמה דרכים מקבילות לאותה תוצאה. טעויות נפוצות: בחירת 4/7 או 2/5 במקום 5/7 עבור החלק של דן; טעויות חישוב בהכפלת שבר בסכום (20 או 18 במקום 16). מידע נוסף: תרגול מונחה בממשק שני-פאנלים (מחברת עם הבעיה המקורית + כרטיס 'שלב מודרך') - mediaFormat: text לפי הכלל הקבוע לתרגול מונחה, גם שה-questions אינו ריק (הלומד צופה בפתרון עם הדמות, לא עונה בעצמו). מסך מעבר קודם ('בואו נפתור תרגיל אחד יחד') מתקפל לתוך פריט זה. צילום מסך: לא צורף.",
+      "contentType": "solved-exercise",
+      "mediaFormat": "text",
+      "questions": [
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-004/q1",
+          "questionType": "true-false",
+          "questionText": "א. האם נכון שיש לאורי 2/7 מהגולות?",
+          "answers": [
+            "נכון",
+            "לא נכון"
+          ],
+          "correctAnswers": [
+            "נכון"
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-004/q2",
+          "questionType": "choice",
+          "questionText": "ב. איזה חלק קיבל דן?",
+          "answers": [
+            "5/7",
+            "4/7",
+            "2/5"
+          ],
+          "correctAnswers": [
+            "5/7"
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-004/q3",
+          "questionType": "choice",
+          "questionText": "ג. 2/7 · 56 = ?",
+          "answers": [
+            "18",
+            "20",
+            "16"
+          ],
+          "correctAnswers": [
+            "16"
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-004/q4",
+          "questionType": "choice",
+          "questionText": "ד. 5/7 · 56 = ?",
+          "answers": [
+            "45",
+            "40",
+            "39"
+          ],
+          "correctAnswers": [
+            "40"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-005/",
+      "title": "שאלת חימום: בקבוקי שתייה וזוויות לפי יחס",
+      "informationToBot": "מטרת הפריט: שתי שאלות חימום קלילות רצופות על חלוקה לפי יחס - האחת בעזרת יישומון גרירה (60 בקבוקי שתייה ביחס 2:3 תות:מנגו, מסודרים במדפים בני 5 בקבוקים), השנייה על חישוב זוויות (זווית ABC ישרה 90°, מחולקת ליחס 1:4 בין α ל-β). מה התלמיד אמור להבין/לתרגל: בבקבוקים - חישוב מספר המדפים (60÷5=12) ואז כמות מכל טעם (12×2=24 תות, 12×3=36 מנגו); בזוויות - זיהוי ש'השלם' הוא 90° (לא 180/360), חלוקתו ל-5 חלקי-יחס (1+4), וחישוב כל זווית כשבר מתאים. כיווני חשיבה ואסטרטגיות: בכל 'יחידת יחס' (5 בקבוקים) יש 2 תות ו-3 מנגו קבועים, להכפיל במספר החזרות; לוודא ש-α+β=90° כבדיקת-סבירות עצמית. טעויות נפוצות: חישוב הפוך בין תות למנגו (24↔36) או שכחת שלב-הביניים של מספר המדפים; שימוש ב-180°/360° כ'שלם' במקום 90°, או היפוך בין α ל-β (72↔18). מידע נוסף: כל שלושת סעיפי הבקבוקים נבדקים יחד בכפתור 'צדקתי?' אחד (משולב עם יישומון גרירה אמיתי, ללא בדיקה מובנית ביישומון עצמו), ושני סעיפי הזוויות נבדקים יחד בכפתור נפרד (כולל כפתור רמז המוסתר עד ניסיון שגוי ראשון); שני ניסיונות לכל קבוצה. דיאגרמת הזווית היא איור תומך בלבד - כל המידע הדרוש לפתרון קיים כטקסט מלא, אין תלות בתמונה. מסך מעבר קודם ('מה נשאר לנו בראש? 2 שאלות קלילות לחימום') מתקפל לתוך פריט זה. שתי הקבוצות נבנו בקוד כשני מסכי-חימום נפרדים (הערת-בנייה: 'שקף 26 = שאלה 2 מתוך 2'), אך מוזגו כאן לפריט אחד לפי בקשת המשתמש. צילום מסך: לא צורף.",
+      "contentType": "practice",
+      "mediaFormat": "interactive-content",
+      "questions": [
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-005/q1",
+          "questionType": "numeric",
+          "questionText": "א. בכמה מדפים סידרתם את בקבוקי השתייה?",
+          "answers": [],
+          "correctAnswers": [
+            12
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-005/q2",
+          "questionType": "numeric",
+          "questionText": "ב. כמה בקבוקי שתייה בטעם תות יש על המדפים?",
+          "answers": [],
+          "correctAnswers": [
+            24
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-005/q3",
+          "questionType": "numeric",
+          "questionText": "ג. כמה בקבוקי שתייה בטעם מנגו יש על המדפים?",
+          "answers": [],
+          "correctAnswers": [
+            36
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-005/q4",
+          "questionType": "numeric",
+          "questionText": "ד. גודלה של זווית α הוא (°)",
+          "answers": [],
+          "correctAnswers": [
+            18
+          ]
+        },
+        {
+          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-005/q5",
+          "questionType": "numeric",
+          "questionText": "ה. גודלה של זווית β הוא (°)",
+          "answers": [],
+          "correctAnswers": [
+            72
+          ]
+        }
+      ]
+    }
+  ]
+}
