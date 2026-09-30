@@ -92,6 +92,19 @@ all 720 units use (`REPORT_FIELDS` must not change) with unit / component / item
 - A white boot cover hides the first screen until the restore has decided where to land.
 - `?resetState` wipes the document and the caches (QA).
 
+## Kata catalogue
+- Sent **2026-09-30** as **draft** (not published): unit `methodica-math-ratio-05`, 6 components, 19
+  items; 03 `recommendedAfterFail` → 02. `hostedContentRef` =
+  `https://lomdot.education.gov.il/metodica/720/math/ratio/05/<component>/index.html` — the package
+  must be uploaded there. Logs: `docs-and-tools/*-2026-09-30*.log`.
+- Tools (from volume-liquid-01): `docs-and-tools/send-metadata.ps1` (`-Preflight`, `-DryRun`, live,
+  `-Status`, `-Publish` — one-way) and `retrieve-metadata.ps1 -FailOnDrift` → `metadata-from/`.
+  Key: `docs-and-tools/kata-api-key.txt` (git-ignored, never packaged). Run from native PowerShell 7;
+  see `docs-and-tools/SEND-METADATA.md`. Archive `send-metadata.log` before every run.
+- Verified after the send: retrieve `-FailOnDrift` 0 warnings; parsed JSON identical to `metadata/`
+  except Kata's own `manufacturer` label and the IRI form of `recommendedAfterFail`.
+- Re-send after changing `metadata/`: `-DryRun` → live (upsert, reports UPDATED) → retrieve.
+
 ## Packaging and deployment
 - `pwsh -File docs-and-tools/build-package.ps1 -DryRun` lists what ships and what does not;
   without `-DryRun` it cuts `../../deployments/<yyyy-mm-dd>/` from a **clean, committed** tree and

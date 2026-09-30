@@ -1,0 +1,11 @@
+=== send-metadata STATUS (read-only GETs) ===
+[INFO] Base URL     : https://kata.cet.ac.il
+[INFO] Metadata dir : C:\Users\Vadim\OneDrive - methodic.co.il\Projects_ACTIVE\MOE\720\2026\methodica-math-ratio-05\git-repo\methodica-math-ratio-05\metadata
+[INFO] Mode         : STATUS (read-only GETs)
+[INFO] draft     methodica-math-ratio-05-01 (HTTP 200)
+[INFO] draft     methodica-math-ratio-05-02 (HTTP 200)
+[INFO] draft     methodica-math-ratio-05-03 (HTTP 200)
+[INFO] draft     methodica-math-ratio-05-04 (HTTP 200)
+[INFO] draft     methodica-math-ratio-05-05 (HTTP 200)
+[INFO] draft     methodica-math-ratio-05-06 (HTTP 200)
+[INFO] Status done. draft=6 published=0 unreadable=0 — nothing was written.

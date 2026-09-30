@@ -1,0 +1,32 @@
+=== send-metadata LIVE ===
+[INFO] Base URL     : https://kata.cet.ac.il
+[INFO] Metadata dir : C:\Users\Vadim\OneDrive - methodic.co.il\Projects_ACTIVE\MOE\720\2026\methodica-math-ratio-05\git-repo\methodica-math-ratio-05\metadata
+[INFO] Mode         : LIVE
+[INFO] CREATED unit methodica-math-ratio-05 (HTTP 201)
+[INFO] CREATED component methodica-math-ratio-05-01 (HTTP 201)
+[INFO] CREATED item methodica-math-ratio-05-01-001 (HTTP 201)
+[INFO] CREATED item methodica-math-ratio-05-01-002 (HTTP 201)
+[INFO] CREATED item methodica-math-ratio-05-01-003 (HTTP 201)
+[INFO] CREATED item methodica-math-ratio-05-01-004 (HTTP 201)
+[INFO] CREATED item methodica-math-ratio-05-01-005 (HTTP 201)
+[INFO] CREATED component methodica-math-ratio-05-02 (HTTP 201)
+[INFO] CREATED item methodica-math-ratio-05-02-001 (HTTP 201)
+[INFO] CREATED item methodica-math-ratio-05-02-002 (HTTP 201)
+[INFO] CREATED item methodica-math-ratio-05-02-003 (HTTP 201)
+[INFO] CREATED item methodica-math-ratio-05-02-004 (HTTP 201)
+[INFO] CREATED component methodica-math-ratio-05-03 (HTTP 201)
+[INFO] CREATED item methodica-math-ratio-05-03-001 (HTTP 201)
+[INFO] CREATED item methodica-math-ratio-05-03-002 (HTTP 201)
+[INFO] CREATED item methodica-math-ratio-05-03-003 (HTTP 201)
+[INFO] CREATED item methodica-math-ratio-05-03-004 (HTTP 201)
+[INFO] CREATED component methodica-math-ratio-05-04 (HTTP 201)
+[INFO] CREATED item methodica-math-ratio-05-04-001 (HTTP 201)
+[INFO] CREATED item methodica-math-ratio-05-04-002 (HTTP 201)
+[INFO] CREATED component methodica-math-ratio-05-05 (HTTP 201)
+[INFO] CREATED item methodica-math-ratio-05-05-001 (HTTP 201)
+[INFO] CREATED item methodica-math-ratio-05-05-002 (HTTP 201)
+[INFO] CREATED item methodica-math-ratio-05-05-003 (HTTP 201)
+[INFO] CREATED component methodica-math-ratio-05-06 (HTTP 201)
+[INFO] CREATED item methodica-math-ratio-05-06-001 (HTTP 201)
+[INFO] LINKED  component methodica-math-ratio-05-03 recommendedAfterFail -> [methodica-math-ratio-05-02] (HTTP 200)
+[INFO] Done. created=26 updated=1 failed=0

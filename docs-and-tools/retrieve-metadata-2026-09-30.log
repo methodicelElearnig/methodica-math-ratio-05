@@ -1,0 +1,13 @@
+=== retrieve-metadata ===
+[INFO] Base URL   : https://kata.cet.ac.il
+[INFO] Output dir : C:\Users\Vadim\OneDrive - methodic.co.il\Projects_ACTIVE\MOE\720\2026\methodica-math-ratio-05\git-repo\methodica-math-ratio-05\metadata-from
+[INFO] Unit key   : methodica-math-ratio-05 (from methodica-math-ratio-05_unit.json)
+[INFO] Auditing against C:\Users\Vadim\OneDrive - methodic.co.il\Projects_ACTIVE\MOE\720\2026\methodica-math-ratio-05\git-repo\methodica-math-ratio-05\metadata (6 components, 19 items)
+[INFO] WROTE   methodica-math-ratio-05_unit.json
+[INFO] WROTE   methodica-math-ratio-05-01.json (5 items)
+[INFO] WROTE   methodica-math-ratio-05-02.json (4 items)
+[INFO] WROTE   methodica-math-ratio-05-03.json (4 items)
+[INFO] WROTE   methodica-math-ratio-05-04.json (2 items)
+[INFO] WROTE   methodica-math-ratio-05-05.json (3 items)
+[INFO] WROTE   methodica-math-ratio-05-06.json (1 items)
+[INFO] Done. unit=1 components=6 items=19 warnings=0
