@@ -2,84 +2,17 @@
 
 /* ---------- Subject theme tokens (Math) ----------
    זהים לחלוטין לסיינים 1+2 — אותו יעד/נושא ("יחס"), אותה ערכת-צבע. */
-:root {
-  --subject-100: #EAD9FF;
-  --subject-200: #CEC7FF;
-  --subject-300: #E1D9FF;
-  --subject-350: #B3B0FF;
-  --subject-400: #BDB3FC;
-  --subject-500: #3B2FC2;
-  --subject-600: #383896;
-  --subject-700: #5656CC;
-  --subject-800: #4B35A5;
-  --subject-900: #2F2478;
-  --subject-alpha-100: rgba(165, 28, 255, 0);
-  --subject-alpha-200: rgba(165, 28, 255, 0.3);
-}
 
 /* ---------- Fonts (עותק מקומי לסין זה, ב-assets/fonts — כל סין
    עצמאי לחלוטין, לפי כלל העצמאות של הפרויקט) ---------- */
-@font-face {
-  font-family: 'Assistant';
-  src: url('../unit-assets/fonts/assistant-hebrew.woff2') format('woff2');
-  font-weight: 400 800;
-  font-style: normal;
-  font-display: swap;
-  unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
-}
-@font-face {
-  font-family: 'Assistant';
-  src: url('../unit-assets/fonts/assistant-latin.woff2') format('woff2');
-  font-weight: 400 800;
-  font-style: normal;
-  font-display: swap;
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-                 U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
-}
 
 /* ---------- Reset ---------- */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  direction: rtl;
-  font-family: 'Assistant', 'Segoe UI', Arial, sans-serif;
-  background: #ffffff;
-}
-button {
-  font-family: inherit;
-  cursor: pointer;
-  background: none;
-  border: none;
-  color: inherit;
-}
-button:disabled { cursor: default; }
-img { display: block; max-width: none; }
 
 /* ---------- Canvas & viewport scaling ---------- */
-#app {
-  width: 1280px;
-  height: 710px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform-origin: top left;
-  background: #fff;
-  overflow: hidden;
-}
-
-.screen {
-  position: absolute;
-  inset: 0;
-  display: none;
-}
-.screen.active { display: block; }
 
 /* transitions removed on purpose — Figma states change instantly;
    entrance/reveal motion is added later, per-screen, by the
    animation-system skill — not here */
-* { transition: none !important; }
 
 /* ════════════════════════════════════════════════════════
    GLOBAL — Bottom bar (74px, per Figma)
@@ -88,34 +21,6 @@ img { display: block; max-width: none; }
    (bar-back ראשון = flex-start = ימין ב-RTL; bar-actions שני =
    flex-end = שמאל), לא ע"י היפוך direction. בכל מסך, .bar-back
    מופיע לפני .bar-actions ב-DOM. ════════════════════════════ */
-.bottom-bar {
-  position: absolute;
-  bottom: -3px; /* -3px hides the bottom border line */
-  left: 0;
-  right: 0;
-  height: 74px;
-  background: #ffffff;
-  border-top: 0.4px solid #AEAEAE;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.bottom-bar-inner {
-  width: 1232px;
-  padding: 0 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.bar-actions {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.bar-back {
-  display: flex;
-  align-items: center;
-}
 
 /* === Continue button (gradient pill) — Math gradient ===
    SELF-QA-lomda.md §6: reference CSS, Math gradient per
@@ -125,88 +30,20 @@ img { display: block; max-width: none; }
    actual Math-themed Figma frame — flagged as an open question since
    סיין 1 (ARCHITECTURE.md § "ביקורת התאמה לפיגמה") — carried forward
    as-is, not re-derived here. */
-.btn-continue {
-  display: flex; align-items: center; justify-content: center;
-  height: 39px;
-  background: linear-gradient(180deg, #6F6AD5 8.654%, #4B35A5 38.462%, #270075 100%);
-  color: #ffffff;
-  border: none;
-  border-radius: 1000px;
-  font-family: 'Assistant', sans-serif;
-  font-size: 20px;
-  font-weight: 400;
-  padding: 0 20px;
-  min-width: 140px;
-  box-sizing: border-box;
-  cursor: pointer;
-  white-space: nowrap;
-}
-.btn-continue:disabled {
-  background: #AEAEAE;
-  color: #303030;
-  cursor: not-allowed;
-}
-.btn-continue:not(:disabled):hover { opacity: 0.88; }
-.btn-continue:focus-visible {
-  outline: 3px solid var(--subject-500);
-  outline-offset: 2px;
-}
 
 /* === Back button (חזרה) — never shown on the first screen ===
    border/text color = var(--subject-700), never var(--subject-500)
    (הצבע המבולבל ביותר במשפחה הזו). */
-.btn-back {
-  display: flex; align-items: center; justify-content: center;
-  height: 39px;
-  background: #ffffff;
-  color: var(--subject-700);
-  border: 1px solid var(--subject-700);
-  border-radius: 1000px;
-  font-family: 'Assistant', sans-serif;
-  font-size: 20px;
-  font-weight: 400;
-  padding: 0 20px;
-  min-width: 140px;
-  box-sizing: border-box;
-  cursor: pointer;
-  white-space: nowrap;
-}
-.btn-back[hidden] { display: none; }
-.btn-back:hover { background: #f0f8ff; }
-.btn-back:focus-visible {
-  outline: 3px solid var(--subject-700);
-  outline-offset: 2px;
-}
 
 /* === Hint button (אפשר רמז?) — border/text = var(--subject-700);
    icon class is .scq-hint-icon (26×24). 4 מופעים במסך 3 (סעיפים
    א/ב/ג/ד), בתוך .btn-hint-row (רמז ראשון ב-DOM, צדקתי שני). */
-.btn-hint {
-  display: flex; align-items: center; justify-content: center;
-  height: 39px;
-  background: #ffffff;
-  color: var(--subject-700);
-  border: 1px solid var(--subject-700);
-  border-radius: 1000px;
-  font-family: 'Assistant', sans-serif;
-  font-size: 20px;
-  font-weight: 400;
-  padding: 0 20px;
-  min-width: 140px;
-  box-sizing: border-box;
-  cursor: pointer;
-  gap: 6px;
-  white-space: nowrap;
-}
-.btn-hint[hidden] { display: none; }
 .btn-hint .scq-hint-icon {
   flex-shrink: 0;
   width: 26px;
   height: 24px;
 }
 .btn-hint:disabled .scq-hint-icon { filter: grayscale(1) opacity(0.45); }
-.btn-hint:disabled { color: #aeaeae; border-color: #aeaeae; cursor: not-allowed; }
-.btn-hint:hover { background: #f0f8ff; }
 
 /* ════════════════════════════════════════════════════════
    GLOBAL — Report/Issue button (.flag-btn)
@@ -215,41 +52,6 @@ img { display: block; max-width: none; }
    Figma-verified position (fileKey eSbp4bKHgBky0rakDb8l9N,
    nodeId 1045:13096, "Report Problem"): top:32/left:32.
    ════════════════════════════════════════════════════════ */
-.flag-btn {
-  position: absolute;
-  top: 32px;
-  left: 32px;
-  z-index: 30;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 10px 4px;
-  width: 88px;
-}
-.flag-btn-icon { position: relative; display: block; width: 38px; height: 38px; }
-.flag-btn-icon-default,
-.flag-btn-icon-hover {
-  position: absolute;
-  inset: 0;
-  width: 38px;
-  height: 38px;
-}
-.flag-btn-icon-hover { opacity: 0; }
-.flag-btn-label {
-  font-weight: 600;
-  font-size: 20px;
-  color: var(--subject-500);
-  text-align: center;
-  width: 80px;
-  opacity: 0;
-}
-.flag-btn:hover .flag-btn-icon-default,
-.flag-btn:focus-visible .flag-btn-icon-default { opacity: 0; }
-.flag-btn:hover .flag-btn-icon-hover,
-.flag-btn:focus-visible .flag-btn-icon-hover { opacity: 1; }
-.flag-btn:hover .flag-btn-label,
-.flag-btn:focus-visible .flag-btn-label { opacity: 1; }
 
 /* ════════════════════════════════════════════════════════
    GLOBAL — Image zoom (_global-components.md: "Image zoom")
@@ -259,37 +61,6 @@ img { display: block; max-width: none; }
    .screen divs, directly in #app. Ready for use once a content
    screen adds an image + .img-zoom-btn.
    ════════════════════════════════════════════════════════ */
-.img-zoom-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  background: #fff;
-  border: 2px solid var(--subject-500);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 0;
-  z-index: 2;
-}
-.img-zoom-btn:hover { background: var(--subject-500); }
-.img-zoom-btn__icon { width: 20px; height: 20px; stroke: var(--subject-500); }
-.img-zoom-btn:hover .img-zoom-btn__icon { stroke: #fff; }
-.img-zoom-btn:focus-visible { outline: 2px solid var(--subject-500); outline-offset: 2px; }
-
-.img-zoom-modal {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.78);
-  z-index: 1000;
-}
-.img-zoom-modal.hidden { display: none; }
 
 .img-zoom-modal__panel {
   position: relative;
@@ -321,10 +92,8 @@ img { display: block; max-width: none; }
   justify-content: center;
   cursor: pointer;
 }
-.img-zoom-close:hover { background: var(--subject-500); }
 .img-zoom-close__icon { width: 15px; height: 15px; color: var(--subject-500); }
 .img-zoom-close:hover .img-zoom-close__icon { color: #fff; }
-.img-zoom-close:focus-visible { outline: 2px solid var(--subject-500); outline-offset: 2px; }
 
 /* ════════════════════════════════════════════════════════
    GLOBAL — Feedback popup system (_global-components.md:
@@ -357,10 +126,6 @@ img { display: block; max-width: none; }
   z-index: 50;
   cursor: grab;
 }
-.scq-fb-box.visible { display: flex; }
-.scq-fb-box.is-correct { background: #edf8ed; }
-.scq-fb-box.is-wrong { background: #ffdbdc; }
-.scq-fb-box.is-dragging { cursor: grabbing; }
 .scq-fb-box.is-static {
   position: static;
   left: auto; right: auto; top: auto; bottom: auto;
@@ -375,88 +140,12 @@ img { display: block; max-width: none; }
   align-items: center;
   gap: 8px;
 }
-.scq-fb-title-text {
-  flex: 1;
-  font-weight: 700;
-  font-size: 20px;
-  color: #222;
-  text-align: right;
-  white-space: pre-line;
-}
-.scq-fb-body {
-  font-weight: 400;
-  font-size: 20px;
-  color: #222;
-  text-align: right;
-  white-space: pre-line;
-}
-.scq-fb-reveal-btn {
-  align-self: flex-start;
-  background: #fff;
-  color: var(--subject-500);
-  border: 1.5px solid var(--subject-500);
-  border-radius: 1000px;
-  font-family: 'Assistant', sans-serif;
-  font-size: 20px;
-  font-weight: 400;
-  padding: 10px 24px;
-  cursor: pointer;
-}
-.scq-fb-reveal-btn[hidden] { display: none; }
-.scq-fb-reveal-btn:hover { background: #f0f8ff; }
 /* ════════════════════════════════════════════════════════
    GLOBAL — Hint overlay (_global-components.md — outside .screen,
    direct child of #app). 4 מופעים במסך 3 (s2-p1/p2/p4/p5-hint-overlay).
    Opened/closed per-screen via the native `hidden` property — this is
    exactly the mechanism closeAllPopupsAndHints() in script.js relies on.
    ════════════════════════════════════════════════════════ */
-.scq-hint-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 40;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(47, 36, 120, 0.35);
-}
-.scq-hint-overlay[hidden] { display: none; }
-
-.scq-hint-popup {
-  position: relative;
-  width: 542px;
-  max-width: calc(100% - 64px);
-  background: var(--subject-500);
-  border-radius: 48px;
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 24px;
-  direction: rtl;
-}
-.scq-hint-title-row {
-  width: 100%;
-  display: flex;
-  flex-direction: row-reverse;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 16px;
-}
-.scq-hint-title {
-  flex: 1;
-  font-weight: 700;
-  font-size: 32px;
-  color: #fff;
-  text-align: right;
-}
-.scq-hint-bulb { width: 40px; height: 34px; flex-shrink: 0; }
-.scq-hint-body {
-  font-weight: 400;
-  font-size: 22px;
-  color: #fff;
-  text-align: right;
-  line-height: 1.5;
-}
 .scq-hint-close {
   align-self: center;
   width: 196px;
@@ -626,8 +315,6 @@ img { display: block; max-width: none; }
    GLOBAL — ValueInputQuestion inputs. מועתק כפי-שהוא מסיינים 3/5.
    ════════════════════════════════════════════════════════ */
 .viq-answers { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; width: 100%; }
-.viq-answer-row { display: flex; flex-direction: row; align-items: center; gap: 16px; width: 100%; }
-.viq-answer-label { font-family: 'Assistant', sans-serif; font-size: 24px; font-weight: 400; color: #303030; text-align: right; }
 .viq-answer-unit { font-family: 'Assistant', sans-serif; font-size: 20px; color: #303030; }
 
 .viq-input {
@@ -647,72 +334,13 @@ img { display: block; max-width: none; }
   background-position: right 16px center;
   background-size: 16px 16px;
 }
-.viq-input::-webkit-outer-spin-button,
-.viq-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.viq-input[type="number"] { -moz-appearance: textfield; }
-.viq-input:focus { outline: none; border: 1.5px solid var(--subject-500); }
 .viq-input:not(:placeholder-shown):not(:focus) { border: 1px solid #ececec; }
-.viq-input:disabled { color: #303030; -webkit-text-fill-color: #303030; opacity: 1; background-color: #fff; }
-.viq-input.correct {
-  border: 1px solid #609e12;
-  background-color: #fff;
-  background-image: url('../unit-assets/img/icon-check-green-16.svg');
-  padding-inline-end: 42px;
-}
-.viq-input.wrong {
-  border: 1px solid #b20010;
-  background-color: #fff;
-  background-image: url('../unit-assets/img/icon-x-red-16.svg');
-  padding-inline-end: 42px;
-}
 
 /* ════════════════════════════════════════════════════════
    GLOBAL — Progress Question (720-templates skill →
    _global-components.md → "Progress Question"). מועתק כפי-שהוא מסיין 3.
    מופע יחיד כאן: #s2-progress, 4 פריטים (סעיפים א/ב/ג/ד).
    ════════════════════════════════════════════════════════ */
-.progress-question {
-  position: absolute;
-  top: 48px;
-  left: 40px;
-  right: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 4px;
-  z-index: 2;
-}
-.progress-question__item { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 80px; }
-.progress-question__icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1.5px solid #ececec; background: #fff; }
-.progress-question__icon::after { content: ''; width: 12px; height: 12px; border-radius: 50%; background: #ececec; display: block; }
-.progress-question__icon--current { border: 2px solid var(--subject-500); background: #fff; }
-.progress-question__icon--current::after { background: var(--subject-500); }
-.progress-question__icon--correct { background: var(--subject-500); border: 2px solid var(--subject-500); }
-.progress-question__icon--correct::after {
-  content: '';
-  width: 12px; height: 9px;
-  background: none;
-  background-image: url('../unit-assets/img/icon-check-white.svg');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-}
-.progress-question__icon--incorrect { background: var(--subject-500); border: 2px solid var(--subject-500); }
-.progress-question__icon--incorrect::after {
-  content: '';
-  width: 10px; height: 10px;
-  background: none;
-  background-image: url('../unit-assets/img/icon-x-white.svg');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-}
-.progress-question__label { font-family: 'Assistant', sans-serif; font-size: 20px; color: #ececec; text-align: center; white-space: nowrap; }
-.progress-question__label--visited { color: #222; }
-.progress-question__connector { width: 64px; height: 1.5px; background: #ececec; margin-top: 11.5px; border-radius: 2px; flex-shrink: 0; }
-.progress-question__connector--visited { background: rgba(0, 0, 0, 0.6); }
-
-.scq-qtext-em { font-family: 'Assistant', sans-serif; font-size: 24px; font-weight: 700; color: var(--subject-500); text-align: right; margin: 0; }
 .btn-hint-row { display: flex; flex-direction: row; align-items: center; gap: 16px; align-self: flex-end; }
 
 /* ════════════════════════════════════════════════════════
@@ -732,7 +360,6 @@ img { display: block; max-width: none; }
   z-index: 1;
 }
 .s3-img-frame { position: relative; width: 400px; border: 1px solid rgba(174, 174, 174, 0.5); border-radius: 16px; overflow: hidden; box-sizing: border-box; }
-.s3-img-frame img { width: 100%; height: auto; display: block; }
 .s3-img-frame--diagram { background: #fafafa; padding: 16px; box-sizing: border-box; }
 .s3-img-frame--diagram img { width: 100%; height: auto; }
 
@@ -749,15 +376,6 @@ img { display: block; max-width: none; }
   direction: ltr;
   cursor: grab;
 }
-.s3-scroll-area::-webkit-scrollbar { width: 12px; }
-.s3-scroll-area::-webkit-scrollbar-track { background: rgba(201, 206, 216, 0.4); border-radius: 16px; }
-.s3-scroll-area::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.56); border-radius: 24px; }
-.s3-scroll-inner { direction: rtl; width: 100%; }
-
-.s3-part { display: flex; flex-direction: column; align-items: flex-start; width: 100%; gap: 20px; padding: 20px 0; box-sizing: border-box; }
-.s3-part[hidden] { display: none; }
-.s3-body { font-family: 'Assistant', sans-serif; font-size: 24px; font-weight: 400; color: #303030; text-align: right; line-height: 1.4; width: 100%; margin: 0; }
-.s3-inline-btn { align-self: flex-end; }
 
 /* ════════════════════════════════════════════════════════
    GLOBAL — Gesture Hint (Cursor Scroll), SELF-QA-lomda.md §7. מועתק
@@ -768,66 +386,8 @@ img { display: block; max-width: none; }
   pointer-events: none;
   z-index: 20;
 }
-.gesture-hint-scroll-wrap[hidden] { display: none; }
 #s2-scroll-gesture { top: 139px; left: 460px; right: 16px; bottom: 74px; }
 #s4-scroll-gesture { top: 139px; left: 460px; right: 16px; bottom: 74px; }
-.gesture-hint {
-  position: absolute;
-  left: 50%; top: 62%;
-  translate: -50% -50%;
-  width: 0; height: 0;
-  pointer-events: none;
-}
-.gesture-hint-scroll-wrap .gesture-hint { left: auto; right: 6px; }
-.gesture-hint-hand,
-.gesture-hint-ring {
-  position: absolute;
-  left: 0; top: 0;
-  translate: -50% -50%;
-}
-.gesture-hint-hand { width: 28px; height: 33px; z-index: 3; }
-.gesture-hint-ring { border-radius: 50%; opacity: 0; }
-.gesture-hint-ring--small {
-  width: 12px; height: 12px;
-  border: 1.5px solid var(--subject-350);
-  z-index: 2;
-  animation: gesture-ring-small 2s infinite;
-}
-.gesture-hint-ring--big {
-  width: 64px; height: 64px;
-  background: var(--subject-350);
-  border: 2.5px solid var(--subject-400);
-  z-index: 1;
-  animation: gesture-ring-big 2s infinite;
-}
-@keyframes gesture-ring-small {
-  0%   { opacity: 0;    scale: 0.2 0.2; }
-  3%   { opacity: 0.75; scale: 1   1; }
-  10%  { opacity: 0;    scale: 1.1 1.1; }
-  100% { opacity: 0;    scale: 1.1 1.1; }
-}
-@keyframes gesture-ring-big {
-  0%    { opacity: 0;    scale: 0.05 0.05; }
-  5%    { opacity: 0.85; }
-  7.5%  {                scale: 0.22 0.22; }
-  22.5% {                scale: 0.6  0.6; }
-  35%   { opacity: 0.65; }
-  37.5% {                scale: 0.85 0.85; }
-  45%   { opacity: 0.35; }
-  50%   { opacity: 0; scale: 1 1; }
-  100%  { opacity: 0; scale: 1 1; }
-}
 
 /* שבר מוצג (2/7 וכו') */
-.frac {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  vertical-align: middle;
-  font-size: 0.75em;
-  line-height: 1.2;
-  margin: 0 4px;
-}
-.frac-num { border-bottom: 1.5px solid currentColor; padding: 0 6px 2px; }
-.frac-den { padding: 2px 6px 0; }
 
