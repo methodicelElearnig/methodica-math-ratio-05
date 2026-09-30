@@ -155,6 +155,14 @@ function alignBtnToLeftmost(btn, anchors, container) {
   btn.style.marginLeft = Math.max(0, (leftmost - containerRect.left) / scale) + 'px';
 }
 
+/* ---------- Screen-reader announcement through #a11y-announcer (polite live region) ---------- */
+function announce(msg) {
+  var el = document.getElementById('a11y-announcer');
+  if (!el || !msg) return;
+  el.textContent = '';
+  setTimeout(function () { el.textContent = msg; }, 50);
+}
+
 /* ---------- Image zoom: any element with data-zoom-src opens its parent frame
    in the global #img-zoom-modal (outside every .screen). ---------- */
 function imgZoomOpen(trigger) {
