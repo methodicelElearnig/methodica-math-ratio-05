@@ -79,7 +79,7 @@ img { display: block; max-width: none; }
    added later, per-screen, by the animation-system skill — not here) */
 * { transition: none !important; }
 
-/* מסך 1 — בחירת דמות מלווה (TwoOptionSelection), data-screen"0", id"s0" */
+/* מסך 1 — בחירת דמות מלווה (TwoOptionSelection), data-screen="0", id="s0" */
 .screen1-content {
   position: absolute;
   top: 64px;
@@ -1175,7 +1175,7 @@ img { display: block; max-width: none; }
 .s3-avatar-wrap { display: flex; align-items: center; justify-content: center; }
 .s3-avatar { width: 450px; height: 350px; object-fit: cover; display: block; }
 
-/* מסך 5 (מאוחד) — תרגול מונחה, data-screen"4", id"s4" */
+/* מסך 5 (מאוחד) — תרגול מונחה, data-screen="4", id="s4" */
 :root { --s4-card-bg-unconfirmed: #5749C4;  }
 
 /* עוטף title+text-block, gap:40 ביניהם (זהה לרפרנס: "Instruction Math

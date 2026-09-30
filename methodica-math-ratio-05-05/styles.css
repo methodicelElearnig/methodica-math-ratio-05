@@ -472,7 +472,7 @@ img { display: block; max-width: none; }
   text-align: center;
 }
 
-/* מסך 1 — מסך מעבר, דמות+בועית-דיבור (data-screen"0", id"s0"). */
+/* מסך 1 — מסך מעבר, דמות+בועית-דיבור (data-screen="0", id="s0"). */
 .transition-content {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 74px;

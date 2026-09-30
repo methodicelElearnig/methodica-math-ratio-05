@@ -750,7 +750,7 @@ img { display: block; max-width: none; }
 .viq-input:focus { outline: none; border: 1.5px solid var(--subject-500); }
 .viq-coord { display: inline-flex; flex-direction: row; align-items: center; gap: 6px; font-family: 'Assistant', sans-serif; font-size: 20px; font-weight: 700; color: #303030; }
 
-/* מסך 3 — המשך משימת הכיתה: קלט פתוח בלי תשובה-נכונה (data-screen"2", */
+/* מסך 3 — המשך משימת הכיתה: קלט פתוח בלי תשובה-נכונה (data-screen="2", */
 .s3open-content {
   position: absolute;
   top: 64px; right: 16px; bottom: 74px; left: 340px;

@@ -1,139 +1,28 @@
 'use strict';
 
-/* לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 1 */
+/* לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 1
+   Shared engine: ../unit-js/ (loaded before this file). */
 
 const TOTAL_SCREENS = 7;
-let currentScreen = 0;
-
-/* ---------- Companion character system — state + storage key ----------
-   ID לוגי (character-1/character-2), לא צבע/שם, לפי Companion character
-   system (720-templates skill, _global-components.md) + החלטת הפרויקט
-   (§0.4). מפתח האחסון מתויג ללומדה זו כדי שלא ידרוס/יידרס ע"י לומדה 720
-   אחרת שנטענת מאותו origin. */
-const CHARACTER_STORAGE_KEY = 'math-ratio-01_selectedCharacter';
-const KNOWN_CHARACTER_IDS = ['character-1', 'character-2'];
-
-/* כל סיין הוא מסמך HTML נפרד לחלוטין — window.lomdaState לא "עובר" בין
-   הסינים בטעינת עמוד מלאה, לכן הבחירה נשמרת גם ב-localStorage, ונקראת
-   בחזרה כאן כדי לשחזר גם רענון של מסך 1 עצמו אחרי שכבר נבחרה דמות (לא
-   רק בסינים מאוחרים יותר) — לפי החוזה המומלץ ב-_global-components.md.
-   ערך שמור שאינו אחד משני ה-ID-ים הידועים (למשל שארית מסכמה ישנה/
-   שונה) נופל בחזרה ל-null במקום להיחשב תקף, לפי אותו חוזה מומלץ.
-   try/catch: בפתיחה מ-file:// חלק מהדפדפנים (ולמשל jsdom) חוסמים גישה
-   ל-localStorage עם SecurityError — בלי ה-try/catch, חריגה כאן הייתה
-   עוצרת את טעינת כל script.js. */
-let savedCharacter = null;
-try {
-  savedCharacter = localStorage.getItem(CHARACTER_STORAGE_KEY);
-} catch (e) { /* localStorage חסום (opaque origin/פרטיות) — נמשיך בלי שמירה */ }
-if (KNOWN_CHARACTER_IDS.indexOf(savedCharacter) === -1) savedCharacter = null;
-window.lomdaState = {
-  selectedCharacter: savedCharacter
-};
-
-const CANVAS_W = 1280, CANVAS_H = 710;
-
-function scaleApp() {
-  const app = document.getElementById('app');
-  const scale = Math.min(window.innerWidth / CANVAS_W, window.innerHeight / CANVAS_H);
-  const canvasW = window.innerWidth / scale;
-  const canvasH = window.innerHeight / scale;
-  app.style.width = canvasW + 'px';
-  app.style.height = canvasH + 'px';
-  app.style.transform = 'scale(' + scale + ')';
-  app.style.left = '0px';
-  app.style.top = '0px';
-}
-window.addEventListener('resize', scaleApp);
-
-function getCanvasSize() {
-  const app = document.getElementById('app');
-  return {
-    w: parseFloat(app.style.width) || CANVAS_W,
-    h: parseFloat(app.style.height) || CANVAS_H
-  };
-}
-
-function currentCanvasScale() {
-  const appEl = document.getElementById('app');
-  return appEl ? (appEl.getBoundingClientRect().width / getCanvasSize().w) : 1;
-}
 
 function s2EAlignCheckBtn() {
-  const btn = document.getElementById('s2-e-check');
-  const diagram = document.getElementById('s2-eq-diagram');
-  const section = document.getElementById('s2-sec-e');
-  if (!btn || !diagram || !section) return;
-  const scale = currentCanvasScale();
-  const diagramRect = diagram.getBoundingClientRect();
-  const sectionRect = section.getBoundingClientRect();
-  btn.style.marginLeft = Math.max(0, (diagramRect.left - sectionRect.left) / scale) + 'px';
+  alignBtnToLeftmost(document.getElementById('s2-e-check'),
+    [document.getElementById('s2-eq-diagram')].filter(Boolean), document.getElementById('s2-sec-e'));
 }
 
-/* ---------- closeAllPopupsAndHints() — bug-fixed version ----------
-   לפי סיכום-תהליך-בניית-הלומדה.md §0.3: קורא לפעולת-הסגירה האמיתית
-   שכל רכיב-רכיב עצמו משתמש בה כדי להסתיר את עצמו —
-   - פופ-אפ משוב (id מסתיים ב-"-feedbox", class .scq-fb-box): נסגר
-     בפועל ע"י classList.remove('visible') (ראו .scq-fb-box.visible
-     ב-styles.css) — לא class גנרי "hidden".
-   - הצצת-רמז (id מסתיים ב-"-hint-overlay", class .scq-hint-overlay):
-     נסגרת בפועל ע"י הגדרת התכונה הילידית hidden=true (ראו
-     .scq-hint-overlay[hidden] ב-styles.css) — גם כאן לא class "hidden".
-   זו בדיוק אותה מנגנון-סגירה שכל מסך-תוכן ישתמש בו בעצמו (ראו למשל
-   viqCheck/s8CloseHint וכו' בפרויקטי המדעים) — הפונקציה הזו רק מריצה
-   אותו גורף, לכל הרכיבים הגלויים, לפני מעבר מסך. גנרית מספיק כדי
-   להמשיך לעבוד ברגע שמסכי תוכן אמיתיים (עם feedbox/hint-overlay
-   בפועל) יתווספו בהמשך. */
-function closeAllPopupsAndHints() {
-  document.querySelectorAll('[id$="-feedbox"]').forEach(function (el) {
-    el.classList.remove('visible');
-  });
-  document.querySelectorAll('[id$="-hint-overlay"]').forEach(function (el) {
-    el.hidden = true;
-  });
-  if (typeof s2SimExpandToggle === 'function') s2SimExpandToggle(false);
-  if (typeof s6AppletExpandToggle === 'function') s6AppletExpandToggle(false);
+/* s6 (juice-store ValueInputQuestion) intentionally keeps its own engine
+   (S6_Q/s6Check...): unlike the shared VIQ it enables a hint button after
+   the first wrong try, resets unfinished inputs on every entry and drives
+   the older qnav bar markup. */
+
+/* Called by the shared closeAllPopupsAndHints() on every screen change:
+   collapses the expanded simulation (s2) and applet (s6). */
+function partClosePopups() {
+  s2SimExpandToggle(false);
+  s6AppletExpandToggle(false);
 }
 
-function goTo(n) {
-  if (n < 0 || n >= TOTAL_SCREENS) return;
-  closeAllPopupsAndHints();
-  document.querySelectorAll('.screen').forEach(function (el) {
-    el.classList.remove('active');
-  });
-  const target = document.querySelector('.screen[data-screen="' + n + '"]');
-  if (!target) return;
-  currentScreen = n;
-  resetScreenState(n);
-  target.classList.add('active');
-}
-
-function resetScreenState(n) {
-  if (n === 0) resetScreenState0();
-  if (n === 1) resetScreenState1();
-  if (n === 2) resetScreenState2();
-  if (n === 3) resetScreenState3();
-  if (n === 4) resetScreenState4();
-  if (n === 5) resetScreenState5();
-  if (n === 6) resetScreenState6();
-}
-
-/* ---------- Dev postMessage bridge (index_dev.html free nav) ---------- */
-window.addEventListener('message', function (e) {
-  if (e.data && e.data.type === 'DEV_GOTO') goTo(e.data.screen);
-});
-window.addEventListener('load', function () {
-  if (window.parent === window) return; // not embedded in index_dev.html
-  const screenCount = document.querySelectorAll('.screen').length;
-  window.parent.postMessage({ type: 'DEV_READY', total: screenCount }, '*');
-});
-
-document.addEventListener('keydown', function (e) {
-  if (e.ctrlKey && e.key === 'ArrowLeft') goTo(currentScreen + 1);
-  if (e.ctrlKey && e.key === 'ArrowRight') goTo(currentScreen - 1);
-});
-
-/* מסך 1 — בחירת דמות מלווה (TwoOptionSelection), data-screen"0", id"s0" */
+/* מסך 1 — בחירת דמות מלווה (TwoOptionSelection), data-screen="0", id="s0" */
 function resetScreenState0() {
   // תמיד מסנכרן את ה-UI מ-window.lomdaState.selectedCharacter (לא "פעם
   // אחת בלבד") — כך חזרה למסך זה אחרי בחירה משקפת נכון את המצב הקיים.
@@ -211,8 +100,8 @@ function s1GoToPage(index) {
   s1CurrentPage = index;
   const scrollArea = document.getElementById('s1-scroll-area');
   if (scrollArea) {
-    s1GestureProgrammaticScroll = true;
-    setTimeout(function () { s1GestureProgrammaticScroll = false; }, 700);
+    S1_GESTURE.programmatic = true;
+    setTimeout(function () { S1_GESTURE.programmatic = false; }, 700);
     scrollArea.scrollTo({ top: pages[index].offsetTop, behavior: 'smooth' });
   }
   setTimeout(function () { s1Jumping = false; }, 500);
@@ -228,36 +117,7 @@ function s1InitScrollJump() {
   });
 }
 
-/* Gesture Hint — Cursor Scroll (SELF-QA-lomda.md §7). מוצג פעם אחת בכל
-   כניסה למסך (s1GestureShown הוא flag ברמת-מודול, לא resume-state
-   מתמשך — טעינה מחדש של הדף מציגה שוב, תואם את שאר מנגנוני ה-resume
-   בפרויקט). נעלם ברגע גלילה אמיתית — כאן זה אירוע ה-`scroll` הנייטיבי
-   (לא רק wheel/keydown כמו במקור ב-mass-measure-03-01): מכסה גם גלילת
-   מגע וגם גרירת פס-הגלילה בעכבר, לא רק שני הטריגרים שהמקור בדק. */
-let s1GestureShown = false;
-let s1GestureProgrammaticScroll = false;
-function s1MaybeShowScrollGesture() {
-  requestAnimationFrame(function () {
-  if (s1GestureShown) return;
-  const gesture = document.getElementById('s1-scroll-gesture');
-  const scrollArea = document.getElementById('s1-scroll-area');
-  if (!gesture || !scrollArea) return;
-  if (scrollArea.scrollHeight <= scrollArea.clientHeight) return;
-  s1GestureShown = true;
-  gesture.hidden = false;
-  scrollArea.addEventListener('scroll', s1HideGestureOnScroll, { once: true });
-
-  });}
-function s1HideGestureOnScroll() {
-  const scrollArea = document.getElementById('s1-scroll-area');
-  const gesture = document.getElementById('s1-scroll-gesture');
-  if (!scrollArea || !gesture) return;
-  if (s1GestureProgrammaticScroll) {
-    scrollArea.addEventListener('scroll', s1HideGestureOnScroll, { once: true });
-    return;
-  }
-  gesture.hidden = true;
-}
+const S1_GESTURE = makeScrollGestureHint('s1-scroll-gesture', 's1-scroll-area');
 
 function olyOptKey(event, el) {
   if (event.key === 'Enter' || event.key === ' ') {
@@ -266,11 +126,6 @@ function olyOptKey(event, el) {
   }
 }
 
-function fbCorrectShown(title) {
-  let t = String(title).replace(/\s+$/, '').replace(/[:,;]$/, '');
-  if (!/[.!?]$/.test(t)) t += '.';
-  return t + ' התשובה הנכונה מוצגת.';
-}
 
 function olySetFeedback(feedboxEl, isCorrect, text) {
   scqFbResetPosition(feedboxEl.id);
@@ -317,7 +172,7 @@ function olyQ1Check() {
   s1State.q1.done = true;
 
   document.getElementById('s1-q2').hidden = false;
-  s1MaybeShowScrollGesture();
+  S1_GESTURE.maybeShow();
   s1GoToPage(1);
 }
 
@@ -357,7 +212,7 @@ function olyQ2Check() {
   s1State.q2.done = true;
 
   document.getElementById('s1-q3').hidden = false;
-  s1MaybeShowScrollGesture();
+  S1_GESTURE.maybeShow();
   s1GoToPage(2);
 }
 
@@ -395,7 +250,7 @@ const S1_OUTRO_AVATAR_ASSETS = {
 
 function s1ShowOutro() {
   document.getElementById('s1-outro').hidden = false;
-  s1MaybeShowScrollGesture();
+  S1_GESTURE.maybeShow();
   resolveCharBubbleVideo('s1-outro-avatar', S1_OUTRO_AVATAR_ASSETS);
 }
 
@@ -423,7 +278,7 @@ function advanceFromS1() {
 
 function resetScreenState1() {
   s1InitScrollJump();
-  s1MaybeShowScrollGesture();
+  S1_GESTURE.maybeShow();
 
   document.querySelectorAll('#s1-q1 .scq-opt').forEach(function (c) {
     const isSelected = c.dataset.id === s1State.q1.selected;
@@ -496,8 +351,8 @@ function resetScreenState1() {
   s1CurrentPage = 0;
   const scrollArea = document.getElementById('s1-scroll-area');
   if (scrollArea) {
-    s1GestureProgrammaticScroll = true;
-    setTimeout(function () { s1GestureProgrammaticScroll = false; }, 700);
+    S1_GESTURE.programmatic = true;
+    setTimeout(function () { S1_GESTURE.programmatic = false; }, 700);
     scrollArea.scrollTop = 0;
   }
 }
@@ -512,30 +367,7 @@ function resetScreenState1() {
    ========================================================= */
 const s2State = { c: { selected: null, done: false } };
 
-let s2GestureShown = false;
-let s2GestureProgrammaticScroll = false;
-function s2MaybeShowScrollGesture() {
-  requestAnimationFrame(function () {
-  if (s2GestureShown) return;
-  const gesture = document.getElementById('s2-scroll-gesture');
-  const scrollArea = document.getElementById('s2-scroll-area');
-  if (!gesture || !scrollArea) return;
-  if (scrollArea.scrollHeight <= scrollArea.clientHeight) return;
-  s2GestureShown = true;
-  gesture.hidden = false;
-  scrollArea.addEventListener('scroll', s2HideGestureOnScroll, { once: true });
-
-  });}
-function s2HideGestureOnScroll() {
-  const scrollArea = document.getElementById('s2-scroll-area');
-  const gesture = document.getElementById('s2-scroll-gesture');
-  if (!scrollArea || !gesture) return;
-  if (s2GestureProgrammaticScroll) {
-    scrollArea.addEventListener('scroll', s2HideGestureOnScroll, { once: true });
-    return;
-  }
-  gesture.hidden = true;
-}
+const S2_GESTURE = makeScrollGestureHint('s2-scroll-gesture', 's2-scroll-area');
 
 let s2DragGestureShown = false;
 function s2MaybeShowDragGesture() {
@@ -830,7 +662,7 @@ function s6AppletExpandToggle(expand) {
 }
 
 function resetScreenState2() {
-  s2MaybeShowScrollGesture();
+  S2_GESTURE.maybeShow();
   resolveCharBubbleVideo('s2-c-avatar', S2_C_AVATAR_ASSETS);
 
   document.querySelectorAll('#s2-sec-c .scq-opt').forEach(function (c) {
@@ -879,9 +711,9 @@ function resetScreenState2() {
 
   const scrollArea = document.getElementById('s2-scroll-area');
   if (scrollArea) {
-    s2GestureProgrammaticScroll = true;
+    S2_GESTURE.programmatic = true;
     scrollArea.scrollTop = 0;
-    setTimeout(function () { s2GestureProgrammaticScroll = false; }, 700);
+    setTimeout(function () { S2_GESTURE.programmatic = false; }, 700);
   }
 
   requestAnimationFrame(s2EAlignCheckBtn);
@@ -892,7 +724,7 @@ function advanceFromS2() {
   goTo(3);
 }
 
-/* מסך 4 — מסך מעבר (TransitionScreen), data-screen"3", id"s3" */
+/* מסך 4 — מסך מעבר (TransitionScreen), data-screen="3", id="s3" */
 function resetScreenState3() {
   setFixedCharVideo('s3-avatar', 'assets/videos/yellow-avatar-and-turquise-avatar.mp4');
 }
@@ -1131,33 +963,7 @@ function advanceFromS4() {
 }
 
 /* Companion character system — helper functions (ready for use) */
-function resolveCharBubbleImg(imgId, assetMap) {
-  const el = document.getElementById(imgId);
-  if (!el) return;
-  const char = window.lomdaState.selectedCharacter;
-  const src = (char && assetMap[char]) ? assetMap[char] : '';
-  if (el.tagName === 'VIDEO') {
-    if (el.getAttribute('src') !== src) {
-      if (src) el.setAttribute('src', src); else el.removeAttribute('src');
-      el.load();
-    }
-    el.play().catch(function () {});
-  } else {
-    el.src = src;
-  }
-}
 
-function resolveCharBubbleVideo(videoId, assetMap) {
-  const el = document.getElementById(videoId);
-  if (!el) return;
-  const char = window.lomdaState.selectedCharacter;
-  const src = (char && assetMap[char]) ? assetMap[char] : '';
-  if (el.getAttribute('src') !== src) {
-    if (src) el.setAttribute('src', src); else el.removeAttribute('src');
-    el.load();
-  }
-  el.play().catch(function () {});
-}
 
 function setFixedCharVideo(videoId, src) {
   const el = document.getElementById(videoId);
@@ -1169,7 +975,7 @@ function setFixedCharVideo(videoId, src) {
   el.play().catch(function () {});
 }
 
-/* מסך 6 — מסך מעבר, data-screen"5", id"s5". שקף 23. */
+/* מסך 6 — מסך מעבר, data-screen="5", id="s5". שקף 23. */
 const S5_AVATAR_ASSETS = {
   'character-1': 'assets/videos/boy-avatar-muscle.mp4',
   'character-2': 'assets/videos/yellow-avatar-muscle.mp4'
@@ -1178,7 +984,7 @@ function resetScreenState5() {
   resolveCharBubbleVideo('s5-avatar', S5_AVATAR_ASSETS);
 }
 
-/* מסך 7 — ValueInputQuestion כפול, מסך גלילה, data-screen"6", id"s6". */
+/* מסך 7 — ValueInputQuestion כפול, מסך גלילה, data-screen="6", id="s6". */
 const S6_Q = {
   1: {
     inputs: ['s6-q1-a', 's6-q1-b', 's6-q1-c'],
@@ -1349,25 +1155,7 @@ function updateS6Qnav() {
 function s6HintOpen() { document.getElementById('s6-q2-hint-overlay').hidden = false; }
 function s6HintClose() { document.getElementById('s6-q2-hint-overlay').hidden = true; }
 
-/* Gesture Hint — Cursor Scroll (SELF-QA-lomda.md §7), אותו מנגנון
-   בדיוק כמו s1MaybeShowScrollGesture/s2MaybeShowScrollGesture. */
-let s6GestureShown = false;
-function s6MaybeShowScrollGesture() {
-  requestAnimationFrame(function () {
-  if (s6GestureShown) return;
-  const gesture = document.getElementById('s6-scroll-gesture');
-  const scrollArea = document.getElementById('s6-scroll-area');
-  if (!gesture || !scrollArea) return;
-  if (scrollArea.scrollHeight <= scrollArea.clientHeight) return;
-  s6GestureShown = true;
-  gesture.hidden = false;
-  scrollArea.addEventListener('scroll', s6HideGestureOnScroll, { once: true });
-
-  });}
-function s6HideGestureOnScroll() {
-  const gesture = document.getElementById('s6-scroll-gesture');
-  if (gesture) gesture.hidden = true;
-}
+const S6_GESTURE = makeScrollGestureHint('s6-scroll-gesture', 's6-scroll-area');
 
 function resetScreenState6() {
   [1, 2].forEach(function (n) {
@@ -1393,118 +1181,8 @@ function resetScreenState6() {
   });
   document.getElementById('s6-continue').disabled = (s6Outcome[2] === null);
   updateS6Qnav();
-  s6MaybeShowScrollGesture();
+  S6_GESTURE.maybeShow();
 }
-
-/* =========================================================
-   GLOBAL — Feedback popup drag/reset helpers (ready, not yet
-   instantiated — no question screen exists yet in this scene).
-   לפי _global-components.md → "Feedback popup system" → "Drag bounds":
-   הפופ-אפ יכול לזוז בכל הקנבס חוץ מהפס התחתון (74px) ומעבר לגבולות
-   הקנבס (1280×710) — הנוסחה clampPopupPosition למטה ממומשת בדיוק לפי
-   המפרט, כולל המרת דלתא-הסמן ממרחב-viewport למרחב-קנבס-לוגי (חלוקה
-   בגורם ה-scale הנוכחי של scaleApp()) לפני ההרצה.
-   ========================================================= */
-const BOTTOM_BAR_H = 74;
-
-function clampPopupPosition(x, y, popupEl) {
-  const w = popupEl.offsetWidth, h = popupEl.offsetHeight;
-  const canvas = getCanvasSize();
-  const minX = 0, maxX = canvas.w - w;
-  const minY = 0, maxY = (canvas.h - BOTTOM_BAR_H) - h; // top edge of the bottom bar
-  return {
-    x: Math.min(Math.max(x, minX), maxX),
-    y: Math.min(Math.max(y, minY), maxY)
-  };
-}
-
-function scqFbResetPosition(boxId) {
-  const box = document.getElementById(boxId);
-  if (!box) return;
-  box.style.left = '';
-  box.style.top = '';
-  box.style.bottom = '';
-}
-
-function scqFbMakeDraggable(boxId) {
-  const box = document.getElementById(boxId);
-  if (!box) return;
-
-  let dragging = false;
-  let startX = 0, startY = 0, startLeft = 0, startTop = 0;
-
-  box.addEventListener('mousedown', function (e) {
-    const parent = box.offsetParent || box.parentElement;
-    const boxRect = box.getBoundingClientRect();
-    const parentRect = parent.getBoundingClientRect();
-    startLeft = boxRect.left - parentRect.left;
-    startTop = boxRect.top - parentRect.top;
-    box.style.left = startLeft + 'px';
-    box.style.top = startTop + 'px';
-    box.style.bottom = 'auto';
-    startX = e.clientX;
-    startY = e.clientY;
-    dragging = true;
-    box.classList.add('is-dragging');
-    e.preventDefault();
-  });
-
-  document.addEventListener('mousemove', function (e) {
-    if (!dragging) return;
-    const parent = box.offsetParent || box.parentElement;
-    const parentRect = parent.getBoundingClientRect();
-    const scale = parentRect.width / getCanvasSize().w;
-    const dx = (e.clientX - startX) / scale;
-    const dy = (e.clientY - startY) / scale;
-    const clamped = clampPopupPosition(startLeft + dx, startTop + dy, box);
-    box.style.left = clamped.x + 'px';
-    box.style.top = clamped.y + 'px';
-  });
-
-  document.addEventListener('mouseup', function () {
-    if (!dragging) return;
-    dragging = false;
-    box.classList.remove('is-dragging');
-  });
-}
-
-/* =========================================================
-   GLOBAL — Image zoom (_global-components.md: "Image zoom") — רכיב
-   גלובלי יחיד, מחוץ לכל .screen, ישירות ב-#app. עובד על כל תמונה
-   שהתווית שלה מקבלת כפתור .img-zoom-btn עם data-zoom-src — לא מוגבל
-   לפריים ספציפי, כי הכפתור תמיד יושב בתוך ה-wrapper של התמונה.
-   ========================================================= */
-function imgZoomOpen(trigger) {
-  const modal = document.getElementById('img-zoom-modal');
-  const stage = modal && modal.querySelector('.img-zoom-modal__stage');
-  const frame = trigger.parentElement;
-  if (!modal || !stage || !frame) return;
-  const clone = frame.cloneNode(true);
-  const btnInClone = clone.querySelector('.img-zoom-btn');
-  if (btnInClone) btnInClone.remove();
-  stage.innerHTML = '';
-  stage.appendChild(clone);
-  modal.classList.remove('hidden');
-  modal.setAttribute('aria-hidden', 'false');
-}
-
-function imgZoomClose() {
-  const modal = document.getElementById('img-zoom-modal');
-  if (!modal) return;
-  modal.classList.add('hidden');
-  modal.setAttribute('aria-hidden', 'true');
-  const stage = modal.querySelector('.img-zoom-modal__stage');
-  if (stage) stage.innerHTML = '';
-}
-
-document.addEventListener('click', function (e) {
-  const trigger = e.target.closest('[data-zoom-src]');
-  if (trigger) { imgZoomOpen(trigger); return; }
-  const closeTarget = e.target.closest('[data-zoom-close="true"]');
-  if (!closeTarget) return;
-  if (closeTarget.id === 'img-zoom-modal' && e.target.closest('.img-zoom-modal__panel')) return;
-  imgZoomClose();
-});
 
 document.addEventListener('click', function (e) {
   const wrap = document.getElementById('s2-sim-wrap');
@@ -1515,17 +1193,6 @@ document.addEventListener('click', function (e) {
 
 document.addEventListener('keydown', function (e) {
   if (e.key !== 'Escape') return;
-  const modal = document.getElementById('img-zoom-modal');
-  if (modal && !modal.classList.contains('hidden')) imgZoomClose();
   const simWrap = document.getElementById('s2-sim-wrap');
   if (simWrap && simWrap.classList.contains('is-expanded')) s2SimExpandToggle(false);
 });
-
-/* אתחול */
-scaleApp();
-(function () {
-  const m = /^#screen=(\d+)$/.exec(location.hash);
-  if (new URLSearchParams(location.search).get('screen') === 'last') goTo(TOTAL_SCREENS - 1);
-  else if (m) goTo(parseInt(m[1], 10));
-  else resetScreenState(0);
-})();
