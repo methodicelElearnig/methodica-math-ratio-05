@@ -1,17 +1,4 @@
-/* =========================================================
-   לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 5
-   תשתית בסיס בלבד (Prompt 1) — אין עדיין תוכן אמיתי. מסך יחיד
-   placeholder + כל הרכיבים הגלובליים מוכנים לשימוש. ייבנה תוכן
-   בהדרגה מסך אחר מסך לפי `פרומפטים לבניית מסכים של סיין 5.docx`
-   (Prompt 2 ואילך).
-
-   מקור: הועתק/הותאם מהמנוע הגלובלי של סיין 2 (methodica-math-ratio-01-02)
-   של הפרויקט הזה עצמו — לא מסיין 1 ולא מ-methodica-science-mass-
-   measure-03-01 — כי סיין 2 הוא כרגע מקור-האמת המתודולוגי המאומת/
-   מתוקן ביותר בפרויקט (עבר סבבי-QA נוספים אחרי סיין 1: בעיית-הגלילה
-   ב-RTL, צבע Progress Question, ניגודיות תוויות, מרווח פס-גלילה).
-   ראו ARCHITECTURE.md לפירוט מלא של מה הועתק ומה הושמט בכוונה.
-   ========================================================= */
+/* לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 5 */
 
 /* ---------- Subject theme tokens (Math) ----------
    זהים לחלוטין לסיינים 1+2 — אותו יעד/נושא ("יחס"), אותה ערכת-צבע. */
@@ -212,19 +199,11 @@ img { display: block; max-width: none; }
   white-space: nowrap;
 }
 .btn-hint[hidden] { display: none; }
-/* ⚠️ תוקן (31.08.2026, לפי דיווח: "חסר האייקון... פשוט לקחת אותו אייקון
-   כמו בלומדות במדעים ולצבוע אותו בסגול") — ראו הערה מלאה זהה ב-
-   methodica-math-ratio-05-01/styles.css. הוחלף mask+currentColor
-   ב-img סטטי (icon-hint-purple.svg), אותה טכניקה כמו methodica-science-
-   mass-measure-02-01. */
 .btn-hint .scq-hint-icon {
   flex-shrink: 0;
   width: 26px;
   height: 24px;
 }
-/* ⚠️ נוסף (31.08.2026, לפי בקשה מפורשת: "כשהכפתור דיסאבל גם האייקון
-   צריך להיות אפור") — ראו הערה מלאה זהה ב-
-   methodica-math-ratio-05-01/styles.css. */
 .btn-hint:disabled .scq-hint-icon { filter: grayscale(1) opacity(0.45); }
 .btn-hint:disabled { color: #aeaeae; border-color: #aeaeae; cursor: not-allowed; }
 .btn-hint:hover { background: #f0f8ff; }
@@ -325,15 +304,6 @@ img { display: block; max-width: none; }
   overflow: hidden;
 }
 .img-zoom-modal__stage { position: relative; width: 100%; height: 100%; }
-/* ⚠️ נוסף (06.09.2026) — .s3-img-frame/.s2-diagram-img-frame הם
-   wrapper-ים ברוחב-קבוע (260/480px, גובה-auto לפי יחס-התמונה, לא
-   ריבועיים כמו .scq-img-inner) — בלי הכלל הזה, השכפול למודל היה נשאר
-   בגודל המקורי (לא מוגדל) בתוך הפאנל 660×660. ממוקד ל-
-   .img-zoom-modal__stage בלבד — לא משפיע על התצוגה הרגילה במסך. */
-/* ⚠️ תוקן (07.09.2026, דיווח: "הגדלת התמונה לא ממש תקינה" על משולש
-   מסך 2/s1) — .s1-img-frame (500×350 קבוע, ראו §למטה) נשכח מהרשימה
-   הזו באותה סיבה בדיוק: השכפול נשאר בגודל-המקור הקטן בתוך פאנל
-   660×660, המון רקע-לבן ריק מסביב. */
 .img-zoom-modal__stage .s3-img-frame,
 .img-zoom-modal__stage .s2-diagram-img-frame,
 .img-zoom-modal__stage .s1-img-frame { width: 100%; height: 100%; }
@@ -388,25 +358,10 @@ img { display: block; max-width: none; }
   box-sizing: border-box;
   flex-direction: column;
   gap: 24px;
-  /* ⚠️ תוקן (22.09.2026, דיווח: "המשוב הקבוע עולה מעל פופ-אפ הרמז") —
-     z-index חייב להישאר נמוך מ-.scq-hint-overlay (z-index:40), אחרת
-     הפופ-אפ הצף (position:absolute) *וגם* הגרסה הקבועה-בזרימה
-     (.is-static, שכן היא flex item בתוך ה-.*-part/.*-flow-row —
-     z-index נאכף גם ב-position:static כש-parent הוא flex container)
-     מציירים את עצמם מעל השכבה הכהה. אותו ערך מדויק כמו
-     methodica-math-ratio-05-01/styles.css (כבר תוקן שם), ואותה בעיה
-     שתוקנה נקודתית ל-.is-static ב-05-06/styles.css. */
   z-index: 25;
   cursor: grab;
 }
 .scq-fb-box.visible { display: flex; }
-/* .is-static — QA 19.08.2026: משוב-תשובה בתוך מסך-גלילה חייב להופיע
-   סטטית מתחת למסיחים של אותה שאלה (לא floating/draggable במיקום קבוע
-   ביחס לקנבס, שמתנתק חזותית מהשאלה ברגע שגוללים לחלק אחר). ה-DOM עצמו
-   הוזז לתוך ה-.s1-part/.s3-part הרלוונטי, מיד אחרי כפתור/י-הפעולה —
-   לכן position:static מספיק (זורם עם התוכן הגולל). לא נוגע ב-.scq-opt/
-   .viq-input הנעולים אחרי check — רק במיקום-קופסת-המשוב עצמה. אין
-   שינוי במסכים לא-גוללים (למשל s2 כאן) — ראו ARCHITECTURE.md. */
 .scq-fb-box.is-static {
   position: static;
   left: auto; right: auto; top: auto; bottom: auto;
@@ -466,9 +421,6 @@ img { display: block; max-width: none; }
   display: flex;
   align-items: center;
   justify-content: center;
-  /* var(--subject-900) של הפרויקט הזה (#2F2478 → rgb(47,36,120)) —
-     לא rgba(0,32,96,.35) הקבוע (Science Subject/900), באג שכבר תוקן
-     בסיינים 1+2 (ראו ARCHITECTURE.md שם). */
   background: rgba(47, 36, 120, 0.35);
 }
 .scq-hint-overlay[hidden] { display: none; }
@@ -520,21 +472,7 @@ img { display: block; max-width: none; }
   text-align: center;
 }
 
-/* ⚠️ הוסר (Prompt 2, תוכן אמיתי) — .placeholder-box/.placeholder-title/
-   .placeholder-subtitle היו קוד-מת ברגע שתוכן אמיתי נבנה (אותו שיעור
-   שכבר נלמד בסיינים 2/4 של הפרויקט הזה: קוד-פלייסהולדר שנשאר אחרי
-   בניית-תוכן הוא קוד-מת, נמחק ולא נשאר "ליתר ביטחון"). מסך 1 עכשיו
-   הוא מסך-מעבר אמיתי (ראו .transition-* למטה).
-   ========================================================= */
-
-/* =========================================================
-   מסך 1 — מסך מעבר, דמות+בועית-דיבור (data-screen="0", id="s0").
-   מבנה+ערכים מועתקים 1:1 מ-methodica-math-ratio-01-04 (מסך 1 שם,
-   שהוא עצמו הועתק 1:1 מ-methodica-science-mass-measure-03-01 מסך 13).
-   כאן רק כותרת אחת (h2.transition-title) בתוך .transition-title-block
-   — לפי בקשה מפורשת אין .transition-sub נוסף (בניגוד למסך המקור בסיין
-   4, ששם יש שלוש שורות). ראו ARCHITECTURE.md § "מסך 1".
-   ========================================================= */
+/* מסך 1 — מסך מעבר, דמות+בועית-דיבור (data-screen"0", id"s0"). */
 .transition-content {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 74px;
@@ -568,13 +506,6 @@ img { display: block; max-width: none; }
   text-align: center;
   line-height: 1.5;
 }
-/* ⚠️ תוקן (31.08.2026, דיווח: "צריך להגדיל את גודל התמונה של מסך
-   המעבר שיהיה אחיד עם שאר מסכי המעבר") — היה 304×293 (aspect-ratio),
-   הוגדל ל-450×350: הגודל האחיד שכבר קיים בפועל בשאר מסכי-המעבר/וידאו-
-   הדמות של הפרויקט הזה (methodica-math-ratio-01-01 .s3-avatar/.s5-avatar,
-   ואומת גם מפורשות ב-methodica-math-ratio-05-02/styles.css: "המשתמשת
-   ביקשה התאמה מדויקת לגודל הווידאו במסך 6 בסיין 1 דווקא — 450×350px,
-   לא 304×293"). */
 .transition-avatar-wrap {
   position: relative;
   width: 450px;
@@ -625,12 +556,6 @@ img { display: block; max-width: none; }
   z-index: 1;
 }
 
-/* ════════════════════════════════════════════════════════
-   GLOBAL — Progress Question (720-templates skill →
-   _global-components.md → "Progress Question"). מועתק מילה-במילה
-   מ-methodica-math-ratio-01-02 (מקור-אמת מתודולוגי מאומת של הפרויקט
-   הזה) — 3 פריטים בלבד (לא 4), לפי סדרת-שאלות בת 3 בסיין הזה.
-   ════════════════════════════════════════════════════════ */
 .progress-question {
   position: absolute;
   top: 48px;
@@ -677,20 +602,8 @@ img { display: block; max-width: none; }
    מועתק מילה-במילה מ-methodica-math-ratio-01-02.
    ════════════════════════════════════════════════════════ */
 .scq-answers { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; }
-/* ⚠️ נוסף (07.09.2026, דיווח: "המלבנים של המסיחים מאוד גדולים") —
-   אותו תיקון בדיוק כמו methodica-math-ratio-05-02: .scq-opt הגלובלי
-   (width:100%, למטה) הוא רפרנס-משותף לכל שאלות ה-SCQ בפרויקט, לא
-   שונה. modifier ממוקד: מבטל את הרוחב הקבוע כדי ש-equalizeScqOptWidths
-   (script.js) יוכל להחיל רוחב-תוכן טבעי (JS דורס עם style.width
-   inline). */
 .scq-answers--fit .scq-opt { width: auto; }
-/* ⚠️ תוקן (07.09.2026, לפי בקשה מפורשת: "הרוחב שלהם צריך להיות
-   350px") — מסך 2 (s1-part-2, "כן/לא/לא ניתן לדעת") מקבל רוחב-קבוע
-   מפורש במקום רוחב-לפי-תוכן-אוטומטי (הרפרנס הכללי, ראו הכלל
-   למעלה) — יותר ספציפי (id+class) אז דורס אותו. equalizeScqOptWidths
-   (script.js) עדיין רץ ומיישר את שורת-הכפתור, אבל מודד עכשיו 350
-   (הרוחב הקבוע), לא רוחב-תוכן-משתנה. */
-#s1-part-2 .scq-opt { width: 480px; } /* עודכן 07.09.2026, לפי בקשה מפורשת: "450-500" */
+#s1-part-2 .scq-opt { width: 480px; }
 .scq-opt {
   width: 100%;
   display: flex;
@@ -764,26 +677,7 @@ img { display: block; max-width: none; }
    (methodica-math-ratio-01-01), שם גנרי-יותר כאן כי הוא בשימוש חוזר
    בכל השאלות המספריות של הסיין הזה, לא רק שאלה אחת. */
 .viq-answer-unit { font-family: 'Assistant', sans-serif; font-size: 20px; color: #303030; }
-/* ⚠️ נוסף (01.09.2026, דיווח: "לפי הניסוח בתסריט: 45° = ∡A" — סימן ה-"="
-   היה מוצמד לתווית (∢A =) במקום לערך, כך שהסדר החזותי יצא "45°  ∢A ="
-   במקום "45° = ∢A" כמו בתסריט. הועבר ל-.viq-answer-value (צד-הערך,
-   LTR) כילד אחרון — כך הוא נופל צמוד לערך משמאלו, לפני ה-gap של
-   .viq-answer-row שמפריד בינו לבין התווית עצמה. */
 .viq-answer-eq { font-family: 'Assistant', sans-serif; font-size: 20px; font-weight: 700; color: #303030; margin-inline-start: 4px; }
-/* ⚠️ נוסף (31.08.2026, לפי דיווח: "סימן הזווית צריך להיות בצד השמאלי
-   של המספר") — עוטף input+° משלו, gap:2px צמוד — נפרד מ-gap:16px של
-   .viq-answer-row עצמה (שם ה-° היה מרוחק מהקלט כמו אלמנט-שורה נפרד). */
-/* ⚠️ תוקן שוב (31.08.2026, דיווח: "הזוויות נראות הפוכות, צריך לתקן
-   ולוודא RTL") — נוסף direction:ltr. בלעדיו, שני הילדים (input ואז °,
-   בסדר הזה ב-DOM) יורשים RTL מהעמוד: input (ילד ראשון) יוצא הכי-ימני
-   בתוך התיבה הזו ו-° הכי-שמאלי — ומכיוון שהקלט עצמו מיושר-לימין
-   (.viq-input{text-align:right}), הספרות נדחקות לקצה הימני של תיבת-
-   הקלט (צמוד ל-∢A =), בעוד ה-° נשאר בקצה השמאלי הרחוק של תיבת-הקלט —
-   מרחק גדול ומנותק בין הספרות לסימן שלהן (נבדק ויזואלית עם ערך אמיתי
-   כמו "67.5": "67.5 ... °" עם פער ענק, לא "67.5°" צמוד). עם
-   direction:ltr, input (ילד ראשון) יוצא הכי-שמאלי ו-° הכי-ימני בתוך
-   התיבה — כלומר ° צמוד מיד מימין לקצה-הימני של הספרות (שם הן ממילא
-   כבר נמצאות בגלל text-align:right) — "67.5°" צמוד, קריא נכון. */
 .viq-answer-value { display: flex; flex-direction: row; direction: ltr; align-items: center; gap: 2px; }
 
 /* שבר מוצג (2/7 וכו') */
@@ -817,14 +711,6 @@ img { display: block; max-width: none; }
   background-size: 16px 16px;
 }
 .viq-input--sm { width: 92px; }
-/* ⚠️ תוקן (31.08.2026, דיווח: "צריך גם להגדיל את הרוחב של האינפוטים,
-   כרגע מה שכתוב בתוכם חתוך לגמרי") — ממוקד רק ל-3 קלטי-הזווית
-   ב-s1-part-1 (∢A/∢B/∢C, מקבלים גם עשרוניים כמו 67.5 וגם שליליים),
-   לא ל-.viq-input--sm הבסיסי (עדיין 92px בכל שימוש אחר בקובץ — s2-cd/
-   s2-db, וריאנט-קואורדינטות צר-במכוון, ראו התיעוד ב-
-   methodica-math-ratio-05-02/styles.css). 92px היה צר מדי לערכים
-   כמו "127.5"/"-67.5" (רק ~60px רוחב-תוכן בפועל אחרי padding+border) —
-   הוגדל ל-130px, מספיק לשלוש-ספרות+נקודה-עשרונית+מינוס בלי חיתוך. */
 #s1-part-1 .viq-input--sm { width: 130px; }
 .viq-input::-webkit-outer-spin-button,
 .viq-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
@@ -859,13 +745,8 @@ img { display: block; max-width: none; }
   z-index: 20;
 }
 .gesture-hint-scroll-wrap[hidden] { display: none; }
-#s1-scroll-gesture { top: 139px; left: 580px; right: 16px; bottom: 74px; } /* left עודכן 07.09.2026, ראו .s1-scroll-area */
-/* ⚠️ תוקן (31.08.2026, בדיקה מקיפה של כל מסכי-הגלילה) — left:360px היה
-   מועתק מ-#s1-scroll-gesture, אבל .s3-scroll-area (מסך s3) ממוקם ב-
-   left:320px (עמודת-תמונה צרה יותר ממסך s1) — היד התיישרה 40px מדי
-   ימינה, לא מעל פס-הגלילה בפועל. תוקן ל-left:320px, תואם ל-
-   .s3-scroll-area. */
-#s3-scroll-gesture { top: 139px; left: 338px; right: 16px; bottom: 74px; } /* left עודכן 07.09.2026, ראו .s3-scroll-area */
+#s1-scroll-gesture { top: 139px; left: 580px; right: 16px; bottom: 74px; }
+#s3-scroll-gesture { top: 139px; left: 338px; right: 16px; bottom: 74px; }
 .gesture-hint {
   position: absolute;
   left: 50%; top: 62%;
@@ -873,20 +754,6 @@ img { display: block; max-width: none; }
   width: 0; height: 0;
   pointer-events: none;
 }
-/* QA 19.08.2026: בתוך רמז-גלילה (לא רמז-גרירה), היד חייבת להופיע
-   קרוב לפס-הגלילה עצמו (בצד ימין, איפה שהפס יושב בפועל) — לא במרכז
-   האזור, שם היד לא נראית קשורה לגלילה בכלל. `92%` (לא ערך-פיקסלים
-   קבוע) כדי שיתאים אוטומטית לרוחב-עמודת-הגלילה השונה בכל מסך. */
-/* QA 20.08.2026 (תוקן שוב — 92% לא היה מספיק קרוב בפועל): עוגן ב-
-   right:6px קבוע (לא אחוז) — ממורכז בתוך פס-הגלילה עצמו, ללא תלות
-   ברוחב-העמודה. ראו methodica-math-ratio-01-01/styles.css להסבר המלא. */
-/* ⚠️ תוקן שוב (10.09.2026, דיווח: "כף היד לא ממוקמת בדיוק על
-   הסקרולבר בכל המסכים שיש בהם גלילה") — ההערה הקודמת (31.08.2026)
-   טעתה: היא הוסיפה את ה-right:16px של ה-wrap עצמו (ביחס למסך) לחצי-
-   רוחב-הפס (6px), אבל right כאן כבר יחסי לקצה-ה-wrap עצמו (frame
-   פנימי) — אין להוסיף שוב את ה-16px. הפס (12px) יושב צמוד לקצה-ה-wrap,
-   מרכזו הוא 12/2=6px מהקצה, לא 22px. תוקן חזרה ל-6px (זהה לתיקון
-   שבוצע ב-methodica-math-ratio-05-01, ראו שם ההערה המלאה). */
 .gesture-hint-scroll-wrap .gesture-hint { left: auto; right: 6px; }
 .gesture-hint-hand,
 .gesture-hint-ring {
@@ -931,8 +798,6 @@ img { display: block; max-width: none; }
    מסך 2 — מסך גלילה, שאלה 1 מתוך 3, data-screen="1", id="s1".
    תמונת המשולש קבועה בצד שמאל, זהה בשני החלקים (א'/ב').
    ════════════════════════════════════════════════════════ */
-/* ⚠️ עודכן (07.09.2026) — הרוחב הועלה מ-300 ל-500px, בעקבות הגדלת
-   .s1-img-frame (ראו שם). */
 .s1-fixed-images {
   position: absolute;
   top: 139px;
@@ -943,18 +808,6 @@ img { display: block; max-width: none; }
   gap: 20px;
   z-index: 1;
 }
-/* ⚠️ תוקן (06.09.2026, דיווח: "אין מסגרת לתמונה בכל הלומדה, חוץ מסיין 1
-   מסכים ראשונים") — נוסף border, אותו ערך המאומת-מול-Figma
-   ב-.s2-hook-img-frame-inner/.s2-fb-img-frame-inner (methodica-math-
-   ratio-05-01/styles.css) — מאומץ כתקן האחיד לכל מסגרות-תמונת-התוכן
-   בפרויקט (לפי בקשה מפורשת "על כל תמונות התוכן"). */
-/* ⚠️ תוקן (07.09.2026, לפי בקשה מפורשת: "התמונה צריכה להיות בגודל
-   500*350") — היה 300px (height:auto, יחס-רוחב-גובה טבעי ~1.96:1,
-   530×270 מקורי). 500×350 המבוקש הוא יחס שונה (1.43:1) מהתמונה
-   המקורית — בלי object-fit:contain זה היה מותח/מעוות את השרטוט
-   (תוית-A/B/C ייצאו לא-פרופורציונליות). הפאנל עכשיו 500×350 קבוע,
-   התמונה object-fit:contain בתוכו (יחס-הרוחב-גובה האמיתי נשמר
-   במלואו, בלי שום עיוות — ריפוד-לבן טבעי מעל/מתחת בתוך המסגרת). */
 .s1-img-frame { position: relative; width: 500px; height: 350px; border: 1px solid rgba(174, 174, 174, 0.5); border-radius: 16px; overflow: hidden; box-sizing: border-box; }
 .s1-img-frame img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
@@ -963,17 +816,9 @@ img { display: block; max-width: none; }
 .s1-scroll-area {
   position: absolute;
   top: 139px;
-  /* ⚠️ עודכן (07.09.2026) — left הוזז מ-360 ל-580 (500+40+40, אותו
-     מרווח-40px כמו קודם) בעקבות הגדלת .s1-fixed-images ל-500px. תוכן-
-     הטקסט כאן הוא פסקאות זורמות (לא שדות-קלט ברוחב-קבוע) — מתגלגל-
-     שורות בבטחה לכל רוחב, אין סיכון-גלישה כמו בשורות-VIQ. */
   left: 580px;
   right: 16px;
   bottom: 74px;
-  /* ⚠️ תוקן (31.08.2026, בדיקה חיה מול Figma דרך MCP) — right/padding-right/
-     רוחב-הפס עודכנו ל-16px/24px/12px, תואם ל-node "scrolling"
-     (1038:18222/1038:18219, fileKey eSbp4bKHgBky0rakDb8l9N). המרווח
-     הנראה בין תוכן לפס נשאר ~12px (24-12), התוכן עצמו לא זז. */
   padding-right: 24px;
   box-sizing: border-box;
   overflow-y: auto;
@@ -985,11 +830,6 @@ img { display: block; max-width: none; }
 .s1-scroll-area::-webkit-scrollbar-track { background: rgba(201, 206, 216, 0.4); border-radius: 16px; }
 .s1-scroll-area::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.56); border-radius: 24px; }
 .s1-scroll-inner { direction: rtl; width: 100%; }
-
-/* מיקום ברירת-המחדל הגלובלי של .scq-fb-box (left:16) חפף פיזית את
-   .s1-fixed-images — תוקן קודם ל-left:360. הוסר (19.08.2026): שני
-   הפופאפים האלה עברו ל-.is-static (בתוך .s1-part, זורמים עם התוכן) —
-   אין להם יותר position:absolute, so אין למה "left" הזה להשפיע. */
 
 .s1-part { display: flex; flex-direction: column; align-items: flex-start; width: 100%; gap: 20px; padding: 20px 0; box-sizing: border-box; }
 .s1-part[hidden] { display: none; }
@@ -1009,9 +849,6 @@ img { display: block; max-width: none; }
   width: 100%;
   margin: 0;
 }
-/* ⚠️ שם-כללי בכוונה (לא "s1-") — בשימוש הן ב-s1-part-2 (מסך 2) והן
-   ב-s3-part-1 (מסך 4): כל מקום שיש בו כפתור-בדיקה+כפתור-רמז יחד
-   בתוך חלק-גלילה. */
 .btn-hint-row { display: flex; flex-direction: row; align-items: center; gap: 16px; align-self: flex-end; }
 
 /* ════════════════════════════════════════════════════════
@@ -1026,14 +863,6 @@ img { display: block; max-width: none; }
    id="s2". דיאגרמה ממורכזת עם שתי תשובות-overlay ממוקמות-אבסולוטית
    מתחת לדיאגרמה עצמה. ראו ARCHITECTURE.md § "מסך 3" למדידות-האחוזים.
    ════════════════════════════════════════════════════════ */
-/* ⚠️ תוקן (31.08.2026, דיווח: "שני כפתורים של המשך", "התמונה
-   נחתכת") — נמדד בפועל (headless): scrollHeight=508px מול
-   clientHeight=497px זמינים (top:139/bottom:74 מתוך קנבס 710px) —
-   חריגה של 11px. כל עוד flex-shrink:0 על .s2-check-btn (נדרש בנפרד
-   כדי שהכפתור יישאר בגובה אחיד, ראו למטה), החריגה דוחפת את הכפתור
-   מעבר לתחתית .s2-content, חופף חזותית את הסרגל-התחתון — נראה כמו
-   "שני כפתורי המשך" (זה לא כפתור נוסף, זה אותו #s2-check שהטקסט שלו
-   מתחלף ל"המשך" אחרי פתרון נכון). gap הוקטן כדי לפנות מספיק מקום. */
 .s2-content {
   position: absolute;
   top: 139px; left: 40px; right: 40px; bottom: 74px;
@@ -1045,35 +874,14 @@ img { display: block; max-width: none; }
   overflow: hidden;
 }
 .s2-text { width: 100%; }
-/* ⚠️ נוסף (31.08.2026, דיווח: "'השלימו' באמצע המסך ולא מיושרת לשאר
-   הטקסט") — .s2-content הוא align-items:center; בלי width:100% כאן
-   (כמו ב-.s2-text למעלה), הפסקה הזו נשארת ברוחב-תוכנה-הטבעי וממורכזת
-   *כבלוק* בתוך העמודה — למרות ש-text-align:right פנימי (מ-
-   .scq-qtext-em), זה נראה "ממורכז" כי הקופסה עצמה לא נמתחת לרוחב
-   השורה שמעליה. */
 #s2 .s2-content > .scq-qtext-em { width: 100%; }
-/* ⚠️ רוחב 480px (לא 600) + padding-bottom:80px בכוונה: .s2-input-overlay
-   ממוקם-אבסולוטית (מחוץ לזרימת-המסמך), אז בלי padding-bottom כאן
-   התוכן-שמתחתיו (כפתור הבדיקה) היה חופף פיזית את שכבת ה-overlay.
-   80px = הגובה המשוער של תווית+פער+קלט ב-overlay (label~22 + gap6 +
-   input42 + offset10). ב-480px רוחב, גובה-התמונה (860:345 המקורי)
-   הוא 480×345/860≈192.6px — משמש כערך-top הקבוע (לא אחוז) ב-
-   .s2-input-overlay, ראו שם. שילוב שני הערכים (480/192.6/80) נבחר גם
-   כדי להישאר בתוך תקציב-הגובה הפנוי של המסך הסטטי הזה (497px, בלי
-   גלילה) — ראו ARCHITECTURE.md § "מסך 3" לחישוב המלא. */
 .s2-diagram-wrap {
   position: relative;
   width: 480px;
   max-width: 100%;
   margin-top: 4px;
-  /* ⚠️ תוקן (31.08.2026, דיווח: "צריך להרוויח בין התמונה לאינפוטים
-     והלייבלים כדי שלא תיחתך") — הוגדל מ-80px, בהתאמה ל-translate
-     החדש ב-.s2-input-overlay למטה (10px→20px). המקום הפנוי גדל בכל
-     מקרה אחרי תיקון-הגלישה של .s2-content (gap 20→12px, ראו שם). */
   padding-bottom: 90px;
 }
-/* ⚠️ תוקן (06.09.2026) — נוסף border+border-radius+overflow:hidden
-   (לא היה אף אחד מהם קודם), אותו ערך כמו .s1-img-frame למעלה. */
 .s2-diagram-img-frame { position: relative; border: 1px solid rgba(174, 174, 174, 0.5); border-radius: 16px; overflow: hidden; box-sizing: border-box; }
 .s2-diagram-img { width: 100%; height: auto; display: block; }
 .s2-input-overlay {
@@ -1081,7 +889,7 @@ img { display: block; max-width: none; }
   top: 193px; /* ≈ גובה התמונה ב-480px רוחב (480×345/860) — לא top:100%,
                  כי זה היה נמדד מול תיבת-הרפידה (כולל padding-bottom)
                  ולא מול תחתית התמונה עצמה בלבד. */
-  transform: translate(-50%, 20px); /* ⚠️ תוקן (31.08.2026) — היה 10px */
+  transform: translate(-50%, 20px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1094,17 +902,9 @@ img { display: block; max-width: none; }
   font-weight: 400;
   color: #303030;
   text-align: center;
-  
+
   white-space: nowrap;
 }
-/* ⚠️ תוקן (31.08.2026, דיווח: "גודל הכפתור של 'צדקתי?' לא תקין, הוא
-   לא אחיד") — .s2-content הוא flex column בגובה קבוע (top:139/
-   bottom:74 מתוך קנבס 710px = 497px זמינים בפועל ~479.5px נמדד).
-   התוכן (טקסט+"השלימו:"+דיאגרמה+שכבת-קלטים) כמעט ממלא את זה, אז ברירת-
-   המחדל flex-shrink:1 (לא הוגדר עד כה) כיווצה את הכפתור מ-height:39px
-   (.btn-continue) בפועל ל-~27.7px בלבד — נמדד/אומת עם getComputedStyle
-   בפועל (offsetHeight=28 בלי התיקון, 39 איתו) — נראה "לא אחיד" מול
-   הכפתורים הזהים במסכי-גלילה 2/4 (s1/s3), ששם אין כיווץ כזה. */
 .s2-check-btn { align-self: flex-end; flex-shrink: 0; }
 
 /* ════════════════════════════════════════════════════════
@@ -1113,12 +913,6 @@ img { display: block; max-width: none; }
    מוצגת ב-260px רוחב (לא 300px, ראו ההערה ב-index.html) כדי להישאר
    בתוך תקציב-הגובה הפנוי בלי לחתוך את התמונה.
    ════════════════════════════════════════════════════════ */
-/* ⚠️ עודכן (07.09.2026, לפי בקשה מפורשת: "להגדיל טיפה את התמונה") —
-   260→278px. זה למעשה תקרת-הבטיחות המלאה: התמונה פורטרט קיצוני
-   (1387×2475, יחס 0.56:1), ותקציב-הגובה הפנוי כאן הוא 497px בלבד
-   (139px..636px, לפני הבר התחתון, בלי מנגנון-חיתוך). ב-278px רוחב
-   הגובה-הטבעי הוא ~496px — כמעט מדויק בתוך התקציב. הגדלה נוספת
-   מעבר לזה תגלוש מתחת לבר התחתון (ראו גם דיון קודם בשיחה). */
 .s3-fixed-images {
   position: absolute;
   top: 139px;
@@ -1129,22 +923,15 @@ img { display: block; max-width: none; }
   gap: 20px;
   z-index: 1;
 }
-/* ⚠️ תוקן (06.09.2026) — נוסף border, אותו ערך כמו .s1-img-frame
-   למעלה. הרוחב (260px, לא 300px כמו שאר הסינים) נשאר ללא שינוי —
-   מתועד במפורש ב-index.html כמכוון (תמונת-פורטרט קיצונית, 300px היה
-   גולש מתקציב-הגובה של פאנל-הגלילה). */
 .s3-img-frame { position: relative; width: 278px; border: 1px solid rgba(174, 174, 174, 0.5); border-radius: 16px; overflow: hidden; box-sizing: border-box; }
 .s3-img-frame img { width: 100%; height: auto; display: block; }
 
 .s3-scroll-area {
   position: absolute;
   top: 139px;
-  left: 338px; /* עודכן 07.09.2026: 40+278+20, ראו .s3-fixed-images */
+  left: 338px;
   right: 16px;
   bottom: 74px;
-  /* ⚠️ תוקן (31.08.2026, בדיקה חיה מול Figma — ראו ההערה המלאה ליד
-     .s1-scroll-area למעלה) — right/padding-right/רוחב-הפס עודכנו
-     ל-16px/24px/12px. */
   padding-right: 24px;
   box-sizing: border-box;
   overflow-y: auto;
@@ -1156,10 +943,6 @@ img { display: block; max-width: none; }
 .s3-scroll-area::-webkit-scrollbar-track { background: rgba(201, 206, 216, 0.4); border-radius: 16px; }
 .s3-scroll-area::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.56); border-radius: 24px; }
 .s3-scroll-inner { direction: rtl; width: 100%; }
-
-/* מיקום ברירת-המחדל הגלובלי של .scq-fb-box (left:16) חפף פיזית את
-   .s3-fixed-images — תוקן קודם ל-left:320. הוסר (19.08.2026): שני
-   הפופאפים האלה עברו ל-.is-static (בתוך .s3-part, זורמים עם התוכן). */
 
 .s3-part { display: flex; flex-direction: column; align-items: flex-start; width: 100%; gap: 20px; padding: 20px 0; box-sizing: border-box; }
 .s3-part[hidden] { display: none; }

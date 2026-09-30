@@ -1,17 +1,7 @@
 'use strict';
 
-/* =========================================================
-   לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 6
-   3 מסכי תוכן אמיתי (Prompt 2): מסך-מעבר (s0), תמונה ממלאת-מסך (s1),
-   מסך-גלילה עם "שאלת השיא" בת 4 סעיפים + חלק-ביניים תמונתי (s2).
-   מקור: תשתית שהותאמה מסיין 2 (methodica-math-ratio-01-02); הרכיבים
-   הגנריים (Progress Question, VIQ, Feedback popup, Gesture Hint) הועתקו
-   כפי-שהם ממסך-הגלילה המקביל בסיין 3 (methodica-math-ratio-01-03) —
-   ראו ARCHITECTURE.md לפירוט מלא של מה הועתק ומה נבנה כאן לראשונה.
-   ========================================================= */
+/* לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 6 */
 
-/* ⚠️ עודכן (07.09.2026, לפי בקשה מפורשת) — 3→6: מסך 3 (הישן) פוצל
-   ל-3 מסכים (א+ב, תמונה, ג+ד), ונוסף מסך-סיום ריק בסוף. */
 const TOTAL_SCREENS = 6;
 let currentScreen = 0;
 
@@ -42,19 +32,8 @@ window.lomdaState = {
   selectedCharacter: savedCharacter
 };
 
-/* ⚠️ תוקן (31.08.2026, לפי בדיקת-רספונסיביות) — CANVAS_W/CANVAS_H היו
-   מוצהרים פעמיים: פעם מקומית כאן בתוך scaleApp(), ופעם נפרדת למטה ליד
-   clampPopupPosition (BOTTOM_BAR_H) — שני מקורות-אמת לאותם מספרים,
-   ללא שום דבר שמכריח אותם להישאר מסונכרנים אם מישהו יערוך רק אחד מהם
-   בעתיד. אוחד למקור-אמת יחיד כאן, ברמת-המודול — גם scaleApp() וגם
-   clampPopupPosition (למטה) קוראים מכאן, לא מגדירים בעצמם. */
 const CANVAS_W = 1280, CANVAS_H = 710;
 
-/* ⚠️ תוקן (23.09.2026, דיווח לקוח: "יש מלא שטח מת למעלה ולמטה") —
-   אותו תיקון שכבר בוצע ואומת ב-methodica-math-ratio-05-01/script.js:
-   scaleApp() ממרכז-עם-שוליים הוחלף במתיחת-הקנבס-עצמו למילוי-מדויק של
-   ה-viewport (אפס שטח-מת, בכל יחס-גובה-רוחב). getCanvasSize() למטה
-   היא מקור-האמת לגודל-הקנבס בפועל מרגע זה. */
 function scaleApp() {
   const app = document.getElementById('app');
   const scale = Math.min(window.innerWidth / CANVAS_W, window.innerHeight / CANVAS_H);
@@ -163,12 +142,6 @@ function resolveCharBubbleVideo(videoId, assetMap) {
    נפרד משלה. ראו resetScreenState2()/setCurrentQuestion() למטה לאופן
    שבו זה מוכלל לתרחיש "כמה שאלות על מסך-גלילה אחד".
    ========================================================= */
-/* ⚠️ עודכן (07.09.2026, לפי בקשה מפורשת: "יש 4 סעיפים של שאלה, צריך
-   שיהיו 4 שאלות על סרגל ההתקדמות, לא משנה שיש שבירה במסך 4") —
-   4 השאלות (א/ב/ג/ד) חזרו למונה-גלובלי-משותף אחד, בדיוק כמו לפני
-   הפיצול למסכים — רק שעכשיו יש **שני** מופעי-nav (#s2-progress במסך
-   3, #s4-progress במסך 5) שמסונכרנים לאותו state יחיד, לא שני
-   state-ים נפרדים. ראו syncBothProgressNavs() למטה. */
 const practiceProgress = {
   questions: [
     { number: 1, visited: false, state: 'not-answered', screen: 2 },
@@ -249,8 +222,6 @@ function viqOnInput(key) {
   if (fb) fb.classList.remove('visible');
 }
 
-/* משוב שגוי סופי (הפתרון הנכון מוצג): משפט הכותרת (בולד) מקבל נקודה בסוף אם חסרה
-   (נקודתיים בסוף מוחלפות בנקודה), ואחריו "התשובה הנכונה מוצגת." (29.09.2026, חידוד לקוח). */
 function fbCorrectShown(title) {
   let t = String(title).replace(/\s+$/, '').replace(/[:,;]$/, '');
   if (!/[.!?]$/.test(t)) t += '.';
@@ -262,8 +233,6 @@ function viqCheck(key) {
   viqState[key] = viqState[key] || { attempts: 0, outcome: null };
   const st = viqState[key];
   if (st.outcome !== null) { if (cfg.nextScreen != null) goTo(cfg.nextScreen); return; }
-  /* ⚠️ נוסף (31.08.2026, דיווח: "המשוב עולה על הפופ-אפ של הרמז") —
-     סוגר רמז פתוח לפני שמציגים משוב, כדי שלא יחפפו חזותית. */
   document.querySelectorAll('[id$="-hint-overlay"]').forEach(function (el) { el.hidden = true; });
 
   const inputs = cfg.inputs.map(function (id) { return document.getElementById(id); });
@@ -298,12 +267,6 @@ function viqCheck(key) {
     bodyEl.innerHTML = cfg.wrongOnce.body;
     document.getElementById(cfg.checkBtn).disabled = true;
   } else {
-    /* ⚠️ תוקן (23.09.2026, דיווח: "לא ביקשתי שהתשובה הנכונה תיחשף
-       באופן מידי, לא צריך לחשוף אותה בכלל — היה צריך שתישאר התשובה
-       השגויה שהזין הלומד") — ההערה הקודמת כאן תיארה במפורש את הבאג
-       (דריסת-ערך אוטומטית); לא דורסים יותר — הערך שהלומד/ת הקלידו
-       נשאר, מסומן correct/wrong לפי-שדה בפועל (זהה לענף wrongOnce
-       למעלה), רק ננעל. */
     inputs.forEach(function (input, i) {
       input.classList.toggle('correct', correctFlags[i]);
       input.classList.toggle('wrong', !correctFlags[i]);
@@ -317,7 +280,6 @@ function viqCheck(key) {
     if (cfg.revealBtn) {
       const revealBtn = document.getElementById(cfg.revealBtn);
       if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
-      /* עודכן (29.09.2026, חידוד לקוח): הפתרון הנכון מוצג מיד עם המשוב הסופי, הכפתור ב"התשובה שלי". */
       viqToggleReveal(key);
     }
     st.outcome = 'fail';
@@ -358,11 +320,6 @@ function viqToggleReveal(key) {
 function viqFinish(key) {
   const cfg = VIQ_CFG[key];
   const btn = document.getElementById(cfg.checkBtn);
-  /* ⚠️ תוקן (23.09.2026, דיווח: "יש שני כפתורים של המשך", זוהה במסך
-     אחר באותה סצנה) — רלייבל ל-"המשך"+re-enable תקין רק אם הכפתור
-     *באמת* חי בתוך .bottom-bar (כלומר הוא בעצמו כפתור-הניווט הראשי,
-     לא כפתור-בדיקה נפרד של סעיף בתוך מסך-רב-חלקים). בדיקה מבנית, לא
-     ניחוש-שם — ראו הערה מלאה זהה ב-methodica-math-ratio-05-05/script.js. */
   if (btn.closest('.bottom-bar')) {
     btn.disabled = false;
     btn.textContent = 'המשך';
@@ -372,19 +329,11 @@ function viqFinish(key) {
   if (cfg.onDone) cfg.onDone();
 }
 
-/* =========================================================
-   GLOBAL — Feedback popup drag/reset helpers (_global-components.md).
-   מועתק כפי-שהוא מהתשתית (Prompt 1) — בלי שום שינוי.
-   ========================================================= */
-/* ⚠️ CANVAS_W/CANVAS_H הוסרו מכאן (31.08.2026) — מוגדרים פעם אחת בלבד,
-   למעלה ליד scaleApp(). ראו ההערה המלאה שם. */
+/* GLOBAL — Feedback popup drag/reset helpers (_global-components.md). */
 const BOTTOM_BAR_H = 74;
 
 function clampPopupPosition(x, y, popupEl) {
   const w = popupEl.offsetWidth, h = popupEl.offsetHeight;
-  // ⚠️ עודכן (23.09.2026) — קורא ל-getCanvasSize() במקום ל-CANVAS_W/
-  // CANVAS_H הקבועים: הקנבס עשוי כעת להיות רחב/גבוה יותר מגודל-העיצוב
-  // (ראו scaleApp()), אז גבולות-ההגבלה חייבים לשקף את הגודל בפועל.
   const canvasSize = getCanvasSize();
   const minX = 0, maxX = canvasSize.w - w;
   const minY = 0, maxY = (canvasSize.h - BOTTOM_BAR_H) - h; // top edge of the bottom bar
@@ -429,10 +378,6 @@ function scqFbMakeDraggable(boxId) {
     if (!dragging) return;
     const parent = box.offsetParent || box.parentElement;
     const parentRect = parent.getBoundingClientRect();
-    // pointer delta lives in raw viewport px — convert to canvas-space
-    // (divide by the current scaleApp() zoom factor) before clamping.
-    // ⚠️ עודכן (23.09.2026) — getCanvasSize().w במקום CANVAS_W הקבוע,
-    // אותה סיבה כמו ב-clampPopupPosition למעלה.
     const scale = parentRect.width / getCanvasSize().w;
     const dx = (e.clientX - startX) / scale;
     const dy = (e.clientY - startY) / scale;
@@ -489,13 +434,7 @@ document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) imgZoomClose();
 });
 
-/* =========================================================
-   מסך 1 — מסך מעבר (TransitionScreen), data-screen="0", id="s0".
-   תוכן משקף 62 (תסריט). דמות-נלווית לפי הדמות שנבחרה בסיין קודם.
-   ⚠️ עודכן (30.08.2026) — נכס-וידאו ייעודי ("climbing") סופק במפורש,
-   מחליף את פוזת-החשיבה/שאילה הזמנית שתועדה קודם כטרם-מאושרת מול
-   המפיקה.
-   ========================================================= */
+/* מסך 1 — מסך מעבר (TransitionScreen), data-screen"0", id"s0". */
 const S0_AVATAR_ASSETS = {
   'character-1': 'assets/videos/boy-avatar-climbing.mp4',
   'character-2': 'assets/videos/yellow-avatar-climbing.mp4'
@@ -514,24 +453,7 @@ function resetScreenState1() {
   /* אין state לאפס — מסך תמונה+כרטיס-מידע סטטי בלבד. */
 }
 
-/* =========================================================
-   מסך 3 — מסך גלילה, "שאלת השיא" סעיפים א+ב (שקפים 64/65), data-screen="2",
-   id="s2". דיאגרמת המגרש (land-plot-diagram.png) קבועה וזהה בשני
-   הסעיפים.
-   ⚠️ עודכן (07.09.2026, לפי בקשה מפורשת) — הפוצל ל-3 מסכים (ראו
-   ARCHITECTURE.md § "מסך 3", עדכון 07.09.2026): חלק-הביניים התמונתי
-   (שקף 66) עבר למסך 4 (id="s3") משלו, וסעיפים ג/ד (שקפים 67/68) עברו
-   למסך 5 (id="s4"). s2HideDiagramForInterlude/s2RestoreDiagram/
-   s2MaybeRestoreDiagram/s2WireDiagramScroll הוסרו כליל — היו קיימים
-   רק כי חלק-הביניים חי באותה עמודת-גלילה כמו הדיאגרמה; זה כבר לא
-   המצב.
-   ========================================================= */
-/* ⚠️ תוקן (07.09.2026, דיווח: "מסך 3 סעיף א' צריך לתקן את המסומן")
-   — "מ"ר" ישב כטקסט-רגיל *מחוץ* ל-dir="ltr" שעוטף את המשוואה
-   ("200 + 16 = 216"). תבנית א' ב-"ניסוח מתמטי.md" (השורש-של-היחידה):
-   dir="rtl" מקונן סביב "216 מ"ר" (סדר-מקור מספר-ואז-יחידה), בתוך
-   ה-dir="ltr" החיצוני שנשאר כמו שהוא. "שטח החלקה כולה הוא" (הטקסט-
-   המוביל) לא נגעתי בו — לא סומן בדיווח. */
+/* מסך 3 — מסך גלילה, "שאלת השיא" סעיפים א+ב (שקפים 64/65), data-screen"2", */
 VIQ_CFG_REGISTER('s2p1', {
   inputs: ['s2-p1-input'], correct: [216], checkBtn: 's2-p1-check', feedbox: 's2-p1-feedbox', revealBtn: 's2-p1-reveal-btn', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'היחס בין AB ל-AE הוא 2 : 1, לכן <span dir="ltr">AE = 10</span>.<br>נחשב את שטח המלבן AEDB:<br><span dir="ltr"> 20 ⋅ 10 = 200</span>.<br>נחשב את שטח הריבוע GHCD:<br><span dir="ltr"> 4 ⋅ 4 = 16</span>.<br>שטח החלקה כולה הוא <span dir="ltr">200 + 16 = <span dir="rtl">216 מ"ר</span></span>.' },
@@ -548,12 +470,6 @@ function s2P1Check() { viqCheck('s2p1'); }
 function s2P1HintOpen() { document.getElementById('s2-p1-hint-overlay').hidden = false; }
 function s2P1HintClose() { document.getElementById('s2-p1-hint-overlay').hidden = true; }
 
-/* ⚠️ שיקול-דעת מתועד — נשאר-בכוונה: הסבר-הפתרון של סעיף ב' בתסריט-
-   המקור מנוסח "היחס בין AT ל-TB הוא 3 : 2. נחשב את AT: 2/5⋅20=8" —
-   יש כאן חוסר-עקביות ניסוחי לכאורה (3:2 מול המקדם 2/5), אבל לפי כלל-
-   הפרויקט הקבוע "תוכן כפי-שסופק, לא נגזר-מחדש" (ראו תקדים זהה בדיוק
-   בשאלת-ערבוב-הצבעים של methodica-math-ratio-01-05), משעתקים את הטקסט
-   הנתון מילה-במילה ולא "מתקנים" אותו. */
 VIQ_CFG_REGISTER('s2p2', {
   inputs: ['s2-p2-input'], correct: [80], checkBtn: 's2-p2-check', feedbox: 's2-p2-feedbox', revealBtn: 's2-p2-reveal-btn', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'ידוע כי מ\' <span dir="ltr">AB = 20</span>. היחס בין AT ל-TB הוא 3 : 2.<br>נחשב את AT: <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">5</span></span> ⋅ 20 = 8</span>,<br>לכן שטח הגינה הוא <span dir="ltr"> 10 ⋅ 8 = <span dir="rtl">80 מ"ר</span></span>.' },
@@ -563,8 +479,6 @@ VIQ_CFG_REGISTER('s2p2', {
     practiceProgress.questions[1].state = (viqState.s2p2 && viqState.s2p2.outcome === 'fail') ? 'incorrect' : 'correct';
     setCurrentQuestion(practiceProgress, 2);
     syncBothProgressNavs();
-    /* ⚠️ נוסף (07.09.2026) — ב' הוא הסעיף האחרון על מסך 3 (ג/ד עברו
-       למסך 5), אז כפתור "המשך" נדלק כאן. */
     document.getElementById('s2-continue').disabled = false;
   }
 });
@@ -573,22 +487,12 @@ function s2P2Check() { viqCheck('s2p2'); }
 function s2P2HintOpen() { document.getElementById('s2-p2-hint-overlay').hidden = false; }
 function s2P2HintClose() { document.getElementById('s2-p2-hint-overlay').hidden = true; }
 
-/* =========================================================
-   מסך 5 — מסך גלילה, "שאלת השיא" סעיפים ג+ד (שקפים 67/68), data-screen="4",
-   id="s4". דיאגרמת המגרש (land-plot-diagram.png) — מופע-עצמאי-משלה
-   (לא משותפת עם מסך 3), קבועה וזהה בשני הסעיפים. ⚠️ נוסף (07.09.2026,
-   לפי בקשה מפורשת) — הועבר ממסך 3 (s2) הישן, ראו ההערה שם. */
+/* מסך 5 — מסך גלילה, "שאלת השיא" סעיפים ג+ד (שקפים 67/68), data-screen"4", */
 VIQ_CFG_REGISTER('s2p4', {
   inputs: ['s2-p4-input'], correct: [26], checkBtn: 's2-p4-check', feedbox: 's2-p4-feedbox', revealBtn: 's2-p4-reveal-btn', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'שטח המגרש הוא 216 מ"ר. היחס המבוקש הוא 3 : 1.<br>נחשב את השטח המיועד לבנייה לפי היחס המבוקש:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">4</span></span> ⋅ 216 = 162</span><br>ואת השטח המיועד לגינה: <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">4</span></span>  ⋅216 = 54</span>.<br>שטח הגינה שמצאנו בסעיף ב\' הוא 80 מ"ר.<br>לכן, עלינו להעביר <span dir="ltr">80 - 54 = <span dir="rtl">26 מ"ר</span></span> לשטח המיועד לבנייה.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
   wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'שטח המגרש הוא 216 מ"ר. היחס המבוקש הוא 3 : 1.<br>נחשב את השטח המיועד לבנייה לפי היחס המבוקש:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">4</span></span> ⋅ 216 = 162</span><br>ואת השטח המיועד לגינה: <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">4</span></span> ⋅ 216 = 54</span>.<br>שטח הגינה שמצאנו בסעיף ב\' הוא 80 מ"ר.<br>לכן, עלינו להעביר <span dir="ltr">80 - 54 = <span dir="rtl">26 מ"ר</span></span> לשטח המיועד לבנייה.' },
-  /* ⚠️ תוקן (23.09.2026, בקשה מפורשת: "ג יהיה במקום ד וד יהיה במקום
-     ג") — סעיף ג' (הסעיף הזה) עבר להיות שני פיזית על המסך (אחרי ד'),
-     אז ה-onDone שלו הוחלף עם זה שהיה ב-s2p5 למטה: מסמן עכשיו את
-     practiceProgress.questions[3] ("שאלה 4", לא [2]) ומפעיל את
-     "המשך" בסרגל התחתון — כי הוא עכשיו הסעיף *האחרון* שנענה במסך,
-     לא הראשון. ראו ההערה המקבילה ב-s2p5 למטה + ב-index.html. */
   onDone: function () {
     practiceProgress.questions[3].state = (viqState.s2p4 && viqState.s2p4.outcome === 'fail') ? 'incorrect' : 'correct';
     syncBothProgressNavs();
@@ -600,25 +504,11 @@ function s2P4Check() { viqCheck('s2p4'); }
 function s2P4HintOpen() { document.getElementById('s2-p4-hint-overlay').hidden = false; }
 function s2P4HintClose() { document.getElementById('s2-p4-hint-overlay').hidden = true; }
 
-/* ⚠️ תוקן (07.09.2026, דיווח: "אותה טעות חוזרת על עצמה במשוב", סעיף ד')
-   — "מ"ר" ישב כטקסט-רגיל *מחוץ* ל-dir="ltr" שעוטף את המשוואה
-   ("216 : 2 = 108"/"108 - 80 = 28"), אותה סיבה בדיוק שתועדה כבר
-   ב-methodica-math-ratio-05-03/script.js § s5p2 ו-methodica-math-
-   ratio-05-05/script.js § VIQ_CFG_S2_BODY (עדכון-מקביל, אותו יום):
-   נוסף dir="rtl" מקונן סביב "108 מ"ר"/"28 מ"ר" (סדר-מקור מספר-ואז-
-   יחידה), בתוך ה-dir="ltr" החיצוני שנשאר כמו שהוא. */
 VIQ_CFG_REGISTER('s2p5', {
   inputs: ['s2-p5-input'], correct: [28], checkBtn: 's2-p5-check', feedbox: 's2-p5-feedbox', revealBtn: 's2-p5-reveal-btn', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'שטח הגינה כולה הוא 216 מ"ר.<br>אם נרצה לחלק את השטחים ביחס של 1:1, בעצם נרצה ששני השטחים יהיו שווים.<br>לכן, שטח הבנייה ושטח הגינה יהיו:<br><span dir="ltr">216 : 2 = <span dir="rtl">108 מ"ר</span></span>.<br>שטח הגינה הוא 80 מ"ר, לכן נרצה להעביר <span dir="ltr">108 - 80 = <span dir="rtl">28 מ"ר</span></span> משטח הבנייה לשטח הגינה.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },
   wrongFinal: { title: 'טעיתם. לא נורא, מטעויות לומדים', body: 'שטח הגינה כולה הוא 216 מ"ר.<br>אם נרצה לחלק את השטחים ביחס של 1:1, בעצם נרצה ששני השטחים יהיו שווים.<br>לכן, שטח הבנייה ושטח הגינה יהיו:<br><span dir="ltr">216 : 2 = <span dir="rtl">108 מ"ר</span></span>.<br>שטח הגינה הוא 80 מ"ר, לכן נרצה להעביר <span dir="ltr">108 - 80 = <span dir="rtl">28 מ"ר</span></span> משטח הבנייה לשטח הגינה.' },
-  /* ⚠️ תוקן (23.09.2026, בקשה מפורשת: "ג יהיה במקום ד וד יהיה במקום
-     ג") — סעיף ד' (הסעיף הזה) עבר להיות ראשון פיזית על המסך, אז
-     ה-onDone שלו הוחלף עם זה שהיה ב-s2p4 למעלה: מסמן עכשיו את
-     practiceProgress.questions[2] ("שאלה 3", לא [3]) ומקדם את
-     "הנוכחי" לשאלה 4 — כי הוא עכשיו הסעיף *הראשון* שנענה במסך, לא
-     האחרון (לא מפעיל עוד את "המשך" בסרגל התחתון בעצמו). ראו ההערה
-     המקבילה ב-s2p4 למעלה + ב-index.html. */
   onDone: function () {
     practiceProgress.questions[2].state = (viqState.s2p5 && viqState.s2p5.outcome === 'fail') ? 'incorrect' : 'correct';
     setCurrentQuestion(practiceProgress, 3);
@@ -630,9 +520,6 @@ function s2P5Check() { viqCheck('s2p5'); }
 function s2P5HintOpen() { document.getElementById('s2-p5-hint-overlay').hidden = false; }
 function s2P5HintClose() { document.getElementById('s2-p5-hint-overlay').hidden = true; }
 
-/* ⚠️ הוסרה s2ShowPart (20.08.2026, לפי בקשה מפורשת) — כל החלקים
-   גלויים תמיד (index.html, hidden הוסר). resetScreenState2 כבר קורא
-   ל-s2MaybeShowScrollGesture ישירות. */
 let s2ProgrammaticScroll = false;
 
 let s2GestureShown = false;
@@ -646,11 +533,7 @@ function s2HideGestureOnScroll() {
   }
   gesture.hidden = true;
 }
-/* QA 19.08.2026: לא מוצג עוד ללא-תנאי — רק אם יש בפועל מה לגלול
-   (scrollHeight>clientHeight) באותו רגע. נקראת שוב מתוך s2ShowPart
-   בכל חשיפת-חלק חדש. */
 function s2MaybeShowScrollGesture() {
-  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
   requestAnimationFrame(function () {
   if (s2GestureShown) return;
   const gesture = document.getElementById('s2-scroll-gesture');
@@ -670,10 +553,6 @@ function s2MaybeShowScrollGesture() {
    (hidden) או state של viqState/scqState בכלל — ה-DOM (data-attributes/
    disabled/hidden) וה-JS state נשארים כפי שהם לאורך כל חיי העמוד, לפי
    אותה מוסכמה בדיוק כמו כל מסכי-הגלילה מרובי-החלקים בפרויקט הזה. */
-/* ⚠️ עודכן (07.09.2026) — מחושב עכשיו כנגד ה-practiceProgress המשותף
-   המלא (4 שאלות), לא מערך-נפרד-לכל-מסך, ומסנכרן את שני ה-nav-ים
-   (syncBothProgressNavs) — כדי ששני המסכים (3+5) תמיד יראו את אותו
-   מצב-אמת, גם אם המבקר טרם ביקר באחד מהם. */
 function syncPracticeProgressCurrent() {
   let idx = 0;
   for (let i = 0; i < practiceProgress.questions.length; i++) {
@@ -693,18 +572,11 @@ function resetScreenState2() {
   s2MaybeShowScrollGesture();
 }
 
-/* =========================================================
-   מסך 4 — תמונה ממלאת-מסך + תגית-מידע, data-screen="3", id="s3". מסך
-   סטטי לחלוטין — בלי שאלה, בלי state לאפס. ⚠️ נוסף (07.09.2026), אותו
-   דפוס בדיוק כמו resetScreenState1 (מסך 2, id="s1").
-   ========================================================= */
+/* מסך 4 — תמונה ממלאת-מסך + תגית-מידע, data-screen"3", id"s3". מסך */
 function resetScreenState3() {
   /* אין state לאפס — מסך תמונה+כרטיס-מידע סטטי בלבד. */
 }
 
-/* ⚠️ נוסף (07.09.2026) — Gesture Hint (Cursor Scroll) למסך 5 (id="s4"),
-   אותו מנגנון בדיוק כמו s2MaybeShowScrollGesture/s2HideGestureOnScroll
-   למעלה, רק ממוקד ל-#s4-scroll-area/#s4-scroll-gesture. */
 let s4ProgrammaticScroll = false;
 let s4GestureShown = false;
 function s4HideGestureOnScroll() {
@@ -737,21 +609,7 @@ function resetScreenState4() {
   s4MaybeShowScrollGesture();
 }
 
-/* =========================================================
-   מסך 6 — מסך-סיום, מסך מעבר (TransitionScreen), data-screen="5",
-   id="s5". ⚠️ תוקן (07.09.2026, לפי בקשה מפורשת: "מסך אחרון בסיין 6
-   צריך להיות מסך מעבר, אפשר להעתיק ממסך ראשון באותו סיין") — הוחלף
-   הפלייסהולדר-הריק (מ-07.09.2026 המוקדם יותר, ראו למעלה) במבנה זהה
-   ל-מסך 1 (`s0`, `.transition-content`/`.transition-title-block`/
-   `.transition-avatar-wrap`) — בלי `.transition-bubble` (לא סופק
-   טקסט-בועית בבקשה). `.transition-sub`/`.transition-title` הגלובליים
-   כבר בדיוק 28px-רגיל/40px-בולד, לפי הבקשה — לא נדרשה שום דריסת-CSS.
-   ⚠️ תוקן שוב (07.09.2026, המשך) — הנכס הראשון שסופק לדמות הצהובה
-   היה בטעות תמונה סטטית (Yellow_happy.png, לא וידאו), מה שחייב מנגנון
-   video+img כפול חריג; סופק וידאו אמיתי חלופי (yellow-avatar-jumping
-   (1).mp4) — חזרה למנגנון הסטנדרטי-והפשוט של הפרויקט: אלמנט `<video>`
-   יחיד + `resolveCharBubbleVideo()` הגלובלי, אותו דפוס בדיוק כמו
-   S0_AVATAR_ASSETS/resetScreenState0 למעלה. */
+/* מסך 6 — מסך-סיום, מסך מעבר (TransitionScreen), data-screen"5", */
 const S5_AVATAR_ASSETS = {
   'character-1': 'assets/videos/boy-avatar-jumping-happily.mp4',
   'character-2': 'assets/videos/yellow-avatar-jumping (1).mp4'
@@ -762,9 +620,6 @@ function resetScreenState5() {
 
 /* אתחול */
 scaleApp();
-/* QA 19.08.2026: s2-p1/p2/p4/p5-feedbox הפכו ל-.is-static — מסך s2
-   (היחיד עם שאלות בסיין הזה) הוא מסך-גלילה. אין יותר קריאות
-   scqFbMakeDraggable בקובץ הזה. */
 (function () {
   const m = /^#screen=(\d+)$/.exec(location.hash);
   if (m) goTo(parseInt(m[1], 10));

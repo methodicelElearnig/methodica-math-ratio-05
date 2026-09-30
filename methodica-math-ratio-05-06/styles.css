@@ -1,15 +1,4 @@
-/* =========================================================
-   לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 6
-   3 מסכי תוכן אמיתי (Prompt 2): מסך-מעבר (s0), תמונה ממלאת-מסך (s1),
-   מסך-גלילה "שאלת השיא" בת 4 סעיפים + חלק-ביניים תמונתי (s2).
-
-   מקור התשתית הגלובלית: מנוע-הבסיס של סיין 2 (methodica-math-ratio-01-02).
-   מקור הרכיבים הגנריים לשאלות (Progress Question, VIQ, Feedback popup,
-   Gesture Hint): מסך-הגלילה עם דיאגרמה-קבועה בסיין 3
-   (methodica-math-ratio-01-03) — הועתקו כפי-שהם, בלי שינוי ערך.
-   ראו ARCHITECTURE.md לפירוט מלא של מה הועתק ומה נבנה כאן לראשונה
-   (מסך 2 — תמונה ממלאת-מסך — הוא סוג-מסך חדש, אין תקדים ישיר).
-   ========================================================= */
+/* לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 6 */
 
 /* ---------- Subject theme tokens (Math) ----------
    זהים לחלוטין לסיינים 1+2 — אותו יעד/נושא ("יחס"), אותה ערכת-צבע. */
@@ -210,16 +199,11 @@ img { display: block; max-width: none; }
   white-space: nowrap;
 }
 .btn-hint[hidden] { display: none; }
-/* ⚠️ תוקן (31.08.2026) — ראו הערה מלאה זהה ב-
-   methodica-math-ratio-05-01/styles.css. img סטטי במקום mask+currentColor. */
 .btn-hint .scq-hint-icon {
   flex-shrink: 0;
   width: 26px;
   height: 24px;
 }
-/* ⚠️ נוסף (31.08.2026, לפי בקשה מפורשת: "כשהכפתור דיסאבל גם האייקון
-   צריך להיות אפור") — ראו הערה מלאה זהה ב-
-   methodica-math-ratio-05-01/styles.css. */
 .btn-hint:disabled .scq-hint-icon { filter: grayscale(1) opacity(0.45); }
 .btn-hint:disabled { color: #aeaeae; border-color: #aeaeae; cursor: not-allowed; }
 .btn-hint:hover { background: #f0f8ff; }
@@ -320,11 +304,6 @@ img { display: block; max-width: none; }
   overflow: hidden;
 }
 .img-zoom-modal__stage { position: relative; width: 100%; height: 100%; }
-/* ⚠️ נוסף (06.09.2026) — .s3-img-frame הוא wrapper ברוחב-קבוע (300px,
-   גובה-auto לפי יחס-התמונה, לא ריבועי כמו .s1-photo-img-frame/
-   .s2-interlude-img-frame) — בלי הכלל הזה, השכפול למודל היה נשאר
-   ב-300px (לא מוגדל) בתוך הפאנל 660×660. ממוקד ל-.img-zoom-modal__stage
-   בלבד — לא משפיע על התצוגה הרגילה במסך. */
 .img-zoom-modal__stage .s3-img-frame { width: 100%; height: 100%; }
 .img-zoom-modal__stage .s3-img-frame img { width: 100%; height: 100%; object-fit: contain; }
 .img-zoom-close {
@@ -382,21 +361,12 @@ img { display: block; max-width: none; }
 .scq-fb-box.is-correct { background: #edf8ed; }
 .scq-fb-box.is-wrong { background: #ffdbdc; }
 .scq-fb-box.is-dragging { cursor: grabbing; }
-/* .is-static — QA 19.08.2026: מסך s2 (היחיד עם שאלות בסיין הזה) הוא
-   מסך-גלילה; פופאפ-משוב במיקום קבוע-לקנבס מתנתק חזותית מהשאלה כשגוללים
-   בין הסעיפים. הוזז לזרום מיד אחרי כפתור-הבדיקה בתוך ה-.s3-part
-   הרלוונטי. חל על כל ארבעת תיבות-המשוב (s2-p1/p2/p4/p5). */
 .scq-fb-box.is-static {
   position: static;
   left: auto; right: auto; top: auto; bottom: auto;
   width: 100%;
   max-width: none;
   cursor: default;
-  /* ⚠️ תוקן (03.09.2026, דיווח: "המשוב הקבוע עולה מעל פופ-אפ הרמז") —
-     ה-z-index:50 של .scq-fb-box הבסיסית נועד לגרסה הצפה (position:
-     absolute), לא לגרסה הקבועה-בזרימה הזו. באג-בידי/דפדפן גרם לו
-     להישאר פעיל ולתפוס-קדימות מעל .scq-hint-overlay (z-index:40) —
-     אין לו סיבה לחרוג-מעל תוכן-רגיל של המסך בכלל, אז אופס במפורש. */
   z-index: auto;
 }
 .scq-fb-title {
@@ -447,9 +417,6 @@ img { display: block; max-width: none; }
   display: flex;
   align-items: center;
   justify-content: center;
-  /* var(--subject-900) של הפרויקט הזה (#2F2478 → rgb(47,36,120)) —
-     לא rgba(0,32,96,.35) הקבוע (Science Subject/900), באג שכבר תוקן
-     בסיינים 1+2 (ראו ARCHITECTURE.md שם). */
   background: rgba(47, 36, 120, 0.35);
 }
 .scq-hint-overlay[hidden] { display: none; }
@@ -500,12 +467,6 @@ img { display: block; max-width: none; }
   font-size: 20px;
   text-align: center;
 }
-
-/* ⚠️ הוסר (19.08.2026, Prompt 2) — .placeholder-box/.placeholder-title/
-   .placeholder-subtitle היו קוד-מת ברגע שתוכן אמיתי נבנה (אותו שיעור
-   שכבר נלמד בסיינים 3/4: קוד-פלייסהולדר שנשאר אחרי בניית-תוכן הוא
-   קוד-מת, נמחק ולא נשאר "ליתר ביטחון"). מסך 1 עכשיו הוא מסך-מעבר אמיתי
-   (ראו .transition-* למטה). */
 
 /* =========================================================
    מסך 1 — מסך מעבר, דמות+בועית-דיבור (data-screen="0", id="s0").
@@ -649,10 +610,6 @@ img { display: block; max-width: none; }
   line-height: 1.5;
   margin: 0;
 }
-/* ⚠️ תוקן (31.08.2026, דיווח: "תיבת הטקסט הגדולה תמקם בבקשה בתחתית
-   התמונה") — הוחלף top:2.5% ב-bottom:2.5%, כדי שהתיבה תשב בתחתית
-   תיבת-התמונה (.s1-photo-wrap) במקום בפינה העליונה. left/width נשארו
-   כפי-שהיו (לא התבקש שינוי רוחב/מיקום-אופקי). */
 .s1-info-banner {
   position: absolute;
   bottom: 2.5%;
@@ -660,12 +617,6 @@ img { display: block; max-width: none; }
   width: 38%;
   z-index: 2;
 }
-/* ⚠️ תוקן (31.08.2026, דיווח: "תוודא שהפונט של הטקסט הוא ASSISTANT
-   ובגודל 24") — .info-banner-label/.info-banner-body (הבסיס המשותף,
-   בשימוש גם ע"י .s2-interlude-banner במסך 3) היו 18px/20px, לא 24px.
-   מודיפייר-scope כאן במקום עריכת הכלל המשותף, כדי לא להשפיע על חלק-
-   הביניים במסך 3 שלא התבקש שינוי בו. font-family כבר היה 'Assistant'
-   נכון בשני הכללים — לא שונה. */
 .s1-info-banner .info-banner-label,
 .s1-info-banner .info-banner-body {
   font-size: 24px;
@@ -761,11 +712,6 @@ img { display: block; max-width: none; }
 .progress-question__connector { width: 64px; height: 1.5px; background: #ececec; margin-top: 11.5px; border-radius: 2px; flex-shrink: 0; }
 .progress-question__connector--visited { background: rgba(0, 0, 0, 0.6); }
 
-/* ════════════════════════════════════════════════════════
-   GLOBAL — scq-qtext-em (טקסט-שאלה מודגש) + btn-hint-row. מועתק
-   כפי-שהוא מסיינים 3/5. סדר-DOM ב-.btn-hint-row: רמז ראשון, צדקתי
-   שני (מאומת מול Figma — "אפשר רמז?" פיזית מימין ל"צדקתי?").
-   ════════════════════════════════════════════════════════ */
 .scq-qtext-em { font-family: 'Assistant', sans-serif; font-size: 24px; font-weight: 700; color: var(--subject-500); text-align: right; margin: 0; }
 .btn-hint-row { display: flex; flex-direction: row; align-items: center; gap: 16px; align-self: flex-end; }
 
@@ -775,12 +721,6 @@ img { display: block; max-width: none; }
    .s3-img-frame/.s3-scroll-area/.s3-scroll-inner/.s3-part/.s3-body/
    .s3-inline-btn), בלי שום שינוי ערך.
    ════════════════════════════════════════════════════════ */
-/* ⚠️ תוקן (07.09.2026, דיווח: "מסכים 3+5 צריך להגדיל את התמונה
-   המלווה") — .s3-fixed-images/.s3-img-frame (משמשים אך ורק את שני
-   הדיאגרמות ב-#s2-fixed-images/#s4-fixed-images, שני המקומות היחידים
-   בקובץ הזה, אומת) הוגדלו 300px→400px; .s3-scroll-area/#s2-scroll-
-   gesture/#s4-scroll-gesture הוזזו left:360px→460px בהתאם (40+400+20
-   רווח), כדי שאזור-הגלילה הסמוך לא ייחתך/יחפוף. */
 .s3-fixed-images {
   position: absolute;
   top: 139px;
@@ -791,11 +731,6 @@ img { display: block; max-width: none; }
   gap: 20px;
   z-index: 1;
 }
-/* ⚠️ תוקן (06.09.2026, דיווח: "אין מסגרת לתמונה בכל הלומדה, חוץ מסיין 1
-   מסכים ראשונים") — נוסף border, אותו ערך המאומת-מול-Figma
-   ב-.s2-hook-img-frame-inner/.s2-fb-img-frame-inner (methodica-math-
-   ratio-05-01/styles.css) — מאומץ כתקן האחיד לכל מסגרות-תמונת-התוכן
-   בפרויקט (לפי בקשה מפורשת "על כל תמונות התוכן"). */
 .s3-img-frame { position: relative; width: 400px; border: 1px solid rgba(174, 174, 174, 0.5); border-radius: 16px; overflow: hidden; box-sizing: border-box; }
 .s3-img-frame img { width: 100%; height: auto; display: block; }
 .s3-img-frame--diagram { background: #fafafa; padding: 16px; box-sizing: border-box; }
@@ -807,10 +742,6 @@ img { display: block; max-width: none; }
   left: 460px;
   right: 16px;
   bottom: 74px;
-  /* ⚠️ תוקן (31.08.2026, בדיקה חיה מול Figma דרך MCP) — right/padding-right/
-     רוחב-הפס עודכנו ל-16px/24px/12px, תואם ל-node "scrolling"
-     (1038:18222/1038:18219, fileKey eSbp4bKHgBky0rakDb8l9N). המרווח
-     הנראה בין תוכן לפס נשאר ~12px (24-12), התוכן עצמו לא זז. */
   padding-right: 24px;
   box-sizing: border-box;
   overflow-y: auto;
@@ -823,23 +754,10 @@ img { display: block; max-width: none; }
 .s3-scroll-area::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.56); border-radius: 24px; }
 .s3-scroll-inner { direction: rtl; width: 100%; }
 
-/* #s2-p1/p2/p4/p5-feedbox left:360px הוסר (19.08.2026) — כולם הפכו
-   ל-.is-static, אין להם יותר position:absolute. */
-
 .s3-part { display: flex; flex-direction: column; align-items: flex-start; width: 100%; gap: 20px; padding: 20px 0; box-sizing: border-box; }
 .s3-part[hidden] { display: none; }
 .s3-body { font-family: 'Assistant', sans-serif; font-size: 24px; font-weight: 400; color: #303030; text-align: right; line-height: 1.4; width: 100%; margin: 0; }
 .s3-inline-btn { align-self: flex-end; }
-
-/* ⚠️ הוסרו (07.09.2026, לפי בקשה מפורשת לפצל את מסך 3 ל-3 מסכים
-   נפרדים) — .s3-scroll-area.s2-full-width/.s2-interlude-frame/
-   .s2-interlude-img-frame/.s2-interlude-img/.s2-interlude-banner:
-   חלק-הביניים התמונתי (engineers.jpg) עבר למסך עצמאי משלו (מסך 4,
-   id="s3"), שם הוא משתמש ב-.s1-photo-wrap/.s1-photo-img-frame/
-   .s1-photo-img/.s1-info-banner הקיימים (אותו דפוס בדיוק כמו מסך 2)
-   — לא נזקק יותר לקלאסים הייעודיים-לחלק-בתוך-עמודת-גלילה האלה, ולא
-   להרחבת-העמודה הזמנית (שהייתה קיימת רק כי הדיאגרמה-הקבועה והתמונה
-   חלקו את אותה עמודת-גלילה — כבר לא המצב). */
 
 /* ════════════════════════════════════════════════════════
    GLOBAL — Gesture Hint (Cursor Scroll), SELF-QA-lomda.md §7. מועתק
@@ -851,11 +769,8 @@ img { display: block; max-width: none; }
   z-index: 20;
 }
 .gesture-hint-scroll-wrap[hidden] { display: none; }
-#s2-scroll-gesture { top: 139px; left: 460px; right: 16px; bottom: 74px; } /* right עודכן 31.08.2026, ראו .s3-scroll-area; left עודכן 07.09.2026 יחד עם הגדלת-התמונה */
-/* ⚠️ נוסף (07.09.2026) — מסך 5 (id="s4", ג+ד) הוא עמודת-גלילה עצמאית
-   משלו, עם אותה דיאגרמה-קבועה/פריסה בדיוק כמו מסך 3 (s2) — אותן
-   קואורדינטות. */
-#s4-scroll-gesture { top: 139px; left: 460px; right: 16px; bottom: 74px; } /* left עודכן 07.09.2026 יחד עם הגדלת-התמונה */
+#s2-scroll-gesture { top: 139px; left: 460px; right: 16px; bottom: 74px; }
+#s4-scroll-gesture { top: 139px; left: 460px; right: 16px; bottom: 74px; }
 .gesture-hint {
   position: absolute;
   left: 50%; top: 62%;
@@ -863,18 +778,6 @@ img { display: block; max-width: none; }
   width: 0; height: 0;
   pointer-events: none;
 }
-/* QA 19.08.2026: היד חייבת להופיע קרוב לפס-הגלילה עצמו (בצד ימין),
-   לא במרכז האזור. `92%` יחסי כדי שיתאים לרוחב-עמודת-הגלילה בכל מסך. */
-/* QA 20.08.2026 (תוקן שוב — 92% לא היה מספיק קרוב בפועל): עוגן ב-
-   right:6px קבוע (לא אחוז) — ממורכז בתוך פס-הגלילה עצמו, ללא תלות
-   ברוחב-העמודה. ראו methodica-math-ratio-01-01/styles.css להסבר המלא. */
-/* ⚠️ תוקן שוב (10.09.2026, דיווח: "כף היד לא ממוקמת בדיוק על
-   הסקרולבר בכל המסכים שיש בהם גלילה") — ההערה הקודמת (31.08.2026)
-   טעתה: היא הוסיפה את ה-right:16px של ה-wrap עצמו (ביחס למסך) לחצי-
-   רוחב-הפס (6px), אבל right כאן כבר יחסי לקצה-ה-wrap עצמו (frame
-   פנימי) — אין להוסיף שוב את ה-16px. הפס (12px) יושב צמוד לקצה-ה-wrap,
-   מרכזו הוא 12/2=6px מהקצה, לא 22px. תוקן חזרה ל-6px (זהה לתיקון
-   שבוצע ב-methodica-math-ratio-05-01, ראו שם ההערה המלאה). */
 .gesture-hint-scroll-wrap .gesture-hint { left: auto; right: 6px; }
 .gesture-hint-hand,
 .gesture-hint-ring {
@@ -928,6 +831,3 @@ img { display: block; max-width: none; }
 .frac-num { border-bottom: 1.5px solid currentColor; padding: 0 6px 2px; }
 .frac-den { padding: 2px 6px 0; }
 
-/* ⚠️ הוסר .s5-placeholder-box (07.09.2026) — מסך 6 (id="s5") הפך למסך-
-   מעבר אמיתי (ראו index.html/script.js), הפלייסהולדר-הריק כבר לא
-   בשימוש בקובץ הזה. */

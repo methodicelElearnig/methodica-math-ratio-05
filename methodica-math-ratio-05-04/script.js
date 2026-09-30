@@ -1,28 +1,9 @@
 'use strict';
 
-/* =========================================================
-   לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 4
-   מנוע גלובלי — canvas scaling, ניווט מסכים, סטייט גלובלי.
-   TOTAL_SCREENS יעודכן ל-1+ עם הוספת כל מסך תוכן אמיתי (Prompt 2+).
-
-   מקור: הועתק/הותאם מהמנוע הגלובלי של סיין 2 (methodica-math-ratio-01-02)
-   של הפרויקט הזה עצמו — סיין 2 הוא כרגע מקור-האמת המתודולוגי המאומת/
-   מתוקן ביותר בפרויקט. ראו ARCHITECTURE.md לפירוט מלא.
-   ========================================================= */
+/* לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 4 */
 
 const TOTAL_SCREENS = 3;
 let currentScreen = 0;
-
-/* ⚠️ נוסף (30.08.2026) — ניווט בין-סיינים: כפתור "חזרה" מהמסך הראשון
-   כאן מוביל לסיין הקודם (methodica-math-ratio-01-03) בלי פרמטר, ופותח
-   שם כרגיל במסך הראשון-שלו. כפתור "חזרה" מהסיין הבא
-   (methodica-math-ratio-01-05) מוביל הנה עם ?screen=last — נפתח ישר
-   במסך האחרון כאן במקום. script.js נטען בסוף ה-body (אחרי כל ה-.screen
-   sections), אז אפשר לקרוא ל-goTo באופן סינכררוני כאן. */
-/* ⚠️ תוקן (03.09.2026, דיווח: "חזרה מהסיין הבא מעבירה למסך ריק") — קריאת ה-goTo כאן רצה
-   סינכררונית לפני שקבועים המוגדרים למטה בקובץ (const) מאותחלים; אם resetScreenState
-   של המסך האחרון תלוי באחד מהם, נזרקת שגיאה שקוטעת את goTo() לפני שהמסך היעד מסומן
-   active, ואז שום מסך לא נשאר גלוי. הועבר לסוף הקובץ (ראו §אתחול), אחרי שהכל מוגדר. */
 
 /* ---------- Companion character system — state + storage key ----------
    ID לוגי (character-1/character-2), לא צבע/שם, לפי Companion character
@@ -49,19 +30,8 @@ window.lomdaState = {
   selectedCharacter: savedCharacter
 };
 
-/* ⚠️ תוקן (31.08.2026, לפי בדיקת-רספונסיביות) — CANVAS_W/CANVAS_H היו
-   מוצהרים פעמיים: פעם מקומית כאן בתוך scaleApp(), ופעם נפרדת למטה ליד
-   clampPopupPosition (BOTTOM_BAR_H) — שני מקורות-אמת לאותם מספרים,
-   ללא שום דבר שמכריח אותם להישאר מסונכרנים אם מישהו יערוך רק אחד מהם
-   בעתיד. אוחד למקור-אמת יחיד כאן, ברמת-המודול — גם scaleApp() וגם
-   clampPopupPosition (למטה) קוראים מכאן, לא מגדירים בעצמם. */
 const CANVAS_W = 1280, CANVAS_H = 710;
 
-/* ⚠️ תוקן (23.09.2026, דיווח לקוח על methodica-math-ratio-05-01: "יש מלא
-   שטח מת למעלה ולמטה, אנחנו סתם מקטינים את שטח היחידה") — אותו תיקון
-   הועתק לכאן: scaleApp() ממרכז-עם-שוליים הוחלף במתיחת-הקנבס-עצמו
-   למילוי-מדויק של ה-viewport (אפס שוליים-מתים, בכל יחס-גובה-רוחב).
-   getCanvasSize() למטה היא מקור-האמת לגודל-הקנבס בפועל מרגע זה. */
 function scaleApp() {
   const app = document.getElementById('app');
   const scale = Math.min(window.innerWidth / CANVAS_W, window.innerHeight / CANVAS_H);
@@ -114,20 +84,12 @@ function goTo(n) {
 }
 
 function resetScreenState(n) {
-  /* כל מסך תוכן אמיתי שנוסף מקבל כאן שורת if (n === X) resetScreenStateX();
-     משלו, ומגדיר את הפונקציה resetScreenStateX() ליד קטע ה-HTML/JS של
-     המסך — לפי אותה מוסכמה בדיוק כמו סיינים 1+2. */
   if (n === 0) resetScreenState0();
   if (n === 1) resetScreenState1();
   if (n === 2) resetScreenState2();
 }
 
-/* =========================================================
-   מסך 1 — מסך מעבר, data-screen="0", id="s0". שקף 51. דמות-נלווית
-   לפי הדמות שנבחרה בסיין 1. ⚠️ עודכן (30.08.2026) — נכס-וידאו ייעודי
-   ("i-beat-you") סופק במפורש, מחליף את פוזת-החשיבה/שאילה הזמנית
-   שתועדה קודם כלא-מאושרת מול המפיקה.
-   ========================================================= */
+/* מסך 1 — מסך מעבר, data-screen"0", id"s0". שקף 51. דמות-נלווית */
 const S0_AVATAR_ASSETS = {
   'character-1': 'assets/videos/boy-avatar-i-beat-you.mp4',
   'character-2': 'assets/videos/yellow-avatar-i-beat-you.mp4'
@@ -136,26 +98,13 @@ function resetScreenState0() {
   resolveCharBubbleVideo('s0-avatar', S0_AVATAR_ASSETS);
 }
 
-/* =========================================================
-   מסך 2 — משימת כיתה, הוראות בלבד (data-screen="1", id="s1"). אין
-   בדיקת נכון/שגוי — מסך מידע/הנחיות בלבד, כפתור ההמשך תמיד פעיל
-   (מאומת מול methodica-science-mass-measure-03-03, הערת-קוד מקורית
-   שם: "בלי בדיקת נכון/שגוי... כפתור ההמשך תמיד פעיל"). אותה מערכת-
-   דמות-נלווית, נכסים זהים לאלה של מסך 1 (אין פוזה ייעודית "מתבונן/ת
-   בסביבה" בנכסים הקיימים).
-   ========================================================= */
+/* מסך 2 — משימת כיתה, הוראות בלבד (data-screen"1", id"s1"). אין */
 const S1_CHAR_ASSETS = {
   'character-1': '../unit-assets/video/boy-avatar-thinking.mp4',
   'character-2': '../unit-assets/video/yellow-avatr-asking.mp4'
 };
-/* Gesture Hint — Cursor Scroll (SELF-QA-lomda.md §7). נוסף (31.08.2026,
-   בדיקה מקיפה של כל מסכי-הגלילה) — מסך זה גולל אבל לא קיבל את הרכיב
-   מעולם. אין כאן שום scrollTo/scrollIntoView יזום-קוד במסך הזה, אז
-   בניגוד לסינים האחרים אין צורך בדגל "ProgrammaticScroll" — אותו
-   מנגנון show-once-if-scrollable, בלי הסיבוך המיותר. */
 let s1GestureShown = false;
 function s1MaybeShowScrollGesture() {
-  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
   requestAnimationFrame(function () {
   if (s1GestureShown) return;
   const gesture = document.getElementById('s1-scroll-gesture');
@@ -178,14 +127,7 @@ function resetScreenState1() {
 }
 function s1Continue() { goTo(2); }
 
-/* =========================================================
-   מסך 3 — המשך משימת הכיתה: קלט פתוח בלי תשובה-נכונה (data-screen="2",
-   id="s2"). ⚠️ אין תקדים לרכיב הזה בפרויקט-אחות (נבדק ולא נמצא) —
-   שער-ההפעלה היחיד לכפתור "המשך" הוא "כל 6 השדות מלאים" — אין שום
-   בדיקת-נכונות, אין משוב, אין .correct/.wrong. זו בכוונה: אלה נתוני-
-   אמת אישיים של הלומד/ת (מה שספרו בפועל בכיתה/בית-הספר), לא תרגיל עם
-   תשובה יחידה נכונה.
-   ========================================================= */
+/* מסך 3 — המשך משימת הכיתה: קלט פתוח בלי תשובה-נכונה (data-screen"2", */
 const S2_OPEN_INPUT_IDS = ['s2-obj-1', 's2-obj-2', 's2-ratio1-a', 's2-ratio1-b', 's2-ratio2-a', 's2-ratio2-b'];
 function s2OnInput() {
   const allFilled = S2_OPEN_INPUT_IDS.every(function (id) {
@@ -201,7 +143,6 @@ const S2_CHAR_ASSETS = {
    ליד s1MaybeShowScrollGesture (מסך 2) — אותו מנגנון בדיוק. */
 let s2GestureShown = false;
 function s2MaybeShowScrollGesture() {
-  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
   requestAnimationFrame(function () {
   if (s2GestureShown) return;
   const gesture = document.getElementById('s2-scroll-gesture');
@@ -279,15 +220,10 @@ function resolveCharBubbleVideo(videoId, assetMap) {
    doesn't exist yet (getElementById guard), so it's safe to keep here
    unused until the first real question screen calls it.
    ========================================================= */
-/* ⚠️ CANVAS_W/CANVAS_H הוסרו מכאן (31.08.2026) — מוגדרים פעם אחת בלבד,
-   למעלה ליד scaleApp(). ראו ההערה המלאה שם. */
 const BOTTOM_BAR_H = 74;
 
 function clampPopupPosition(x, y, popupEl) {
   const w = popupEl.offsetWidth, h = popupEl.offsetHeight;
-  // ⚠️ עודכן (23.09.2026) — getCanvasSize().w/.h, לא CANVAS_W/CANVAS_H
-  // הקבועים: #app יכול כעת להיות רחב/גבוה יותר מגודל-העיצוב (ראו הערה
-  // ליד scaleApp()), אחרת פופ-אפ נגרר היה נשאר נעול לתוך המלבן הישן-הקטן.
   const canvas = getCanvasSize();
   const minX = 0, maxX = canvas.w - w;
   const minY = 0, maxY = (canvas.h - BOTTOM_BAR_H) - h; // top edge of the bottom bar
@@ -333,10 +269,6 @@ function scqFbMakeDraggable(boxId) {
     if (!dragging) return;
     const parent = box.offsetParent || box.parentElement;
     const parentRect = parent.getBoundingClientRect();
-    // pointer delta lives in raw viewport px — convert to canvas-space
-    // (divide by the current scaleApp() zoom factor) before clamping.
-    // ⚠️ עודכן (23.09.2026) — getCanvasSize().w, לא CANVAS_W הקבוע (ראו
-    // ההערה המלאה ליד scaleApp()/clampPopupPosition()).
     const scale = parentRect.width / getCanvasSize().w;
     const dx = (e.clientX - startX) / scale;
     const dy = (e.clientY - startY) / scale;

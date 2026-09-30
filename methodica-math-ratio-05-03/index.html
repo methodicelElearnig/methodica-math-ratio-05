@@ -25,31 +25,14 @@
     </div>
 
     <div class="bottom-bar">
-      <!-- ⚠️ תוקן (31.08.2026, בדיקה מקיפה) — מחלקת s0-bar (justify-content:
-           flex-end, styles.css) הייתה שריד מהזמן שלמסך הזה לא היה כפתור-
-           חזרה בכלל (השורה הבאה, "Never shown on the first screen", כבר
-           לא נכונה — עודכנה 30.08.2026). עם ה-s0-bar עדיין דלוקה, שני
-           הכפתורים (חזרה+המשך) נדחקו יחד לצד שמאל, לא לשני הקצוות. הוסרה
-           — .bottom-bar-inner הרגילה (justify-content:space-between) כבר
-           נכונה כאן, בדיוק כמו סיין 2 (הרפרנס). -->
       <div class="bottom-bar-inner">
-        <!-- ⚠️ עודכן (30.08.2026) — ניווט בין-סיינים: הוסר hidden, נוסף
-             onclick. מוביל לסיין הקודם (methodica-math-ratio-01-02) עם
-             ?screen=last, כדי שהוא ייפתח שם במסך האחרון-שלו ולא בראשון. -->
         <div class="bar-back"><button class="btn-back" id="s0-back" onclick="location.href='../methodica-math-ratio-05-02/index.html?screen=last'">חזרה</button></div>
         <div class="bar-actions"><button class="btn-continue" id="s0-continue" onclick="goTo(1)">אפשר להתחיל!</button></div>
       </div>
     </div>
   </section>
 
-  <!-- =========================================================
-       מסך 2 — מסך גלילה, "שאלה 1 מתוך 3" (קבוצת התקדמות A), data-screen="1",
-       id="s1". פרחי-שוקולד/יחס. יישומון אינטראקטיבי קבוע בצד שמאל
-       (427×636px, iframe ל-chocolate-ratio-app/index.html — ⚠️ עודכן
-       30.08.2026, ראו ARCHITECTURE.md § "פלייסהולדר-יישומון" לפירוט
-       המלא, כולל למה זה עדיין class נפרד מהפלייסהולדר המקורי).
-       3 חלקים: א'+ב' בדיקה מעורבת (2 קלט מספרי + פיל כן/לא), ג' שאלה
-       חד-ברירה רגילה (SCQ). ========================================================= -->
+  <!-- מסך 2 — מסך גלילה, "שאלה 1 מתוך 3" (קבוצת התקדמות A), data-screen"1", -->
   <section class="screen" data-screen="1" id="s1">
     <nav class="progress-question" id="s1-progress" aria-label="ניווט שאלות">
       <div class="progress-question__item" data-question="1">
@@ -68,29 +51,6 @@
       </div>
     </nav>
 
-    <!-- יישומון אינטראקטיבי (רשת 50 משבצות, בחירת-צבע-שוקולד, צביעה
-         לפי יחס נתון) — ⚠️ עודכן (30.08.2026), לפי שקף 39 בתסריט
-         (טקסט השקף + הערות-הפקה מפורשות) + תמונה-ממחישה שסופקה.
-         קובץ עצמאי ב-chocolate-ratio-app/index.html, מוטמע ב-iframe.
-         מופע יחיד אחד משרת גם סעיף א' (יחס 9:1) וגם סעיף ב' (יחס
-         3:1) — הלומד/ת לוחצים "מחק" בעצמם בין הסעיפים (איפוס מלא של
-         כל 50 המשבצות, לא כלי-מחיקה בודד לפי-משבצת — כך בדיוק לפי
-         הערות ההפקה: "כפתור 'מחק' יאפס את הסימון"). הבדיקה/המשוב
-         ("צדקתי?") שייכים לשאלת ה-VIQ הקיימת מסביב (S1MIX_CFG),
-         לא ליישומון עצמו — היישומון הוא תצוגה/כלי-צביעה חופשיים
-         בלבד, בלי ולידציה מובנית. class ייעודי חדש (.s1-widget-applet)
-         באותם מידות/מיקום בדיוק כמו .s1-widget-placeholder שהוחלף.
-         ראו ARCHITECTURE.md § "פלייסהולדר-יישומון" לפירוט המלא. -->
-    <!-- ⚠️ עודכן (06.09.2026, דיווח: "להזניק אותו על מסך מלא", "לתת
-         ליישומון יותר מקום") — נוסף .s1-widget-wrap/.s1-widget-panel
-         סביב האייפריים כדי לאפשר מצב-הגדלה (toggling class
-         .is-expanded ב-s1WidgetExpandToggle, script.js), בלי לשכפל/
-         לטעון-מחדש את האייפריים (מצב הצביעה חייב להישמר) — אותו
-         אייפריים ממש רק גדל/מתמרכז דרך CSS. כפתור ההגדלה (.img-zoom-btn)
-         וכפתור הסגירה (.img-zoom-close) הם אותם class/אייקון בדיוק
-         כמו הגדלת-תמונה הגלובלית בפרויקט (עקבי חזותית), אבל מנגנון
-         עצמאי (s1WidgetExpandToggle, לא imgZoomOpen/Close) כי אלה
-         משכפלים DOM ("clone") — לא מתאים לאייפריים בעל state חי. -->
     <div class="s1-widget-wrap" id="s1-widget-wrap">
       <div class="s1-widget-panel">
         <iframe class="s1-widget-applet" title="יישומון יחס — תבנית שוקולד" src="chocolate-ratio-app/index.html" loading="lazy"></iframe>
@@ -154,8 +114,6 @@
         </div>
       </div>
 
-      <!-- ⚠️ תוקן (20.08.2026, לפי בקשה מפורשת: "התוכן לא יעלה
-           בהדרגתיות") — הוסר hidden, כל שלושת החלקים גלויים תמיד. -->
       <div class="s1-part" id="s1-part-2">
         <p class="s1-body">
           ב. כעת היחס בין מספר פרחי השוקולד המריר למספר פרחי השוקולד הלבן
@@ -217,8 +175,6 @@
     </div>
     </div>
 
-    <!-- אין .btn-hint במסך הזה: לא נמצא טקסט-רמז מפורש בתסריט (שקפים
-         39-41), אותו ממצא שכבר תועד בסיינים 1+2 לשאלות דומות. -->
     <div class="bottom-bar">
       <div class="bottom-bar-inner">
         <div class="bar-back"><button class="btn-back" id="s1-back" onclick="goTo(0)">חזרה</button></div>
@@ -251,10 +207,6 @@
       </div>
     </nav>
 
-    <!-- ⚠️ נוסף (01.09.2026, דיווח: "אין כף יד" — היה חסר לגמרי, לא
-         רק מוסתר: זה המסך היחיד בפרויקט עם overflow-y:auto בלי שום
-         gesture-hint נלווה. אותה מוסכמה בדיוק כמו s1-scroll-gesture/
-         s3-scroll-gesture באותה תיקייה. -->
     <div class="gesture-hint-scroll-wrap" id="s2-scroll-gesture" hidden>
       <div class="gesture-hint">
         <div class="gesture-hint-ring gesture-hint-ring--big"></div>
@@ -267,11 +219,6 @@
       <div class="scq-question">
         <div class="scq-text-col">
           <div class="scq-qtext-body">
-            <!-- ⚠️ תוקן (31.08.2026, לפי בקשה מפורשת: "סימן הזווית ∢
-                 לא תקין לאורך כל הלומדה, צריך ∢ABD לא ABD∢") — ∢ הוא
-                 תו-ניטרלי מבחינת bidi; בלי dir="ltr" עוטף גם אותו וגם
-                 האותיות הלטיניות ביחד כיחידה אחת, אלגוריתם ה-bidi (תחת
-                 direction:rtl של העמוד) ממקם אותו בצד ההפוך מהמיועד. -->
             <p class="scq-qbody">2. בסרטוט נתונה <span dir="ltr">∢ACB</span> וקטע CD היוצא מקודקוד הזווית ומחלק אותה לשתי זוויות α ו-β. היחס בין α ל-β הוא 7 : 2.</p>
             <p class="scq-qtext-em">סמנו את המשפטים הנכונים:</p>
           </div>
@@ -383,12 +330,8 @@
       </div>
     </div>
 
-    <!-- id נוסף (מעבר ל-class) כדי ש-s3HidePhoto() ב-script.js יוכל
-         להסתיר את כל העמודה בבת-אחת בחלק ג'. -->
     <div class="s3-fixed-images" id="s3-fixed-images">
       <div class="s3-img-frame">
-        <!-- ⚠️ תוקן (31.08.2026, דיווח: "לא מופיעה התמונה של מסך 4") —
-             הקובץ בפועל בדיסק הוא .jpg, לא .jpeg. -->
         <button class="img-zoom-btn" type="button" aria-label="הגדלת התמונה"
                 data-zoom-src="assets/images/purim-gold-tickets.jpg" data-zoom-alt="כרטיסי זהב של הגרלת פורים">
           <svg class="img-zoom-btn__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -423,8 +366,6 @@
         </div>
       </div>
 
-      <!-- ⚠️ תוקן (20.08.2026, לפי בקשה מפורשת) — הוסר hidden, כל
-           שלושת החלקים גלויים תמיד. -->
       <div class="s3-part" id="s3-part-2">
         <p class="s3-body">רועי ועינת זכו בפרס הגדול של 120 שקלים!!! עכשיו הם רוצים לחלק את 120 השקלים בצורה הוגנת, לפי יחס הכסף שכל אחד מהם שילם בקניה.</p>
         <p class="scq-qtext-em">ב. סמנו את התשובה הנכונה:</p>
@@ -502,12 +443,6 @@
       <p class="s0-line-1">יופי של עבודה!</p>
       <p class="s0-line-2">הנה עוד 2 תרגילים ברמת קושי גבוהה יותר.
 </p>
-      <!-- ⚠️ תוקן (31.08.2026, לפי בקשה מפורשת: "'קטן עליכם' צריך
-           להיות בתוך בועית") — הוסר .s0-line-3 (פסקה פשוטה); הטקסט
-           עבר לבועית-דיבור ליד הדמות (.s0-bubble, אותה טכניקה
-           חזותית בדיוק כמו .transition-bubble ב-methodica-math-
-           ratio-01-05-06, מותאמת-מיקום ל-.s0-avatar-wrap הממורכז
-           כאן). -->
       <div class="s0-avatar-wrap">
         <div class="s0-bubble">קטן עליכם!</div>
         <video class="s0-avatar" id="s4-avatar" autoplay loop muted playsinline></video>
@@ -522,29 +457,8 @@
     </div>
   </section>
 
-  <!-- =========================================================
-       מסך 6 — מסך גלילה, קבוצת-התקדמות **נפרדת** (practiceProgress2,
-       2 פריטים בלבד: "שאלה 1"=סעיפים א'+ב' יחד, "שאלה 2"=סעיף 3),
-       data-screen="5", id="s5". שעות-עבודה/חלוקת-כסף. תמונה קבועה
-       מתחלפת בכל חלק (לא מוסתרת כמו במסך 4): boy-washing-car.jpeg
-       (ברירת-מחדל, חלק א') → girl-washing-car.jpeg (חלק ב') →
-       lottery-kiosk-siblings.jpg (חלק 3, ⚠️ .jpg לא .jpeg — כך הקובץ
-       בפועל בדיסק, תוקן 31.08.2026 אחרי דיווח על תמונה חסרה), דרך
-       s5SetPhoto(). מסך אחרון
-       בסיין — כפתור "המשך" הראשי הוא no-op בטוח (goTo(6),
-       TOTAL_SCREENS=6 → תקף רק 0-5), בדיוק לפי המוסכמה המתועדת כבר
-       בסיין 1 (#s6-continue→goTo(7)) ובסיין 2 (#s4-continue→goTo(5)).
-       ========================================================= -->
+  <!-- מסך 6 — מסך גלילה, קבוצת-התקדמות **נפרדת** (practiceProgress2, -->
   <section class="screen" data-screen="5" id="s5">
-    <!-- ⚠️ הוסר (23.09.2026, בקשה מפורשת: "סרגל ההתקדמות למעלה צריך
-         להוריד לגמרי, לא צריך אותו") — .progress-question הוא
-         position:absolute עצמאי (top:48px, לא בזרימה רגילה), ואף
-         אלמנט אחר במסך הזה לא ממוקם ביחס אליו (.s5-fixed-images/
-         .s3-scroll-area שניהם position:absolute עם top קבוע משלהם) —
-         ההסרה לא מזיזה שום דבר אחר. syncPracticeProgressNav (script.js)
-         כבר null-safe (querySelector('.progress-question') מחזיר null,
-         ה-if מדלג) — לא צריך שינוי-JS נלווה. -->
-
 
     <div class="gesture-hint-scroll-wrap" id="s5-scroll-gesture" hidden>
       <div class="gesture-hint">
@@ -575,12 +489,6 @@
       <div class="s3-part" id="s5-part-1">
         <p class="scroll-intro-text">נעמי ויוני עבדו יחד בשטיפת מכוניות בשכונה.<br>נעמי עבדה <strong>2 שעות </strong>ויוני עבד <strong>5 שעות.</strong><br>הם החליטו לחלק את הכסף שירוויחו לפי היחס<br>בין מספר השעות שעבד כל אחד (כלומר יחס של 5 : 2).</p>
         <p class="scq-qtext-em">א. השלימו את המשפטים הבאים: <span style="font-weight:400">אם נעמי ויוני ירוויחו יחד </span>210 ש"ח<span style="font-weight:400"> הם יחלקו את הכסף ביניהם בצורה הבאה:</span></p>
-        <!-- ⚠️ תוקן (31.08.2026, דיווח: "למה יש ____ וגם אחרי המסיח יש
-             את האינפוט") — התווית הכילה "___" כטקסט מילולי *וגם* input
-             נפרד מיד אחריה, כפילות-חזותית של "מקום-למילוי". הוסר ה-___
-             מהתווית; ש"ח עבר ל-.viq-answer-unit נפרד, אותה מוסכמה
-             בדיוק כמו viq-answer-row אחרות בפרויקט (למשל מ"ר ב-
-             methodica-math-ratio-05-06). -->
         <div class="viq-answers">
           <div class="viq-answer-row">
             <span class="viq-answer-label">נעמי תקבל</span>
@@ -601,8 +509,6 @@
         </div>
       </div>
 
-      <!-- ⚠️ תוקן (20.08.2026, לפי בקשה מפורשת) — הוסר hidden, כל
-           שלושת החלקים גלויים תמיד. -->
       <div class="s3-part" id="s5-part-2">
         <p class="s3-body">בשבוע לאחר מכן שוב עבדו נעמי ויוני בשטיפת מכוניות.<br>היחס בין מספר שעות העבודה היה 2:5.<br>הפעם הם הרוויחו סכום כסף <strong>חדש</strong> ולא ידוע.<br>יוני חישב ומצא כי חלקו ברווחים היה <strong>100 ש"ח</strong>.</p>
         <p class="scq-qtext-em">ב. איזה מהמשפטים הבאים מתאר נכונה את החלוקה ביניהם?</p>
@@ -632,10 +538,6 @@
       </div>
 
       <div class="s3-part" id="s5-part-3">
-        <!-- ⚠️ תוקן (23.09.2026, בקשה מפורשת: "שאלה 2 התחתונה צריכה
-             להיות סעיף ג ותהיה מובלטת כמו סעיף א וב") — "2." (s3-body,
-             לא-מודגש) → "ג." (scq-qtext-em, אותה מוסכמת-הדגשה בדיוק
-             כמו סעיפים א'/ב' למעלה במסך הזה). -->
         <p class="scq-qtext-em">ג. מיה ועומר הרוויחו 90 ש"ח, האם הם יכולים לחלק את הכסף ביחס הנתון (5 : 2) כך שכל אחד מהם יקבל כסף בשטרות?</p>
         <div class="scq-answers" role="radiogroup" aria-label="אפשרויות תשובה">
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="a" onclick="s5P3Select('a')">
@@ -656,17 +558,9 @@
     </div>
     </div>
 
-    <!-- ⚠️ goTo(6): TOTAL_SCREENS=6 (אינדקסים תקפים 0-5) — no-op בטוח
-         לפי ה-bounds guard של goTo() (אין עדיין מסך 7 בדיסק), לא קריסה.
-         זהה למוסכמה המתועדת כבר בסיין 1 (#s6-continue→goTo(7)) ובסיין 2
-         (#s4-continue→goTo(5)) — יעד-ניווט אמיתי לתחילת-הסיין-הבא/מסך-
-         סיום דורש אישור-מוצר, לא הומצא כאן. -->
     <div class="bottom-bar">
       <div class="bottom-bar-inner">
         <div class="bar-back"><button class="btn-back" id="s5-back" onclick="goTo(4)">חזרה</button></div>
-        <!-- ⚠️ עודכן (30.08.2026) — ניווט בין-סיינים: זהו המסך האחרון
-             בסיין 3, אז "המשך" עובר לסיין הבא (methodica-math-ratio-01-04),
-             לא ל-goTo(6) שהיה no-op. -->
         <div class="bar-actions"><button class="btn-continue" id="s5-continue" disabled onclick="location.href='../methodica-math-ratio-05-04/index.html'">המשך</button></div>
       </div>
     </div>
@@ -684,12 +578,7 @@
     <span class="flag-btn-label">מצאתם בעיה?</span>
   </button>
 
-  <!-- ============ GLOBAL — Image zoom modal ============
-       מופע-משותף יחיד לכל היחידה, מחוץ לכל .screen, ישירות ב-#app, לפי
-       מפרט 720-templates _global-components.md ("Image zoom"). הופעל
-       (06.09.2026, לפי בקשה מפורשת "על כל תמונה בלומדה חוץ מדמויות") על
-       שלוש תמונות-התוכן במסך 3/4/6 (angle-diagram-cd.png,
-       purim-gold-tickets.jpg, boy/girl-washing-car / lottery-kiosk-siblings). -->
+  <!-- GLOBAL — Image zoom modal -->
   <div id="img-zoom-modal" class="img-zoom-modal hidden" aria-hidden="true" data-zoom-close="true">
     <div class="img-zoom-modal__panel" role="dialog" aria-modal="true" aria-label="הגדלת תמונה">
       <button class="img-zoom-close" type="button" data-zoom-close="true" aria-label="סגירת הגדלת תמונה">

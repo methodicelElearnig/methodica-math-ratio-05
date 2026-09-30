@@ -26,13 +26,6 @@
       </div>
     </div>
 
-    <!-- ⚠️ עודכן (30.08.2026) — ניווט בין-סיינים: נוסף כפתור "חזרה"
-         אמיתי (לא היה כאן div.bar-back בכלל, כי מסך זה נחשב "מסך
-         ראשון בלי חזרה" כשהסיין נבדק בבידוד). מוביל לסיין הקודם
-         (methodica-math-ratio-01-01) עם ?screen=last, כדי שהוא ייפתח
-         שם במסך האחרון-שלו ולא בראשון. class .s0-bar (שדחפה את כפתור
-         ה-continue הבודד ל-flex-end) הוסרה — .bottom-bar-inner חוזרת
-         לברירת-המחדל (space-between) עכשיו ששני הכפתורים קיימים. -->
     <div class="bottom-bar">
       <div class="bottom-bar-inner">
         <div class="bar-back"><button class="btn-back" id="s0-back" onclick="location.href='../methodica-math-ratio-05-01/index.html?screen=last'">חזרה</button></div>
@@ -92,16 +85,6 @@
           </div>
         </div>
       </div>
-      <!-- ⚠️ תוקן (18.08.2026) — התמונה חייבת להיות שנייה ב-DOM (לא
-           ראשונה), כדי שתחת RTL אמיתי (flex-direction:row, בלי שום
-           direction override) היא תרד פיזית שמאלה והטקסט ימינה — לפי
-           720-templates skill § SingleChoiceQuestion.md "Left: .scq-img
-           ... Right: question text" (המרקאבה הראשונית הפוכה בטעות). -->
-      <!-- ⚠️ הוחלף (20.08.2026) — נכס אמיתי סופק (פון.jpg), במקום
-           פלייסהולדר. לפי בקשה מפורשת ("לא צריך שתקיף אותה במסגרת") —
-           .scq-img-inner (בלי border משלה, רק overflow:hidden לקצוות
-           מעוגלים) היא כבר הדפוס הבלתי-ממוסגר הקיים בפרויקט (זהה
-           לדיאגרמת-הזווית במסך 4) — לא הומצא וריאנט חדש. -->
       <div class="scq-img">
         <div class="scq-img-inner">
           <button class="img-zoom-btn" type="button" aria-label="הגדלת התמונה"
@@ -117,14 +100,6 @@
     </div>
     </div>
 
-    <!-- ⚠️ תוקן שוב (20.08.2026, לפי בקשה מפורשת: "מסך 2 סיין 2 הוא
-         לא מסך גלילה") — .scq-scroll-outer לא היה מוגדר בכלל ב-CSS,
-         כלומר לא הפעיל שום גלילה בפועל; ה-.is-static שהוחל כאן ב-
-         19.08.2026 הניח בטעות (לפי שם-המחלקה בלבד) שזה מסך-גלילה. הוחזר
-         להיות פופאפ-צף/גריר רגיל (כמו s2-feedbox בסיין 3) — הועבר חזרה
-         להיות ילד-ישיר של .screen (לא מקונן ב-.scq-text-col), כדי
-         שה-offsetParent של הגרירה יהיה הקנבס המלא, לא עמודת-הטקסט
-         הצרה. -->
     <div id="s1-feedbox" class="scq-fb-box">
       <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
       <p class="scq-fb-body"></p>
@@ -173,8 +148,8 @@
       <div class="scq-text-col">
         <div class="scq-qtext-body">
           <p class="scq-qbody">2. קבוצת תלמידים פתחה שידור חי בערוץ בסטרימינג. <br>בתחילת השידור, היו בצ'אט 30 משתתפים.<br>היחס בין מספר הבנים למספר הבנות היה 1:5.<br>
-            
-          לאורך זמן השידור הצטרפו לצ'אט רק בנים, והיחס בין הבנים לבנות השתנה ל-1:1. 
+
+          לאורך זמן השידור הצטרפו לצ'אט רק בנים, והיחס בין הבנים לבנות השתנה ל-1:1.
             <br>
           לפניכם ציר מספרים - ציר ה-X מייצג את מספר הבנים, וציר ה-Y מייצג את מספר הבנות.
           </p>
@@ -203,10 +178,6 @@
           </div>
         </div>
       </div>
-      <!-- ⚠️ תוקן (18.08.2026) — אותו תיקון-סדר כמו מסך 2 (s1): התמונה/
-           הגרף חייבים להיות שניים ב-DOM כדי לרדת פיזית שמאלה תחת RTL
-           אמיתי. ⚠️ הוחלף (20.08.2026) — נכס אמיתי סופק ("גרף מסך
-           3.png"), אותו דפוס בלתי-ממוסגר (.scq-img-inner) כמו s1. -->
       <div class="scq-img">
         <div class="scq-img-inner">
           <button class="img-zoom-btn" type="button" aria-label="הגדלת התמונה"
@@ -222,9 +193,6 @@
     </div>
     </div>
 
-    <!-- ⚠️ תוקן שוב (20.08.2026) — אותו תיקון בדיוק כמו s1-feedbox
-         למעלה: מסך זה אינו מסך-גלילה (.scq-scroll-outer בלי CSS
-         בפועל), הוחזר לפופאפ-צף/גריר רגיל, ילד-ישיר של .screen. -->
     <div id="s2-feedbox" class="scq-fb-box">
       <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
       <p class="scq-fb-body"></p>
@@ -308,27 +276,13 @@
     <div class="s3-scroll-area" id="s3-scroll-area">
     <div class="s3-scroll-inner">
       <div class="s3-part" id="s3-part-1">
-        <!-- ⚠️ תוקן (31.08.2026, לפי בקשה מפורשת: "סימן הזווית ∢ לא
-             תקין לאורך כל הלומדה, צריך ∢ABD לא ABD∢") — dir="ltr"
-             עוטף את הסימן+האותיות ביחד, כדי שאלגוריתם ה-bidi לא ימקם
-             אותו בצד ההפוך תחת direction:rtl של העמוד. -->
         <p class="s3-body">3. משרד אדריכלות מתכנן מבנה ציבורי חדש בעל גג זכוכית בצורת משולש.<br>האדריכלית הראשית קבעה כלל כי אחת מזווית המשולש חייבת להיות <br/> בת 60° (<span dir="ltr">∢BAC = 60°</span>).<br>
           האדריכליות החליטו כי היחס בין גדלי שתי הזוויות האחרות של משולש הגג יהיה בדיוק 5 : 3
         </p>
       </div>
 
-      <!-- ⚠️ תוקן (20.08.2026, לפי בקשה מפורשת: "לא צריך שהתוכן יופיע
-           בהדרגתיות") — הוסר hidden + כפתור "המשך" של חלק 1 (לא היה
-           תלוי-פונקציונלית בשום דבר, רק חשף את חלק 2). כל שלושת
-           החלקים גלויים תמיד, הלומד/ת גולל/ת. -->
       <div class="s3-part" id="s3-part-2">
         <p class="scq-qtext-em">א. סמנו את הגודל המדויק של שתי הזוויות האחרות במבנה המתוכנן:</p>
-        <!-- ⚠️ נוסף (07.09.2026, דיווח: "גודל המלבנים של המסיחים לא
-             תקין, הוא גדול יותר מדי") — .scq-answers--fit (אותו modifier
-             שכבר קיים במסך 5, s4-part-1/2) מפעיל equalizeScqOptWidths(),
-             שמצמצם את .scq-opt לרוחב-תוכן (זוגות המעלות קצרים, אין
-             סיבה שהמלבן ימתח על כל רוחב המסך) ומיישר בהתאם את כפתור
-             .s3-inline-btn שאחריו. -->
         <div class="scq-answers scq-answers--fit" role="radiogroup" aria-label="אפשרויות תשובה">
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="a" onclick="s3P2Select('a')">
             <span class="scq-opt-text"><span dir="ltr">30°, 50°</span></span>
@@ -398,11 +352,6 @@
     </div>
     </div>
 
-    <!-- אין .btn-hint במסך הזה (וגם לא בתוך אף אחד משלושת חלקי-התוכן —
-         מידע-בלבד בחלק 1, SCQ בחלק 2, נכון/לא-נכון בחלק 3): לא נמצא
-         טקסט-רמז מפורש בתסריט/במוקאפ (שקפים 31-33) לאף חלק, אותו ממצא
-         שכבר תועד למסכים 2-3 (s1/s2, ראו ההערות שם) — לא הושמט בטעות.
-         ראו ARCHITECTURE.md § "בדיקה מקיפה מול SELF-QA-lomda.md". -->
     <div class="bottom-bar">
       <div class="bottom-bar-inner">
         <div class="bar-back"><button class="btn-back" id="s3-back" onclick="goTo(2)">חזרה</button></div>
@@ -458,14 +407,6 @@
 
       <div class="s4-part" id="s4-part-1">
         <p class="s4-body"><strong>א. דניאל ונופר השיגו אותו מספר ניצחונות.</strong><br>מבלי לחשב, מי מבינהם שחה ב<strong>יותר מישחים</strong> לאורך העונה?</p>
-        <!-- ⚠️ נוסף (06.09.2026, דיווח: "המלבנים ממורחים על כל רוחב
-             המסך, צריך שיתאימו לאורך המסיח הגדול ביותר") — .scq-opt
-             הבסיסי (width:100%) הוא הרפרנס-הגלובלי המשותף לכל שאלות
-             ה-SCQ בפרויקט; לא שונה גלובלית. .scq-answers--fit הוא
-             modifier ממוקד רק לשני חלקי-השאלה כאן (מסיחים קצרים —
-             "דניאל"/"נופר" מול משפט שלם — נראה שבור כשנמתח לרוחב מלא),
-             מפעיל equalizeScqOptWidths() (script.js, אותה טכניקה בדיוק
-             כמו equalizeTfBtnWidths הקיימת). -->
         <div class="scq-answers scq-answers--fit" role="radiogroup" aria-label="אפשרויות תשובה">
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="a" onclick="s4P1Select('a')">
             <span class="scq-opt-text">דניאל</span>
@@ -487,8 +428,6 @@
         </div>
       </div>
 
-      <!-- ⚠️ תוקן (20.08.2026, לפי בקשה מפורשת) — אותו תיקון בדיוק כמו
-           מסך 4 (s3): הוסר hidden, כל שלושת החלקים גלויים תמיד. -->
       <div class="s4-part" id="s4-part-2">
         <p class="s4-body"><strong>ב. מי </strong>ניצח ביותר מישחים העונה?
           <br/>
@@ -545,25 +484,12 @@
     <div class="bottom-bar">
       <div class="bottom-bar-inner">
         <div class="bar-back"><button class="btn-back" id="s4-back" onclick="goTo(3)">חזרה</button></div>
-        <!-- ⚠️ goTo(5): TOTAL_SCREENS=5 (אינדקסים תקפים 0-4) — no-op בטוח
-             לפי ה-bounds guard של goTo() (אין דף/סיין 3 בדיסק עדיין),
-             לא קריסה. זהה למוסכמה המתועדת כבר בסיין 1 עבור מסכו האחרון
-             (#s6-continue → goTo(7), ARCHITECTURE.md שם). לא שונה כאן
-             במתכוון — יעד-ניווט אמיתי לתחילת הסיין הבא/מסך-סיום דורש
-             אישור-מוצר. ראו ARCHITECTURE.md § התיקונים (18.08.2026). -->
-        <!-- ⚠️ עודכן (30.08.2026) — ניווט בין-סיינים: זהו המסך האחרון
-             בסיין 2, אז "המשך" עובר לסיין הבא (methodica-math-ratio-01-03),
-             לא ל-goTo(5) שהיה no-op. -->
         <div class="bar-actions"><button class="btn-continue" id="s4-continue" disabled onclick="location.href='../methodica-math-ratio-05-03/index.html'">המשך</button></div>
       </div>
     </div>
   </section>
 
-  <!-- ============ GLOBAL — Report/Issue button (.flag-btn) ============
-       רכיב גלובלי יחיד, מחוץ לכל .screen, ישירות ב-#app, לפי
-       720-templates skill (_global-components.md). ויזואלי בלבד — עדיין
-       בלי התנהגות קליק (ייתכן שיחובר ל-LMS בהמשך). נכסים ניטרליים
-       (ללא צבע-נושא אפוי) — הועתקו כפי-שהם מסיין 1. -->
+  <!-- GLOBAL — Report/Issue button (.flag-btn) -->
   <button class="flag-btn" aria-label="מצאתם בעיה?" title="מצאתם בעיה?">
     <span class="flag-btn-icon" aria-hidden="true">
       <img class="flag-btn-icon-default" src="../unit-assets/img/btn-flag-default.png" alt="">
@@ -572,12 +498,7 @@
     <span class="flag-btn-label">מצאתם בעיה?</span>
   </button>
 
-  <!-- ============ GLOBAL — Image zoom modal ============
-       מופע-משותף יחיד לכל היחידה, מחוץ לכל .screen, ישירות ב-#app, לפי
-       מפרט 720-templates _global-components.md ("Image zoom"). הופעל
-       (06.09.2026, לפי בקשה מפורשת "על כל תמונה בלומדה חוץ מדמויות") על
-       ארבע תמונות-התוכן במסך 2/4 (פון.jpg, גרף מסך 3.png,
-       triangle-roof-building.jpg, triangle-diagram-roof.png). -->
+  <!-- GLOBAL — Image zoom modal -->
   <div id="img-zoom-modal" class="img-zoom-modal hidden" aria-hidden="true" data-zoom-close="true">
     <div class="img-zoom-modal__panel" role="dialog" aria-modal="true" aria-label="הגדלת תמונה">
       <button class="img-zoom-close" type="button" data-zoom-close="true" aria-label="סגירת הגדלת תמונה">

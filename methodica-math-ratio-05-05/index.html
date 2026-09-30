@@ -9,15 +9,7 @@
 <body>
 <div id="app">
 
-  <!-- =========================================================
-       מסך 1 — מסך מעבר, דמות+בועית-דיבור, data-screen="0", id="s0".
-       שקף 55 בתסריט (לא שקף 54 — שקף 54 הוא רק שקף-מפריד-רכיב בלי
-       תוכן-לומד/ת; תוכן-המעבר האמיתי נמצא בשקף 55, אומת מול השקף
-       המעובד). מבנה .transition-* מועתק 1:1 מ-methodica-math-ratio-01-04
-       (מסך 1 שם). שורת-כותרת אחת בלבד (לא שלוש כמו במסכי-מעבר אחרים
-       בפרויקט) — לפי בקשה מפורשת, לא הומצאה שורת .transition-sub
-       נוספת. ראו ARCHITECTURE.md § "מסך 1".
-       ========================================================= -->
+  <!-- מסך 1 — מסך מעבר, דמות+בועית-דיבור, data-screen"0", id"s0". -->
   <section class="screen active" data-screen="0" id="s0">
     <div class="transition-content">
       <div class="transition-title-block">
@@ -32,9 +24,6 @@
     <div class="bottom-bar">
       <div class="bottom-bar-inner">
         <!-- Never shown on the first screen -->
-        <!-- ⚠️ עודכן (30.08.2026) — ניווט בין-סיינים: הוסר hidden, נוסף
-             onclick. מוביל לסיין הקודם (methodica-math-ratio-01-04) עם
-             ?screen=last, כדי שהוא ייפתח שם במסך האחרון-שלו ולא בראשון. -->
         <div class="bar-back"><button class="btn-back" id="s0-back" onclick="location.href='../methodica-math-ratio-05-04/index.html?screen=last'">חזרה</button></div>
         <div class="bar-actions"><button class="btn-continue" id="s0-continue" onclick="goTo(1)">המשך</button></div>
       </div>
@@ -99,15 +88,6 @@
         <p class="s3-body">1. משרד אדריכלים מתכנן אלמנט הצללה עבור מדרחוב עירוני. <br>חזית האלמנט מעוצבת בצורה של משולש שווה-שוקיים (<span dir="ltr">AB = AC</span>). <br>המהנדס הראשי הגדיר תנאי גיאומטרי: <br>היחס בין זווית הראש לסכום שתי זוויות הבסיס הוא 3 : 1.</p>
         <p class="scq-qtext-em" style="font-weight:400">א. חשבו את שלוש זוויות המשולש ABC.</p>
         <div class="viq-answers">
-          <!-- ⚠️ תוקן (31.08.2026, לפי דיווח: "סימן הזווית צריך להיות
-               בצד השמאלי של המספר") — עוטף חדש (.viq-answer-value) מצמיד
-               את ה-° ישירות לספרות, נפרד מ-gap של השורה עצמה — ראו הערה
-               מלאה זהה ב-methodica-math-ratio-05-01/index.html § מסך 7.
-               ⚠️ הסדר הוהפך שוב (03.09.2026, לפי בקשה מפורשת אחרונה,
-               דורסת את התיקון הקודם מ-01.09.2026 שביקש "ערך = תווית") —
-               עכשיו "∢A = ערך°" (תווית קודם), כל השורה dir="ltr" כדי
-               שסדר-ה-DOM (תווית, "=", ערך) ייצא משמאל-לימין כמשוואה
-               רגילה. -->
           <div class="viq-answer-row" dir="ltr">
             <span class="viq-coord">∢A</span>
             <span class="viq-answer-eq">=</span>
@@ -134,9 +114,6 @@
           </div>
         </div>
         <button class="btn-continue s3-inline-btn" id="s1-p1-check" disabled onclick="s1P1Check()">צדקתי?</button>
-        <!-- מיקום-סטטי מתחת למסיחים (לא floating/draggable) — QA
-             19.08.2026: בתוך מסך-גלילה, פופאפ-משוב במיקום קבוע-לקנבס
-             מתנתק חזותית מהשאלה כשגוללים. ראו ARCHITECTURE.md. -->
         <div id="s1-p1-feedbox" class="scq-fb-box is-static">
           <div class="scq-fb-title"><span class="scq-fb-title-text"></span></div>
           <p class="scq-fb-body"></p>
@@ -144,18 +121,11 @@
         </div>
       </div>
 
-      <!-- ⚠️ תוקן (20.08.2026, לפי בקשה מפורשת: "התוכן לא יעלה
-           בהדרגתיות") — הוסר hidden, שני החלקים גלויים תמיד. -->
       <div class="s1-part" id="s1-part-2">
-        <p class="s1-p2-bold">אדריכל צעיר טען כי לא ניתן ליצר משולש כזה, מכיוון שזוויות הבסיס יצאו קהות 
+        <p class="s1-p2-bold">אדריכל צעיר טען כי לא ניתן ליצר משולש כזה, מכיוון שזוויות הבסיס יצאו קהות
           <br/>
           (גדולות מ-90 מעלות), דבר שיגרום לכך שלא תיווצר צורת משולש.</p>
         <p class="s1-p2-bold">ב. האם טענת האדריכל הצעיר נכונה?</p>
-        <!-- ⚠️ נוסף (07.09.2026, דיווח: "המלבנים של המסיחים מאוד
-             גדולים") — אותו תיקון בדיוק כמו methodica-math-ratio-05-02
-             (מסך 5): .scq-opt הגלובלי (width:100%) הוא רפרנס-משותף,
-             לא שונה; modifier ממוקד כאן בלבד + equalizeScqOptWidths
-             (script.js) מצמצם לרוחב-התוכן הטבעי (המסיח הרחב ביותר). -->
         <div class="scq-answers scq-answers--fit" role="radiogroup" aria-label="אפשרויות תשובה">
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="a" onclick="s1P2Select('a')">
             <span class="scq-opt-text">כן</span>
@@ -171,15 +141,6 @@
           </div>
         </div>
         <div class="btn-hint-row">
-          <!-- מדיניות-רמז: גלוי/פעיל מלכתחילה (ברירת-המחדל של התבנית,
-               720-templates skill → _question-template-defaults.md §
-               "Hint policy" — אין הנחיה מפורשת בתסריט לסטות ממנה).
-               פתיחה/סגירה עצמאיות (s1P2HintOpen/Close), לא שזורות בתוך
-               scqCheck הגנרי — כדי לשמור על scqCheck כפי-שהוא (העתקה
-               מילולית, ראו ARCHITECTURE.md). סדר-DOM: רמז לפני צדקתי
-               (מאומת מול Figma node 1045:13096 — "אפשר רמז?" פיזית
-               מימין ל"המשך"/"צדקתי?", ראו ARCHITECTURE.md § בדיקת-QA
-               2026-08-19). -->
           <button class="btn-hint" id="s1-p2-hint-btn" onclick="s1P2HintOpen()">
             <img class="scq-hint-icon" src="../unit-assets/img/icon-hint-purple.svg" alt="" aria-hidden="true">
             אפשר רמז?
@@ -241,17 +202,17 @@
     </nav>
 
     <div class="s2-content">
-      <p class="s3-body s2-text">2. הנקודה D נמצאת על צלע CB במשולש ABC. 
+      <p class="s3-body s2-text">2. הנקודה D נמצאת על צלע CB במשולש ABC.
         <br/>
         נתון: היחס בין שטח משולש ACD לשטח משולש ADB הוא 3:1.
         <br/>
         שטח משולש ABC הוא 64 סמ"ר.
         <br/>
         <span dir="ltr">
-          AE = <span dir="rtl">8 ס"מ</span> 
-        </span> 
+          AE = <span dir="rtl">8 ס"מ</span>
+        </span>
         &nbsp;(גובה המשולש).
-      
+
       <br/></p>
       <p class="scq-qtext-em" style="font-weight:400">השלימו:</p>
 
@@ -279,10 +240,6 @@
         </div>
       </div>
 
-      <!-- ⚠️ הכפתור הנפרד (#s2-check, "צדקתי?") הוסר (31.08.2026, לפי
-           בקשה מפורשת: "אין צורך בשני כפתורים") — מוזג לתוך #s2-continue
-           בסרגל התחתון, שעכשיו משמש גם לבדיקה וגם להמשך (ראו
-           VIQ_CFG_S2 ב-script.js: checkBtn='s2-continue', nextScreen:3). -->
     </div>
 
     <div id="s2-feedbox" class="scq-fb-box">
@@ -296,24 +253,12 @@
     <div class="bottom-bar">
       <div class="bottom-bar-inner">
         <div class="bar-back"><button class="btn-back" id="s2-back" onclick="goTo(1)">חזרה</button></div>
-        <!-- ⚠️ תוקן (31.08.2026, לפי בקשה מפורשת) — כפתור-יחיד: "צדקתי?"
-             לפני מענה, הופך ל"המשך" אוטומטית אחרי (viqFinish, script.js),
-             ולחיצה נוספת מפעילה goTo(3) דרך המנגנון הקיים ב-viqCheck
-             (nextScreen:3 ב-VIQ_CFG_S2). -->
         <div class="bar-actions"><button class="btn-continue" id="s2-continue" disabled onclick="s2Check()">צדקתי?</button></div>
       </div>
     </div>
   </section>
 
-  <!-- =========================================================
-       מסך 4 — מסך גלילה, שאלה 3 מתוך 3, data-screen="3", id="s3".
-       שאלת ערבוב-צבעים (יחס 2:3:5), שני חלקים: (א) שאלת-קלט משולשת,
-       (ב) שאלה חד-ברירה (4 אפשרויות). תמונת פחיות-הצבע קבועה בצד
-       שמאל לאורך שני החלקים. זהו המסך האחרון בסיין — כפתור "המשך"
-       הראשי הוא no-op בטוח (goTo(4), מחוץ לתחום TOTAL_SCREENS=4),
-       לפי אותה מוסכמה כבר-מתועדת בסיינים 1/2/4 של הפרויקט הזה עבור
-       מסכם האחרון. ראו ARCHITECTURE.md § "מסך 4".
-       ========================================================= -->
+  <!-- מסך 4 — מסך גלילה, שאלה 3 מתוך 3, data-screen"3", id"s3". -->
   <section class="screen" data-screen="3" id="s3">
     <nav class="progress-question" id="s3-progress" aria-label="ניווט שאלות">
       <div class="progress-question__item" data-question="1">
@@ -381,9 +326,6 @@
           </div>
         </div>
         <div class="btn-hint-row">
-          <!-- אותה מדיניות-רמז כמו s1-p2 (גלוי/פעיל מלכתחילה,
-               פתיחה/סגירה עצמאיות) — ראו ההערה המלאה שם. סדר-DOM:
-               רמז לפני צדקתי (מאומת מול Figma, ראו ARCHITECTURE.md). -->
           <button class="btn-hint" id="s3-p1-hint-btn" onclick="s3P1HintOpen()">
             <img class="scq-hint-icon" src="../unit-assets/img/icon-hint-purple.svg" alt="" aria-hidden="true">
             אפשר רמז?
@@ -397,24 +339,22 @@
         </div>
       </div>
 
-      <!-- ⚠️ תוקן (20.08.2026, לפי בקשה מפורשת) — הוסר hidden, שני
-           החלקים גלויים תמיד. -->
       <div class="s3-part" id="s3-part-2">
         <p class="s3-body">רותי, עובדת נוספת במפעל, רצתה ליצור גוון <strong>כהה יותר</strong> של אותו הצבע. <br>כדי להגיע לגוון הרצוי, היא החליטה להכפיל פי 2 את כמות הצבע <strong>השחור</strong> בלבד, <br>בעוד שכמויות הצהוב והכחול נשארו כפי שהיו ביום ראשון.</p>
         <p class="scq-qtext-em">ב. איזה מהמשפטים הבאים מתאר נכונה את היחס החדש בין המרכיבים (צהוב, כחול, שחור)?</p>
         <div class="scq-answers" role="radiogroup" aria-label="אפשרויות תשובה">
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="a" onclick="s3P2Select('a')">
-            <span class="scq-opt-text">היחס החדש הוא 
+            <span class="scq-opt-text">היחס החדש הוא
               4 : 6 : 10, ולכן הגוון נשאר בדיוק אותו הדבר</span>
             <span class="scq-radio"></span>
           </div>
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="b" onclick="s3P2Select('b')">
-            <span class="scq-opt-text">היחס החדש הוא 
+            <span class="scq-opt-text">היחס החדש הוא
               4 : 3 : 5, ולכן חלקו של הצבע השחור בתערובת גדל.</span>
             <span class="scq-radio"></span>
           </div>
           <div class="scq-opt" role="radio" aria-checked="false" tabindex="0" data-id="c" onclick="s3P2Select('c')">
-            <span class="scq-opt-text">היחס החדש הוא 
+            <span class="scq-opt-text">היחס החדש הוא
               4 : 5 : 7, כי הוספנו 2 יחידות לכל צבע כדי לשמור על איזון.</span>
             <span class="scq-radio"></span>
           </div>
@@ -448,23 +388,12 @@
     <div class="bottom-bar">
       <div class="bottom-bar-inner">
         <div class="bar-back"><button class="btn-back" id="s3-back" onclick="goTo(2)">חזרה</button></div>
-        <!-- ⚠️ goTo(4): TOTAL_SCREENS=4 (אינדקסים תקפים 0-3) — no-op
-             בטוח לפי ה-bounds guard של goTo(), לא קריסה. אותה מוסכמה
-             כבר-מתועדת בסיינים 1/2/4 של הפרויקט הזה למסכן האחרון —
-             יעד-ניווט אמיתי לתחילת הסיין הבא דורש אישור-מוצר. -->
-        <!-- ⚠️ עודכן (30.08.2026) — ניווט בין-סיינים: זהו המסך האחרון
-             בסיין 5, אז "המשך" עובר לסיין הבא (methodica-math-ratio-01-06),
-             לא ל-goTo(4) שהיה no-op. -->
         <div class="bar-actions"><button class="btn-continue" id="s3-continue" disabled onclick="location.href='../methodica-math-ratio-05-06/index.html'">המשך</button></div>
       </div>
     </div>
   </section>
 
-  <!-- ============ GLOBAL — Report/Issue button (.flag-btn) ============
-       רכיב גלובלי יחיד, מחוץ לכל .screen, ישירות ב-#app, לפי
-       720-templates skill (_global-components.md). ויזואלי בלבד — עדיין
-       בלי התנהגות קליק (ייתכן שיחובר ל-LMS בהמשך). נכסים ניטרליים
-       (ללא צבע-נושא אפוי) — הועתקו כפי-שהם מסיין 2. -->
+  <!-- GLOBAL — Report/Issue button (.flag-btn) -->
   <button class="flag-btn" aria-label="מצאתם בעיה?" title="מצאתם בעיה?">
     <span class="flag-btn-icon" aria-hidden="true">
       <img class="flag-btn-icon-default" src="../unit-assets/img/btn-flag-default.png" alt="">
@@ -473,13 +402,7 @@
     <span class="flag-btn-label">מצאתם בעיה?</span>
   </button>
 
-  <!-- ============ GLOBAL — Image zoom modal ============
-       מופע-משותף יחיד לכל היחידה, מחוץ לכל .screen, ישירות ב-#app, לפי
-       מפרט 720-templates _global-components.md ("Image zoom"). הופעל
-       (06.09.2026, לפי בקשה מפורשת "על כל תמונה בלומדה חוץ מדמויות")
-       על שלוש תמונות-התוכן במסך 1/3/4 (triangle-isoceles-abc.png,
-       triangle-acd-adb.png, paint-factory-cans.jpeg) — ראו ARCHITECTURE.md
-       § "זום-תמונה". -->
+  <!-- GLOBAL — Image zoom modal -->
   <div id="img-zoom-modal" class="img-zoom-modal hidden" aria-hidden="true" data-zoom-close="true">
     <div class="img-zoom-modal__panel" role="dialog" aria-modal="true" aria-label="הגדלת תמונה">
       <button class="img-zoom-close" type="button" data-zoom-close="true" aria-label="סגירת הגדלת תמונה">

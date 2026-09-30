@@ -1,28 +1,9 @@
 'use strict';
 
-/* =========================================================
-   לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 5
-   מנוע גלובלי — canvas scaling, ניווט מסכים, סטייט גלובלי.
-   TOTAL_SCREENS יעודכן ל-1+ עם הוספת כל מסך תוכן אמיתי (Prompt 2+).
-
-   מקור: הועתק/הותאם מהמנוע הגלובלי של סיין 2 (methodica-math-ratio-01-02)
-   של הפרויקט הזה עצמו — סיין 2 הוא כרגע מקור-האמת המתודולוגי המאומת/
-   מתוקן ביותר בפרויקט. ראו ARCHITECTURE.md לפירוט מלא.
-   ========================================================= */
+/* לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 5 */
 
 const TOTAL_SCREENS = 4;
 let currentScreen = 0;
-
-/* ⚠️ נוסף (30.08.2026) — ניווט בין-סיינים: כפתור "חזרה" מהמסך הראשון
-   כאן מוביל לסיין הקודם (methodica-math-ratio-01-04) בלי פרמטר, ופותח
-   שם כרגיל במסך הראשון-שלו. כפתור "חזרה" מהסיין הבא
-   (methodica-math-ratio-01-06) מוביל הנה עם ?screen=last — נפתח ישר
-   במסך האחרון כאן במקום. script.js נטען בסוף ה-body (אחרי כל ה-.screen
-   sections), אז אפשר לקרוא ל-goTo באופן סינכררוני כאן. */
-/* ⚠️ תוקן (03.09.2026, דיווח: "חזרה מהסיין הבא מעבירה למסך ריק") — קריאת ה-goTo כאן רצה
-   סינכררונית לפני שקבועים המוגדרים למטה בקובץ (const) מאותחלים; אם resetScreenState
-   של המסך האחרון תלוי באחד מהם, נזרקת שגיאה שקוטעת את goTo() לפני שהמסך היעד מסומן
-   active, ואז שום מסך לא נשאר גלוי. הועבר ל-IIFE בסוף הקובץ, אחרי שהכל כבר מוגדר. */
 
 /* ---------- Companion character system — state + storage key ----------
    ID לוגי (character-1/character-2), לא צבע/שם, לפי Companion character
@@ -49,19 +30,8 @@ window.lomdaState = {
   selectedCharacter: savedCharacter
 };
 
-/* ⚠️ תוקן (31.08.2026, לפי בדיקת-רספונסיביות) — CANVAS_W/CANVAS_H היו
-   מוצהרים פעמיים: פעם מקומית כאן בתוך scaleApp(), ופעם נפרדת למטה ליד
-   clampPopupPosition (BOTTOM_BAR_H) — שני מקורות-אמת לאותם מספרים,
-   ללא שום דבר שמכריח אותם להישאר מסונכרנים אם מישהו יערוך רק אחד מהם
-   בעתיד. אוחד למקור-אמת יחיד כאן, ברמת-המודול — גם scaleApp() וגם
-   clampPopupPosition (למטה) קוראים מכאן, לא מגדירים בעצמם. */
 const CANVAS_W = 1280, CANVAS_H = 710;
 
-/* ⚠️ תוקן (23.09.2026, דיווח לקוח: "יש מלא שטח מת למעלה ולמטה") — אותו
-   תיקון שכבר הוחל ואומת ב-methodica-math-ratio-05-01/script.js:
-   scaleApp() ממרכז-עם-שוליים הוחלף במתיחת-הקנבס-עצמו למילוי-מדויק של
-   ה-viewport (אפס שטח מת, בכל יחס-גובה-רוחב). getCanvasSize() למטה
-   היא מקור-האמת לגודל-הקנבס *בפועל* מרגע זה. */
 function scaleApp() {
   const app = document.getElementById('app');
   const scale = Math.min(window.innerWidth / CANVAS_W, window.innerHeight / CANVAS_H);
@@ -114,9 +84,6 @@ function goTo(n) {
 }
 
 function resetScreenState(n) {
-  /* כל מסך תוכן אמיתי שנוסף מקבל כאן שורת if (n === X) resetScreenStateX();
-     משלו, ומגדיר את הפונקציה resetScreenStateX() ליד קטע ה-HTML/JS של
-     המסך — לפי אותה מוסכמה בדיוק כמו סיינים 1+2. */
   if (n === 0) resetScreenState0();
   if (n === 1) resetScreenState1();
   if (n === 2) resetScreenState2();
@@ -172,13 +139,7 @@ function resolveCharBubbleVideo(videoId, assetMap) {
   el.play().catch(function () {});
 }
 
-/* =========================================================
-   GLOBAL — Progress Question (720-templates skill →
-   _global-components.md → "Progress Question"). קוד הרינדור/הסנכרון
-   הועתק **כפי-שהוא** מ-methodica-math-ratio-01-02 (מקור-אמת מתודולוגי
-   מאומת) — 3 שאלות בלבד בסדרה הזו (לא 4), על מסכי s1/s2/s3
-   (data-screen 1/2/3). מסך המעבר (s0) אינו חלק מהסדרה.
-   ========================================================= */
+/* GLOBAL — Progress Question (720-templates skill → */
 const practiceProgress = {
   questions: [
     { number: 1, visited: false, state: 'not-answered', screen: 1 },
@@ -241,9 +202,6 @@ function scqSelect(key, id) {
   scqState[key] = scqState[key] || { selected: null, attempts: 0, outcome: null };
   const st = scqState[key];
   if (st.outcome !== null) return;
-  /* ⚠️ תוקן (31.08.2026, דיווח: "למה מסומנות שתי תשובות לא נכונות
-     בשאלה חד-ברירה?") — ראו הערה מלאה זהה ב-
-     methodica-math-ratio-05-03/script.js. */
   document.querySelectorAll(cfg.containerSel + ' .scq-opt').forEach(function (el) {
     el.classList.remove('selected', 'correct', 'wrong');
     el.setAttribute('aria-checked', 'false');
@@ -264,8 +222,6 @@ function scqLockOptions(containerSel) {
   });
 }
 
-/* משוב שגוי סופי (הפתרון הנכון מוצג): משפט הכותרת (בולד) מקבל נקודה בסוף אם חסרה
-   (נקודתיים בסוף מוחלפות בנקודה), ואחריו "התשובה הנכונה מוצגת." (29.09.2026, חידוד לקוח). */
 function fbCorrectShown(title) {
   let t = String(title).replace(/\s+$/, '').replace(/[:,;]$/, '');
   if (!/[.!?]$/.test(t)) t += '.';
@@ -277,8 +233,6 @@ function scqCheck(key) {
   const st = scqState[key];
   if (!st || st.outcome !== null) return;
 
-  /* ⚠️ נוסף (31.08.2026, דיווח: "המשוב עולה על הפופ-אפ של הרמז") —
-     ראו הערה מלאה זהה ב-viqCheck לעיל. */
   document.querySelectorAll('[id$="-hint-overlay"]').forEach(function (el) { el.hidden = true; });
 
   const isCorrect = st.selected === cfg.correctId;
@@ -358,9 +312,6 @@ function viqCheck(key) {
   const st = viqState[key];
   if (st.outcome !== null) { if (cfg.nextScreen != null) goTo(cfg.nextScreen); return; }
 
-  /* ⚠️ נוסף (31.08.2026, דיווח: "המשוב עולה על הפופ-אפ של הרמז") —
-     אם הרמז פתוח כשלוחצים "צדקתי?", תיבת-המשוב (z-index גבוה יותר)
-     נפתחת מעליו במקום שהרמז ייסגר קודם — חפיפה חזותית מכוערת. */
   document.querySelectorAll('[id$="-hint-overlay"]').forEach(function (el) { el.hidden = true; });
 
   const inputs = cfg.inputs.map(function (id) { return document.getElementById(id); });
@@ -395,12 +346,6 @@ function viqCheck(key) {
     bodyEl.innerHTML = cfg.wrongOnce.body;
     document.getElementById(cfg.checkBtn).disabled = true;
   } else {
-    /* ⚠️ תוקן (23.09.2026, דיווח: "לא ביקשתי שהתשובה הנכונה תיחשף
-       באופן מידי, לא צריך לחשוף אותה בכלל — היה צריך שתישאר התשובה
-       השגויה שהזין הלומד") — ההערה הקודמת כאן תיארה במפורש את הבאג
-       (דריסת-ערך אוטומטית); לא דורסים יותר — הערך שהלומד/ת הקלידו
-       נשאר, מסומן correct/wrong לפי-שדה בפועל (זהה לענף wrongOnce
-       למעלה), רק ננעל. */
     inputs.forEach(function (input, i) {
       input.classList.toggle('correct', correctFlags[i]);
       input.classList.toggle('wrong', !correctFlags[i]);
@@ -414,7 +359,6 @@ function viqCheck(key) {
     if (cfg.revealBtn) {
       const revealBtn = document.getElementById(cfg.revealBtn);
       if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
-      /* עודכן (29.09.2026, חידוד לקוח): הפתרון הנכון מוצג מיד עם המשוב הסופי, הכפתור ב"התשובה שלי". */
       viqToggleReveal(key);
     }
     st.outcome = 'fail';
@@ -455,15 +399,6 @@ function viqToggleReveal(key) {
 function viqFinish(key) {
   const cfg = VIQ_CFG[key];
   const btn = document.getElementById(cfg.checkBtn);
-  /* ⚠️ תוקן (23.09.2026, דיווח: "יש שני כפתורים של המשך") — הרלייבל
-     ל-"המשך"+re-enable היה בלתי-מותנה, מתאים *רק* למקרה המכוון (כמו
-     VIQ_CFG_S2 כאן, checkBtn:'s2-continue' — אותו כפתור פיזי ממש כמו
-     .bottom-bar, per בקשה מפורשת ישנה "אין צורך בשני כפתורים"). במסך
-     עם כמה סעיפים (למשל VIQ_CFG_S3P1, checkBtn:'s3-p1-check' — כפתור
-     נפרד לגמרי מ-#s3-continue שבסרגל התחתון), אותו רלייבל יצר כפתור
-     "המשך" שני, מבלבל, לצד הכפתור האמיתי בסרגל. עכשיו: רלייבל רק אם
-     הכפתור *באמת* חי בתוך .bottom-bar (בדיקה מבנית, לא ניחוש-שם) —
-     אחרת רק ננעל, בדיוק כמו scqFinish. */
   if (btn.closest('.bottom-bar')) {
     btn.disabled = false;
     btn.textContent = 'המשך';
@@ -476,15 +411,7 @@ function viqFinish(key) {
 /* VIQ_CFG מוגדר בהמשך הקובץ, ליד קטע ה-HTML/JS של כל מסך (s1p1/s2/s3p1)
    — לא כאן, לפי אותה מוסכמה כמו methodica-math-ratio-01-02. */
 
-/* =========================================================
-   מסך 1 — מסך מעבר, דמות+בועית-דיבור, data-screen="0", id="s0".
-   שקף 55. דמות-נלווית לפי הדמות שנבחרה קודם בפרויקט. ⚠️ עודכן
-   (30.08.2026) — נכס-וידאו ייעודי ("writing-notebook") סופק במפורש,
-   מחליף את פוזת-החשיבה/שאילה הזמנית שתועדה קודם כטרם-מאושרת מול
-   המפיקה. שם-הקובץ של הדמות הצהובה ("yellow-avatar-writing-
-   noebook.mp4") הוא ככתבו-וכלשונו על הדיסק (שגיאת-כתיב בפועל בשם
-   הקובץ, כמו yellow-avatr-asking.mp4 בפרויקטים האחרים) — לא לתקן.
-   ========================================================= */
+/* מסך 1 — מסך מעבר, דמות+בועית-דיבור, data-screen"0", id"s0". */
 const S0_AVATAR_ASSETS = {
   'character-1': 'assets/videos/boy-avatar-writing-notebook.mp4',
   'character-2': 'assets/videos/yellow-avatar-writing-noebook.mp4'
@@ -499,11 +426,6 @@ function resetScreenState0() {
    אפשרויות). תמונת המשולש קבועה בצד שמאל לכל אורך שני החלקים.
    ========================================================= */
 const VIQ_CFG_S1P1_BODY = 'א. סכום זוויות במשולש הוא <span dir="ltr">180°</span>.<br>המשולש ABC הוא שווה שוקיים. היחס בין זווית הראש לסכום זוויות הבסיס הוא 3 : 1.<br>נוכל למצוא את גודלה של זווית הראש <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">4</span></span> · 180 = 45°</span><br>לכן <span dir="ltr"> ∢A = 45°</span>.<br>מכיוון ששתי הזוויות הנותרות זהות, נחלק 135 מעלות ב-2 ונמצא שכל אחת מהן בת 67.5 מעלות.';
-
-/* ⚠️ הוסרה s1ShowPart (20.08.2026, לפי בקשה מפורשת: "התוכן לא יעלה
-   בהדרגתיות") — שני החלקים גלויים תמיד (index.html, hidden הוסר).
-   resetScreenState1 כבר קורא ל-s1MaybeShowScrollGesture ישירות, כך
-   שהגלילה תזוהה נכון מיד בכניסה למסך (התוכן המלא כבר גלוי). */
 
 const VIQ_CFG_S1P1 = {
   inputs: ['s1-a', 's1-b', 's1-c'], correct: [45, 67.5, 67.5], checkBtn: 's1-p1-check', feedbox: 's1-p1-feedbox', revealBtn: 's1-p1-reveal-btn', nextScreen: null,
@@ -532,11 +454,6 @@ const SCQ_CFG_S1P2 = {
 function s1P2Select(id) { scqSelect('s1p2', id); }
 function s1P2Check() { scqCheck('s1p2'); }
 
-/* מדיניות-רמז: גלוי/פעיל מלכתחילה (ברירת-המחדל של התבנית, לפי
-   720-templates skill → _question-template-defaults.md § "Hint
-   policy" — אין הנחיה מפורשת בתסריט לסטות ממנה). פתיחה/סגירה
-   עצמאיות, לא שזורות בתוך scqCheck/viqCheck הגנריים (שהועתקו
-   כפי-שהם, בלי לוגיקת-רמז מובנית) — ראו ARCHITECTURE.md. */
 function s1P2HintOpen() { document.getElementById('s1-p2-hint-overlay').hidden = false; }
 function s1P2HintClose() { document.getElementById('s1-p2-hint-overlay').hidden = true; }
 
@@ -561,14 +478,7 @@ function s1HideGestureOnScroll() {
   }
   gesture.hidden = true;
 }
-/* QA 19.08.2026: הרמז לא יוצג עוד ללא-תנאי בכניסה למסך — רק אם יש
-   בפועל מה לגלול (scrollHeight>clientHeight) באותו רגע. אחרת, הלומד/ת
-   רואה יד-מרחפת בלי שום פס-גלילה שמצדיק אותה (התוכן הגלוי בחלק א'
-   קצר-מדי לגלישה, ורק אחרי מענה-נכון על חלק א' וחשיפת חלק ב' התוכן
-   בפועל עולה על הגובה הפנוי). נקראת שוב מתוך s1ShowPart בכל חשיפת-חלק
-   חדש, כך שאם לא הוצג בכניסה, הוא עדיין יכול להופיע ברגע שבאמת נדרש. */
 function s1MaybeShowScrollGesture() {
-  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
   requestAnimationFrame(function () {
   if (s1GestureShown) return;
   const gesture = document.getElementById('s1-scroll-gesture');
@@ -581,14 +491,6 @@ function s1MaybeShowScrollGesture() {
 
   });}
 
-/* ⚠️ נוסף (07.09.2026, דיווח: "למה הכפתור של 'צדקתי' זרוק כך?? כדאי
-   ליישר לכפתור 'צדקתי' של סעיף ב") — סעיף א' (#s1-part-1) בנוי
-   .viq-answers/.viq-answer-row (עמודת שורות-זווית צרה, לא .scq-answers
-   כמו סעיף ב'), ולא היה לו שום לוגיקת-יישור — .s3-inline-btn נשאר
-   ב-align-self:flex-end הגלובלי, שמצמיד אותו לקצה-שמאל של *כל* #s1-part-1
-   (רוחב-מלא), לא לקצה-שמאל הצר בפועל של עמודת-הקלטים. אותה טכניקה
-   בדיוק כמו s3AlignHintRow למטה (leftmost .viq-input, getBoundingClientRect,
-   מחולק ב-currentCanvasScale נגד באג ה-scale² המתועד שם). */
 function s1P1AlignCheckBtn() {
   const btn = document.getElementById('s1-p1-check');
   const inputs = document.querySelectorAll('#s1-part-1 .viq-input');
@@ -616,12 +518,6 @@ function resetScreenState1() {
    ARCHITECTURE.md). אין רמז — לא נמצא טקסט-רמז מפורש בתסריט.
    ========================================================= */
 const VIQ_CFG_S2_BODY = 'היחס בין שטח משולש ACD לשטח משולש ABD הוא<br>3 : 1. <br> שטח ABC הוא: <span dir="ltr">ABC = <span dir="rtl">64 סמ"ר</span></span>.<br>נחשב את שטחי המשולשים:<br>שטח ACD הוא <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">4</span></span> · 64 = 48</span><br>ושטח ABD הוא <span dir="ltr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">4</span></span> · 64 = 16</span>.<br>AE שווה 8 ס"מ, והוא גובה במשולש ACD, לכן:<br><span dir="ltr"><span class="frac"><span class="frac-num">8·CD</span><span class="frac-den">2</span></span> = 48</span>, <span dir="ltr">4CD = 48</span>, <span dir="ltr">לכן CD = <span dir="rtl">12 ס"מ</span></span>.<br>לשני המשולשים (ACD ו-ABD) יש אותו גובה.<br>יחס הצלעות הנפגשות עם הגובה יהיה כמו יחס השטחים (3 : 1).<br>לכן – <span dir="ltr">BD = 12 : 3 = 4</span>.';
-/* ⚠️ תוקן (31.08.2026, לפי בקשה מפורשת: "אין צורך בשני כפתורים,
-   ה'המשך' בסרגל התחתון צריך להיות 'צדקתי?' לפני המענה ו'המשך' אחריו")
-   — checkBtn מצביע עכשיו על #s2-continue (כפתור הסרגל התחתון) במקום
-   על #s2-check הנפרד שהוסר מ-index.html; nextScreen:3 מפעיל את מנגנון
-   ה-viqCheck הקיים-ומוכן ("אם כבר נענה, לחיצה נוספת = goTo(nextScreen)"
-   — ראו תחילת viqCheck) — כך אותו כפתור-יחיד גם בודק וגם ממשיך. */
 const VIQ_CFG_S2 = {
   inputs: ['s2-cd', 's2-db'], correct: [12, 4], checkBtn: 's2-continue', feedbox: 's2-feedbox', revealBtn: 's2-reveal-btn', nextScreen: 3,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: VIQ_CFG_S2_BODY },
@@ -648,17 +544,7 @@ function resetScreenState2() {
    אפשרויות). תמונת פחיות-הצבע קבועה בצד שמאל לכל אורך שני החלקים.
    זהו המסך האחרון בסיין.
    ========================================================= */
-/* ⚠️ תוקן (07.09.2026, דיווח: "במשוב של סעיף א' צריך לתקן את המסומן
-   באדום, בדומה למה שעשית כבר קודם") — "ליטרים 18" ישב שטוח בתוך
-   dir="ltr" יחיד, עם היחידה לפני המספר בסדר-המקור (בדיוק תבנית-הכישלון
-   הראשונה שתועדה ב-"ניסוח מתמטי.md"). תוקן לתבנית א' של אותו קובץ:
-   dir="rtl" מקונן סביב "18 ליטרים" (סדר-מקור מספר-ואז-יחידה), בתוך
-   ה-dir="ltr" החיצוני שנשאר כמו שהוא. */
 const VIQ_CFG_S3P1_BODY = 'א. נסמן ב-x את סך הליטרים של הצבע "ירוק זית" שהתקבל.<br>סכום חלקי היחס הוא: <span dir="ltr">5 + 3 + 2 = 10</span><br>לכן הצבע השחור מהווה <span class="frac"><span class="frac-num">2</span><span class="frac-den">10</span></span> מהתערובת.<br>נסמן ב-x את כמות הליטרים של התערובת ונבנה משוואה: <span dir="ltr"><span class="frac"><span class="frac-num">2</span><span class="frac-den">10</span></span> · x = 12</span><br>נחלק ב-<span class="frac"><span class="frac-num">2</span><span class="frac-den">10</span></span> ונקבל: <span dir="ltr">x = 60</span>.<br>לכן, יש 60 ליטרים של צבע ירוק זית.<br>הצבע הצהוב מהווה <span class="frac"><span class="frac-num">5</span><span class="frac-den">10</span></span> מהתערובת. מדובר במחצית מהתערובת לכן יש 30 ליטרים של צבע צהוב בתערובת.<br>מסקנה: יש <span dir="ltr">60 − 12 − 30 = <span dir="rtl">18 ליטרים</span></span><br>של צבע כחול בתערובת.';
-
-/* ⚠️ הוסרה s3ShowPart (20.08.2026, לפי בקשה מפורשת) — שני החלקים
-   גלויים תמיד. resetScreenState3 כבר קורא ל-s3MaybeShowScrollGesture
-   ישירות. */
 
 const VIQ_CFG_S3P1 = {
   inputs: ['s3-total', 's3-yellow', 's3-blue'], correct: [60, 30, 18], checkBtn: 's3-p1-check', feedbox: 's3-p1-feedbox', revealBtn: 's3-p1-reveal-btn', nextScreen: null,
@@ -704,10 +590,7 @@ function s3HideGestureOnScroll() {
   }
   gesture.hidden = true;
 }
-/* QA 19.08.2026: אותו תיקון בדיוק כמו s1MaybeShowScrollGesture —
-   נבדק בפועל אם יש מה לגלול לפני הצגת הרמז. */
 function s3MaybeShowScrollGesture() {
-  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
   requestAnimationFrame(function () {
   if (s3GestureShown) return;
   const gesture = document.getElementById('s3-scroll-gesture');
@@ -720,33 +603,8 @@ function s3MaybeShowScrollGesture() {
 
   });}
 
-/* ⚠️ נוסף (07.09.2026, דיווח: "הכפתורים לא מיושרים לפינה השמאלית של
-   המלבנים של המסיחים") — .btn-hint-row מיושר ב-align-self:flex-end
-   (כלל גלובלי, לא שונה) שמצמיד אותו לשמאל *הכלל של .s3-part-1* —
-   שדות-הקלט (.viq-input, 180px קבוע) לא ממלאים את כל הרוחב הזה, כל
-   שורה נארזת לימין לפי אורך-התווית שלה (תוויות שונות = שדות בעומק-
-   שמאל שונה בין השורות). נמדד בפועל (getBoundingClientRect, אותה
-   טכניקה כמו ב-methodica-math-ratio-05-02) קצה-שמאל של שדה-הקלט
-   הרחוק-ביותר שמאלה (⚠️ תוקן 07.09.2026 שוב, לפי סימון-בתמונה מפורש —
-   היה שדה-הקלט *האחרון* בלבד, לא בהכרח הרחוק ביותר: שורה 1 ("מהו סך
-   כל...") עם התווית הארוכה ביותר דוחפת את השדה שלה רחוק יותר שמאלה
-   מהשורות הקצרות מתחתיה — Math.min על קצוות-שמאל *כל* השדות, לא רק
-   האחרון) ומוחל כ-margin-left. */
-/* ⚠️ תוקן (07.09.2026, דיווח: "שיבשת את הכול" — מסך אחר, אותו באג-
-   מקור) — getBoundingClientRect מחזיר פיקסלי-viewport, כלומר *אחרי*
-   ה-transform:scale() של #app (scaleApp(), למעלה בקובץ הזה) — כבר
-   מוכפלים ב-scale הנוכחי. margin-left מתפרש *לפני* אותו transform
-   ואז מוכפל ב-scale שוב בזמן הרינדור בפועל — delta × scale² בפועל,
-   לא delta. על מסך גדול (scale>1) זה יוצר margin ענק ושובר את
-   הפריסה. עוזר משותף: קורא את ה-scale הנוכחי ישירות מרוחב #app
-   בפועל (אותה טכניקה שכבר קיימת ב-clampPopupPosition, ראו למטה
-   בקובץ), לא מהנחה על innerWidth. */
 function currentCanvasScale() {
   const appEl = document.getElementById('app');
-  // ⚠️ עודכן (23.09.2026) — מחלקים ב-getCanvasSize().w (הרוחב הדינמי
-  // בפועל שנקבע ב-scaleApp(), עשוי לחרוג מ-1280), לא ב-CANVAS_W הקבוע
-  // — אחרת ה-scale היה יוצא שגוי בכל viewport שבו הקנבס התרחב מעבר
-  // לגודל-העיצוב (ראו ההערה המלאה ליד scaleApp()).
   return appEl ? (appEl.getBoundingClientRect().width / getCanvasSize().w) : 1;
 }
 
@@ -761,12 +619,6 @@ function s3AlignHintRow() {
   row.style.marginLeft = Math.max(0, (leftmost - partRect.left) / scale) + 'px';
 }
 
-/* ⚠️ נוסף (07.09.2026, דיווח: "המלבנים של המסיחים מאוד גדולים") —
-   אותה טכניקה בדיוק כמו methodica-math-ratio-05-02 (equalizeScqOptWidths
-   שם): מודד רוחב-תוכן טבעי לכל .scq-opt בתוך קבוצה שסומנה
-   .scq-answers--fit ומיישם את הרחב ביותר על כולם, ואז מיישר את שורת-
-   הכפתור הבאה (.s3-inline-btn *או* .btn-hint-row — שני הדפוסים
-   הקיימים בפרויקט לכפתור-בדיקה) לקצה-שמאל של הפילים המצומצמים. */
 function equalizeScqOptWidths() {
   document.querySelectorAll('.scq-answers--fit').forEach(function (group) {
     const opts = Array.prototype.slice.call(group.querySelectorAll('.scq-opt'));
@@ -792,13 +644,6 @@ function resetScreenState3() {
   requestAnimationFrame(s3AlignHintRow);
 }
 
-/* SCQ_CFG/VIQ_CFG הגלובליים — מוגדרים כאן (אחרי כל שלושת המסכים),
-   לא בהצהרה בודדת ליד כל מסך, כדי למנוע Temporal Dead Zone: הפונקציות
-   הגנריות (scqCheck/viqCheck) קוראות ל-SCQ_CFG[key]/VIQ_CFG[key]
-   *בזמן-ריצה* (בתוך קריאת-פונקציה, אחרי שה-script המלא כבר נטען),
-   לא בזמן-הגדרה — לכן אין בעיה שההפניה `const SCQ_CFG = {...}` מגיעה
-   אחרי ה-const-ים המוקדמים-יותר (VIQ_CFG_S1P1 וכו') שהיא מרכיבה. נבדק
-   ישירות ב-Node עם DOM מדומה (ראו ARCHITECTURE.md § "בדיקת-הרצה"). */
 const SCQ_CFG = {
   s1p2: SCQ_CFG_S1P2,
   s3p2: SCQ_CFG_S3P2
@@ -816,16 +661,10 @@ const VIQ_CFG = {
    doesn't exist yet (getElementById guard), so it's safe to keep here
    unused until the first real question screen calls it.
    ========================================================= */
-/* ⚠️ CANVAS_W/CANVAS_H הוסרו מכאן (31.08.2026) — מוגדרים פעם אחת בלבד,
-   למעלה ליד scaleApp(). ראו ההערה המלאה שם. */
 const BOTTOM_BAR_H = 74;
 
 function clampPopupPosition(x, y, popupEl) {
   const w = popupEl.offsetWidth, h = popupEl.offsetHeight;
-  // ⚠️ עודכן (23.09.2026) — גבולות ביחס לגודל-הקנבס *בפועל*
-  // (getCanvasSize(), עשוי לחרוג מ-1280×710), לא ביחס ל-CANVAS_W/
-  // CANVAS_H הקבועים — אחרת פופ-אפ נגרר היה נשאר נעול לתוך המלבן
-  // הישן-הקטן גם כש-#app כבר גדול יותר (ראו ההערה המלאה ליד scaleApp()).
   const canvas = getCanvasSize();
   const minX = 0, maxX = canvas.w - w;
   const minY = 0, maxY = (canvas.h - BOTTOM_BAR_H) - h; // top edge of the bottom bar
@@ -851,11 +690,6 @@ function scqFbMakeDraggable(boxId) {
   let startX = 0, startY = 0, startLeft = 0, startTop = 0;
 
   box.addEventListener('mousedown', function (e) {
-    /* ⚠️ נוסף (28.09.2026, דיווח: "לא מתאפשרת לחיצה על כפתור 'התשובה
-       הנכונה', המשוב תמיד בורח") — הכפתור יושב בתוך תיבת-המשוב הנגררת;
-       בלי היציאה הזו, mousedown על הכפתור עצמו הופעל תמיד כתחילת-גרירה
-       (הקופסה "בורחת" עם העכבר), ומנע מהקליק על הכפתור להירשם. אותו
-       תיקון כבר קיים ב-methodica-math-ratio-05-04/script.js. */
     if (e.target.closest('.scq-fb-reveal-btn')) return;
     const parent = box.offsetParent || box.parentElement;
     const boxRect = box.getBoundingClientRect();
@@ -876,10 +710,6 @@ function scqFbMakeDraggable(boxId) {
     if (!dragging) return;
     const parent = box.offsetParent || box.parentElement;
     const parentRect = parent.getBoundingClientRect();
-    // pointer delta lives in raw viewport px — convert to canvas-space
-    // (divide by the current scaleApp() zoom factor) before clamping.
-    // ⚠️ עודכן (23.09.2026) — getCanvasSize().w, לא CANVAS_W הקבוע (ראו
-    // ההערה המלאה ליד scaleApp()/currentCanvasScale()).
     const scale = parentRect.width / getCanvasSize().w;
     const dx = (e.clientX - startX) / scale;
     const dy = (e.clientY - startY) / scale;
@@ -940,9 +770,6 @@ document.addEventListener('keydown', function (e) {
 
 /* אתחול */
 scaleApp();
-/* s1-p1/p2 ו-s3-p1/p2 הוסרו (19.08.2026) — הפכו ל-.is-static (מסכי-
-   גלילה, ראו styles.css). s2-feedbox נשאר draggable — מסך s2 סטטי
-   (לא-גולל), לא מושפע משינוי-המדיניות הזה. */
 ['s2-feedbox'].forEach(scqFbMakeDraggable);
 (function () {
   const m = /^#screen=(\d+)$/.exec(location.hash);

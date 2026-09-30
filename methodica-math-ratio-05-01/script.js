@@ -1,27 +1,9 @@
 'use strict';
 
-/* =========================================================
-   לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 1
-   מנוע גלובלי — canvas scaling, ניווט מסכים, סטייט גלובלי.
-   TOTAL_SCREENS יעודכן ל-1+ עם הוספת כל מסך תוכן אמיתי (Prompt 2+).
-
-   מקור: הועתק/הותאם מהמנוע הגלובלי של
-   methodica-science-mass-measure-03-01 (720 מדעים, יעד 3, סיין 1),
-   עם תיקון closeAllPopupsAndHints() (ראו למטה) לפי החלטת הפרויקט
-   (סיכום-תהליך-בניית-הלומדה.md §0.3) — ראו ARCHITECTURE.md לפירוט מלא.
-   ========================================================= */
+/* לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 1 */
 
 const TOTAL_SCREENS = 7;
 let currentScreen = 0;
-
-/* ⚠️ תוקן (03.09.2026, דיווח: "לחיצה על חזרה מהסיין הבא מעבירה למסך
-   ריק") — קריאת ה-goTo(TOTAL_SCREENS-1) בשביל ?screen=last הייתה כאן,
-   ממש בתחילת הקובץ, ורצה סינכררונית לפני שקבועים כמו S6_Q/s6Outcome
-   (מוגדרים הרבה יותר למטה, ב-const) הוגדרו בכלל — resetScreenState6()
-   שנקראת מתוכה נכשלת עם "Cannot access 'S6_Q' before initialization",
-   וה-exception קוטע את goTo() *לפני* ההוראה שמדליקה class="active"
-   על המסך היעד. תוצאה: אף מסך לא active, הדף כולו ריק. הועבר ל-IIFE
-   בסוף הקובץ (ראו שם) — שם כל הקבועים כבר מוגדרים. */
 
 /* ---------- Companion character system — state + storage key ----------
    ID לוגי (character-1/character-2), לא צבע/שם, לפי Companion character
@@ -49,27 +31,8 @@ window.lomdaState = {
   selectedCharacter: savedCharacter
 };
 
-/* ⚠️ תוקן (31.08.2026, לפי בדיקת-רספונסיביות) — CANVAS_W/CANVAS_H היו
-   מוצהרים פעמיים: פעם מקומית כאן בתוך scaleApp(), ופעם נפרדת למטה ליד
-   clampPopupPosition (BOTTOM_BAR_H) — שני מקורות-אמת לאותם מספרים,
-   ללא שום דבר שמכריח אותם להישאר מסונכרנים אם מישהו יערוך רק אחד מהם
-   בעתיד. אוחד למקור-אמת יחיד כאן, ברמת-המודול — גם scaleApp() וגם
-   clampPopupPosition (למטה) קוראים מכאן, לא מגדירים בעצמם. */
 const CANVAS_W = 1280, CANVAS_H = 710;
 
-/* ⚠️ תוקן (23.09.2026, דיווח לקוח: "יש מלא שטח מת למעלה ולמטה, אנחנו
-   סתם מקטינים את שטח היחידה") — scaleApp() ממרכז-עם-שוליים הוחלף
-   במתיחת-הקנבס-עצמו למילוי-מדויק של ה-viewport, אותה נוסחה בדיוק כמו
-   methodica-math-percent-02 (unit-js/15-ui.js), שהלקוח אישר כתקינה.
-   ה-scale עדיין Math.min של שני היחסים (לא נוגעים בפרופורציית-התוכן),
-   אבל אז #app עצמו מתרחב ל-canvasW/canvasH (במקום להישאר נעול ל-
-   1280×710 עם left/top ממורכזים) — כך שאחרי ה-transform:scale() הוא
-   ממלא את הוויופורט בדיוק, אפס שוליים-מתים, בכל יחס-גובה-רוחב. תוכן-
-   מסכים לא נבנה מחדש: אותה שיטת מיקום-אבסולוטי-קבוע-פיקסלים ביחס
-   לרשת-1280 בשני הפרויקטים (ראו ARCHITECTURE.md אם קיים סעיף ייעודי).
-   getCanvasSize() למטה (גם היא מועתקת מאותו מקור) היא מקור-האמת
-   לגודל-הקנבס *בפועל* מרגע זה — currentCanvasScale/clampPopupPosition
-   עודכנו לקרוא לה במקום ל-CANVAS_W/CANVAS_H הקבועים ישירות. */
 function scaleApp() {
   const app = document.getElementById('app');
   const scale = Math.min(window.innerWidth / CANVAS_W, window.innerHeight / CANVAS_H);
@@ -91,30 +54,11 @@ function getCanvasSize() {
   };
 }
 
-/* ⚠️ נוסף (07.09.2026, בדיקה מקיפה: "כפתור 'צדקתי?' לא תמיד מיושר
-   לשמאל") — הועתק/הותאם מ-methodica-math-ratio-05-05/script.js
-   (currentCanvasScale). getBoundingClientRect() מחזיר פיקסלי-viewport
-   *אחרי* transform:scale() של #app (scaleApp() למעלה) — margin-left,
-   לעומת זאת, מתפרש *לפני* אותו transform ואז מוכפל ב-scale שוב בזמן
-   הרינדור, delta × scale² בפועל. מחלקים ב-scale הנוכחי (נמדד ישירות
-   מרוחב #app בפועל) כדי לקבל בחזרה יחידות מקומיות נכונות. */
 function currentCanvasScale() {
   const appEl = document.getElementById('app');
-  // ⚠️ עודכן (23.09.2026) — מחלקים ב-getCanvasSize().w (הרוחב הדינמי
-  // בפועל שנקבע ב-scaleApp(), עשוי לחרוג מ-1280), לא ב-CANVAS_W הקבוע
-  // — אחרת ה-scale היה יוצא שגוי בכל viewport שבו הקנבס התרחב מעבר
-  // לגודל-העיצוב (ראו ההערה המלאה ליד scaleApp()).
   return appEl ? (appEl.getBoundingClientRect().width / getCanvasSize().w) : 1;
 }
 
-/* ⚠️ נוסף (07.09.2026, בדיקה מקיפה) — #s2-e-check (.s2-check-btn,
-   align-self:flex-end גלובלי) הוא היחיד בקובץ הזה שהתוכן-שמעליו
-   *ממורכז* (לא נדחס-ימינה כמו שורות VIQ בסיינים אחרים): .s2-eq-diagram
-   הוא width:700px;margin:0 auto בתוך .s2-sec-e הרחב-יותר. align-self:
-   flex-end לבד מצמיד את הכפתור לקצה-השמאלי של *כל הסעיף*, לא לקצה-
-   השמאלי של הדיאגרמה הממורכזת שמעליו — נראה מנותק ממנה. מיישר לפי
-   קצה-שמאל בפועל של .s2-eq-diagram (אותה טכניקה, getBoundingClientRect
-   מחולק ב-currentCanvasScale). */
 function s2EAlignCheckBtn() {
   const btn = document.getElementById('s2-e-check');
   const diagram = document.getElementById('s2-eq-diagram');
@@ -147,10 +91,6 @@ function closeAllPopupsAndHints() {
   document.querySelectorAll('[id$="-hint-overlay"]').forEach(function (el) {
     el.hidden = true;
   });
-  /* ⚠️ נוסף (07.09.2026) — אם יוצאים מהמסך בזמן שהיישומון מוגדל,
-     s2SimExpandToggle(false) מחזיר אותו למקומו המקורי לפני שהמסך
-     מוסתר — כדי לא להשאיר אותו "תקוע" מוגדל/מועתק-במקום-לא-נכון
-     כשחוזרים למסך הזה בהמשך. */
   if (typeof s2SimExpandToggle === 'function') s2SimExpandToggle(false);
   if (typeof s6AppletExpandToggle === 'function') s6AppletExpandToggle(false);
 }
@@ -169,9 +109,6 @@ function goTo(n) {
 }
 
 function resetScreenState(n) {
-  /* כל מסך תוכן אמיתי שנוסף מקבל כאן שורת if (n === X) resetScreenStateX();
-     משלו, ומגדיר את הפונקציה resetScreenStateX() ליד קטע ה-HTML/JS של
-     המסך — לפי אותה מוסכמה בדיוק כמו בפרויקטי המדעים. */
   if (n === 0) resetScreenState0();
   if (n === 1) resetScreenState1();
   if (n === 2) resetScreenState2();
@@ -196,15 +133,7 @@ document.addEventListener('keydown', function (e) {
   if (e.ctrlKey && e.key === 'ArrowRight') goTo(currentScreen - 1);
 });
 
-/* =========================================================
-   מסך 1 — בחירת דמות מלווה (TwoOptionSelection), data-screen="0", id="s0"
-   הועתק ממסך 1 (s0) של methodica-science-mass-measure-03-01. שומר את
-   הבחירה ב-window.lomdaState.selectedCharacter + localStorage
-   (CHARACTER_STORAGE_KEY, מוגדר למעלה) — לפי Companion character system
-   (720-templates skill). "המשך" (advanceFromS0) קורא ל-goTo(1): no-op
-   בטוח כרגע (TOTAL_SCREENS=1, אין עדיין מסך 2) — יתחבר בפועל כשמסך
-   התוכן הבא ייבנה ו-TOTAL_SCREENS יעודכן.
-   ========================================================= */
+/* מסך 1 — בחירת דמות מלווה (TwoOptionSelection), data-screen"0", id"s0" */
 function resetScreenState0() {
   // תמיד מסנכרן את ה-UI מ-window.lomdaState.selectedCharacter (לא "פעם
   // אחת בלבד") — כך חזרה למסך זה אחרי בחירה משקפת נכון את המצב הקיים.
@@ -282,8 +211,6 @@ function s1GoToPage(index) {
   s1CurrentPage = index;
   const scrollArea = document.getElementById('s1-scroll-area');
   if (scrollArea) {
-    /* QA 20.08.2026: ראו ההערה המלאה ליד s1MaybeShowScrollGesture —
-       הדגל הזה מבדיל את הגלילה-היזומה-הזו מגלילה אמיתית של הלומד/ת. */
     s1GestureProgrammaticScroll = true;
     setTimeout(function () { s1GestureProgrammaticScroll = false; }, 700);
     scrollArea.scrollTo({ top: pages[index].offsetTop, behavior: 'smooth' });
@@ -291,14 +218,6 @@ function s1GoToPage(index) {
   setTimeout(function () { s1Jumping = false; }, 500);
 }
 
-/* ⚠️ תוקן (16.08.2026) — הוסר ה-wheel listener שהוסיף e.preventDefault()
-   ללא-תנאי על כל טיק-גלגלת (גם כשלא בוצעה קפיצת-עמוד בפועל). זה חסם
-   לחלוטין גלילה טבעית בתוך שאלה שגבוהה מהחלון הגלוי (בדיוק המצב שדווח:
-   "הגלילה לא עובדת בכלל"). אזור הגלילה גולל עכשיו באופן טבעי (עכבר/
-   מגע/פס-גלילה) דרך overflow-y:auto רגיל בלבד. קפיצת-העמוד
-   (s1GoToPage) נשארת ככלי-נוחות: מקלדת (למטה) + קריאה יזומה מה-JS
-   ברגע ששאלה חדשה נחשפת (olyQ1Check/olyQ2Check), לא עוד hijack של
-   הגלגלת. */
 function s1InitScrollJump() {
   const scrollArea = document.getElementById('s1-scroll-area');
   if (!scrollArea || scrollArea.dataset.jumpInit) return;
@@ -316,18 +235,8 @@ function s1InitScrollJump() {
    (לא רק wheel/keydown כמו במקור ב-mass-measure-03-01): מכסה גם גלילת
    מגע וגם גרירת פס-הגלילה בעכבר, לא רק שני הטריגרים שהמקור בדק. */
 let s1GestureShown = false;
-/* QA 20.08.2026: הרמז היה נעלם כמעט-מיד אחרי שהוצג, בפועל "חסר"
-   ללומד/ת — שורש-הבאג: המאזין החד-פעמי ({once:true}) לא הבחין בין
-   גלילה אמיתית של הלומד/ת לגלילה **פרוגרמטית** שנגרמת מ-`s1GoToPage`
-   (נקראת מיד אחרי olyQ1Check/olyQ2Check כדי לגלול לשאלה הבאה) —
-   `scrollTo({behavior:'smooth'})` מפיק אירוע `scroll` נייטיבי, בדיוק
-   כמו גלילה אמיתית, אז המאזין הסתיר את הרמז לפני שהלומד/ת בכלל גלל/ה
-   בעצמו/ה. תוקן באותו דפוס בדיוק כמו s2/s3/s5-MaybeShowScrollGesture
-   בשאר הסינים: דגל `s1GestureProgrammaticScroll` מודלק לפני כל
-   `scrollTo` יזום-קוד (ראו s1GoToPage), ומאופס אוטומטית אחרי 700ms. */
 let s1GestureProgrammaticScroll = false;
 function s1MaybeShowScrollGesture() {
-  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
   requestAnimationFrame(function () {
   if (s1GestureShown) return;
   const gesture = document.getElementById('s1-scroll-gesture');
@@ -357,12 +266,6 @@ function olyOptKey(event, el) {
   }
 }
 
-/* ⚠️ תוקן (16.08.2026) — משתמש עכשיו במופע .scq-fb-box אמיתי (גריר),
-   לא בתיבה סטטית מוטבעת. scqFbResetPosition נקרא בכל פתיחה (גם
-   פתיחה-מחדש בחזרה למסך) כדי לממש "resets to default position on
-   every open", לפי _global-components.md → Feedback popup system. */
-/* משוב שגוי סופי (הפתרון הנכון מוצג): משפט הכותרת (בולד) מקבל נקודה בסוף אם חסרה
-   (נקודתיים בסוף מוחלפות בנקודה), ואחריו "התשובה הנכונה מוצגת." (29.09.2026, חידוד לקוח). */
 function fbCorrectShown(title) {
   let t = String(title).replace(/\s+$/, '').replace(/[:,;]$/, '');
   if (!/[.!?]$/.test(t)) t += '.';
@@ -372,35 +275,12 @@ function fbCorrectShown(title) {
 function olySetFeedback(feedboxEl, isCorrect, text) {
   scqFbResetPosition(feedboxEl.id);
   feedboxEl.querySelector('.scq-fb-title-text').textContent = (!isCorrect && text !== S2_E_WRONG_ONCE) ? fbCorrectShown(text.title) : text.title;
-  /* QA 20.08.2026: הוחלף מ-textContent ל-innerHTML — לפי בקשה מפורשת
-     לתקן הדגשות-בולד חסרות "גם במשובים". התסריט (שקף 6) כולל הדגשה-
-     חלקית אמיתית בתוך גוף-משוב אחד (S1_Q3_FEEDBACK.wrong: "משלחת א'"
-     בבולד, שאר המשפט רגיל) — טקסט קבוע-מראש בקוד (לא קלט-משתמש), אין
-     סיכון-XSS. שינוי מקומי לפונקציה הזו בלבד (הספציפית למסך הזה) —
-     לא נוגע ב-viqCheck/scqCheck הגנריים המשותפים לשאר הפרויקט. */
   feedboxEl.querySelector('.scq-fb-body').innerHTML = text.body;
   feedboxEl.classList.add('visible');
   feedboxEl.classList.toggle('is-correct', isCorrect);
   feedboxEl.classList.toggle('is-wrong', !isCorrect);
 }
 
-/* ⚠️ olyHideFeedback הוסרה (19.08.2026, לפי בקשה מפורשת שהופכת החלטה
-   קודמת מ-17.08.2026): המדיניות הייתה "משוב-סעיף-קודם מוסתר ברגע
-   שמתחילים לבחור בסעיף הבא" — עכשיו ההפך: משוב חייב להישאר מוצג על
-   המסך (מתחת לשאלה שלו) גם אחרי מעבר לשאלה הבאה, זהה למדיניות
-   שיושמה באותו יום בכל שאר מסכי-הגלילה-עם-שאלות בפרויקט. */
-
-/* ⚠️ תוקן (19.08.2026, לפי בקשה מפורשת) — בתסריט המקורי (שקפים 4-5)
-   שני הפידבקים (נכון/שגוי) הכילו פסקת-הסבר אחת משותפת לשני חלקי
-   א'+ב' (מסומנת "א. .../ב. ..."), כי במקור הייתה תיבת-משוב אחת
-   משותפת לשתי השאלות. אבל בפועל כל שאלה (א'/ב') מקבלת כאן תיבת-משוב
-   עצמאית משלה (s1-q1-feedbox/s1-q2-feedbox) — הטקסט המשותף-במקור
-   הועתק בטעות *במלואו* לתוך שתיהן (ראו S1_Q2_FEEDBACK למטה, שכבר
-   נכתב-מחדש נכון), מה שגרם לשני באגים: (1) חשיפת תשובת שאלה ב' ("40
-   משתתפות ומשתתפים") בתוך המשוב של שאלה א', לפני שהלומד/ת בכלל ניגש/ה
-   אליה; (2) תוויות-אות מיותרות ("א."/"ב.") שאין בהן צורך כשלכל שאלה
-   כבר יש תיבת-משוב נפרדת משלה. הושאר רק חלק א' (הרלוונטי לשאלה הזו
-   בלבד), בלי תווית-אות. */
 const S1_Q1_FEEDBACK = {
   correct: {
     title: 'נכון!',
@@ -441,10 +321,6 @@ function olyQ1Check() {
   s1GoToPage(1);
 }
 
-/* ⚠️ הנחה — לא טקסט מילולי מהתסריט. התסריט לא כלל תיבת-משוב נפרדת
-   לשאלה ב' (רק את הפידבק המשותף למעלה, שכבר חושף "40"). הטקסט כאן נגזר
-   מאותו הסבר-יחס שכבר נמסר (פי 2 לכל מדליה: 5 מדליות זהב → 40), לא
-   עובדה חדשה שהומצאה — לאשר מול המשתמשת לפני שהמסך נחשב סופי. */
 const S1_Q2_FEEDBACK = {
   correct: {
     title: 'נכון!',
@@ -485,12 +361,6 @@ function olyQ2Check() {
   s1GoToPage(2);
 }
 
-/* ⚠️ טקסט מוצג מדויק מהתסריט (שקף 6) — שני הפידבקים (נכון/שגוי) מכילים
-   במקור את אותה פסקת הסבר, רק שורת הפתיחה שונה. הועתק כפי-שהוא. */
-/* ⚠️ תוקן (20.08.2026, לפי בקשה מפורשת — בולד חסר מול התסריט) — נבדק
-   ישירות מול ריצות-הבולד בפועל בשקף 6: גוף-המשוב "נכון" כולו רגיל
-   (בלי שום בולד), אבל גוף-המשוב "שגוי" מדגיש חלקית רק את "משלחת א'"
-   — לא אותו טקסט מוכפל-סתם, הבדל אמיתי בין שתי הגרסאות. */
 const S1_Q3_FEEDBACK = {
   correct: {
     title: 'נכון!',
@@ -568,10 +438,6 @@ function resetScreenState1() {
   });
   document.getElementById('s1-q1-check').disabled = !s1State.q1.selected || s1State.q1.done;
   const fb1 = document.getElementById('s1-q1-feedbox');
-  /* QA 19.08.2026: תוקן — לשעבר "&& !s1State.q2.selected" הסתיר את
-     משוב א' ברגע שהתחילו לבחור בשאלה ב' (החלטה מ-17.08.2026, הפוכה
-     עכשיו לפי בקשה מפורשת). משוב מוצג כל עוד השאלה שלו עצמה נענתה —
-     בלי תלות במצב השאלות הבאות. */
   if (s1State.q1.done) {
     const isCorrect1 = s1State.q1.selected === 'b';
     olySetFeedback(fb1, isCorrect1, isCorrect1 ? S1_Q1_FEEDBACK.correct : S1_Q1_FEEDBACK.wrong);
@@ -593,7 +459,6 @@ function resetScreenState1() {
   });
   document.getElementById('s1-q2-check').disabled = !s1State.q2.selected || s1State.q2.done;
   const fb2 = document.getElementById('s1-q2-feedbox');
-  /* QA 19.08.2026: אותו תיקון בדיוק כמו fb1 למעלה. */
   if (s1State.q2.done) {
     const isCorrect2 = s1State.q2.selected === '40';
     olySetFeedback(fb2, isCorrect2, isCorrect2 ? S1_Q2_FEEDBACK.correct : S1_Q2_FEEDBACK.wrong);
@@ -631,9 +496,6 @@ function resetScreenState1() {
   s1CurrentPage = 0;
   const scrollArea = document.getElementById('s1-scroll-area');
   if (scrollArea) {
-    /* QA 20.08.2026: הגנה זהה ל-s1GoToPage — אם חוזרים למסך הזה אחרי
-       שכבר גללו בו (scrollTop>0), האיפוס-ל-0 הזה מפיק גם הוא אירוע
-       scroll נייטיבי, שעלול להסתיר בטעות רמז שרק הוצג. */
     s1GestureProgrammaticScroll = true;
     setTimeout(function () { s1GestureProgrammaticScroll = false; }, 700);
     scrollArea.scrollTop = 0;
@@ -652,16 +514,7 @@ const s2State = { c: { selected: null, done: false } };
 
 let s2GestureShown = false;
 let s2GestureProgrammaticScroll = false;
-/* QA 19.08.2026: אותו תיקון בדיוק כמו s1MaybeShowScrollGesture — נבדק
-   בפועל אם יש מה לגלול לפני הצגת הרמז.
-   ⚠️ תוקן (20.08.2026, לפי דיווח "אין כף יד ליד הסקרול בר במסך 3") —
-   resetScreenState2 מאפס scrollTop=0 בסופה (למטה); אם המסך נכנס-
-   מחדש בזמן ש-scrollTop>0 (למשל אחרי גלילה קודמת), האיפוס הזה מפיק
-   אירוע scroll נייטיבי שהמאזין הישן (naive, {once:true}) לא הבחין
-   בינו לבין גלילה אמיתית של הלומד/ת — מסתיר את הרמז לפני שהוא נראה
-   בכלל. אותו דפוס-דגל בדיוק כמו s1/s6MaybeShowScrollGesture. */
 function s2MaybeShowScrollGesture() {
-  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
   requestAnimationFrame(function () {
   if (s2GestureShown) return;
   const gesture = document.getElementById('s2-scroll-gesture');
@@ -684,16 +537,8 @@ function s2HideGestureOnScroll() {
   gesture.hidden = true;
 }
 
-/* ⚠️ נוסף (18.08.2026) — Gesture Hint: Cursor Drag (SELF-QA-lomda.md §7).
-   סעיף ה (דיאגרמת-המשוואה, s2E*) הוא אינטראקציית-גרירה אמיתית שלא
-   קיבלה עד כה שום gesture hint. מוצג פעם אחת ברגע שסעיף ה נחשף
-   (לא ברגע שהמסך כולו הופך active — הווידג'ט עצמו hidden עד שסעיף ג'
-   נענה, ראו s2CCheck/resetScreenState2), מוסתר בניסיון-הגרירה-
-   המוצלח הראשון (s2EDrop), לא בגלילה — אותו מנגנון show-once כמו
-   s1/s2/s6MaybeShowScrollGesture, רק שה-trigger-להסתרה הוא גרירה. */
 let s2DragGestureShown = false;
 function s2MaybeShowDragGesture() {
-  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
   requestAnimationFrame(function () {
   if (s2DragGestureShown) return;
   s2DragGestureShown = true;
@@ -707,8 +552,6 @@ function s2HideDragGesture() {
   if (gesture) gesture.hidden = true;
 }
 
-/* ⚠️ טקסט מדויק מהתסריט (שקף 12 — כולל ה-m:t של החישוב שהיה מוטמע
-   כאובייקט-נוסחה, לא טקסט רגיל: 3∙10=30, 4∙10=40). */
 const S2_C_FEEDBACK = {
   correct: {
     title: 'כל הכבוד!',
@@ -747,10 +590,6 @@ function s2CCheck() {
   // הדמות+בועית באותו מקום פיזי בדיוק — לא מופיעה לצידה.
   document.getElementById('s2-c-char').hidden = true;
   document.getElementById('s2-c-fb-img').hidden = false;
-  /* QA 20.08.2026: הוסרו שני שורות ה-hidden=false לסעיפים ד'/ה' —
-     שניהם גלויים תמיד עכשיו (לפי בקשה מפורשת), אין יותר חשיפה-
-     הדרגתית. s2MaybeShowDragGesture() הועברה ל-resetScreenState2 (רצה
-     עם כניסה למסך, לא תלוית-מענה-על-סעיף-ג'). */
 }
 
 /* =========================================================
@@ -782,18 +621,6 @@ let s2EDragActive = null;
 let s2EDropHandled = false;
 let s2ERevealed = false;
 let s2EPlacementSnapshot = {};
-
-/* ⚠️ הוסר (18.08.2026) — הייתה כאן s2ERenderLines(), פונקציה שציירה
-   קווי-חיבור SVG בין כל משבצת למספר שלה (getBoundingClientRect-based).
-   הקווים עצמם כבר לא קיימים ב-HTML מזמן (הוסרו ב-17.08.2026 לפי בקשה
-   מפורשת: "לא צריך חיצים... פשוט שאיזורי הגרירה קרובים למספרים"), אז
-   הפונקציה הפכה לקוד-מת ששותק בלי לעשות כלום (setLine עם line===null
-   פשוט return-ה). ההערה שהייתה כאן טענה בטעות ש"כל משבצת ממוקמת
-   דינמית ב-JS (s2EPositionTargets)" — אבל הפונקציה הזו מעולם לא
-   נכתבה, וזה שורש-הבאג החוזר (המשבצות מעולם לא היו קרובות בפועל
-   למספרים שלהן). תוקן ביסודו ב-styles.css/index.html: פריסת flex-
-   column סטטית (.s2-eq-num-col) — כל משבצת מקוננת ישירות ליד המספר
-   שלה ב-HTML, בלי שום מדידת-runtime. */
 
 function s2ERender() {
   Object.keys(S2_DDQ_CORRECT).forEach(function (targetId) {
@@ -885,24 +712,14 @@ function s2EDrop(e, targetId) {
   s2EDropHandled = true;
   s2ERender();
   s2ECheckEnable();
-  // ⚠️ נוסף (22.09.2026, דיווח: "אין משוב אחרי ניסיון ראשון שגוי, וכפתור
-  // צדקתי נשאר דלוק בלי לשנות תשובה") — סידור-מחדש אחרי ניסיון שגוי
-  // ראשון (ראו s2ECheck) חייב לאפס את המשוב הישן, אותו דפוס בדיוק כמו
-  // s6OnInput (fb.classList.remove('visible')).
   document.getElementById('s2-e-feedbox').classList.remove('visible');
   s2HideDragGesture(); // ניסיון-גרירה-מוצלח ראשון — מסתיר את ה-gesture hint (לא תלוי-הצלחה/דיוק)
 }
 
-/* ⚠️ טקסט מדויק מהתסריט (שקף 14, AlternateContent). "כל הכבוד! / זה
-   לא מדויק, התשובה הנכונה מוצגת" — אותה פסקת-הסבר לשני המצבים, רק
-   שורת הפתיחה שונה, כמו כל משוב אחר בפרויקט הזה. */
 const S2_E_FEEDBACK = {
   correct: { title: 'כל הכבוד!', body: 'כשגודל הקבוצה והיחס בין החלקים בה ידועים לנו, זוהי הדרך בה נחשב את גדלי החלקים השונים.' },
   wrong:   { title: 'זה לא מדויק', body: 'כשגודל הקבוצה והיחס בין החלקים בה ידועים לנו, זוהי הדרך בה נחשב את גדלי החלקים השונים.' }
 };
-/* ⚠️ נוסף (22.09.2026, דיווח: "אין משוב, וכפתור צדקתי נשאר דלוק אחרי
-   ניסיון ראשון שגוי בלי לשנות תשובה") — אותו טקסט-משוב מדויק שכבר
-   בשימוש ב-s6Check (wrongOnce) לניסיון-ראשון-שגוי בשאר הפרויקט. */
 const S2_E_WRONG_ONCE = { title: 'התשובה אינה נכונה.', body: 'נסו שוב.' };
 
 function s2EMarkResult() {
@@ -948,20 +765,10 @@ function s2ECheck() {
     olySetFeedback(document.getElementById('s2-e-feedbox'), false, S2_E_FEEDBACK.wrong);
     const revealBtn = document.getElementById('s2-e-reveal-btn');
     if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
-    /* עודכן (29.09.2026, חידוד לקוח): הסידור הנכון מוצג מיד עם המשוב הסופי, הכפתור ב"התשובה שלי". */
     s2EToggleReveal();
   }
   if (s2EChecked) {
     document.getElementById('s2-e-check').disabled = true;
-    /* ⚠️ תוקן (31.08.2026, דיווח: "לא מקבלים חיווי אלא רק משוב") —
-       s2ERender() עושה targetEl.classList.remove('occupied','correct',
-       'wrong') על כל יעד (כדי לבנות-מחדש את ה-innerHTML נקי), בלי
-       להחזיר correct/wrong בחזרה. כשה-s2EMarkResult() שסימן את
-       החיווי נקרא *לפני* s2ERender() (כמו שהיה כאן קודם), ה-render
-       שרץ אחריו מוחק את הסימון מיד — התוצאה: הטקסט/משוב מוצג אבל שום
-       חיווי-צבע/אייקון על היעדים עצמם. סדר נכון: render קודם (בונה את
-       הכרטיסים-המונחים מחדש), markResult אחריו (מסמן את היעדים
-       הקיימים בפועל). */
     s2ERender();
     s2EMarkResult();
     const continueBtn = document.getElementById('s2-continue');
@@ -990,37 +797,11 @@ function s2EToggleReveal() {
   }
 }
 
-/* ⚠️ s2InitFeedbackAutoHide הוסרה (19.08.2026) — נבנתה (17.08.2026)
-   כי #s2-c-feedbox היה אז פופ-אפ קנבס-קבוע (position:absolute יחסית
-   לקנבס, לא לתוכן-הגלילה), ולכן היה נשאר גלוי-קבוע על גבי סעיפים
-   ד'/ה' גם אחרי שגוללים הרחק מסעיף ג', בלי טיפול-נפרד. אבל מאז
-   #s2-c-feedbox הפך ל-.is-static (זורם *בתוך* סעיף ג' עצמו, לא עוד
-   קבוע-לקנבס) — כשגוללים הרחק ממנו הוא כבר גולל-איתו החוצה מהתצוגה
-   כמו כל תוכן רגיל, בלי צורך ב-IntersectionObserver שיחביא אותו
-   בכוח. השארת המנגנון הישן הייתה מוחקת בפועל את ה-.visible ברגע
-   שסעיף ג' יוצא מהתצוגה — בדיוק ההפך מהמדיניות הנוכחית ("המשוב נשאר
-   מוצג גם אחרי מעבר לשאלה הבאה"). */
-
-/* דמות-מלווה ליד שאלת סעיף ג' (מסך 3) — הוחלף מ-placeholder לנכסים
-   אמיתיים, לפי בחירה מפורשת של שני קבצי-וידאו (לא תלוי-בחירה סתמי —
-   שני נכסים ספציפיים סופקו). שם-הקובץ "yellow-avatr-asking.mp4" הוא
-   ככתבו-וכלשונו על הדיסק (שגיאת-כתיב בפועל בשם הקובץ) — לא לתקן. */
 const S2_C_AVATAR_ASSETS = {
   'character-1': '../unit-assets/video/boy-avatar-thinking.mp4',
   'character-2': '../unit-assets/video/yellow-avatr-asking.mp4'
 };
 
-/* ⚠️ נוסף (07.09.2026, לפי בקשה מפורשת: "אפשרות הגדלה כמו היישומון של
-   השוקולד") — בניגוד ל-.s1-widget-wrap בסיין 3 (שם ה-wrap כבר יושב
-   כילד-ישיר של המסך, לא בתוך אזור-גלילה), .s2-sim-wrap כאן מקונן
-   בתוך .s2-scroll-area (position:absolute + overflow-y:auto —
-   ראו styles.css). position:absolute;inset:0 לבד היה נחתך לגבולות
-   אזור-הגלילה (clipping מ-overflow, לא קשור ל-containing-block),
-   לא ממורכז בקנבס המלא. הפתרון: מזיז בפועל את ה-wrap (עם ה-iframe
-   בתוכו) להיות ילד-ישיר של #s2 בזמן ההגדלה (appendChild/insertBefore
-   רגילים — לא reload של ה-iframe בדפדפנים מודרניים כל עוד ה-src לא
-   נוגע), ומחזיר אותו למקומו המדויק (parent+nextSibling נשמרים)
-   בסגירה — שומר את מצב-הסליידר של היישומון. */
 let s2SimHomeParent = null;
 let s2SimHomeNext = null;
 function s2SimExpandToggle(expand) {
@@ -1042,16 +823,6 @@ function s2SimExpandToggle(expand) {
   }
 }
 
-/* ⚠️ תוקן (10.09.2026, דיווח: "כל מה שהכניס הלומד למדפים נמחק כשמגדילים
-   את היישומון") — הייתה כאן העתקה-מדויקת של s2SimExpandToggle (reparent
-   בפועל ל-#s6 כדי "לברוח" מ-overflow:auto של .s6-scroll-area) — אבל
-   הזזת ה-wrap (עם ה-iframe בתוכו) בין הורים ב-DOM גורמת לדפדפנים
-   בפועל לטעון את ה-iframe מחדש (גם כש-src לא משתנה), ואיפסה את כל
-   מצב-היישומון (המדפים שכבר סודרו). תוקן מהשורש: .s6-applet-wrap.is-expanded
-   עבר ל-position:fixed (ר' styles.css) — #app (אב-משותף, transform:scale())
-   כבר הופך להיות בסיס-המיקום גם ל-fixed, כך שה-wrap "בורח" מה-overflow
-   בלי לזוז ב-DOM בכלל. אין יותר צורך ב-reparent/home-parent-tracking —
-   רק toggle של המחלקה. */
 function s6AppletExpandToggle(expand) {
   const wrap = document.getElementById('s6-applet-wrap');
   if (!wrap) return;
@@ -1084,10 +855,6 @@ function resetScreenState2() {
   document.getElementById('s2-c-char').hidden = s2State.c.done;
   document.getElementById('s2-c-fb-img').hidden = !s2State.c.done;
 
-  /* QA 20.08.2026: סעיפים ד'/ה' גלויים תמיד (לא עוד hidden=!s2State.c.done)
-     — לפי בקשה מפורשת לבטל חשיפה-הדרגתית במסך הזה. רמז-הגרירה נבדק
-     תמיד בכניסה למסך (לא רק אם ג' כבר נענתה), כמו שאר רמזי-הגלילה
-     בפרויקט. */
   if (!s2EChecked) s2MaybeShowDragGesture();
 
   s2ERender();
@@ -1095,11 +862,6 @@ function resetScreenState2() {
   const fbe = document.getElementById('s2-e-feedbox');
   if (s2EChecked) {
     document.getElementById('s2-e-check').disabled = true;
-    /* ⚠️ נוסף (31.08.2026, אותו דיווח בדיוק כמו s2ECheck: "לא מקבלים
-       חיווי אלא רק משוב") — s2ERender() שלמעלה מוחק correct/wrong מכל
-       יעד (ראו ההערה המלאה ב-s2ECheck); בחזרה למסך הזה (resume) לא
-       היה כאן שום s2EMarkResult() שמחזיר את הסימון, אז החיווי נעלם
-       גם כשחוזרים למסך אחרי שכבר נבדק, לא רק בזמן-אמת. */
     s2EMarkResult();
     const isAllCorrectE = s2EIsAllCorrect();
     olySetFeedback(fbe, isAllCorrectE, isAllCorrectE ? S2_E_FEEDBACK.correct : S2_E_FEEDBACK.wrong);
@@ -1122,9 +884,6 @@ function resetScreenState2() {
     setTimeout(function () { s2GestureProgrammaticScroll = false; }, 700);
   }
 
-  /* ⚠️ נוסף (07.09.2026, בדיקה מקיפה) — ראו s2EAlignCheckBtn למעלה.
-     נדחה ל-requestAnimationFrame — המסך עדיין display:none ברגע
-     ש-resetScreenState רץ, אז getBoundingClientRect היה מחזיר 0. */
   requestAnimationFrame(s2EAlignCheckBtn);
 }
 
@@ -1133,13 +892,7 @@ function advanceFromS2() {
   goTo(3);
 }
 
-/* =========================================================
-   מסך 4 — מסך מעבר (TransitionScreen), data-screen="3", id="s3"
-   תוכן משקף 15. הערת מפיקה מבקשת "שתי הדמויות אוחזות יד ביד".
-   ⚠️ עודכן (20.08.2026) — נכס-זוג-דמויות אמיתי סופק (לא עוד הנחה
-   "אין נכס כזה"): yellow-avatar-and-turquise-avatar.mp4. מוצג תמיד,
-   לפי בקשה מפורשת ("לא משנה מה נבחר במסך הבחירה") — לא עוד תלוי-
-   בחירה. ראו ARCHITECTURE.md § "מסך 4" לעדכון-ההנחה. */
+/* מסך 4 — מסך מעבר (TransitionScreen), data-screen"3", id"s3" */
 function resetScreenState3() {
   setFixedCharVideo('s3-avatar', 'assets/videos/yellow-avatar-and-turquise-avatar.mp4');
 }
@@ -1160,13 +913,6 @@ function advanceFromS3() {
    asset-תמונה כי אין כזה בפרויקט).
    ========================================================= */
 const S4_STEPS = {
-  /* ⚠️ תוקן (31.08.2026, לפי דיווח: "כשעניתי על סעיף א הופיע לי
-     באינפוט TRUE, צריך שיהיה הערך של התשובה הנכונה") — שלב 1 הוא
-     שאלת נכון/לא-נכון, אז ה-id של הבחירה הנכונה הוא המחרוזת הבוליאנית
-     'true' — אבל תיבת-התצוגה המקדימה (.s4-preview-box, s4RefreshPreviewRows
-     למטה) צריכה להציג את *הערך* שהתשובה מייצגת (2/7, בדיוק כמו שלב 2
-     מציג 5/7), לא את ה-id הטכני. display אופציונלי — כשלא קיים,
-     נופל-חזרה ל-correct (שלבים 2-4, שם ה-id כבר זהה לערך התצוגה). */
   1: { correct: 'true', display: '<span class="frac"><span class="frac-num">2</span><span class="frac-den">7</span></span>' },
   2: { correct: '5/7', display: '<span class="frac"><span class="frac-num">5</span><span class="frac-den">7</span></span>' },
   3: { correct: '16' },
@@ -1186,12 +932,6 @@ let s4State = {
   done: false
 };
 
-/* ⚠️ שונה (10.09.2026, לפי בקשה מפורשת) — הכרטיס הסגול כבר לא מכיל
-   כפתורי "צדקתי?"/"המשך" משלו; הניווט כולו דרך כפתור "המשך" הכללי
-   בסרגל התחתון (#s4-continue, ר' s4ContinueClick למטה). בחירה בפיל
-   רק מסמנת אותה (s4Choose) ומדליקה את #s4-continue; s4ContinueClick
-   הוא זה שמפעיל את s4CheckStep (לחיצה ראשונה) ואת s4Next (לחיצה
-   שנייה), לפי s4State.answers. */
 function s4Choose(stepNum, id, btnEl) {
   if (s4State.answers[stepNum]) return; // כבר נענה — לא ניתן לשנות (guided, לא נבחן)
   document.querySelectorAll('#s4-pills-' + stepNum + ' .s4-pill').forEach(function (b) {
@@ -1203,16 +943,6 @@ function s4Choose(stepNum, id, btnEl) {
   if (continueBtn) continueBtn.disabled = false;
 }
 
-/* ⚠️ שונה (10.09.2026, לפי בקשה מפורשת + Figma node eSbp4bKHgBky0rakDb8l9N
-   4551:23839/4551:24245/4551:21752/4551:23989) — חיווי-תשובה חדש
-   לגמרי, מחליף את הישן (רקע ירוק-בהיר/ורוד-בהיר + תג ✓/✗ על כל פיל):
-   - הפיל שנבחר, לפני בדיקה: רקע סגול (--subject-300) + טקסט מודגש
-     (s4-pill.selected, ר' CSS — לא כאן).
-   - אחרי בדיקה, הפיל הנכון (בין אם נבחר או לא): רקע לבן, טקסט מודגש,
-     תג-וי ירוק. אם הוא גם זה שנבחר — הרקע סגול במקום לבן (.chosen).
-   - אחרי בדיקה, הפיל שנבחר והוא שגוי: רקע סגול, טקסט רגיל (לא מודגש),
-     בלי תג — חוזר לעיגול-מתאר ריק כמו ברירת-המחדל.
-   - כל שאר הפילים (לא נבחרו ולא נכונים): נשארים במראה ברירת-המחדל. */
 function s4CheckStep(stepNum) {
   const id = s4State.selected && s4State.selected[stepNum];
   if (!id) return;
@@ -1259,13 +989,6 @@ function s4RenderMarbles() {
   }
 }
 
-/* ⚠️ נוסף (20.08.2026, לפי בקשה מפורשת) — #s4-preview-rows נשארת
-   גלויה לכל אורך התרגול (1-6), לא נעלמת אחרי s4Start(). שורת השלב-
-   הנוכחי מקבלת .current (בולד); כל שורה ששלבה נענה (s4State.answers)
-   מציגה בפועל את S4_STEPS[i].correct בתוך התיבה, וגבול-התיבה עובר
-   מ-pending (subject-350) ל-answered (subject-500). נקראת גם
-   מ-s4ShowStep (מעבר-שלב) וגם מ-s4Select (מיד כשנענו, לא רק כש-
-   "המשך" נלחץ) — לפי "בכל פעם שעונים על סעיף" במפורש. */
 function s4RefreshPreviewRows(currentStep) {
   for (let i = 1; i <= 4; i++) {
     const label = document.getElementById('s4-preview-label-' + i);
@@ -1282,23 +1005,11 @@ function s4RefreshPreviewRows(currentStep) {
   }
 }
 
-/* Gesture Hint — Cursor Scroll (SELF-QA-lomda.md §7). נוסף (31.08.2026,
-   בדיקה מקיפה של כל מסכי-הגלילה) — שני כרטיסי-מסך 4 (.s4-notebook/
-   .s4-step-card) גללו כבר אבל בלי יד-רמז מעולם. אין כאן שום scrollTo/
-   scrollIntoView יזום-קוד, אז אין צורך בדגל "ProgrammaticScroll" —
-   אותו מנגנון show-once-if-scrollable הפשוט, נבדק מחדש בכל קריאה
-   ל-s4ShowStep (התוכן משתנה בכל שלב, אז יכול להפוך לגלילה-אמיתית רק
-   בשלב מאוחר יותר). */
 let s4NotebookGestureShown = false;
 function s4MaybeShowNotebookGesture() {
-  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
   requestAnimationFrame(function () {
   if (s4NotebookGestureShown) return;
   const gesture = document.getElementById('s4-notebook-gesture');
-  // ⚠️ תוקן (31.08.2026) — הגלילה עצמה עברה מ-#s4-notebook (המסגרת
-  // החיצונית, עכשיו overflow:hidden בלבד) ל-.s4-notebook-scroll הפנימי
-  // — ראו ההערה המלאה ב-styles.css § .s4-notebook. מיקום-היד עצמו
-  // (gesture wrap) נשאר מעוגן ל-#s4-notebook, לא השתנה.
   const scrollArea = document.querySelector('#s4-notebook .s4-notebook-scroll');
   if (!gesture || !scrollArea) return;
   if (scrollArea.scrollHeight <= scrollArea.clientHeight) return;
@@ -1307,20 +1018,6 @@ function s4MaybeShowNotebookGesture() {
   scrollArea.addEventListener('scroll', function () { gesture.hidden = true; }, { once: true });
 
   });}
-/* ⚠️ נוסף (31.08.2026, לפי דיווח: "אורך המלבן של המסיחים צריך להיות
-   לפי אורך המסיח הארוך ביותר בכל שאלה") — .s4-pill היה min-width:85px
-   בלבד, כל פיל מתרווח לפי הטקסט שלו-עצמו (אין מנגנון-רוחב-משותף), אז
-   "לא נכון" יצא רחב מ"נכון". פותר ב-JS (לא CSS-בלבד, כי הפילים
-   בשורת-flex-wrap עם 2-3 פילים משתנה, לא עמודה יחידה): מודד את הרוחב
-   הטבעי (offsetWidth) של כל פיל בקבוצת השלב-הנוכחי, ומיישם את הרחב
-   ביותר כ-width מפורש על כולם. נקרא מ-s4ShowStep בכל מעבר-שלב (לא רק
-   פעם אחת) כי הפילים חייבים להיות גלויים (לא [hidden]) כדי שהמדידה
-   תהיה נכונה. */
-/* ⚠️ עודכן (10.09.2026) — נמדד עכשיו במשקל-מודגש (font-weight:600)
-   זמנית, לא במשקל-רגיל: .selected/.correct/.correct.chosen כל
-   השלושה מציגים טקסט מודגש (ר' CSS), אז הרוחב-הקבוע חייב להתאים
-   למקרה-הרחב-ביותר מראש — בדיוק הבאג שתוקן קודם (דיווח: "'לא נכון'
-   נראה שבור") כשנוסף font-weight:600 בלי לעדכן את המדידה. */
 function s4EqualizePillWidths(stepNum) {
   const group = document.getElementById('s4-pills-' + stepNum);
   if (!group) return;
@@ -1332,9 +1029,6 @@ function s4EqualizePillWidths(stepNum) {
 }
 
 function s4ShowStep(n) {
-  // ⚠️ תוקן (17.08.2026, לפי get_design_context בפועל) — במצב-הפתיחה
-  // (n===0) אין כרטיס סגול בכלל ברפרנס האמיתי; מוצגת דמות-מלווה
-  // (Companion character, לפי התסריט) באותו מקום-פיזי במקום.
   document.getElementById('s4-intro-char').hidden = (n !== 0);
   document.getElementById('s4-step-card').hidden = (n === 0);
 
@@ -1342,12 +1036,6 @@ function s4ShowStep(n) {
     const block = document.getElementById('s4-step-' + i);
     if (block) block.hidden = (i !== n);
   }
-  /* ⚠️ תוקן (31.08.2026, דיווח: "גדלים והתנהגויות השתבשו במסך 5") —
-     s4ShowStep נקראת גם מ-resetScreenState4, שנקראת מ-resetScreenState
-     *לפני* target.classList.add('active') (ראו goTo) — באותו רגע
-     המסך עדיין display:none, אז offsetWidth של כל פיל נמדד כ-0, וכל
-     הפילים קיבלו width:0px מפורש בפועל. נדחה ל-requestAnimationFrame,
-     בדיוק כמו equalizeTfBtnWidths ב-methodica-math-ratio-05-02/-03. */
   requestAnimationFrame(function () { s4EqualizePillWidths(n); });
 
   s4RefreshPreviewRows(n);
@@ -1359,24 +1047,12 @@ function s4ShowStep(n) {
   document.getElementById('s4-marbles').hidden = (n !== 6);
   if (n === 6) {
     s4RenderMarbles();
-    /* ⚠️ נוסף (31.08.2026, לפי בקשה מפורשת: "לא צריך את כפתור 'סיימתי',
-       רק שכפתור ההמשך למטה יהיה דלוק") — שלב 6 אינו אינטראקטיבי (טקסט-
-       הסבר בלבד), אז אין צורך בלחיצת-אישור נפרדת בתוך הכרטיס — ברגע
-       שהשלב מוצג, ה"סיום" קורה אוטומטית וכפתור ה-#s4-continue הכללי
-       (בסרגל התחתון) נדלק ישירות. */
     s4Finish();
   }
 
   s4State.step = n;
   s4MaybeShowNotebookGesture();
 
-  /* ⚠️ עודכן (10.09.2026, לפי בקשה מפורשת: "לא צריך כפתור 'בואו
-     נתחיל', כפתור 'המשך' יעביר לחלק הראשון בתרגול") — #s4-continue
-     הכללי הוא זה שמדליק/מכבה את עצמו בכל מעבר-שלב, כולל שלב 0
-     (הפתיחה) עכשיו: דלוק תמיד שם (מפעיל s4Start דרך s4ContinueClick).
-     שלבים 1-4 (אינטראקטיביים): דלוק רק אם השלב כבר נענה (עדיין לא
-     נענה ← ידלק מ-s4Choose ברגע שנבחר מסיח). שלב 5 (הסבר בלבד, בלי
-     בחירה): דלוק תמיד. שלב 6: נדלק כבר למעלה (s4Finish). */
   if (n >= 0 && n <= 5) {
     const continueBtn = document.getElementById('s4-continue');
     if (continueBtn) continueBtn.disabled = (n >= 1 && n <= 4) && !s4State.answers[n];
@@ -1393,14 +1069,6 @@ function s4Next(fromStep) {
   s4ShowStep(n);
 }
 
-/* ⚠️ עודכן (10.09.2026, לפי בקשה מפורשת) — נקודת-הכניסה היחידה של
-   כפתור "המשך" הכללי (#s4-continue) לכל אורך מסך 5, כולל שלב 0
-   (הפתיחה, ר' מטה — לא רק 1-6 כמו קודם): בשלב 0 מפעילה s4Start
-   (=s4ShowStep(1), אותה פונקציה שהייתה מחוברת ל"בואו נתחיל" שהוסר).
-   בשלבים 1-4, לחיצה ראשונה (עדיין לא נענה) בודקת את התשובה שנבחרה
-   (s4CheckStep, חושפת חיווי+הסבר, לא מתקדמת); לחיצה שנייה (כבר נענה)
-   מתקדמת לשלב הבא (s4Next). בשלב 5 (הסבר בלבד) מתקדמת ישירות לשלב 6.
-   בשלב 6 (סיום התרגול) מנווטת למסך הבא (advanceFromS4/goTo(5)). */
 function s4ContinueClick() {
   const n = s4State.step;
   if (n === 0) { s4Start(); return; }
@@ -1412,25 +1080,6 @@ function s4ContinueClick() {
   }
 }
 
-/* ⚠️ נוסף (07.09.2026, לפי בקשה מפורשת) — כפתור "חזרה" של המסך עצמו
-   (#s4-back, בסרגל התחתון) היה onclick="goTo(3)" ישיר-תמיד. עכשיו:
-   בזמן שהתרגול-המודרך באמצע, "חזרה" מציג מחדש רק את השלב הקודם
-   (s4ShowStep, אותה פונקציה ששולפת גם קדימה) — לא יוצא מהמסך. רק
-   כש-step===0 (טרם התחיל, מסך-הפתיחה) "חזרה" מבצע ניווט-מסך רגיל.
-   s4ShowStep לא נוגעת ב-s4State.answers/נעילת-הפילים כלל — חזרה
-   לשלב קודם רק *מציגה* אותו כפי-שהוא (כבר נענה+נעול), לא פותחת-מחדש
-   לענות שוב.
-   ⚠️ תוקן (10.09.2026, דיווח לקוח: "בניווט קדימה/אחורה החלק הסגול
-   משתבש וגם הכפתור") — התנאי היה step>1, אז מ-step===1 "חזרה" קפץ
-   ישר ל-goTo(3) (החוצה מהמסך לגמרי), מדלג על step===0 (מסך-הפתיחה עם
-   הדמות) — שהיה תקין כשלשלב 0 היה כפתור "בואו נתחיל" נפרד ובלתי-תלוי,
-   אבל לא מאז ש-#s4-continue הכללי נהיה אחראי גם על step===0 (ר'
-   s4ContinueClick). זה גם גרם לבאג-שרשרת: אם המשתמש/ת חוזר/ת החוצה
-   מ-step===1 בלי ש-s4State.step התאפס ל-0, וחוזר/ת קדימה למסך (למשל
-   דרך "המשך" של מסך 4/s3) — resetScreenState4 קורא ל-s4ShowStep(1)
-   ישירות (עדיין 1, לא 0), מדלג לגמרי על מסך-הפתיחה גם בכיוון-קדימה.
-   step>0 מתקן את שניהם: step===1 "חזרה" מציג step===0 (המסך-הפתיחה),
-   לא קופץ החוצה. */
 function s4BackOrPrevScreen() {
   if (s4State.step > 0) {
     s4ShowStep(s4State.step - 1);
@@ -1481,16 +1130,7 @@ function advanceFromS4() {
   goTo(5);
 }
 
-/* =========================================================
-   Companion character system — helper functions (ready for use)
-   הועתק כפי-שהוא (גנרי, לא ספציפי-מסך) מהמנוע של
-   methodica-science-mass-measure-03-01 — resolveCharBubbleImg עובד גם
-   על <img> וגם על <video> (לפי tagName בפועל). מסך בחירת הדמות (s0)
-   כבר קיים וכותב ל-window.lomdaState.selectedCharacter, אבל עדיין אין
-   מסך אחר ביחידה זו שמציג "בועת דיבור"/וידאו-דמות תלוי-בחירה — לכן אין
-   עדיין קריאה בפועל לפונקציות האלה. מוכנות לשימוש כשמסך כזה ייבנה (ראו
-   Companion character system, 720-templates skill).
-   ========================================================= */
+/* Companion character system — helper functions (ready for use) */
 function resolveCharBubbleImg(imgId, assetMap) {
   const el = document.getElementById(imgId);
   if (!el) return;
@@ -1519,11 +1159,6 @@ function resolveCharBubbleVideo(videoId, assetMap) {
   el.play().catch(function () {});
 }
 
-/* ⚠️ נוסף (20.08.2026) — נכס-זוג-דמויות אמיתי הפך זמין
-   (yellow-avatar-and-turquise-avatar.mp4), לפי בקשה מפורשת: "מסך 4
-   ...לא משנה מה נבחר במסך הבחירה". מציג את הווידאו הקבוע הזה תמיד,
-   בלי תלות ב-selectedCharacter — לא עוד resolveCharBubbleVideo/
-   S3_AVATAR_ASSETS (החלפה-לפי-דמות) למסכים האלה. */
 function setFixedCharVideo(videoId, src) {
   const el = document.getElementById(videoId);
   if (!el) return;
@@ -1534,18 +1169,7 @@ function setFixedCharVideo(videoId, src) {
   el.play().catch(function () {});
 }
 
-/* =========================================================
-   מסך 6 — מסך מעבר, data-screen="5", id="s5". שקף 23.
-   ⚠️ תוקן (31.08.2026, לפי בקשה מפורשת: "התמונה צריכה להיות אחת מ:
-   yellow-avatar-muscle.mp4 / boy-avatar-muscle.mp4, כמובן לפי הבחירה
-   במסך 1") — דורס את ההחלטה הקודמת (20.08.2026, נכס-זוג-דמויות קבוע,
-   בלי תלות בבחירה). חזרה ל-resolveCharBubbleVideo/מפת-נכסים-לפי-דמות,
-   אותה מפה בדיוק כמו S4_INTRO_AVATAR_ASSETS (מסך 5, אותם שני קבצים).
-   ⚠️ שים לב: מסך 4 (resetScreenState3, S3-avatar) עדיין משתמש בנכס
-   הקבוע הזוגי (setFixedCharVideo) — התוקן כאן רק במסך 6, לפי הבקשה
-   הספציפית; שני המסכים היו מתועדים כ"זהים בדיוק" קודם, ועכשיו סוטים
-   זה מזה במכוון-לפי-בקשה, לא בטעות. אם גם מסך 4 צריך את אותו שינוי —
-   לא בוצע כאן, יש לבקש במפורש. */
+/* מסך 6 — מסך מעבר, data-screen"5", id"s5". שקף 23. */
 const S5_AVATAR_ASSETS = {
   'character-1': 'assets/videos/boy-avatar-muscle.mp4',
   'character-2': 'assets/videos/yellow-avatar-muscle.mp4'
@@ -1554,17 +1178,7 @@ function resetScreenState5() {
   resolveCharBubbleVideo('s5-avatar', S5_AVATAR_ASSETS);
 }
 
-/* =========================================================
-   מסך 7 — ValueInputQuestion כפול, מסך גלילה, data-screen="6", id="s6".
-   שקפים 24-26. שאלה 1 (בקבוקים, 3 סעיפים) נבדקת כיחידה אחת בכפתור
-   "צדקתי?" אחד (התסריט נותן משוב-אחד משותף לשלושת הסעיפים, לא שלושה
-   נפרדים). שאלה 2 (זוויות, 2 סעיפים) כנ"ל, עם כפתור "אפשר רמז?"
-   נוסף (מוסתר-עד-ניסיון-שגוי, לפי המוסכמה הגלובלית). שני ניסיונות
-   לכל שאלה — ניסיון ראשון שגוי: גבול-אדום בלבד, נשאר פתוח לתיקון;
-   ניסיון שני שגוי: חושף את הערכים הנכונים ונועל (אין reveal-button
-   נפרד, לפי אותה מוסכמה "תיבת-משוב חושפת את התשובה בעצמה" שכבר
-   קיימת במסכים 2/3/5 של הפרויקט הזה). ראו ARCHITECTURE.md § "מסך 7".
-   ========================================================= */
+/* מסך 7 — ValueInputQuestion כפול, מסך גלילה, data-screen"6", id"s6". */
 const S6_Q = {
   1: {
     inputs: ['s6-q1-a', 's6-q1-b', 's6-q1-c'],
@@ -1620,20 +1234,10 @@ function s6OnInput(n) {
   if (fb) fb.classList.remove('visible');
 }
 
-/* ⚠️ תוקן (18.08.2026) — SELF-QA-lomda.md §1: תג-ה-X השגוי הופיע עד כה
-   רק בניסיון-האחרון-שנחסם (הענף else למטה), לא בניסיון הראשון השגוי —
-   בניגוד לדפוס viqCheck() ב-methodica-math-ratio-01-02, ששם כל ניסיון
-   שגוי (כולל הראשון) מסמן .wrong באופן מיידי. תוקן: ענף "ניסיון ראשון
-   שגוי" עכשיו מוסיף .wrong לכל input שגוי, בדיוק כמו הענף הסופי.
-   גם עבר מ-.error ל-.correct/.wrong (ישירות על ה-<input>, לא על
-   .viq-input-wrap) — תואם לדפוס-ה-CSS שנבנה-מחדש (background-image
-   ישירות על ה-input, לא badge/span נפרד). */
 function s6Check(n) {
   const cfg = S6_Q[n];
   if (s6Outcome[n] !== null) return; // resume/re-click guard — כבר ננעל
 
-  /* ⚠️ נוסף (31.08.2026, דיווח: "המשוב עולה על הפופ-אפ של הרמז") —
-     סוגר רמז פתוח (s6-q2-hint-overlay) לפני שמציגים משוב. */
   document.querySelectorAll('[id$="-hint-overlay"]').forEach(function (el) { el.hidden = true; });
 
   const inputs = cfg.inputs.map(function (id) { return document.getElementById(id); });
@@ -1667,12 +1271,6 @@ function s6Check(n) {
     document.getElementById(cfg.checkBtn).disabled = true; // נעול עד ש-s6OnInput יופעל מחדש ע"י שינוי ערך
     if (cfg.hintBtn) document.getElementById(cfg.hintBtn).disabled = false;
   } else {
-    /* ⚠️ תוקן (23.09.2026, דיווח: "לא ביקשתי שהתשובה הנכונה תיחשף
-       באופן מידי, לא צריך לחשוף אותה בכלל — היה צריך שתישאר התשובה
-       השגויה שהזין הלומד") — ההערה הקודמת כאן תיארה במפורש את הבאג
-       (דריסת-ערך אוטומטית); לא דורסים יותר — הערך שהלומד/ת הקלידו
-       נשאר, מסומן correct/wrong לפי-שדה בפועל (זהה לענף wrongOnce
-       למעלה), רק ננעל. */
     inputs.forEach(function (input, i) {
       input.classList.toggle('correct', Number(input.value) === cfg.correct[i]);
       input.classList.toggle('wrong', Number(input.value) !== cfg.correct[i]);
@@ -1686,7 +1284,6 @@ function s6Check(n) {
     if (cfg.revealBtn) {
       const revealBtn = document.getElementById(cfg.revealBtn);
       if (revealBtn) { revealBtn.hidden = false; revealBtn.textContent = 'התשובה הנכונה'; }
-      /* עודכן (29.09.2026, חידוד לקוח): הפתרון הנכון מוצג מיד עם המשוב הסופי, הכפתור ב"התשובה שלי". */
       s6ToggleReveal(n);
     }
     s6Outcome[n] = 'fail';
@@ -1722,12 +1319,6 @@ function s6ToggleReveal(n) {
   }
 }
 
-/* ⚠️ תוקן (07.09.2026, לפי בקשה מפורשת: "התוכן לא צריך לעלות בהדרגה")
-   — s6-q2 גלויה תמיד מההתחלה עכשיו (index.html), אז הוסר החשיפה-
-   וגלילה-היזומה שהיו כאן (nextEl.hidden=false + scrollIntoView) —
-   אותו עיקרון בדיוק כמו s4 (ראו ההערה ליד s4MaybeShowNotebookGesture:
-   "אין כאן שום scrollTo/scrollIntoView יזום-קוד"). הלומד/ת גוללים
-   בעצמם. */
 function s6Finish(n) {
   const cfg = S6_Q[n];
   document.getElementById(cfg.checkBtn).disabled = true;
@@ -1761,13 +1352,7 @@ function s6HintClose() { document.getElementById('s6-q2-hint-overlay').hidden = 
 /* Gesture Hint — Cursor Scroll (SELF-QA-lomda.md §7), אותו מנגנון
    בדיוק כמו s1MaybeShowScrollGesture/s2MaybeShowScrollGesture. */
 let s6GestureShown = false;
-/* ⚠️ פושט (07.09.2026) — s6GestureProgrammaticScroll הוסר: הדגל שימש
-   רק להבחין בין גלילה-אמיתית לגלילה-היזומה שהייתה ב-s6Finish (חשיפת
-   שאלה 2 + scrollIntoView, הוסרו — ראו שם). אחרי ההסרה, אין עוד שום
-   scrollTo/scrollIntoView יזום-קוד במסך הזה — אותו מצב בדיוק כמו s4
-   (ראו ההערה ליד s4MaybeShowNotebookGesture), אז אין יותר צורך בדגל. */
 function s6MaybeShowScrollGesture() {
-  /* ⚠️ rAF-wrapped (01.09.2026, דיווח: "חסרה כף יד") — נקראת מתוך resetScreenState*, לפני שה-.active נוסף למסך (display:none עדיין), אז scrollHeight/clientHeight נמדדים כ-0 ו-0<=0 גורם ל-return מוקדם לצמיתות. עוטף את כל גוף-הפונקציה ב-requestAnimationFrame כדי שהמדידה תרוץ אחרי שהמסך כבר גלוי. */
   requestAnimationFrame(function () {
   if (s6GestureShown) return;
   const gesture = document.getElementById('s6-scroll-gesture');
@@ -1787,7 +1372,7 @@ function s6HideGestureOnScroll() {
 function resetScreenState6() {
   [1, 2].forEach(function (n) {
     const cfg = S6_Q[n];
-    if (s6Outcome[n] !== null) return; // resume-state guard — אין ניסיון נוסף בחזרה למסך שכבר הושלם
+    if (s6Outcome[n] !== null) return;
     cfg.inputs.forEach(function (id) {
       const input = document.getElementById(id);
       input.value = '';
@@ -1820,16 +1405,10 @@ function resetScreenState6() {
    המפרט, כולל המרת דלתא-הסמן ממרחב-viewport למרחב-קנבס-לוגי (חלוקה
    בגורם ה-scale הנוכחי של scaleApp()) לפני ההרצה.
    ========================================================= */
-/* ⚠️ CANVAS_W/CANVAS_H הוסרו מכאן (31.08.2026) — מוגדרים פעם אחת בלבד,
-   למעלה ליד scaleApp(). ראו ההערה המלאה שם. */
 const BOTTOM_BAR_H = 74;
 
 function clampPopupPosition(x, y, popupEl) {
   const w = popupEl.offsetWidth, h = popupEl.offsetHeight;
-  // ⚠️ עודכן (23.09.2026) — גבולות ביחס לגודל-הקנבס *בפועל*
-  // (getCanvasSize(), עשוי לחרוג מ-1280×710), לא ביחס ל-CANVAS_W/
-  // CANVAS_H הקבועים — אחרת פופ-אפ נגרר היה נשאר נעול לתוך המלבן
-  // הישן-הקטן גם כש-#app כבר גדול יותר (ראו ההערה המלאה ליד scaleApp()).
   const canvas = getCanvasSize();
   const minX = 0, maxX = canvas.w - w;
   const minY = 0, maxY = (canvas.h - BOTTOM_BAR_H) - h; // top edge of the bottom bar
@@ -1874,10 +1453,6 @@ function scqFbMakeDraggable(boxId) {
     if (!dragging) return;
     const parent = box.offsetParent || box.parentElement;
     const parentRect = parent.getBoundingClientRect();
-    // pointer delta lives in raw viewport px — convert to canvas-space
-    // (divide by the current scaleApp() zoom factor) before clamping.
-    // ⚠️ עודכן (23.09.2026) — getCanvasSize().w, לא CANVAS_W הקבוע (ראו
-    // ההערה המלאה ליד scaleApp()/currentCanvasScale()).
     const scale = parentRect.width / getCanvasSize().w;
     const dx = (e.clientX - startX) / scale;
     const dy = (e.clientY - startY) / scale;
@@ -1931,9 +1506,6 @@ document.addEventListener('click', function (e) {
   imgZoomClose();
 });
 
-/* ⚠️ נוסף (07.09.2026) — סגירת מצב-הגדלת-היישומון (s2-sim-wrap) בלחיצה
-   על הרקע (מחוץ ל-.s2-sim-panel המורחב), אותה מוסכמה כמו סגירת
-   img-zoom-modal בלחיצה מחוץ ל-panel. */
 document.addEventListener('click', function (e) {
   const wrap = document.getElementById('s2-sim-wrap');
   if (wrap && wrap.classList.contains('is-expanded') && e.target === wrap) {
@@ -1951,13 +1523,6 @@ document.addEventListener('keydown', function (e) {
 
 /* אתחול */
 scaleApp();
-/* QA 19.08.2026: כל שבעת תיבות-המשוב בפרויקט הזה (s1-q1/q2/q3,
-   s2-c/e, s6-q1/q2) הפכו ל-.is-static (זורמות בתוך השאלה עצמה, מיד
-   אחרי כפתור-הבדיקה — ראו styles.css + index.html) — משום ששלושת
-   המסכים היחידים בסיין הזה עם שאלות-אמיתיות (s1/s2/s6) הם כולם
-   מסכי-גלילה, ופופאפ-משוב במיקום קבוע-לקנבס מתנתק חזותית מהשאלה
-   ברגע שגוללים לחלק אחר. לכן אין יותר קריאות scqFbMakeDraggable
-   בקובץ הזה בכלל — כל שבעת ה-id-ים הוסרו. */
 (function () {
   const m = /^#screen=(\d+)$/.exec(location.hash);
   if (new URLSearchParams(location.search).get('screen') === 'last') goTo(TOTAL_SCREENS - 1);
