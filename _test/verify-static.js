@@ -98,5 +98,21 @@ const re = (loader.match(/XAPI_USING_G = \/xapi-720-\[([a-z]+)\]/) || [])[1] || 
 letters.forEach(l => ok(re.includes(l), `50-loader.js loads xapi-720-${l}.js but XAPI_USING_G's regex lacks '${l}'`));
 ok(/RESUME_ENABLED = true;/.test(read('unit-js/10-identity.js')) && letters.includes('k'), 'resume on must load -k');
 
+/* 5. F-2 (QA 2026-10-02): a fraction answer keeps its slash. 01 S4 step 2's pills are drawn as
+   .frac > .frac-num + .frac-den (the bar is a CSS border), so textContent read "57" for 5/7 — in
+   Kata and for a screen reader. Needs jsdom on NODE_PATH; skipped (and said so) without it. */
+let JSDOM_ = null; try { JSDOM_ = require('jsdom').JSDOM; } catch (e) {}
+if (JSDOM_) {
+  const dom = new JSDOM_(read('methodica-math-ratio-05-01/index.html'), { runScripts: 'outside-only' });
+  dom.window.eval(read('unit-js/20-xapi.js') + '\nwindow.xapiAnswerText = xapiAnswerText;');   // the file is strict: export explicitly
+  const pills = [...dom.window.document.querySelectorAll('#s4-pills-2 .s4-pill')];
+  ok(pills.length === 3, 'F-2: 01 S4 step 2 has three fraction pills');
+  pills.forEach(p => {
+    const t = dom.window.xapiAnswerText(p);
+    ok(t === p.dataset.id, `F-2: xapiAnswerText of pill ${p.dataset.id} is "${t}", not "${p.dataset.id}"`);
+    ok(p.getAttribute('aria-label') === p.dataset.id, `F-2: pill ${p.dataset.id} has aria-label "${p.getAttribute('aria-label')}" (a screen reader must hear the fraction)`);
+  });
+} else console.log('  SKIP F-2 checks: jsdom not on NODE_PATH');
+
 console.log(`${checks} checks, ${failures ? failures + ' FAILURE(S)' : 'ALL PASS'}`);
 process.exit(failures ? 1 : 0);
