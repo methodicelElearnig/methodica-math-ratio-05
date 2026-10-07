@@ -330,6 +330,15 @@ function xapiEndComponent(result, btn){
    component's 'completed' is recorded in the state document, never merely because the learner
    is on the last screen. 30-nav.js calls it after every repaint. */
 function restoreEndedButton() {
+  /* The stop screen (XAPI_STOP, 30-nav.js) is a second, earlier end: re-disable its button only
+     when the stop holds AND the 'completed' is in the ledger — answered-but-not-clicked comes back
+     LIVE, so the click still stops and reports. */
+  if (typeof XAPI_STOP !== 'undefined' && XAPI_STOP && currentScreen === XAPI_STOP.at) {
+    if (!stopBlocks(currentScreen) || !alreadySent('done', currentPartSlug())) return;
+    var sb = stopButton();
+    if (sb) { sb.disabled = true; sb.setAttribute('aria-disabled', 'true'); }
+    return;
+  }
   if (currentScreen !== PART_LAST) return;
   if (!alreadySent('done', currentPartSlug())) return;
   var btn = typeof lastScreenButton === 'function' ? lastScreenButton() : null;

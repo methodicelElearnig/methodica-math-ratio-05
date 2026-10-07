@@ -22,7 +22,9 @@ function syncBothProgressNavs() {
 
 /* מסך 1 — מסך מעבר (TransitionScreen), data-screen="0", id="s0". */
 const S0_AVATAR_ASSETS = {
-  'character-1': 'assets/videos/boy-avatar-climbing.mp4',
+  /* boy-avatar-climbing.mp4 was never delivered — the boy showed nothing here; the existing jumping
+     clip stands in until content supplies the climbing one (07.10.26). */
+  'character-1': 'assets/videos/boy-avatar-jumping-happily.mp4',
   'character-2': 'assets/videos/yellow-avatar-climbing.mp4'
 };
 function resetScreenState0() {

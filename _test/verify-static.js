@@ -29,7 +29,7 @@ function existsExact(rel) {
 const SHIP = /^(unit-js\/[^/]+\.js|unit-css\/[^/]+\.css|unit-assets\/.+|metadata\/[^/]+\.json|methodica-math-ratio-05-0\d\/(index\.html|script\.js|styles\.css|(assets|geogbra-app|juice-store-app|chocolate-ratio-app)\/.+))$/;
 
 /* Known open item (README "Open items"): reported, not failed, until the asset is supplied. */
-const KNOWN_MISSING = ['methodica-math-ratio-05-06/assets/videos/boy-avatar-climbing.mp4'];
+const KNOWN_MISSING = [];
 function checkRef(fromFile, ref) {
   ref = ref.split(/[?#]/)[0];
   if (!ref || /^(https?:|data:|mailto:|#|javascript:)/.test(ref)) return;
@@ -113,6 +113,29 @@ if (JSDOM_) {
     ok(p.getAttribute('aria-label') === p.dataset.id, `F-2: pill ${p.dataset.id} has aria-label "${p.getAttribute('aria-label')}" (a screen reader must hear the fraction)`);
   });
 } else console.log('  SKIP F-2 checks: jsdom not on NODE_PATH');
+
+/* 5. Pass rules agree with what the first screen promises (MOE monday 05-06.10.26).
+   The number of questions the learner must get right, as printed on s0, is the station rule in
+   code; 03's stop sits on its last group-A screen. Behaviour: _test/gates.js. */
+{
+  const num = (u, re) => { const m = read(u + '/index.html').match(re); return m ? +m[1] : null; };
+  const decl = (u, name) => {
+    const m = read(u + '/script.js').match(new RegExp('var ' + name + ' = (\\{[^;]*\\});'));
+    return m ? vm.runInNewContext('(' + m[1] + ')') : null;
+  };
+  const stations = u => (read(u + '/script.js').match(/const practiceProgress = \{\s*questions: \[([\s\S]*?)\]\s*\};/) || ['', ''])[1].split('number:').length - 1;
+  const U2 = 'methodica-math-ratio-05-02', U3 = 'methodica-math-ratio-05-03';
+  const p2 = decl(U2, 'XAPI_STATION_PASS');
+  ok(p2 && p2.need === num(U2, /צריך לענות נכון על (\d+) שאלות לפחות/), '02: XAPI_STATION_PASS.need = the number on s0');
+  ok(stations(U2) === num(U2, /<p class="s0-line-2">(\d+) שאלות<\/p>/), '02: the station count is what s0 promises');
+  const p3 = decl(U3, 'XAPI_STATION_PASS'), st3 = decl(U3, 'XAPI_STOP');
+  ok(p3 && p3.need === num(U3, /ענו נכון על (\d+) שאלות ומעלה כדי להתקדם/), '03: XAPI_STATION_PASS.need = the number on s0');
+  ok(p3 && p3.of && p3.of.length === num(U3, /<p class="s0-line-2">(\d+) שאלות<\/p>/), '03: the rule counts as many questions as s0 promises');
+  ok(st3 && st3.at === 3 && /id="s3-continue"[^>]*onclick="goTo\(4\)"/.test(read(U3 + '/index.html')), '03: the stop sits on s3\'s "המשך"');
+  ['01', '04', '05', '06'].forEach(c => ok(!decl('methodica-math-ratio-05-' + c, 'XAPI_STOP'), c + ': no stop declared'));
+  ok(/const DEFAULT_CHARACTER = 'character-1';/.test(read('unit-js/15-ui.js')) &&
+     /assetMap\[DEFAULT_CHARACTER\]/.test(read('unit-js/15-ui.js')), 'the character falls back to the default when none was chosen');
+}
 
 console.log(`${checks} checks, ${failures ? failures + ' FAILURE(S)' : 'ALL PASS'}`);
 process.exit(failures ? 1 : 0);

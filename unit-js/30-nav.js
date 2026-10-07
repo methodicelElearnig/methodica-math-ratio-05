@@ -10,6 +10,12 @@
 let currentScreen = 0;
 
 function goTo(n) {
+  /* A mid-component stop (XAPI_STOP, below): forward off the stop screen with the promised
+     stations not passed ends the component there. Never while a resume replays the saved screen. */
+  if (n === currentScreen + 1 && !(typeof _restoring !== 'undefined' && _restoring) && stopBlocks(currentScreen)) {
+    endComponentAtStop();
+    return;
+  }
   if (n < 0 || n >= TOTAL_SCREENS) return;
   closeAllPopupsAndHints();
   document.querySelectorAll('.screen').forEach(function (el) {
@@ -44,6 +50,30 @@ function _devHref(slug, screen) {
   if (screen) q.set('screen', screen); else q.delete('screen');
   const s = q.toString();
   return '../' + slug + '/index.html' + (s ? '?' + s : '');
+}
+
+/* ── A stop in the middle of the component ── XAPI_STOP { at, btn } in script.js (only 03): the
+   ratio-02 SET_GATES pattern (also ratio-01 / ratio-04). A HARD stop — no message, no retry (the
+   answers are already revealed): the component reports 'completed' (success false, from
+   partResult's XAPI_STATION_PASS) and ENDS on the stop screen; the platform routes on that
+   statement (recommendedAfterFail). ⚠️ FAILS OPEN: it may only close on evidence — every counted
+   station resolved — so a resume that lost the progress state never traps a learner. */
+function stopBlocks(n) {
+  var s = (typeof XAPI_STOP !== 'undefined') ? XAPI_STOP : null;
+  if (!s || n !== s.at) return false;
+  var t = (typeof stationTally === 'function') ? stationTally() : null;
+  if (!t || t.resolved < t.total) return false;
+  return t.ok < t.need;
+}
+function stopButton() {
+  return (typeof XAPI_STOP !== 'undefined' && XAPI_STOP) ? document.getElementById(XAPI_STOP.btn) : null;
+}
+/* Ends the component HERE. Not finishComponent(): its button is the last screen's and, under
+   DEV_NAV, it hops to the next component — the one place a stopped learner must not go.
+   Idempotent (sendCompletedOnce is ledger-guarded). Navigates NOWHERE, DEV_NAV included. */
+function endComponentAtStop() {
+  try { xapiEndComponent(partResult(), stopButton()); } catch (e) { console.error('[xAPI] end at stop', e); }
+  try { flushResumeSave(); } catch (e) {}
 }
 
 function finishComponent(nextSlug) {

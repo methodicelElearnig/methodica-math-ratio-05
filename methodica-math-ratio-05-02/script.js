@@ -270,6 +270,11 @@ var XAPI_COMP_ID   = XAPI_ID_PREFIX + XAPI_COMP_SLUG + '/';
 var XAPI_METADATA_FILE = '../metadata/methodica-math-ratio-05-02.json';
 var SCREEN_TO_SUBCONTENT = { 0: ['001', 1], 1: ['001', 2], 2: ['002', 1], 3: ['003', 1], 4: ['004', 1] };
 var XAPI_EVAL_ITEMS = { '001': 1, '002': 1, '003': 1, '004': 1 };   /* items with code-graded questions */
+/* Pass = 2 of the 4 questions fully right (s0: "צריך לענות נכון על 2 שאלות לפחות"). MOE monday
+   05.10.26: the screen said 3 while 2 of 4 already passed; head of team: "אכן צריך 2 מתוך 4"
+   (agreed with Maya) — the text moved to 2 and the code counts the learner's questions, not the
+   share of xAPI sub-answers (22-scoring.js). */
+var XAPI_STATION_PASS = { need: 2 };
 
 /* ═══════════════ Resume — this component's own answer variables (45-resume-part.js) ═══════════════ */
 function partCaptureVars() { return { s3Tf: s3TfState }; }

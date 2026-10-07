@@ -93,11 +93,17 @@ function resolveCharBubbleImg(imgId, assetMap) {
   }
 }
 
+/* MOE monday 06.10.26 ("הדמות במסך הראשון לא נטענת"): a component launched without component 01's
+   choice in this browser (Kata launches each component on its own; another device; cleared storage)
+   showed an EMPTY character. Display falls back to the default character — percent-02's
+   precedent; the choice itself is not written, so 01's picker still asks. */
+const DEFAULT_CHARACTER = 'character-1';
+
 function resolveCharBubbleVideo(videoId, assetMap) {
   const el = document.getElementById(videoId);
   if (!el) return;
   const char = window.lomdaState.selectedCharacter;
-  const src = (char && assetMap[char]) ? assetMap[char] : '';
+  const src = (char && assetMap[char]) ? assetMap[char] : (assetMap[DEFAULT_CHARACTER] || '');
   if (el.getAttribute('src') !== src) {
     if (src) el.setAttribute('src', src); else el.removeAttribute('src');
     el.load();

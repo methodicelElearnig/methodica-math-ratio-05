@@ -14,4 +14,5 @@ pixelmatch@5 installed **outside OneDrive**, local Chrome):
 ```
 NODE_PATH=<tools>/node_modules node _test/flow.js   http://127.0.0.1:8795/
 NODE_PATH=<tools>/node_modules node _test/resume.js http://127.0.0.1:8795/
+NODE_PATH=<tools>/node_modules node _test/gates.js  http://127.0.0.1:8795/
 ```

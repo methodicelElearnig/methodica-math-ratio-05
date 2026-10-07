@@ -715,6 +715,14 @@ var XAPI_METADATA_FILE = '../metadata/methodica-math-ratio-05-03.json';
 var SCREEN_TO_SUBCONTENT = { 0: ['001', 1], 1: ['001', 2], 2: ['002', 1], 3: ['003', 1], 4: ['004', 1], 5: ['004', 2] };
 var XAPI_EVAL_ITEMS = { '001': 1, '002': 1, '003': 1, '004': 1 };   /* items with code-graded questions */
 
+/* s0 promises "ענו נכון על 2 שאלות ומעלה כדי להתקדם" over group A's 3 questions (s1-s3). MOE monday
+   05-06.10.26: a learner with all three wrong still went on to s4-s5. Now: under 2 of 3, s3's
+   "המשך" ends the component there (XAPI_STOP, 30-nav.js) — 'completed' success false, the platform
+   routes on recommendedAfterFail (-02). The component's success is this same condition; group B
+   (s5) states none. */
+var XAPI_STATION_PASS = { need: 2, of: [0, 1, 2] };
+var XAPI_STOP = { at: 3, btn: 's3-continue' };
+
 /* ═══════════════ Resume — this component's own answer variables (45-resume-part.js) ═══════════════ */
 function partCaptureVars() {
   const mcq = {};

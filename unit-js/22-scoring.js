@@ -8,7 +8,12 @@
    Per-part seams (script.js):
      XAPI_EVAL_ITEMS       items that carry a code-graded question, e.g. { '002': 1, '003': 1 }
      XAPI_PASS_SCALED      optional pass threshold for the component and its items (default 0.6,
-                           the threshold MOE's own example uses; 06: 0.5 = "2 of 4" on screen) */
+                           the threshold MOE's own example uses; 06: 0.5 = "2 of 4" on screen)
+     XAPI_STATION_PASS     optional { need, of? }: the component passes on QUESTIONS AS THE LEARNER
+                           SEES THEM — the practiceProgress stations (a station is 'correct' only
+                           when all its parts are) — instead of the share of xAPI sub-answers.
+                           `of` = the station indexes counted (default: all). 02: 2 of 4; 03: 2 of
+                           group A's 3 (MOE monday 05-06.10.26; head of team on 02: "2 מתוך 4"). */
 var XAPI_DEFAULT_PASS = 0.6;
 
 function xapiPassScaled() {
@@ -44,14 +49,29 @@ function itemResultFor(item) {
   return { success: scaled >= xapiPassScaled(), score: { scaled: scaled } };
 }
 
+/* The station tally behind XAPI_STATION_PASS: how many of the counted stations are resolved
+   (correct / incorrect) and how many are correct. null when the component declares no rule. */
+function stationTally() {
+  var sp = (typeof XAPI_STATION_PASS !== 'undefined') ? XAPI_STATION_PASS : null;
+  if (!sp || typeof practiceProgress === 'undefined') return null;
+  var idx = sp.of || practiceProgress.questions.map(function (_, i) { return i; });
+  var qs = idx.map(function (i) { return practiceProgress.questions[i]; }).filter(Boolean);
+  var resolved = qs.filter(function (q) { return q.state === 'correct' || q.state === 'incorrect'; }).length;
+  var ok = qs.filter(function (q) { return q.state === 'correct'; }).length;
+  return { need: sp.need, total: qs.length, resolved: resolved, ok: ok };
+}
+
 /* The component result — sent on EVERY exit, failing ones included. A component without graded
-   items (04, the class task) reports success with no score. */
+   items (04, the class task) reports success with no score. scaled is always the share of xAPI
+   sub-answers; success follows XAPI_STATION_PASS when the component declares one. */
 function partResult() {
   var items = (typeof XAPI_EVAL_ITEMS !== 'undefined') ? Object.keys(XAPI_EVAL_ITEMS) : [];
   var total = 0, ok = 0;
   items.forEach(function (it) { total += itemQuestionCount(it); ok += itemCorrectCount(it); });
   if (!total) return { success: true };
   var scaled = ok / total;
+  var t = stationTally();
+  if (t) return { success: t.ok >= t.need, score: { scaled: scaled } };
   return { success: scaled >= xapiPassScaled(), score: { scaled: scaled } };
 }
 
