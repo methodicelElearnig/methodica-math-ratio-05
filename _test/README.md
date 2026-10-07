@@ -6,6 +6,7 @@
 | `scenarios.js` | One scripted walk per component (right, or wrong × `window.__TIMES`). |
 | `flow.js` | Every component × {all right, all wrong twice}: every declared `questionId` gets exactly one `answered.last`, every graded item one scored `completed`, the component result is right, no duplicate `completed`, no page error. |
 | `verify-static.js` | No browser: every referenced file exists (exact case) and ships; one `?v=` everywhere; `XAPI_COMP_ID`, `SCREEN_TO_SUBCONTENT`, `XAPI_EVAL_ITEMS` and every `['NNN','qN']` ref agree with `metadata/`; loader letter vs its regex. `node _test/verify-static.js` |
+| `gates.js` | MOE monday 05-06.10.26: 02 passes on 2 of its 4 questions fully right (`XAPI_STATION_PASS`); 03 under 2 of group A's 3 ends the component on s3 (`XAPI_STOP`: completed success false, button ended, stays ended after a reload, live if reloaded before the click, fails open); with no character chosen the first screen of 02 / 03 / 06 still shows and loads one. Every answer through the real handlers. |
 | `resume.js` | Every component: one wrong attempt everywhere → reload → lands on the saved screen, the restore sends only `initialized`, every screen is pixel-identical, the second attempts are final; after finishing, a reload keeps the last button disabled and does not re-send `completed`. |
 
 Run (static server on the repo root, e.g. `python -m http.server 8795`; puppeteer-core, pngjs and
