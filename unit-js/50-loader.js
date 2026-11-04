@@ -149,7 +149,10 @@ function bootXAPI() {
                dropBootCover also clears __resumeInFlight, so the safety net returns to its normal
                800ms behaviour. If there IS a payload the flag stays set and the cover is held
                until phase B. */
-            if (!_payload) dropBootCover();
+            /* ...unless the read FAILED (401/5xx/network — 40-resume.js sets _resumeReadFailed):
+               then "no payload" means "nothing known yet". Keep the cover for the retry in phase
+               B; the markup's net caps it. (2026-11-03) */
+            if (!_payload && !_resumeReadFailed) dropBootCover();
           } catch (e) {
             console.error('[resume] read', e);
             dropBootCover();
@@ -200,6 +203,27 @@ function bootXAPI() {
             var _resumed = false;
             if (RESUME_ENABLED) {
               try {
+                /* A read that failed in phase A (not a 404) gets ONE retry here, a few seconds
+                   later. If it fails again, this session never opens the writes: the document on
+                   Kata is left exactly as it was, statements still go out, and the ledger reads
+                   empty (fail-open — a duplicate 'completed' is possible, the lesser evil). Two
+                   guards on a successful retry: a card the learner picked meanwhile
+                   (_pendingProfile) beats the document's character, so no adoption; and
+                   resetScreenState is only safe on screen 0 — elsewhere it is the generic enter
+                   hook and would wipe in-progress UI. (2026-11-03) */
+                if (_resumeReadFailed) {
+                  _saved = readUnitState();
+                  if (_resumeReadFailed) {
+                    console.error('[resume] state read failed twice — saving is OFF for this session; progress on Kata is preserved',
+                      typeof window.stateLastResult720 === 'function' ? window.stateLastResult720() : null);
+                  } else {
+                    if (!_pendingProfile && adoptUnitCharacter(_saved) && currentScreen === 0) {
+                      try { resetScreenState(0); } catch (e) {}
+                    }
+                    _payload = _saved.payload;
+                  }
+                }
+                if (!_resumeReadFailed) {
                 _resumeReady = true;
                 if (!_unitState) _unitState = emptyUnitState();
                 /* A choice made in the window between the phases is waiting in the queue. Drained
@@ -225,9 +249,10 @@ function bootXAPI() {
                   applyExecutionState(_payload, _hm ? parseInt(_hm[1], 10) : undefined);
                   _resumed = true;
                 }
+                }   /* if (!_resumeReadFailed) */
               } catch (e) {
                 console.error('[resume] init', e);
-                _resumeReady = true;
+                _resumeReady = !_resumeReadFailed;
                 if (!_unitState) _unitState = emptyUnitState();
               }
             }
@@ -244,6 +269,13 @@ function bootXAPI() {
             /* Item-level init for the landing screen. On a resume, applyExecutionState already
                emitted it for the restored screen. */
             if (!_resumed) { try { xapiOnScreen(currentScreen); } catch (e) {} }
+
+            /* Nothing restored, but the learner may have moved past the landing screen while the
+               phases were still loading (the drain no longer captures the live page, and markSent
+               no longer persists before _resumeReady). One debounced save — gated on
+               _resumeReady inside, so inert after a failed read — carries that screen and any
+               ledger key marked in memory. (2026-11-03) */
+            if (!_resumed && currentScreen !== 0) { try { scheduleResumeSave(); } catch (e) {} }
             if (typeof onXapiReady === 'function') {
               try { onXapiReady(); } catch (e) { console.error('[xAPI] ready hook', e); }
             }

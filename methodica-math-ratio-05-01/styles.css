@@ -861,6 +861,15 @@
 .s2-ddq-card.dragging { opacity: 0.38; cursor: grabbing; }
 .s2-ddq-card.locked { cursor: default; }
 .s2-ddq-card.locked:hover { border-color: #ececec; box-shadow: none; }
+/* Pointer drag (30-pointer-dnd.js): no page scroll/zoom under the finger, no native image drag and no
+   long-press menu on iPad. */
+.s2-ddq-card, .s2-eq-placed-card { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+/* Tap fallback: the picked bank card, and the targets waiting for it. */
+.s2-ddq-card.picked { border-color: var(--subject-500); box-shadow: 0 0 0 3px rgba(59, 47, 194, 0.25); }
+.s2-eq-target.pick-ready:not(.occupied) { border-color: var(--subject-500); cursor: pointer; }
+/* The drag ghost: a clone appended to <body>, so every rule is class-scoped. */
+.s2-ddq-card.pointer-drag-ghost { cursor: grabbing; border-color: var(--subject-500); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
+.s2-eq-placed-card.pointer-drag-ghost { cursor: grabbing; background: #d4f3ff; border: 1.5px solid var(--subject-500); border-radius: 12px; font-size: 22px; color: #222; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
 
 /* =========================================================
    מסך 4 — מסך מעבר (TransitionScreen), data-screen="3", id="s3"

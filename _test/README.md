@@ -7,6 +7,8 @@
 | `flow.js` | Every component × {all right, all wrong twice}: every declared `questionId` gets exactly one `answered.last`, every graded item one scored `completed`, the component result is right, no duplicate `completed`, no page error. |
 | `verify-static.js` | No browser: every referenced file exists (exact case) and ships; one `?v=` everywhere; `XAPI_COMP_ID`, `SCREEN_TO_SUBCONTENT`, `XAPI_EVAL_ITEMS` and every `['NNN','qN']` ref agree with `metadata/`; loader letter vs its regex. `node _test/verify-static.js` |
 | `gates.js` | MOE monday 05-06.10.26: 02 passes on 2 of its 4 questions fully right (`XAPI_STATION_PASS`); 03 under 2 of group A's 3 ends the component on s3 (`XAPI_STOP`: completed success false, button ended, stays ended after a reload, live if reloaded before the click, fails open); with no character chosen the first screen of 02 / 03 / 06 still shows and loads one. Every answer through the real handlers. |
+| `write-guard.js` | No write before the restore (2026-11-03 Kata bug, `Documentation/reporting-and-resume/BOOT-AND-RESUME-HARDENING-2026-11-03.md`): the replayed pick-during-the-wait leaves the saved payload intact; `markSent` before phase B writes nothing; a failed read (500 / 401 / network, stub `__failReads`) keeps every write closed and a later good read restores; a 404 is a fresh document. Fails on the code before 2026-11-04. |
+| `touch-dnd.js` | Drag on a tablet (2026-11-04): 01 s2E by real touch input (CDP touch events, touch viewport) — drag, tap-to-place, move between targets, evict, drop outside → bank, tap a placed card → bank, check locks, the answer is reported — and by mouse; the draggable feedback popup (02 s1) moves under a finger. Fails on the code before 2026-11-04. |
 | `resume.js` | Every component: one wrong attempt everywhere → reload → lands on the saved screen, the restore sends only `initialized`, every screen is pixel-identical, the second attempts are final; after finishing, a reload keeps the last button disabled and does not re-send `completed`. |
 
 Run (static server on the repo root, e.g. `python -m http.server 8795`; puppeteer-core, pngjs and
@@ -16,4 +18,6 @@ pixelmatch@5 installed **outside OneDrive**, local Chrome):
 NODE_PATH=<tools>/node_modules node _test/flow.js   http://127.0.0.1:8795/
 NODE_PATH=<tools>/node_modules node _test/resume.js http://127.0.0.1:8795/
 NODE_PATH=<tools>/node_modules node _test/gates.js  http://127.0.0.1:8795/
+NODE_PATH=<tools>/node_modules node _test/write-guard.js http://127.0.0.1:8795/
+NODE_PATH=<tools>/node_modules node _test/touch-dnd.js   http://127.0.0.1:8795/
 ```

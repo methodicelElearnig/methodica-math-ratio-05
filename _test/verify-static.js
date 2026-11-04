@@ -137,5 +137,40 @@ if (JSDOM_) {
      /assetMap\[DEFAULT_CHARACTER\]/.test(read('unit-js/15-ui.js')), 'the character falls back to the default when none was chosen');
 }
 
+/* 6. Boot and resume hardening (BOOT-AND-RESUME-HARDENING-2026-11-03.md §2.3, §5). Behaviour: _test/write-guard.js. */
+{
+  const CDN = 'https://lomdot.education.gov.il/metodica/720active/common/';
+  const loader = read('unit-js/50-loader.js');
+  const lib = (loader.match(/'(xapi-720-[a-z])\.js'\s*:/) || [])[1];
+  const res = read('unit-js/40-resume.js');
+  ok(/function drainPendingUnitState\(\)[\s\S]*?persistUnitState\(_unitState\)/.test(res) &&
+     !/function drainPendingUnitState\(\)[^}]*?captureUnitState\(\)/.test(res.split('function drainPendingUnitState')[1].split('\nfunction ')[0]),
+     'the drain persists the document as read, never a capture');
+  ok(/if \(!_resumeReady\) return;\s*try \{ persistUnitState\(captureUnitState\(\)\); \} catch \(e\) \{ console\.error\('\[resume\] ledger'/.test(res), 'markSent persists only once _resumeReady');
+  ok(/if \(_resumeReadFailed\) \{[\s\S]{0,200}return false;/.test(res), 'persistUnitState refuses after a failed read');
+  ok(/if \(!_payload && !_resumeReadFailed\) dropBootCover\(\);/.test(loader) && /_resumeReady = !_resumeReadFailed;/.test(loader), 'the loader keeps the cover and the writes closed on a failed read');
+  UNITS.forEach(u => {
+    const h = read(u + '/index.html');
+    const preload = f => (h.match(new RegExp('<link rel="preload" as="script" fetchpriority="high" href="' + (CDN + f).replace(/[.\/]/g, '\$&') + '">', 'g')) || []).length === 1;
+    ok(preload('xapiwrapper.min.js') && preload(lib + '.js') && !/rel="preload"[^>]*crossorigin/.test(h), u + ': the two library preloads (exact loader URL, letter ' + lib + ', no crossorigin)');
+    ok(/<link rel="preconnect" href="https:\/\/kata\.cet\.ac\.il">/.test(h), u + ': preconnect to Kata');
+    ok(/if \(\/\[\?&\]registration=\/\.test\(location\.search\)\) window\.__resumeInFlight = true;/.test(h) && (h.match(/<script>/g) || []).length === 1, u + ': the inline net raises __resumeInFlight itself');
+    let eager = 0, lazy0 = 0, screen = null;
+    h.split(/(<section\b[^>]*>|<\/section>)/).forEach(c => {
+      if (c.startsWith('<section')) { const m = c.match(/data-screen="(\d+)"/); screen = m ? +m[1] : null; return; }
+      if (c === '</section>') { screen = null; return; }
+      (c.match(/<img\b[^>]*>/g) || []).forEach(tag => {
+        const s = (tag.match(/\bsrc="([^"]+)"/) || [])[1] || '';
+        const heavy = s.startsWith('assets/') || (s.startsWith('../unit-assets/img/') && s.endsWith('.png'));
+        if (screen === 0 && /loading="lazy"/.test(tag)) lazy0++;
+        if (screen !== null && screen !== 0 && heavy && !/loading="lazy"/.test(tag)) eager++;
+      });
+    });
+    ok(eager === 0, u + ': every assets/ image off screen 0 is lazy (' + eager + ' eager)');
+    ok(lazy0 === 0, u + ': no screen-0 image is lazy');
+    ok(!/<video\b(?![^>]*data-screen)[^>]*\bsrc="assets\/[^"]*"[^>]*\bautoplay/.test(h.split(/data-screen="0"/)[1] ? h.split(/<section\b[^>]*data-screen="1"/).slice(1).join('') : ''), u + ': no hidden autoplay video with an inline src');
+  });
+}
+
 console.log(`${checks} checks, ${failures ? failures + ' FAILURE(S)' : 'ALL PASS'}`);
 process.exit(failures ? 1 : 0);

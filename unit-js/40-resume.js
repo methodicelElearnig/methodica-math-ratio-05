@@ -80,6 +80,14 @@ var _leavingToNextPart   = false;
    sits inside a swallowing try/catch — a throw there would drop a real statement in silence. */
 var _unitState           = null;
 
+/* True when the LAST read of the document failed for a reason other than "nothing saved yet"
+   (401, 5xx, network, an empty 200, no registration). Until 2026-11-03 such a read was
+   indistinguishable from a 404 and became a fresh document, whose first save then overwrote the
+   learner's real one on Kata. While this is set, persistUnitState refuses to write and
+   _resumeReady stays off (50-loader.js retries the read once in phase B before giving up).
+   Statements are not affected. Documentation/reporting-and-resume/BOOT-AND-RESUME-HARDENING-2026-11-03.md */
+var _resumeReadFailed    = false;
+
 /* Set by initResumeResetHatch. The flag is needed because the hatch strips ?resetState from the
    URL at the very start of boot, while readUnitState runs later (after the library loads) — by
    which time a query-string check would find nothing. */
@@ -170,6 +178,19 @@ function readUnitState() {
     }
     doc = (typeof window.loadState720 === 'function') ? window.loadState720(RESUME_STATE_ID) : null;
   } catch (e) { console.error('[resume] read', e); doc = null; }
+  /* A null from loadState720 is "nothing saved yet" ONLY when the library says so. -k records
+     every read in stateLastResult720(): ok is true for 2xx and for 404 ('absent'); anything else
+     is a failed read, and a failed read must not become a fresh document. The XAPI_DISABLED
+     local path and -j (no diagnostics) read as ok. */
+  _resumeReadFailed = false;
+  if (doc === null && typeof window.stateLastResult720 === 'function') {
+    var _lr = null;
+    try { _lr = window.stateLastResult720(); } catch (e) {}
+    if (_lr && _lr.op === 'load' && _lr.ok === false) {
+      _resumeReadFailed = true;
+      console.warn('[resume] state read FAILED (not a 404) — writes stay closed until a read succeeds', _lr);
+    }
+  }
   doc = migrateState(doc);
   if (doc && doc.component && doc.component !== currentPartSlug()) {
     console.warn('[resume] document belongs to "' + doc.component + '", not "' + currentPartSlug() + '" — discarded');
@@ -207,6 +228,12 @@ function captureUnitState() {
    the write with a payload still naming THIS part. Returns whether the synchronous write landed. */
 function persistUnitState(doc) {
   var ok = false;
+  /* The one choke point for every write: after a failed read the in-memory document is a
+     placeholder, and writing it would replace the learner's real one. */
+  if (_resumeReadFailed) {
+    console.warn('[resume] persist refused — the state read failed, writes stay closed');
+    return false;
+  }
   try {
     if (typeof window.saveState720Debounced === 'function') window.saveState720Debounced(RESUME_STATE_ID, doc);
     /* !== false rather than a truthiness check: the library returns an explicit true/false on
@@ -317,8 +344,16 @@ function drainPendingUnitState() {
     _pendingResults = null;
     dirty = true;
   }
+  /* ⚠️ Persists the document AS READ — never captureUnitState(). Until 2026-11-03 this persisted a
+     live capture, and because the loader drains BEFORE applyExecutionState the capture was of the
+     un-restored page (screen 0/1, nothing answered): it replaced the saved payload on Kata, both
+     in the synchronous PUT and in the debounced one (which holds the document by reference).
+     Reproduced by Kata on 03.11.26 (mass-measure-01). The character and the results live beside
+     the payload, so merging them and writing the document unchanged loses nothing. */
   if (dirty) {
-    try { persistUnitState(captureUnitState()); } catch (e) { console.error('[resume] drain', e); }
+    _unitState.v = RESUME_STATE_VERSION;
+    _unitState.component = currentPartSlug();
+    try { persistUnitState(_unitState); } catch (e) { console.error('[resume] drain', e); }
   }
 }
 
@@ -405,6 +440,11 @@ function markSent(ledger, key) {
   if (!_unitState) return;
   _unitState[ledger] = _unitState[ledger] || {};
   _unitState[ledger][key] = true;
+  /* Mark in memory always, but persist only once the restore is done. The library is live from
+     phase A, so a statement sent in the window between the phases used to reach this line and
+     write a live capture over the saved payload — the same overwrite the drain had (2026-11-03).
+     The key rides the next save: the phase-B scheduleResumeSave, or any later capture. */
+  if (!_resumeReady) return;
   try { persistUnitState(captureUnitState()); } catch (e) { console.error('[resume] ledger', e); }
 }
 
@@ -537,7 +577,7 @@ function endRepaint()   { _repainting = false; }
 
 /* Screen change — the choke point. Debounced: bounds the loss to a single screen. */
 function scheduleResumeSave() {
-  if (!RESUME_ENABLED || !_resumeReady || _restoring) return;
+  if (!RESUME_ENABLED || !_resumeReady || _restoring || _resumeReadFailed) return;
   if (typeof window.saveState720Debounced !== 'function') return;
   try { window.saveState720Debounced(RESUME_STATE_ID, captureUnitState()); } catch (e) {}
 }
@@ -551,7 +591,7 @@ function scheduleResumeSave() {
    ⚠️ Contract: a function that commits an answer must flush, and no `return` may sit between the
    commitment and the flush. _test/verify-report.js asserts this statically. */
 function flushResumeSave() {
-  if (!RESUME_ENABLED || !_resumeReady || _restoring) return;
+  if (!RESUME_ENABLED || !_resumeReady || _restoring || _resumeReadFailed) return;
   if (typeof window.saveState720 !== 'function') return;
   try { window.saveState720(RESUME_STATE_ID, captureUnitState()); } catch (e) {}
 }

@@ -26,17 +26,24 @@ function scqFbResetPosition(boxId) {
   box.style.bottom = '';
 }
 
-/* Mouse-drag for a feedback box. A press on the reveal-answer button
-   inside the box must stay a click, so it never starts a drag. */
+/* Pointer drag (mouse + touch) for a feedback box. A press on the reveal-answer button
+   inside the box must stay a click, so it never starts a drag. Pointer events rather than mouse
+   events since 2026-11-04: on a tablet a finger produced no mousemove, so the box could not be moved
+   off the content it covers (the touch side of Tools/touch-dnd-survey). touch-action:none keeps the
+   page from panning under the finger. */
 function scqFbMakeDraggable(boxId) {
   const box = document.getElementById(boxId);
   if (!box) return;
 
   let dragging = false;
+  let pointerId = null;
   let startX = 0, startY = 0, startLeft = 0, startTop = 0;
+  box.style.touchAction = 'none';
 
-  box.addEventListener('mousedown', function (e) {
+  box.addEventListener('pointerdown', function (e) {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
     if (e.target.closest('.scq-fb-reveal-btn')) return;
+    pointerId = e.pointerId;
     const parent = box.offsetParent || box.parentElement;
     const boxRect = box.getBoundingClientRect();
     const parentRect = parent.getBoundingClientRect();
@@ -52,8 +59,8 @@ function scqFbMakeDraggable(boxId) {
     e.preventDefault();
   });
 
-  document.addEventListener('mousemove', function (e) {
-    if (!dragging) return;
+  document.addEventListener('pointermove', function (e) {
+    if (!dragging || e.pointerId !== pointerId) return;
     const parent = box.offsetParent || box.parentElement;
     const parentRect = parent.getBoundingClientRect();
     // pointer delta is in viewport px — convert to canvas px before clamping
@@ -65,11 +72,14 @@ function scqFbMakeDraggable(boxId) {
     box.style.top = clamped.y + 'px';
   });
 
-  document.addEventListener('mouseup', function () {
-    if (!dragging) return;
+  function end(e) {
+    if (!dragging || e.pointerId !== pointerId) return;
     dragging = false;
+    pointerId = null;
     box.classList.remove('is-dragging');
-  });
+  }
+  document.addEventListener('pointerup', end);
+  document.addEventListener('pointercancel', end);
 }
 
 /* Final-wrong feedback title: "<title>. התשובה הנכונה מוצגת." */

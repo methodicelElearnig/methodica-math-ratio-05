@@ -451,12 +451,11 @@ let s2EPlacement = {
 let s2EChecked = false;
 let s2EDone = false;
 let s2EAttempts = 0;
-let s2EDragActive = null;
-let s2EDropHandled = false;
 let s2ERevealed = false;
 let s2EPlacementSnapshot = {};
 
 function s2ERender() {
+  s2EInitDnd();
   Object.keys(S2_DDQ_CORRECT).forEach(function (targetId) {
     const targetEl = document.getElementById(targetId);
     if (!targetEl) return;
@@ -469,12 +468,8 @@ function s2ERender() {
       card.className = 's2-eq-placed-card';
       const sourceEl = document.getElementById(placedId);
       card.textContent = sourceEl ? sourceEl.textContent : '';
-      if (!s2EChecked) {
-        card.draggable = true;
-        card.addEventListener('dragstart', function (ev) { s2EPlacedDragStart(ev, placedId); });
-        card.addEventListener('dragend', function (ev) { s2EDragEnd(ev); });
-      }
       targetEl.appendChild(card);
+      if (!s2EChecked && s2EDnd) s2EDnd.attachSource(card, placedId);
     }
   });
   Object.keys(s2EPlacement).forEach(function (dragId) {
@@ -493,61 +488,63 @@ function s2ECheckEnable() {
   if (btn) btn.disabled = !allFilled || s2EChecked;
 }
 
-function s2EDragStart(e, dragId) {
-  if (s2EChecked) { e.preventDefault(); return; }
-  s2EDragActive = dragId;
-  s2EDropHandled = false;
-  e.dataTransfer.setData('text/plain', dragId);
-  e.dataTransfer.effectAllowed = 'move';
-  e.currentTarget.classList.add('dragging');
+/* Pointer drag (mouse + touch) through ../unit-js/30-pointer-dnd.js. Native HTML5 drag never fires
+   from touch input on Android Chrome and only after a long press on iPad, so this screen could not be
+   answered on a tablet (MOE tester 03.11.26; Tools/touch-dnd-survey: the one C2 screen without a
+   fallback). Sources are the four bank cards and the card placed in each target; a placed card dragged
+   out and dropped elsewhere goes back to the bank. Tap fallback: tap a bank card to pick it, then tap
+   a target; tapping a placed card sends it back to the bank. */
+let s2EDnd = null;
+let s2EPicked = null;
+
+function s2EInitDnd() {
+  if (s2EDnd || typeof createPointerDnd !== 'function') return;
+  s2EDnd = createPointerDnd({
+    canDrag:  function () { return !s2EChecked; },
+    onPick:   function () { s2ESetPicked(null); },
+    onTap:    function (dragId) {
+      if (s2EChecked) return;
+      if (s2EPlacement[dragId] !== 'source') { s2EUnplace(dragId); return; }
+      s2ESetPicked(s2EPicked === dragId ? null : dragId);
+    },
+    onDrop:   function (dragId, targetId) { s2EPlace(dragId, targetId); },
+    onCancel: function (dragId) { if (s2EPlacement[dragId] !== 'source') s2EUnplace(dragId); }
+  });
+  Object.keys(s2EPlacement).forEach(function (dragId) { s2EDnd.attachSource(document.getElementById(dragId), dragId); });
+  Object.keys(S2_DDQ_CORRECT).forEach(function (targetId) {
+    const el = document.getElementById(targetId);
+    if (!el) return;
+    s2EDnd.attachTarget(el, targetId);
+    el.addEventListener('click', function () { if (s2EPicked && !s2EChecked) s2EPlace(s2EPicked, targetId); });
+  });
 }
 
-function s2EPlacedDragStart(e, dragId) {
-  if (s2EChecked) { e.preventDefault(); return; }
-  s2EDragActive = dragId;
-  s2EDropHandled = false;
-  e.dataTransfer.setData('text/plain', dragId);
-  e.dataTransfer.effectAllowed = 'move';
-  setTimeout(function () {
-    s2EPlacement[dragId] = 'source';
-    s2ERender();
-  }, 0);
+function s2ESetPicked(dragId) {
+  s2EPicked = dragId;
+  Object.keys(s2EPlacement).forEach(function (k) {
+    const el = document.getElementById(k);
+    if (el) el.classList.toggle('picked', k === dragId);
+  });
+  document.querySelectorAll('.s2-eq-target').forEach(function (t) { t.classList.toggle('pick-ready', !!dragId); });
 }
 
-function s2EDragEnd() {
-  document.querySelectorAll('.s2-ddq-card.dragging').forEach(function (el) { el.classList.remove('dragging'); });
-  if (!s2EDropHandled && s2EDragActive) {
-    s2EPlacement[s2EDragActive] = 'source';
-    s2ERender();
-  }
-  s2EDragActive = null;
-}
-
-function s2EDragOver(e, targetId) {
-  if (s2EChecked) return;
-  e.preventDefault();
-  const el = document.getElementById(targetId);
-  if (el) el.classList.add('drag-over');
-}
-function s2EDragLeave(e, targetId) {
-  const el = document.getElementById(targetId);
-  if (el) el.classList.remove('drag-over');
-}
-function s2EDrop(e, targetId) {
-  e.preventDefault();
-  const el = document.getElementById(targetId);
-  if (el) el.classList.remove('drag-over');
-  if (s2EChecked) return;
-  const dragId = e.dataTransfer.getData('text/plain') || s2EDragActive;
-  if (!dragId) return;
-  // "Dropping onto an occupied target evicts the existing item back to source" — 720-templates DragAndDropQuestion.md
+// "Dropping onto an occupied target evicts the existing item back to source" — 720-templates DragAndDropQuestion.md
+function s2EPlace(dragId, targetId) {
+  if (s2EChecked || !dragId || !S2_DDQ_CORRECT[targetId]) return;
   Object.keys(s2EPlacement).forEach(function (k) { if (s2EPlacement[k] === targetId) s2EPlacement[k] = 'source'; });
   s2EPlacement[dragId] = targetId;
-  s2EDropHandled = true;
+  s2ESetPicked(null);
   s2ERender();
   s2ECheckEnable();
   document.getElementById('s2-e-feedbox').classList.remove('visible');
   s2HideDragGesture(); // ניסיון-גרירה-מוצלח ראשון — מסתיר את ה-gesture hint (לא תלוי-הצלחה/דיוק)
+}
+
+function s2EUnplace(dragId) {
+  s2EPlacement[dragId] = 'source';
+  s2ESetPicked(null);
+  s2ERender();
+  s2ECheckEnable();
 }
 
 const S2_E_FEEDBACK = {

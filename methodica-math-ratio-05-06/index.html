@@ -4,9 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 6</title>
-<link rel="stylesheet" href="../unit-css/common.css?v=20261007a">
-<link rel="stylesheet" href="styles.css?v=20261007a">
-<link rel="stylesheet" href="../unit-css/25-report.css?v=20261007a">
+<link rel="stylesheet" href="../unit-css/common.css?v=20261104a">
+<link rel="stylesheet" href="styles.css?v=20261104a">
+<link rel="stylesheet" href="../unit-css/25-report.css?v=20261104a">
+<!-- Resume (2026-11-03): the CDN library is requested from the head, before any image, so the
+     restore does not wait for the media; the hrefs must equal what 50-loader.js builds (no ?v=,
+     no crossorigin) or the browser fetches them twice. -->
+<link rel="preload" as="script" fetchpriority="high" href="https://lomdot.education.gov.il/metodica/720active/common/xapiwrapper.min.js">
+<link rel="preload" as="script" fetchpriority="high" href="https://lomdot.education.gov.il/metodica/720active/common/xapi-720-k.js">
+<link rel="preconnect" href="https://kata.cet.ac.il">
 </head>
 <body>
 <!-- Boot cover (resume): hides the first screen until it is known which screen to draw.
@@ -16,6 +22,9 @@
 <div id="boot-cover" style="position:fixed;inset:0;z-index:9999;background:#ffffff"></div>
 <script>
 (function () {
+  /* Raised here, by the markup, when the platform launched the page: bootXAPI raises it too, but
+     from the last script tag, which on a cold cache runs after this net's 800 ms (2026-11-03). */
+  if (/[?&]registration=/.test(location.search)) window.__resumeInFlight = true;
   var t0 = Date.now();
   function tick() {
     var c = document.getElementById('boot-cover');
@@ -64,7 +73,7 @@
   <section class="screen" data-screen="1" id="s1">
     <div class="s1-photo-wrap">
       <div class="s1-photo-img-frame">
-        <img class="s1-photo-img" src="assets/images/family-home-opt.jpg" alt="משפחה מול בית מגורים, בהקשר של תכנון ובניית בית חדש">
+        <img loading="lazy" class="s1-photo-img" src="assets/images/family-home-opt.jpg" alt="משפחה מול בית מגורים, בהקשר של תכנון ובניית בית חדש">
       </div>
       <div class="s1-info-banner info-banner-card">
         <p class="info-banner-label">עליכם לעזור לצוות בשטח לקבל החלטות מבוססות נתונים על סמך המפות וכלי המדידה.</p>
@@ -122,7 +131,7 @@
             <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
           </svg>
         </button>
-        <img src="assets/images/land-plot-diagram-opt.png" alt="שרטוט מגרש מלבני ABDE: A בפינה השמאלית-תחתונה, B בפינה הימנית-תחתונה, E בפינה השמאלית-עליונה, D בצד הימני, עם פינה חתוכה בצורת ריבוע GHCD בפינה הימנית-עליונה (כל צלע 4 מטר); קו מקווקו אנכי מנקודה T (על הבסיס AB) לנקודה R (על EG) מחלק את המגרש לחלקת הגינה משמאל ולחלקה המיועדת לבנייה מימין; אורך AB הוא 20 מטר">
+        <img loading="lazy" src="assets/images/land-plot-diagram-opt.png" alt="שרטוט מגרש מלבני ABDE: A בפינה השמאלית-תחתונה, B בפינה הימנית-תחתונה, E בפינה השמאלית-עליונה, D בצד הימני, עם פינה חתוכה בצורת ריבוע GHCD בפינה הימנית-עליונה (כל צלע 4 מטר); קו מקווקו אנכי מנקודה T (על הבסיס AB) לנקודה R (על EG) מחלק את המגרש לחלקת הגינה משמאל ולחלקה המיועדת לבנייה מימין; אורך AB הוא 20 מטר">
       </div>
     </div>
 
@@ -215,7 +224,7 @@
   <section class="screen" data-screen="3" id="s3">
     <div class="s1-photo-wrap">
       <div class="s1-photo-img-frame">
-        <img class="s1-photo-img" src="assets/images/engineers-opt.jpg" alt="צוות מהנדסים/אדריכלים בשטח, בוחן מפות וכלי מדידה">
+        <img loading="lazy" class="s1-photo-img" src="assets/images/engineers-opt.jpg" alt="צוות מהנדסים/אדריכלים בשטח, בוחן מפות וכלי מדידה">
       </div>
       <div class="s1-info-banner info-banner-card">
         <p class="info-banner-label">עליכם לעזור לצוות בשטח לקבל החלטות מבוססות נתונים על סמך המפות וכלי המדידה.</p>
@@ -272,7 +281,7 @@
             <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
           </svg>
         </button>
-        <img src="assets/images/land-plot-diagram-opt.png" alt="שרטוט מגרש מלבני ABDE: A בפינה השמאלית-תחתונה, B בפינה הימנית-תחתונה, E בפינה השמאלית-עליונה, D בצד הימני, עם פינה חתוכה בצורת ריבוע GHCD בפינה הימנית-עליונה (כל צלע 4 מטר); קו מקווקו אנכי מנקודה T (על הבסיס AB) לנקודה R (על EG) מחלק את המגרש לחלקת הגינה משמאל ולחלקה המיועדת לבנייה מימין; אורך AB הוא 20 מטר">
+        <img loading="lazy" src="assets/images/land-plot-diagram-opt.png" alt="שרטוט מגרש מלבני ABDE: A בפינה השמאלית-תחתונה, B בפינה הימנית-תחתונה, E בפינה השמאלית-עליונה, D בצד הימני, עם פינה חתוכה בצורת ריבוע GHCD בפינה הימנית-עליונה (כל צלע 4 מטר); קו מקווקו אנכי מנקודה T (על הבסיס AB) לנקודה R (על EG) מחלק את המגרש לחלקת הגינה משמאל ולחלקה המיועדת לבנייה מימין; אורך AB הוא 20 מטר">
       </div>
     </div>
 
@@ -479,20 +488,21 @@
   </div>
 
 </div>
-<script src="../unit-js/10-identity.js?v=20261007a"></script>
-<script src="../unit-js/15-ui.js?v=20261007a"></script>
-<script src="../unit-js/20-xapi.js?v=20261007a"></script>
-<script src="../unit-js/22-scoring.js?v=20261007a"></script>
-<script src="../unit-js/25-report.js?v=20261007a"></script>
-<script src="../unit-js/28-feedback-drag.js?v=20261007a"></script>
-<script src="../unit-js/30-nav.js?v=20261007a"></script>
-<script src="../unit-js/32-progress.js?v=20261007a"></script>
-<script src="../unit-js/35-questions.js?v=20261007a"></script>
-<script src="../unit-js/40-resume.js?v=20261007a"></script>
-<script src="../unit-js/45-resume-part.js?v=20261007a"></script>
-<script src="../unit-js/50-loader.js?v=20261007a"></script>
-<script src="../unit-js/60-devbridge.js?v=20261007a"></script>
-<script src="script.js?v=20261007a"></script>
-<script src="../unit-js/90-boot.js?v=20261007a"></script>
+<script src="../unit-js/10-identity.js?v=20261104a"></script>
+<script src="../unit-js/15-ui.js?v=20261104a"></script>
+<script src="../unit-js/20-xapi.js?v=20261104a"></script>
+<script src="../unit-js/22-scoring.js?v=20261104a"></script>
+<script src="../unit-js/25-report.js?v=20261104a"></script>
+<script src="../unit-js/28-feedback-drag.js?v=20261104a"></script>
+<script src="../unit-js/30-nav.js?v=20261104a"></script>
+<script src="../unit-js/32-progress.js?v=20261104a"></script>
+<script src="../unit-js/35-questions.js?v=20261104a"></script>
+<script src="../unit-js/30-pointer-dnd.js?v=20261104a"></script>
+<script src="../unit-js/40-resume.js?v=20261104a"></script>
+<script src="../unit-js/45-resume-part.js?v=20261104a"></script>
+<script src="../unit-js/50-loader.js?v=20261104a"></script>
+<script src="../unit-js/60-devbridge.js?v=20261104a"></script>
+<script src="script.js?v=20261104a"></script>
+<script src="../unit-js/90-boot.js?v=20261104a"></script>
 </body>
 </html>

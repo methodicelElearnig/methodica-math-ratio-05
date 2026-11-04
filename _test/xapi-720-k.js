@@ -22,6 +22,7 @@
   var STATE_KEY = '__test_state';
   var LOG_KEY   = '__test_statements';
   var FAIL_KEY  = '__test_fail_writes';
+  var FAIL_READ_KEY = '__test_fail_reads';   /* 2026-11-04: read failures, for _test/write-guard.js */
 
   /* ── שכבת האבחון של -k ──
      מחזיק את אותו חוזה כמו הספרייה: {op,status,ok,reason}. מפת ה-reason זהה
@@ -125,6 +126,10 @@
 
   window.loadState720 = function (id) {
     try {
+      /* A forced read failure (401/5xx/network): null with ok:false, exactly what -k reports — the
+         case the 2026-11-03 fix must not take for "nothing saved yet". */
+      var fr = parseInt(sessionStorage.getItem(FAIL_READ_KEY) || '0', 10);
+      if (fr || sessionStorage.getItem(FAIL_READ_KEY) === '0!') { record('load', fr, false); return null; }
       var raw = sessionStorage.getItem(stateKey(id));
       /* absent אינו כשל — זו הקריאה הראשונה של registration חדש, וזה בדיוק
          המקרה ש--j לא ידע להבדיל מ-401 או מ-500. */
@@ -225,6 +230,7 @@
         .forEach(function (k) { sessionStorage.removeItem(k); });
       sessionStorage.removeItem(LOG_KEY);
       sessionStorage.removeItem(FAIL_KEY);
+      sessionStorage.removeItem(FAIL_READ_KEY);
       sessionStorage.removeItem('lomda_nav_edges::methodica-math-ratio-05');
     } catch (e) {}
     /* v4: הדמות ותוצאות המועד עברו למסמך ה-state, ו-localStorage הוא קאש
@@ -251,6 +257,17 @@
     var v = (on === true) ? '1' : (on === false || on == null) ? '0' : String(on);
     try { sessionStorage.setItem(FAIL_KEY, v); } catch (e) {}
     return 'failWrites=' + v;
+  };
+  /* Reads fail with this status until cleared: __failReads(500), __failReads(401), __failReads('0!')
+     for a network error (status 0), __failReads(false) to clear. */
+  window.__failReads = function (on) {
+    var v = (on === false || on == null) ? '' : String(on);
+    try { if (v) sessionStorage.setItem(FAIL_READ_KEY, v); else sessionStorage.removeItem(FAIL_READ_KEY); } catch (e) {}
+    return 'failReads=' + (v || 'off');
+  };
+  /* The stored document, read past the library (so it neither records a result nor fails). */
+  window.__rawState = function () {
+    try { var raw = sessionStorage.getItem(stateKey(typeof RESUME_STATE_ID !== 'undefined' ? RESUME_STATE_ID : undefined)); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
   };
   window.__lastState = function () { return window.stateLastResult720(); };
 

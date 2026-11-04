@@ -4,9 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>לומדה 720 | מתמטיקה יעד 1.5 | יחס | סיין 1</title>
-<link rel="stylesheet" href="../unit-css/common.css?v=20261007a">
-<link rel="stylesheet" href="styles.css?v=20261007a">
-<link rel="stylesheet" href="../unit-css/25-report.css?v=20261007a">
+<link rel="stylesheet" href="../unit-css/common.css?v=20261104a">
+<link rel="stylesheet" href="styles.css?v=20261104a">
+<link rel="stylesheet" href="../unit-css/25-report.css?v=20261104a">
+<!-- Resume (2026-11-03): the CDN library is requested from the head, before any image, so the
+     restore does not wait for the media; the hrefs must equal what 50-loader.js builds (no ?v=,
+     no crossorigin) or the browser fetches them twice. -->
+<link rel="preload" as="script" fetchpriority="high" href="https://lomdot.education.gov.il/metodica/720active/common/xapiwrapper.min.js">
+<link rel="preload" as="script" fetchpriority="high" href="https://lomdot.education.gov.il/metodica/720active/common/xapi-720-k.js">
+<link rel="preconnect" href="https://kata.cet.ac.il">
 </head>
 <body>
 <!-- Boot cover (resume): hides the first screen until it is known which screen to draw.
@@ -16,6 +22,9 @@
 <div id="boot-cover" style="position:fixed;inset:0;z-index:9999;background:#ffffff"></div>
 <script>
 (function () {
+  /* Raised here, by the markup, when the platform launched the page: bootXAPI raises it too, but
+     from the last script tag, which on a cold cache runs after this net's 800 ms (2026-11-03). */
+  if (/[?&]registration=/.test(location.search)) window.__resumeInFlight = true;
   var t0 = Date.now();
   function tick() {
     var c = document.getElementById('boot-cover');
@@ -115,7 +124,7 @@
                 <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
               </svg>
             </button>
-            <img class="oly-delegation-img" src="assets/images/משלחת-א.jpg" alt="משלחת א'">
+            <img loading="lazy" class="oly-delegation-img" src="assets/images/משלחת-א.jpg" alt="משלחת א'">
           </div>
         </div>
         <span class="oly-delegation-label">משלחת א'</span>
@@ -131,7 +140,7 @@
                 <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
               </svg>
             </button>
-            <img class="oly-delegation-img" src="assets/images/משלחת-ב.jpg" alt="משלחת ב'">
+            <img loading="lazy" class="oly-delegation-img" src="assets/images/משלחת-ב.jpg" alt="משלחת ב'">
           </div>
         </div>
         <span class="oly-delegation-label">משלחת ב'</span>
@@ -325,7 +334,7 @@
                     <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
                   </svg>
                 </button>
-                <img class="s2-hook-img" src="assets/images/boy-and-girl-planting.jpg" alt="יהב ויעל בגינת הירק של סבתא">
+                <img loading="lazy" class="s2-hook-img" src="assets/images/boy-and-girl-planting.jpg" alt="יהב ויעל בגינת הירק של סבתא">
               </div>
             </div>
           </div>
@@ -409,7 +418,7 @@
                     <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
                   </svg>
                 </button>
-                <img class="s2-fb-img" src="assets/images/radish-cauliflower.jpg" alt="צנוניות וחסה בגינה, מסודרות בשורות">
+                <img loading="lazy" class="s2-fb-img" src="assets/images/radish-cauliflower.jpg" alt="צנוניות וחסה בגינה, מסודרות בשורות">
               </div>
             </div>
           </div>
@@ -443,7 +452,7 @@
                       <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
                     </svg>
                   </button>
-                  <img class="s2-hook-img" src="assets/images/boy-and-girl-planting-2.jpg" alt="יהב ויעל בגינת הירק של סבתא">
+                  <img loading="lazy" class="s2-hook-img" src="assets/images/boy-and-girl-planting-2.jpg" alt="יהב ויעל בגינת הירק של סבתא">
                 </div>
               </div>
             </div>
@@ -466,19 +475,19 @@
         <div class="s2-eq-diagram" id="s2-eq-diagram">
           <div class="s2-eq-formula">
             <div class="s2-eq-num-col">
-              <div class="s2-eq-target" id="s2-target-known" ondragover="s2EDragOver(event,'s2-target-known')" ondragleave="s2EDragLeave(event,'s2-target-known')" ondrop="s2EDrop(event,'s2-target-known')"></div>
+              <div class="s2-eq-target" id="s2-target-known"></div>
               <span class="frac"><span class="frac-num" id="s2-eq-n4">4</span><span class="frac-den" id="s2-eq-n7">7</span></span>
-              <div class="s2-eq-target" id="s2-target-total" ondragover="s2EDragOver(event,'s2-target-total')" ondragleave="s2EDragLeave(event,'s2-target-total')" ondrop="s2EDrop(event,'s2-target-total')"></div>
+              <div class="s2-eq-target" id="s2-target-total"></div>
             </div>
             <span>·</span>
             <div class="s2-eq-num-col">
-              <div class="s2-eq-target" id="s2-target-groupsize" ondragover="s2EDragOver(event,'s2-target-groupsize')" ondragleave="s2EDragLeave(event,'s2-target-groupsize')" ondrop="s2EDrop(event,'s2-target-groupsize')"></div>
+              <div class="s2-eq-target" id="s2-target-groupsize"></div>
               <span id="s2-eq-n70">70</span>
             </div>
             <span>=</span>
             <div class="s2-eq-num-col">
               <span id="s2-eq-n40">40</span>
-              <div class="s2-eq-target" id="s2-target-knownsize" ondragover="s2EDragOver(event,'s2-target-knownsize')" ondragleave="s2EDragLeave(event,'s2-target-knownsize')" ondrop="s2EDrop(event,'s2-target-knownsize')"></div>
+              <div class="s2-eq-target" id="s2-target-knownsize"></div>
             </div>
           </div>
         </div>
@@ -493,11 +502,11 @@
                 <img class="gesture-hint-hand" src="../unit-assets/img/gesture-hand-cursor.svg" alt="">
               </div>
             </div>
-            <div class="s2-ddq-card" id="s2-drag-groupsize" draggable="true" ondragstart="s2EDragStart(event,'s2-drag-groupsize')" ondragend="s2EDragEnd(event)">גודל הקבוצה</div>
+            <div class="s2-ddq-card" id="s2-drag-groupsize">גודל הקבוצה</div>
           </div>
-          <div class="s2-ddq-slot"><div class="s2-ddq-card" id="s2-drag-knownsize" draggable="true" ondragstart="s2EDragStart(event,'s2-drag-knownsize')" ondragend="s2EDragEnd(event)">הגודל של החלק הידוע לפי היחס</div></div>
-          <div class="s2-ddq-slot"><div class="s2-ddq-card" id="s2-drag-known" draggable="true" ondragstart="s2EDragStart(event,'s2-drag-known')" ondragend="s2EDragEnd(event)">החלק הידוע לפי היחס</div></div>
-          <div class="s2-ddq-slot"><div class="s2-ddq-card" id="s2-drag-total" draggable="true" ondragstart="s2EDragStart(event,'s2-drag-total')" ondragend="s2EDragEnd(event)">סך החלקים לפי היחס</div></div>
+          <div class="s2-ddq-slot"><div class="s2-ddq-card" id="s2-drag-knownsize">הגודל של החלק הידוע לפי היחס</div></div>
+          <div class="s2-ddq-slot"><div class="s2-ddq-card" id="s2-drag-known">החלק הידוע לפי היחס</div></div>
+          <div class="s2-ddq-slot"><div class="s2-ddq-card" id="s2-drag-total">סך החלקים לפי היחס</div></div>
         </div>
 
         <button class="btn-continue s2-check-btn" id="s2-e-check" type="button" disabled onclick="s2ECheck()">צדקתי?</button>
@@ -538,7 +547,7 @@
         <p class="s3-line s3-line--sub">רגע לפני, בואו נפתור תרגיל אחד יחד</p>
       </div>
       <div class="s3-avatar-wrap">
-        <video class="s3-avatar" id="s3-avatar" src="assets/videos/yellow-avatar-and-turquise-avatar.mp4" autoplay loop muted playsinline></video>
+        <video class="s3-avatar" id="s3-avatar" autoplay loop muted playsinline></video>
       </div>
     </div>
 
@@ -858,7 +867,7 @@
                 <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
               </svg>
             </button>
-            <img class="s6-angle-diagram" src="assets/images/angle-diagram-ratio.png" alt="שרטוט זווית ABC בת 90 מעלות, המחולקת לזווית אלפא (העליונה) וזווית בטא (התחתונה)">
+            <img loading="lazy" class="s6-angle-diagram" src="assets/images/angle-diagram-ratio.png" alt="שרטוט זווית ABC בת 90 מעלות, המחולקת לזווית אלפא (העליונה) וזווית בטא (התחתונה)">
           </div>
         </div>
       </div>
@@ -994,20 +1003,21 @@
        בדיוק כמו בפרויקטי המדעים. -->
 
 </div>
-<script src="../unit-js/10-identity.js?v=20261007a"></script>
-<script src="../unit-js/15-ui.js?v=20261007a"></script>
-<script src="../unit-js/20-xapi.js?v=20261007a"></script>
-<script src="../unit-js/22-scoring.js?v=20261007a"></script>
-<script src="../unit-js/25-report.js?v=20261007a"></script>
-<script src="../unit-js/28-feedback-drag.js?v=20261007a"></script>
-<script src="../unit-js/30-nav.js?v=20261007a"></script>
-<script src="../unit-js/32-progress.js?v=20261007a"></script>
-<script src="../unit-js/35-questions.js?v=20261007a"></script>
-<script src="../unit-js/40-resume.js?v=20261007a"></script>
-<script src="../unit-js/45-resume-part.js?v=20261007a"></script>
-<script src="../unit-js/50-loader.js?v=20261007a"></script>
-<script src="../unit-js/60-devbridge.js?v=20261007a"></script>
-<script src="script.js?v=20261007a"></script>
-<script src="../unit-js/90-boot.js?v=20261007a"></script>
+<script src="../unit-js/10-identity.js?v=20261104a"></script>
+<script src="../unit-js/15-ui.js?v=20261104a"></script>
+<script src="../unit-js/20-xapi.js?v=20261104a"></script>
+<script src="../unit-js/22-scoring.js?v=20261104a"></script>
+<script src="../unit-js/25-report.js?v=20261104a"></script>
+<script src="../unit-js/28-feedback-drag.js?v=20261104a"></script>
+<script src="../unit-js/30-nav.js?v=20261104a"></script>
+<script src="../unit-js/32-progress.js?v=20261104a"></script>
+<script src="../unit-js/35-questions.js?v=20261104a"></script>
+<script src="../unit-js/30-pointer-dnd.js?v=20261104a"></script>
+<script src="../unit-js/40-resume.js?v=20261104a"></script>
+<script src="../unit-js/45-resume-part.js?v=20261104a"></script>
+<script src="../unit-js/50-loader.js?v=20261104a"></script>
+<script src="../unit-js/60-devbridge.js?v=20261104a"></script>
+<script src="script.js?v=20261104a"></script>
+<script src="../unit-js/90-boot.js?v=20261104a"></script>
 </body>
 </html>

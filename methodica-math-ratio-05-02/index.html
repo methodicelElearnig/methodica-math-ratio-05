@@ -4,9 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>לומדה 720 — מתמטיקה יעד 1.5 | יחס | סיין 2</title>
-<link rel="stylesheet" href="../unit-css/common.css?v=20261007a">
-<link rel="stylesheet" href="styles.css?v=20261007a">
-<link rel="stylesheet" href="../unit-css/25-report.css?v=20261007a">
+<link rel="stylesheet" href="../unit-css/common.css?v=20261104a">
+<link rel="stylesheet" href="styles.css?v=20261104a">
+<link rel="stylesheet" href="../unit-css/25-report.css?v=20261104a">
+<!-- Resume (2026-11-03): the CDN library is requested from the head, before any image, so the
+     restore does not wait for the media; the hrefs must equal what 50-loader.js builds (no ?v=,
+     no crossorigin) or the browser fetches them twice. -->
+<link rel="preload" as="script" fetchpriority="high" href="https://lomdot.education.gov.il/metodica/720active/common/xapiwrapper.min.js">
+<link rel="preload" as="script" fetchpriority="high" href="https://lomdot.education.gov.il/metodica/720active/common/xapi-720-k.js">
+<link rel="preconnect" href="https://kata.cet.ac.il">
 </head>
 <body>
 <!-- Boot cover (resume): hides the first screen until it is known which screen to draw.
@@ -16,6 +22,9 @@
 <div id="boot-cover" style="position:fixed;inset:0;z-index:9999;background:#ffffff"></div>
 <script>
 (function () {
+  /* Raised here, by the markup, when the platform launched the page: bootXAPI raises it too, but
+     from the last script tag, which on a cold cache runs after this net's 800 ms (2026-11-03). */
+  if (/[?&]registration=/.test(location.search)) window.__resumeInFlight = true;
   var t0 = Date.now();
   function tick() {
     var c = document.getElementById('boot-cover');
@@ -113,7 +122,7 @@
               <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
             </svg>
           </button>
-          <img src="assets/images/phone.jpg" alt="צילום מסך של ערוץ הגיימינג">
+          <img loading="lazy" src="assets/images/phone.jpg" alt="צילום מסך של ערוץ הגיימינג">
         </div>
       </div>
     </div>
@@ -206,7 +215,7 @@
               <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
             </svg>
           </button>
-          <img src="assets/images/graph-screen-3.png" alt="ציר מספרים המציג את מספר הבנים (ציר X) ומספר הבנות (ציר Y) בצ'אט">
+          <img loading="lazy" src="assets/images/graph-screen-3.png" alt="ציר מספרים המציג את מספר הבנים (ציר X) ומספר הבנות (ציר Y) בצ'אט">
         </div>
       </div>
     </div>
@@ -278,7 +287,7 @@
             <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
           </svg>
         </button>
-        <img src="assets/images/triangle-roof-building-opt.jpg" alt="מבנה ציבורי עם גג זכוכית בצורת משולש">
+        <img loading="lazy" src="assets/images/triangle-roof-building-opt.jpg" alt="מבנה ציבורי עם גג זכוכית בצורת משולש">
       </div>
       <div class="s3-img-frame s3-img-frame--diagram">
         <button class="img-zoom-btn" type="button" aria-label="הגדלת התמונה"
@@ -288,7 +297,7 @@
             <path d="M13 13L17.5 17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
           </svg>
         </button>
-        <img src="assets/images/triangle-diagram-roof.png" alt="שרטוט משולש BAC, זווית A היא 60 מעלות">
+        <img loading="lazy" src="assets/images/triangle-diagram-roof.png" alt="שרטוט משולש BAC, זווית A היא 60 מעלות">
       </div>
     </div>
 
@@ -603,20 +612,21 @@
   </div>
 
 </div>
-<script src="../unit-js/10-identity.js?v=20261007a"></script>
-<script src="../unit-js/15-ui.js?v=20261007a"></script>
-<script src="../unit-js/20-xapi.js?v=20261007a"></script>
-<script src="../unit-js/22-scoring.js?v=20261007a"></script>
-<script src="../unit-js/25-report.js?v=20261007a"></script>
-<script src="../unit-js/28-feedback-drag.js?v=20261007a"></script>
-<script src="../unit-js/30-nav.js?v=20261007a"></script>
-<script src="../unit-js/32-progress.js?v=20261007a"></script>
-<script src="../unit-js/35-questions.js?v=20261007a"></script>
-<script src="../unit-js/40-resume.js?v=20261007a"></script>
-<script src="../unit-js/45-resume-part.js?v=20261007a"></script>
-<script src="../unit-js/50-loader.js?v=20261007a"></script>
-<script src="../unit-js/60-devbridge.js?v=20261007a"></script>
-<script src="script.js?v=20261007a"></script>
-<script src="../unit-js/90-boot.js?v=20261007a"></script>
+<script src="../unit-js/10-identity.js?v=20261104a"></script>
+<script src="../unit-js/15-ui.js?v=20261104a"></script>
+<script src="../unit-js/20-xapi.js?v=20261104a"></script>
+<script src="../unit-js/22-scoring.js?v=20261104a"></script>
+<script src="../unit-js/25-report.js?v=20261104a"></script>
+<script src="../unit-js/28-feedback-drag.js?v=20261104a"></script>
+<script src="../unit-js/30-nav.js?v=20261104a"></script>
+<script src="../unit-js/32-progress.js?v=20261104a"></script>
+<script src="../unit-js/35-questions.js?v=20261104a"></script>
+<script src="../unit-js/30-pointer-dnd.js?v=20261104a"></script>
+<script src="../unit-js/40-resume.js?v=20261104a"></script>
+<script src="../unit-js/45-resume-part.js?v=20261104a"></script>
+<script src="../unit-js/50-loader.js?v=20261104a"></script>
+<script src="../unit-js/60-devbridge.js?v=20261104a"></script>
+<script src="script.js?v=20261104a"></script>
+<script src="../unit-js/90-boot.js?v=20261104a"></script>
 </body>
 </html>

@@ -11,6 +11,14 @@ A 720 math unit (יחס, יעד 1.5) with six components, each a single-page HTM
 | 05 | 4 | `methodica-math-ratio-05-05/` |
 | 06 | 6 | `methodica-math-ratio-05-06/` |
 
+## 2026-11-04: no write before the restore; tablet drag
+Same change as the Arabic twin (methodica-ar-math-ratio-05 `6c6bf46`, `c83a726`):
+- **No write before the restore** (`Documentation/reporting-and-resume/BOOT-AND-RESUME-HARDENING-2026-11-03.md`):
+  the drain persists the document as read, `markSent` waits for `_resumeReady`, a failed read closes the
+  writes; library preloads, the inline `__resumeInFlight` flag, lazy images off screen 0. `_test/write-guard.js`.
+- **Tablet drag:** 01 s2E on `unit-js/30-pointer-dnd.js` (mouse + touch + tap-to-place), the feedback popup
+  on pointer events. `_test/touch-dnd.js`.
+
 ## Layout
 
 ```
@@ -20,12 +28,13 @@ unit-js/      shared engine, loaded by every component (declarations only, excep
                       popup/hint closing, makeScrollGestureHint(), alignBtnToLeftmost()
   20-xapi.js          item scope, answered / requested / completed helpers        (ratio-01, verbatim)
   22-scoring.js       item + component results from XAPI_Q_RESULTS and metadata, reportQ()
-  28-feedback-drag.js feedback popup clamp/reset/drag, fbCorrectShown()
+  28-feedback-drag.js feedback popup clamp/reset/drag (pointer events), fbCorrectShown()
   30-nav.js           goTo() (+ xapiOnScreen), resetScreenState(n) → resetScreenStateN(),
                       finishComponent() / backToPart() — the component's edges, bootNav()
   32-progress.js      Progress Question bar
   35-questions.js     SingleChoice (scq*) + ValueInput (viq*) engines, SCQ_CFG / VIQ_CFG
   25-report.js        issue-report dialogs → shared 720 Google Form               (ratio-01, verbatim)
+  30-pointer-dnd.js   createPointerDnd(): mouse + touch drag with tap detection (body-matter-01)
   40-resume.js        state document, 'completed' ledger, boot cover, ?resetState  (ratio-01)
   45-resume-part.js   this unit's payload: answer variables + DOM diff; applyExecutionState()
   50-loader.js        loads the 720 library from the CDN, bootXAPI()               (ratio-01, verbatim)
@@ -41,7 +50,7 @@ _test/        local library stub (xapi-720-k.js) + flow.js statement-flow test �
 
 Script order in every component's `index.html`:
 `10-identity → 15-ui → 20-xapi → 22-scoring → 25-report → 28-feedback-drag → 30-nav → 32-progress
-→ 35-questions → 40-resume → 45-resume-part → 50-loader → 60-devbridge → script.js → 90-boot`.
+→ 35-questions → 30-pointer-dnd → 40-resume → 45-resume-part → 50-loader → 60-devbridge → script.js → 90-boot`.
 All code references carry the same `?v=`; bump it everywhere together.
 
 ## Rules
