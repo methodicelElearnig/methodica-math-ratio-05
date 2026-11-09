@@ -4,7 +4,8 @@
      NODE_PATH=<tools>/node_modules node _test/gates.js [BASE=http://127.0.0.1:8795/]
 
    02  s0 says "צריך לענות נכון על 2 שאלות לפחות" (of 4): 2 questions fully right → success,
-       1 → not, whatever the share of xAPI sub-answers (XAPI_STATION_PASS, 22-scoring.js).
+       1 → not, whatever the share of xAPI sub-answers (XAPI_STATION_PASS, 22-scoring.js); and since
+       2026-11-09 (08.11 sheet) scaled is that same count / 4, and 03's is group A's count / 3.
    03  s0 says "ענו נכון על 2 שאלות ומעלה כדי להתקדם" (group A, s1-s3): under 2, s3's "המשך" ENDS
        the component on s3 (completed success false, button ended, no s4); 2+ → s4. Stays ended
        after a reload; answered-but-not-clicked comes back live; missing evidence fails open.
@@ -80,6 +81,8 @@ window.__S = {
     const c = comp(await p.evaluate(() => __stmts()));
     const n = plan.filter(Boolean).length;
     ok('02 ' + n + '/4 questions right → success ' + want, c.length === 1 && c[0].result && c[0].result.success === want, JSON.stringify(c.map(x => x.result)));
+    /* 08.11 sheet fixes 2, 6: the score is the same count — questions fully right out of 4 */
+    ok('02 ' + n + '/4: scaled = ' + n + '/4, the same count as success', c.length === 1 && c[0].result.score && Math.abs(c[0].result.score.scaled - n / 4) < 1e-9, JSON.stringify(c.map(x => x.result)));
     ok('02 ' + n + '/4 no page error', !p.__errs.length, p.__errs.slice(0, 2).join(' | '));
     await p.close();
   }
@@ -97,11 +100,20 @@ window.__S = {
     if (!stops) {
       ok(tag + ': on to s4', r1.cur === 4, 'screen ' + r1.cur);
       ok(tag + ': nothing completed yet', comp(r1.st).length === 0);
+      /* group B (s5) all wrong: the result is still group A's count alone (08.11 sheet fixes 1, 2, 6) */
+      const fin = await p.evaluate(() => {
+        practiceProgress2.questions.forEach(q => { q.state = 'incorrect'; });
+        for (let i = 1; i <= itemQuestionCount('004'); i++) XAPI_Q_RESULTS['004/q' + i] = false;
+        return partResult();
+      });
+      const nA = plan.filter(Boolean).length;
+      ok(tag + ' + group B all wrong: success true, scaled ' + nA + '/3', fin.success === true && fin.score && Math.abs(fin.score.scaled - nA / 3) < 1e-9, JSON.stringify(fin));
       await p.close();
       continue;
     }
     ok(tag + ': stays on s3', r1.cur === 3, 'screen ' + r1.cur);
     ok(tag + ': component completed, success false', comp(r1.st).length === 1 && comp(r1.st)[0].result.success === false, JSON.stringify(comp(r1.st).map(x => x.result)));
+    ok(tag + ': and scaled ' + plan.filter(Boolean).length + '/3 — group A only', comp(r1.st).length === 1 && Math.abs(comp(r1.st)[0].result.score.scaled - plan.filter(Boolean).length / 3) < 1e-9, JSON.stringify(comp(r1.st).map(x => x.result)));
     ok(tag + ': the button is ended', r1.dis === true && r1.aria === 'true');
     await p.evaluate(() => { document.getElementById('s3-continue').disabled = false; document.getElementById('s3-continue').click(); goTo(4); });
     await new Promise(r => setTimeout(r, 300));
