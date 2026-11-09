@@ -62,8 +62,12 @@ function stationTally() {
 }
 
 /* The component result — sent on EVERY exit, failing ones included. A component without graded
-   items (04, the class task) reports success with no score. scaled is always the share of xAPI
-   sub-answers; success follows XAPI_STATION_PASS when the component declares one. */
+   items (04, the class task) reports success with no score. A component that declares
+   XAPI_STATION_PASS (02, 03) takes success AND scaled from that one count: the stations its first
+   screen promises, each correct only when all its parts are; scaled = correct stations / counted
+   stations (2026-11-09, 08.11 sheet fixes 1, 2, 6 — it was the share of every xAPI sub-answer,
+   03's group B included, so 2 of 4 questions passed at 0.33). Otherwise scaled is the share of
+   xAPI sub-answers and success scaled >= the pass threshold. */
 function partResult() {
   var items = (typeof XAPI_EVAL_ITEMS !== 'undefined') ? Object.keys(XAPI_EVAL_ITEMS) : [];
   var total = 0, ok = 0;
@@ -71,7 +75,7 @@ function partResult() {
   if (!total) return { success: true };
   var scaled = ok / total;
   var t = stationTally();
-  if (t) return { success: t.ok >= t.need, score: { scaled: scaled } };
+  if (t) return { success: t.ok >= t.need, score: { scaled: t.total ? t.ok / t.total : 0 } };
   return { success: scaled >= xapiPassScaled(), score: { scaled: scaled } };
 }
 
