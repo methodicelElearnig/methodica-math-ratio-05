@@ -789,7 +789,9 @@ function s4CheckStep(stepNum) {
   const stepDef = S4_STEPS[stepNum];
   s4State.answers[stepNum] = id;
   reportQ(['004', 'q' + stepNum], id === stepDef.correct, true,   /* guided: one attempt per step */
-    xapiAnswerText(document.querySelector('#s4-pills-' + stepNum + ' .s4-pill[data-id="' + id + '"]')));
+    /* step 1 is true/false (pills 'true' / 'false'): report the boolean, not "נכון" (guide §6.3b) */
+    (id === 'true' || id === 'false') ? id
+      : xapiAnswerText(document.querySelector('#s4-pills-' + stepNum + ' .s4-pill[data-id="' + id + '"]')));
   document.querySelectorAll('#s4-pills-' + stepNum + ' .s4-pill').forEach(function (b) {
     b.disabled = true;
     b.classList.remove('selected');

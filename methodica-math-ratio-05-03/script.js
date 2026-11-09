@@ -432,8 +432,9 @@ function s2P1Check() {
 
   const allCorrect = [1, 2, 3, 4].every(function (r) { return s2TfState.selected[r] === s2TfCorrect[r]; });
   [1, 2, 3, 4].forEach(function (r) {   /* item 002: q1..q4 are the four statements */
+    /* true/false: report the boolean picked ('true' / 'false'), not the "נכון" label (guide §6.3b) */
     reportQ(['002', 'q' + r], s2TfState.selected[r] === s2TfCorrect[r], allCorrect || s2TfState.attempts >= 2,
-      xapiAnswerText(document.getElementById('s2-r' + r + '-' + s2TfState.selected[r])));
+      s2TfState.selected[r]);
   });
   const explain = 'זוויות α ו-β הן זוויות צמודות ולכן סכומן הוא 180°, היחס בין α ל-β הוא 7 : 2.<br>לכן, גודלה של זווית β הוא <span dir="">140° = 180 · <span class="frac"><span class="frac-num">7</span><span class="frac-den">9</span></span></span>.<br>גודלה של זווית α הוא 40°, מכיוון ש:<br><span dir="ltr">180° − 40° = 140°</span>.';
 
@@ -620,6 +621,7 @@ function s5P2Check() { scqCheck('s5p2'); }
 
 SCQ_CFG_REGISTER('s5p3', {
   xapi: ['004', 'q3'],
+  tf: { a: 'true', b: 'false' },   /* כן / לא — a true/false question in the metadata */
   containerSel: '#s5-part-3',
   correctId: 'b',
   checkBtnId: 's5-p3-check',

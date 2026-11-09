@@ -156,8 +156,9 @@ function s3P3Check() {
 
   const allCorrect = [1, 2, 3].every(function (r) { return s3TfState.selected[r] === s3TfCorrect[r]; });
   [1, 2, 3].forEach(function (r) {   /* item 003: q2..q4 are the three statements */
+    /* true/false: report the boolean picked ('true' / 'false'), not the "נכון" label (guide §6.3b) */
     reportQ(['003', 'q' + (r + 1)], s3TfState.selected[r] === s3TfCorrect[r], allCorrect || s3TfState.attempts >= 2,
-      xapiAnswerText(document.getElementById('s3-p3-r' + r + '-' + s3TfState.selected[r])));
+      s3TfState.selected[r]);
   });
   const explain = '1. אם זווית <span dir="ltr">∢BAC</span> תהיה בת 100°, אז סכום שתי האחרות יהיה <span dir="ltr">180° − 100° = 80°</span>.<br>אם היחס הוא 3 : 5, אז גודל הזווית הקטנה מבין השתיים הוא : <span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> · 80 = 30°</span>.<br><br>2. מאחר והיחס הוא 3 : 5, כדי לקבל זוויות שלמות עלינו לקבל שסכום שתי הזוויות האחרות מתחלק ב-8 (8 = 3 + 5).<br><br>3. אם <span dir="ltr">∢BAC</span> תהיה בת 20°, אז גודלן של שתי האחרות הוא <span dir="">160° = 20 - 180</span>. מכיוון שהיחס הוא 5 : 3, אז נקבל:<br><span dir="ltr"><span class="frac"><span class="frac-num">3</span><span class="frac-den">8</span></span> · 160 = 60°</span> או <span dir="ltr"><span class="frac"><span class="frac-num">5</span><span class="frac-den">8</span></span> · 160 = 100°</span><br>ולא זווית ישרה (90°).';
 
