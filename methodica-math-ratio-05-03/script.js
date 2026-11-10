@@ -98,7 +98,7 @@ function mcqCheck(key) {
   const isCorrect = setsEqual(st.selected, correctSet);
   st.attempts++;
   reportQ(cfg.xapi, isCorrect, isCorrect || st.attempts >= 2,
-    xapiMultiAnswer(Array.from(st.selected), function (id) { return document.querySelector(cfg.containerSel + ' [data-id="' + id + '"]'); }));
+    { choices: Array.from(st.selected).map(function (id) { return xapiAnswerText(document.querySelector(cfg.containerSel + ' [data-id="' + id + '"]')); }) });   // '[,]' in answers order
 
   const fb = document.getElementById(cfg.feedboxId);
   const titleEl = fb.querySelector('.scq-fb-title-text');
@@ -259,7 +259,7 @@ function s1MixCheck(key) {
   const isCorrect = whiteOk && darkOk && ynOk;
   st.attempts++;
   reportQ(cfg.xapi, isCorrect, isCorrect || st.attempts >= 2,
-    xapiFieldsAnswer([cfg.whiteId, cfg.darkId]) + ' | ' + (xapiAnswerText(document.getElementById(st.yn === 'yes' ? cfg.ynYesId : cfg.ynNoId)) || '—'));
+    { steps: [whiteInput.value, darkInput.value, st.yn ? xapiAnswerText(document.getElementById(st.yn === 'yes' ? cfg.ynYesId : cfg.ynNoId)) : ''] });   // performance: white, dark, yes/no
 
   const fb = document.getElementById(cfg.feedbox);
   const titleEl = fb.querySelector('.scq-fb-title-text');
@@ -505,6 +505,7 @@ function resetScreenState2() {
    ========================================================= */
 VIQ_CFG_REGISTER('s3p1', {
   xapi: ['003', 'q1'],
+  xapiText: function (v) { return v[0] + ':' + v[1]; },   // Kata: '5:7'
   inputs: ['s3-p1-a', 's3-p1-b'], correct: [5, 7], checkBtn: 's3-p1-check', feedbox: 's3-p1-feedbox', revealBtn: 's3-p1-reveal-btn', nextScreen: null,
   correctMsg: { title: 'כל הכבוד, צדקתם!', body: 'רועי שילם 5 ש"ח ועינת שילמה 7 ש"ח, לכן יחס ההשקעה הוא 7 : 5.' },
   wrongOnce: { title: 'לא בדיוק.', body: 'נסו שוב.' },

@@ -99,8 +99,10 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
     const before = await placement(p);
     await touchDrag(p, '#s2-target-known .s2-eq-placed-card', '#s2-target-total');
     ok('touch: nothing moves after the check', JSON.stringify(await placement(p)) === JSON.stringify(before));
-    const q = await p.evaluate(() => __stmts().filter(s => /^answered/.test(s.verb)).map(s => s.result && s.result.extensions && String(s.result.extensions.student_answer)).filter(Boolean));
-    ok('touch: the answer was reported', q.some(r => /known: /.test(r)), JSON.stringify(q.slice(-2)));
+    /* 2026-11-11: result.response is Kata's matching pattern ('label[.]4[,]…'), no longer 'known: …' */
+    const q = await p.evaluate(() => __stmts().filter(s => /^answered/.test(s.verb)).map(s => s.result && s.result.response).filter(Boolean));
+    const pat = await p.evaluate(() => { const q = METADATA.subContent.find(s => /-003\/?$/.test(s.id)).questions.find(q => /\/q2$/.test(q.questionId)); return q.correctXapiResponsesPattern; });
+    ok('touch: the answer was reported as Kata pattern', q.some(r => pat.indexOf(r) !== -1), JSON.stringify(q.slice(-2)));
     ok('touch: no page error', !p.__errs.length, p.__errs.slice(0, 2).join(' | '));
     await p.close();
   }

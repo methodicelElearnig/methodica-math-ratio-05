@@ -194,8 +194,17 @@ function viqReport(cfg, inputs, correctFlags, isLast) {
   });
   order.forEach(function (k) {
     const g = groups[k];
-    reportQ(g.ref, g.ok, isLast, xapiFieldsAnswer(g.ids));
+    reportQ(g.ref, g.ok, isLast, viqXapiAnswer(cfg, g.ref, g.ids));
   });
+}
+
+/* xAPI answer for one question's input group (2026-11-11, MOE runbook: response = Kata's pattern).
+   The typed values in input order; 20-xapi.js picks by the metadata type: numeric takes the first,
+   performance takes them as steps, fill-in takes cfg.xapiText(values, ref) — the page's own
+   spelling, e.g. 'A (5,25)' — or the values. No input ids any more ('s1-a=21'). */
+function viqXapiAnswer(cfg, ref, ids) {
+  const vals = ids.map(function (id) { return (document.getElementById(id) || {}).value || ''; });
+  return { value: vals[0], steps: vals, values: cfg.xapiText ? [cfg.xapiText(vals, ref)] : vals };
 }
 
 /* Toggle: correct values ⇄ the learner's own answer (from snapshot).

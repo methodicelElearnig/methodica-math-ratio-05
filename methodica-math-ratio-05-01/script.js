@@ -577,11 +577,14 @@ function s2EIsAllCorrect() {
 }
 
 /* The learner's placements, target by target: 'targetLabel: card | …' */
+/* xAPI (003/q2, matching): each placed card's label -> the number of the equation slot it sits on,
+   'label[.]number[,]…' as Kata's pattern (2026-11-11; was 'known: … | total: …'). */
+const S2E_XAPI_TARGET = { 's2-target-known': '4', 's2-target-total': '7', 's2-target-groupsize': '70', 's2-target-knownsize': '40' };
 function s2EAnswerText() {
-  return Object.keys(S2_DDQ_CORRECT).map(function (t) {
+  return { pairs: Object.keys(S2_DDQ_CORRECT).map(function (t) {
     const placed = Object.keys(s2EPlacement).find(function (k) { return s2EPlacement[k] === t; });
-    return t.replace(/^s2-target-/, '') + ': ' + (placed ? xapiAnswerText(document.getElementById(placed)) : '—');
-  }).join(' | ');
+    return placed ? { source: xapiAnswerText(document.getElementById(placed)), target: S2E_XAPI_TARGET[t] } : null;
+  }).filter(Boolean) };
 }
 
 function s2ECheck() {

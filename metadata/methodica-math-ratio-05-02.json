@@ -35,7 +35,9 @@
           "answers": [],
           "correctAnswers": [
             21
-          ]
+          ],
+          "xapiInteractionComponents": null,
+          "correctXapiResponsesPattern": ["21"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-02/methodica-math-ratio-05-02-001/q2",
@@ -44,7 +46,9 @@
           "answers": [],
           "correctAnswers": [
             9
-          ]
+          ],
+          "xapiInteractionComponents": null,
+          "correctXapiResponsesPattern": ["9"]
         }
       ]
     },
@@ -62,7 +66,9 @@
           "answers": [],
           "correctAnswers": [
             "A (5,25)"
-          ]
+          ],
+          "xapiInteractionComponents": null,
+          "correctXapiResponsesPattern": ["A (5,25)"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-02/methodica-math-ratio-05-02-002/q2",
@@ -71,7 +77,9 @@
           "answers": [],
           "correctAnswers": [
             "B (25,25)"
-          ]
+          ],
+          "xapiInteractionComponents": null,
+          "correctXapiResponsesPattern": ["B (25,25)"]
         }
       ]
     },
@@ -94,43 +102,58 @@
           ],
           "correctAnswers": [
             "45°, 75°"
-          ]
+          ],
+          "xapiInteractionComponents": {
+            "choices": [
+              {"id": "30°, 50°", "description": "30°, 50°"},
+              {"id": "45°, 75°", "description": "45°, 75°"},
+              {"id": "40°, 80°", "description": "40°, 80°"},
+              {"id": "36°, 60°", "description": "36°, 60°"}
+            ]
+          },
+          "correctXapiResponsesPattern": ["45°, 75°"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-02/methodica-math-ratio-05-02-003/q2",
           "questionType": "true-false",
           "questionText": "אם זווית ∢BAC תהיה בת 100°, אז הזווית הנוספת, הקטנה מבין השתיים האחרות, תהיה בת 30° (בהנחה שהיחס בין שתי הזוויות האחרות נשאר 3:5).",
           "answers": [
-            "נכון",
-            "לא נכון"
+            "true",
+            "false"
           ],
           "correctAnswers": [
-            "נכון"
-          ]
+            "true"
+          ],
+          "xapiInteractionComponents": null,
+          "correctXapiResponsesPattern": ["true"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-02/methodica-math-ratio-05-02-003/q3",
           "questionType": "true-false",
           "questionText": "כדי לקבל זוויות שגודלן הוא מספר שלם, סכום שתי הזוויות האחרות חייב להיות מספר שמתחלק ב-8 ללא שארית.",
           "answers": [
-            "נכון",
-            "לא נכון"
+            "true",
+            "false"
           ],
           "correctAnswers": [
-            "נכון"
-          ]
+            "true"
+          ],
+          "xapiInteractionComponents": null,
+          "correctXapiResponsesPattern": ["true"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-02/methodica-math-ratio-05-02-003/q4",
           "questionType": "true-false",
           "questionText": "אם זווית ∢BAC תשתנה לזווית בת 20°, אחת מהזוויות האחרות של המשולש תהיה זווית ישרה.",
           "answers": [
-            "נכון",
-            "לא נכון"
+            "true",
+            "false"
           ],
           "correctAnswers": [
-            "לא נכון"
-          ]
+            "false"
+          ],
+          "xapiInteractionComponents": null,
+          "correctXapiResponsesPattern": ["false"]
         }
       ]
     },
@@ -152,7 +175,15 @@
           ],
           "correctAnswers": [
             "נופר"
-          ]
+          ],
+          "xapiInteractionComponents": {
+            "choices": [
+              {"id": "דניאל", "description": "דניאל"},
+              {"id": "נופר", "description": "נופר"},
+              {"id": "מספר המישחים בהם השתתפו זהה.", "description": "מספר המישחים בהם השתתפו זהה."}
+            ]
+          },
+          "correctXapiResponsesPattern": ["נופר"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-02/methodica-math-ratio-05-02-004/q2",
@@ -165,7 +196,15 @@
           ],
           "correctAnswers": [
             "דניאל"
-          ]
+          ],
+          "xapiInteractionComponents": {
+            "choices": [
+              {"id": "דניאל", "description": "דניאל"},
+              {"id": "נופר", "description": "נופר"},
+              {"id": "שניהם ניצחו באותו מספר מישחים.", "description": "שניהם ניצחו באותו מספר מישחים."}
+            ]
+          },
+          "correctXapiResponsesPattern": ["דניאל"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-02/methodica-math-ratio-05-02-004/q3",
@@ -174,7 +213,9 @@
           "answers": [],
           "correctAnswers": [
             20
-          ]
+          ],
+          "xapiInteractionComponents": null,
+          "correctXapiResponsesPattern": ["20"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-02/methodica-math-ratio-05-02-004/q4",
@@ -183,7 +224,9 @@
           "answers": [],
           "correctAnswers": [
             32
-          ]
+          ],
+          "xapiInteractionComponents": null,
+          "correctXapiResponsesPattern": ["32"]
         }
       ]
     }
