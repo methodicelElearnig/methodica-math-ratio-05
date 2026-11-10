@@ -35,7 +35,9 @@
           "answers": [],
           "correctAnswers": [
             216
-          ]
+          ],
+          "xapiInteractionComponents": null,
+          "correctXapiResponsesPattern": ["216"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-06/methodica-math-ratio-05-06-001/q2",
@@ -44,7 +46,9 @@
           "answers": [],
           "correctAnswers": [
             80
-          ]
+          ],
+          "xapiInteractionComponents": null,
+          "correctXapiResponsesPattern": ["80"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-06/methodica-math-ratio-05-06-001/q3",
@@ -53,7 +57,9 @@
           "answers": null,
           "correctAnswers": [
             "28"
-          ]
+          ],
+          "xapiInteractionComponents": null,
+          "correctXapiResponsesPattern": ["28"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-06/methodica-math-ratio-05-06-001/q4",
@@ -62,7 +68,9 @@
           "answers": null,
           "correctAnswers": [
             "26"
-          ]
+          ],
+          "xapiInteractionComponents": null,
+          "correctXapiResponsesPattern": ["26"]
         }
       ]
     }

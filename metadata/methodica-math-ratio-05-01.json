@@ -46,7 +46,14 @@
           ],
           "correctAnswers": [
             "משלחת ב'"
-          ]
+          ],
+          "xapiInteractionComponents": {
+            "choices": [
+              {"id": "משלחת א'", "description": "משלחת א'"},
+              {"id": "משלחת ב'", "description": "משלחת ב'"}
+            ]
+          },
+          "correctXapiResponsesPattern": ["משלחת ב'"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-002/q2",
@@ -59,7 +66,15 @@
           ],
           "correctAnswers": [
             "40"
-          ]
+          ],
+          "xapiInteractionComponents": {
+            "choices": [
+              {"id": "20", "description": "20"},
+              {"id": "40", "description": "40"},
+              {"id": "32", "description": "32"}
+            ]
+          },
+          "correctXapiResponsesPattern": ["40"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-002/q3",
@@ -71,7 +86,14 @@
           ],
           "correctAnswers": [
             "משלחת א': כי בה כל 4 משתתפות או משתתפים כבר זכו במדליה (לעומת 8 במשלחת ב')"
-          ]
+          ],
+          "xapiInteractionComponents": {
+            "choices": [
+              {"id": "משלחת א': כי בה כל 4 משתתפות או משתתפים כבר זכו במדליה (לעומת 8 במשלחת ב')", "description": "משלחת א': כי בה כל 4 משתתפות או משתתפים כבר זכו במדליה (לעומת 8 במשלחת ב')"},
+              {"id": "משלחת ב': כי על כל מדליה יש בה פי 2 יותר משתתפות ומשתתפים.", "description": "משלחת ב': כי על כל מדליה יש בה פי 2 יותר משתתפות ומשתתפים."}
+            ]
+          },
+          "correctXapiResponsesPattern": ["משלחת א': כי בה כל 4 משתתפות או משתתפים כבר זכו במדליה (לעומת 8 במשלחת ב')"]
         }
       ]
     },
@@ -93,7 +115,15 @@
           ],
           "correctAnswers": [
             "10"
-          ]
+          ],
+          "xapiInteractionComponents": {
+            "choices": [
+              {"id": "10", "description": "10"},
+              {"id": "11", "description": "11"},
+              {"id": "12", "description": "12"}
+            ]
+          },
+          "correctXapiResponsesPattern": ["10"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-003/q2",
@@ -130,6 +160,23 @@
               "source": "הגודל של החלק הידוע לפי היחס",
               "target": "40"
             }
+          ],
+          "xapiInteractionComponents": {
+            "source": [
+              {"id": "גודל הקבוצה", "description": "גודל הקבוצה"},
+              {"id": "הגודל של החלק הידוע לפי היחס", "description": "הגודל של החלק הידוע לפי היחס"},
+              {"id": "החלק הידוע לפי היחס", "description": "החלק הידוע לפי היחס"},
+              {"id": "סך החלקים לפי היחס", "description": "סך החלקים לפי היחס"}
+            ],
+            "target": [
+              {"id": "4", "description": "4"},
+              {"id": "7", "description": "7"},
+              {"id": "70", "description": "70"},
+              {"id": "40", "description": "40"}
+            ]
+          },
+          "correctXapiResponsesPattern": [
+            "החלק הידוע לפי היחס[.]4[,]סך החלקים לפי היחס[.]7[,]גודל הקבוצה[.]70[,]הגודל של החלק הידוע לפי היחס[.]40"
           ]
         }
       ]
@@ -156,7 +203,9 @@
           "answers": [],
           "correctAnswers": [
             12
-          ]
+          ],
+          "xapiInteractionComponents": null,
+          "correctXapiResponsesPattern": ["12"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-005/q2",
@@ -165,7 +214,9 @@
           "answers": [],
           "correctAnswers": [
             24
-          ]
+          ],
+          "xapiInteractionComponents": null,
+          "correctXapiResponsesPattern": ["24"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-005/q3",
@@ -174,7 +225,9 @@
           "answers": [],
           "correctAnswers": [
             36
-          ]
+          ],
+          "xapiInteractionComponents": null,
+          "correctXapiResponsesPattern": ["36"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-005/q4",
@@ -183,7 +236,9 @@
           "answers": [],
           "correctAnswers": [
             18
-          ]
+          ],
+          "xapiInteractionComponents": null,
+          "correctXapiResponsesPattern": ["18"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-005/q5",
@@ -192,7 +247,9 @@
           "answers": [],
           "correctAnswers": [
             72
-          ]
+          ],
+          "xapiInteractionComponents": null,
+          "correctXapiResponsesPattern": ["72"]
         }
       ]
     }

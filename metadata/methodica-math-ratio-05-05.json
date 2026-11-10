@@ -35,7 +35,9 @@
           "answers": [],
           "correctAnswers": [
             "∢A = 45°, ∢B = 67.5°, ∢C = 67.5°"
-          ]
+          ],
+          "xapiInteractionComponents": null,
+          "correctXapiResponsesPattern": ["∢A = 45°, ∢B = 67.5°, ∢C = 67.5°"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-05/methodica-math-ratio-05-05-001/q2",
@@ -48,7 +50,15 @@
           ],
           "correctAnswers": [
             "לא"
-          ]
+          ],
+          "xapiInteractionComponents": {
+            "choices": [
+              {"id": "כן", "description": "כן"},
+              {"id": "לא", "description": "לא"},
+              {"id": "לא ניתן לדעת", "description": "לא ניתן לדעת"}
+            ]
+          },
+          "correctXapiResponsesPattern": ["לא"]
         }
       ]
     },
@@ -66,7 +76,9 @@
           "answers": [],
           "correctAnswers": [
             "אורך צלע CD הוא: 12 ס\"מ, אורך צלע DB הוא: 4 ס\"מ"
-          ]
+          ],
+          "xapiInteractionComponents": null,
+          "correctXapiResponsesPattern": ["אורך צלע CD הוא: 12 ס\"מ, אורך צלע DB הוא: 4 ס\"מ"]
         }
       ]
     },
@@ -84,7 +96,9 @@
           "answers": [],
           "correctAnswers": [
             "סך הכל: 60 ליטר, צהוב: 30 ליטר, כחול: 18 ליטר"
-          ]
+          ],
+          "xapiInteractionComponents": null,
+          "correctXapiResponsesPattern": ["סך הכל: 60 ליטר, צהוב: 30 ליטר, כחול: 18 ליטר"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-05/methodica-math-ratio-05-05-003/q2",
@@ -98,7 +112,16 @@
           ],
           "correctAnswers": [
             "היחס החדש הוא 4 : 3 : 5, ולכן חלקו של הצבע השחור בתערובת גדל."
-          ]
+          ],
+          "xapiInteractionComponents": {
+            "choices": [
+              {"id": "היחס החדש הוא 4 : 6 : 10, ולכן הגוון נשאר בדיוק אותו הדבר", "description": "היחס החדש הוא 4 : 6 : 10, ולכן הגוון נשאר בדיוק אותו הדבר"},
+              {"id": "היחס החדש הוא 4 : 3 : 5, ולכן חלקו של הצבע השחור בתערובת גדל.", "description": "היחס החדש הוא 4 : 3 : 5, ולכן חלקו של הצבע השחור בתערובת גדל."},
+              {"id": "היחס החדש הוא 4 : 5 : 7, כי הוספנו 2 יחידות לכל צבע כדי לשמור על איזון.", "description": "היחס החדש הוא 4 : 5 : 7, כי הוספנו 2 יחידות לכל צבע כדי לשמור על איזון."},
+              {"id": "לא ניתן לדעת את היחס החדש מבלי לדעת את הכמות המדויקת של הליטרים שהוסיפו.", "description": "לא ניתן לדעת את היחס החדש מבלי לדעת את הכמות המדויקת של הליטרים שהוסיפו."}
+            ]
+          },
+          "correctXapiResponsesPattern": ["היחס החדש הוא 4 : 3 : 5, ולכן חלקו של הצבע השחור בתערובת גדל."]
         }
       ]
     }
