@@ -30,14 +30,22 @@
       "questions": [
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-05/methodica-math-ratio-05-05-001/q1",
-          "questionType": "fill-in",
+          "questionType": "performance",
           "questionText": "א. משולש שווה-שוקיים ABC (AB=AC), היחס בין זווית הראש לסכום שתי זוויות הבסיס הוא 3:1. חשבו את שלוש זוויות המשולש.",
-          "answers": [],
+          "answers": null,
           "correctAnswers": [
-            "∢A = 45°, ∢B = 67.5°, ∢C = 67.5°"
+            {"stepId": "∢A", "response": "45"},
+            {"stepId": "∢B", "response": "67.5"},
+            {"stepId": "∢C", "response": "67.5"}
           ],
-          "xapiInteractionComponents": null,
-          "correctXapiResponsesPattern": ["∢A = 45°, ∢B = 67.5°, ∢C = 67.5°"]
+          "xapiInteractionComponents": {
+            "steps": [
+              {"id": "∢A", "description": null},
+              {"id": "∢B", "description": null},
+              {"id": "∢C", "description": null}
+            ]
+          },
+          "correctXapiResponsesPattern": ["∢A[.]45[,]∢B[.]67.5[,]∢C[.]67.5"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-05/methodica-math-ratio-05-05-001/q2",
@@ -71,14 +79,20 @@
       "questions": [
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-05/methodica-math-ratio-05-05-002/q1",
-          "questionType": "fill-in",
+          "questionType": "performance",
           "questionText": "נקודה D נמצאת על הצלע CB במשולש ABC. יחס שטחי המשולשים ACD:ADB=3:1, שטח משולש ABC=64 סמ\"ר, הגובה AE=8 ס\"מ. השלימו: אורך צלע CD הוא: ___, אורך צלע DB הוא: ___",
-          "answers": [],
+          "answers": null,
           "correctAnswers": [
-            "אורך צלע CD הוא: 12 ס\"מ, אורך צלע DB הוא: 4 ס\"מ"
+            {"stepId": "אורך צלע CD", "response": "12"},
+            {"stepId": "אורך צלע DB", "response": "4"}
           ],
-          "xapiInteractionComponents": null,
-          "correctXapiResponsesPattern": ["אורך צלע CD הוא: 12 ס\"מ, אורך צלע DB הוא: 4 ס\"מ"]
+          "xapiInteractionComponents": {
+            "steps": [
+              {"id": "אורך צלע CD", "description": null},
+              {"id": "אורך צלע DB", "description": null}
+            ]
+          },
+          "correctXapiResponsesPattern": ["אורך צלע CD[.]12[,]אורך צלע DB[.]4"]
         }
       ]
     },
@@ -91,14 +105,22 @@
       "questions": [
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-05/methodica-math-ratio-05-05-003/q1",
-          "questionType": "fill-in",
+          "questionType": "performance",
           "questionText": "א. מפעל מערבב צבעים צהוב:כחול:שחור ביחס של 2:3:5. ידוע כי יש 12 ליטר צבע שחור. השלימו את הכמויות: מהו סך כל הליטרים? כמה ליטרים צהוב? כמה ליטרים כחול?",
-          "answers": [],
+          "answers": null,
           "correctAnswers": [
-            "סך הכל: 60 ליטר, צהוב: 30 ליטר, כחול: 18 ליטר"
+            {"stepId": "סך הכל", "response": "60"},
+            {"stepId": "צהוב", "response": "30"},
+            {"stepId": "כחול", "response": "18"}
           ],
-          "xapiInteractionComponents": null,
-          "correctXapiResponsesPattern": ["סך הכל: 60 ליטר, צהוב: 30 ליטר, כחול: 18 ליטר"]
+          "xapiInteractionComponents": {
+            "steps": [
+              {"id": "סך הכל", "description": null},
+              {"id": "צהוב", "description": null},
+              {"id": "כחול", "description": null}
+            ]
+          },
+          "correctXapiResponsesPattern": ["סך הכל[.]60[,]צהוב[.]30[,]כחול[.]18"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-05/methodica-math-ratio-05-05-003/q2",

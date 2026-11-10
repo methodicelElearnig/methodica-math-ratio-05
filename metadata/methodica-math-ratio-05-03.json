@@ -32,21 +32,41 @@
       "questions": [
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-001/q1",
-          "questionType": "other",
+          "questionType": "performance",
           "questionText": "א. תבנית בת 50 שקעים, יחס פרחי שוקולד לבן:מריר = 9:1. מלאו: מספר פרחי שוקולד לבנים, מספר פרחי שוקולד מריר, והאם נשארו שקעים ריקים.",
-          "answers": "מספר פרחי שוקולד לבנים: 5, מספר פרחי שוקולד מריר: 45, האם נשארו שקעים ריקים: לא",
-          "correctAnswers": [],
-          "xapiInteractionComponents": null,
-          "correctXapiResponsesPattern": []
+          "answers": null,
+          "correctAnswers": [
+            {"stepId": "מספר פרחי השוקולד הלבנים בתבנית", "response": "5"},
+            {"stepId": "מספר פרחי השוקולד המריר בתבנית", "response": "45"},
+            {"stepId": "האם נשארו שקעים ריקים", "response": "לא"}
+          ],
+          "xapiInteractionComponents": {
+            "steps": [
+              {"id": "מספר פרחי השוקולד הלבנים בתבנית", "description": null},
+              {"id": "מספר פרחי השוקולד המריר בתבנית", "description": null},
+              {"id": "האם נשארו שקעים ריקים", "description": null}
+            ]
+          },
+          "correctXapiResponsesPattern": ["מספר פרחי השוקולד הלבנים בתבנית[.]5[,]מספר פרחי השוקולד המריר בתבנית[.]45[,]האם נשארו שקעים ריקים[.]לא"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-001/q2",
-          "questionType": "other",
+          "questionType": "performance",
           "questionText": "ב. אותה תבנית, יחס לבן:מריר = 3:1. מלאו: מספר פרחי שוקולד לבנים, מספר פרחי שוקולד מריר, והאם נשארו שקעים ריקים.",
-          "answers": "מספר פרחי שוקולד לבנים: 12, מספר פרחי שוקולד מריר: 36, האם נשארו שקעים ריקים: כן",
-          "correctAnswers": [],
-          "xapiInteractionComponents": null,
-          "correctXapiResponsesPattern": []
+          "answers": null,
+          "correctAnswers": [
+            {"stepId": "מספר פרחי השוקולד הלבנים בתבנית", "response": "12"},
+            {"stepId": "מספר פרחי השוקולד המריר בתבנית", "response": "36"},
+            {"stepId": "האם נשארו שקעים ריקים", "response": "כן"}
+          ],
+          "xapiInteractionComponents": {
+            "steps": [
+              {"id": "מספר פרחי השוקולד הלבנים בתבנית", "description": null},
+              {"id": "מספר פרחי השוקולד המריר בתבנית", "description": null},
+              {"id": "האם נשארו שקעים ריקים", "description": null}
+            ]
+          },
+          "correctXapiResponsesPattern": ["מספר פרחי השוקולד הלבנים בתבנית[.]12[,]מספר פרחי השוקולד המריר בתבנית[.]36[,]האם נשארו שקעים ריקים[.]כן"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-001/q3",
@@ -222,14 +242,20 @@
       "questions": [
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-004/q1",
-          "questionType": "fill-in",
+          "questionType": "performance",
           "questionText": "א. נעמי ויוני שטפו מכוניות ברחוב וחילקו את הרווח (210 ש\"ח) לפי יחס שעות העבודה שלהם (2:5). כמה יקבל כל אחד?",
-          "answers": [],
+          "answers": null,
           "correctAnswers": [
-            "נעמי תקבל: 60 ש\"ח, יוני יקבל: 150 ש\"ח"
+            {"stepId": "נעמי תקבל", "response": "60"},
+            {"stepId": "יוני יקבל", "response": "150"}
           ],
-          "xapiInteractionComponents": null,
-          "correctXapiResponsesPattern": ["נעמי תקבל: 60 ש\"ח, יוני יקבל: 150 ש\"ח"]
+          "xapiInteractionComponents": {
+            "steps": [
+              {"id": "נעמי תקבל", "description": null},
+              {"id": "יוני יקבל", "description": null}
+            ]
+          },
+          "correctXapiResponsesPattern": ["נעמי תקבל[.]60[,]יוני יקבל[.]150"]
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-004/q2",
