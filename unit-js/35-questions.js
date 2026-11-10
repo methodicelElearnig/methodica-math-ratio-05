@@ -16,7 +16,9 @@ function VIQ_CFG_REGISTER(key, cfg) { VIQ_CFG[key] = cfg; }
 /* ---------- SingleChoiceQuestion ----------
    cfg: { containerSel, correctId, checkBtnId, feedboxId,
           correctMsg, wrongOnce, wrongFinal: {title, body}, onDone?,
-          xapi?: [itemSuffix, qKey] — reported as answered / answered.last } */
+          xapi?: [itemSuffix, qKey] — reported as answered / answered.last,
+          tf?: { optionId: 'true' | 'false' } — a true/false question: report the boolean, never the
+               label on the button (guide §6.3b; Kata compares response with 'true' / 'false') } */
 const scqState = {};
 
 function scqSelect(key, id) {
@@ -61,7 +63,7 @@ function scqCheck(key) {
 
   const chosenEl = document.querySelector(cfg.containerSel + ' [data-id="' + st.selected + '"]');
   const correctEl = document.querySelector(cfg.containerSel + ' [data-id="' + cfg.correctId + '"]');
-  reportQ(cfg.xapi, isCorrect, isCorrect || st.attempts >= 2, xapiAnswerText(chosenEl));
+  reportQ(cfg.xapi, isCorrect, isCorrect || st.attempts >= 2, cfg.tf ? cfg.tf[st.selected] : xapiAnswerText(chosenEl));
 
   if (isCorrect) {
     if (chosenEl) chosenEl.classList.add('correct');

@@ -19,7 +19,7 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
     await page.setViewport({ width: 1180, height: 820, hasTouch: !!touch, isMobile: !!touch });
     page.__errs = [];
     page.on('pageerror', e => page.__errs.push(e.message));
-    const url = BASE + 'methodica-math-ratio-05-' + u + '/index.html?xapiLib=../_test/xapi-720-k.js';
+    const url = BASE + 'methodica-math-ratio-05-' + u + '/index.html?xapiLib=../_test/xapi-720-l.js';
     await page.goto(url, { waitUntil: 'networkidle0' });
     await page.evaluate(() => { __reset(); try { localStorage.clear(); } catch (e) {} });
     await page.goto(url, { waitUntil: 'networkidle0' });

@@ -53,7 +53,7 @@ window.__S = {
     const errs = [];
     page.on('pageerror', e => errs.push(e.message));
     page.on('console', m => { if (m.type() === 'error' && !/favicon|404/.test(m.text())) errs.push(m.text()); });
-    const url = BASE + 'methodica-math-ratio-05-' + u + '/index.html?xapiLib=../_test/xapi-720-k.js';
+    const url = BASE + 'methodica-math-ratio-05-' + u + '/index.html?xapiLib=../_test/xapi-720-l.js';
     page.__url = url; page.__errs = errs;
     await page.goto(url, { waitUntil: 'networkidle0' });
     if (!(opts && opts.keep)) {
