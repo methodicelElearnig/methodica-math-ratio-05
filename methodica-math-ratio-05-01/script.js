@@ -788,10 +788,10 @@ function s4CheckStep(stepNum) {
   if (!id) return;
   const stepDef = S4_STEPS[stepNum];
   s4State.answers[stepNum] = id;
-  reportQ(['004', 'q' + stepNum], id === stepDef.correct, true,   /* guided: one attempt per step */
-    /* step 1 is true/false (pills 'true' / 'false'): report the boolean, not "נכון" (guide §6.3b) */
-    (id === 'true' || id === 'false') ? id
-      : xapiAnswerText(document.querySelector('#s4-pills-' + stepNum + ' .s4-pill[data-id="' + id + '"]')));
+  /* A guided walk-through, not a test (10.11.26, unit owner): its steps report NO answer, item 004
+     declares no question (Kata, metadata/) and is not in XAPI_EVAL_ITEMS, so it never enters a
+     score. The pick is still committed — save it as reportQ used to. */
+  try { flushAfterCommit(); } catch (e) {}
   document.querySelectorAll('#s4-pills-' + stepNum + ' .s4-pill').forEach(function (b) {
     b.disabled = true;
     b.classList.remove('selected');
@@ -1202,7 +1202,7 @@ var XAPI_COMP_SLUG = 'methodica-math-ratio-05-01';
 var XAPI_COMP_ID   = XAPI_ID_PREFIX + XAPI_COMP_SLUG + '/';
 var XAPI_METADATA_FILE = '../metadata/methodica-math-ratio-05-01.json';
 var SCREEN_TO_SUBCONTENT = { 0: ['001', 1], 1: ['002', 1], 2: ['003', 1], 3: ['004', 1], 4: ['004', 2], 5: ['005', 1], 6: ['005', 2] };
-var XAPI_EVAL_ITEMS = { '002': 1, '003': 1, '004': 1, '005': 1 };   /* items with code-graded questions */
+var XAPI_EVAL_ITEMS = { '002': 1, '003': 1, '005': 1 };   /* items with code-graded questions; 004 is the guided walk-through (no question, no score) */
 
 /* ═══════════════ Resume — this component's own answer variables (45-resume-part.js) ═══════════════ */
 function partCaptureVars() {
