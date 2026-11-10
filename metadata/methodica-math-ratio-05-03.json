@@ -7,7 +7,7 @@
   "recommendedAfterFail": [
     "methodica-math-ratio-05-02"
   ],
-  "isRequired": true,
+  "isRequired": false,
   "relativeDifficulty": 2,
   "masteryLevel": null,
   "order": 3,
@@ -32,21 +32,17 @@
       "questions": [
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-001/q1",
-          "questionType": "fill-in",
+          "questionType": "other",
           "questionText": "א. תבנית בת 50 שקעים, יחס פרחי שוקולד לבן:מריר = 9:1. מלאו: מספר פרחי שוקולד לבנים, מספר פרחי שוקולד מריר, והאם נשארו שקעים ריקים.",
-          "answers": [],
-          "correctAnswers": [
-            "מספר פרחי שוקולד לבנים: 5, מספר פרחי שוקולד מריר: 45, האם נשארו שקעים ריקים: לא"
-          ]
+          "answers": "מספר פרחי שוקולד לבנים: 5, מספר פרחי שוקולד מריר: 45, האם נשארו שקעים ריקים: לא",
+          "correctAnswers": []
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-001/q2",
-          "questionType": "fill-in",
+          "questionType": "other",
           "questionText": "ב. אותה תבנית, יחס לבן:מריר = 3:1. מלאו: מספר פרחי שוקולד לבנים, מספר פרחי שוקולד מריר, והאם נשארו שקעים ריקים.",
-          "answers": [],
-          "correctAnswers": [
-            "מספר פרחי שוקולד לבנים: 12, מספר פרחי שוקולד מריר: 36, האם נשארו שקעים ריקים: כן"
-          ]
+          "answers": "מספר פרחי שוקולד לבנים: 12, מספר פרחי שוקולד מריר: 36, האם נשארו שקעים ריקים: כן",
+          "correctAnswers": []
         },
         {
           "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-03/methodica-math-ratio-05-03-001/q3",
@@ -75,11 +71,11 @@
           "questionType": "true-false",
           "questionText": "זוויות α ו-β הן זוויות קודקודיות ולכן הן זוויות שוות.",
           "answers": [
-            "נכון",
-            "לא נכון"
+            "true",
+            "false"
           ],
           "correctAnswers": [
-            "לא נכון"
+            "false"
           ]
         },
         {
@@ -87,11 +83,11 @@
           "questionType": "true-false",
           "questionText": "גודלה של זווית α הוא 40°.",
           "answers": [
-            "נכון",
-            "לא נכון"
+            "true",
+            "false"
           ],
           "correctAnswers": [
-            "נכון"
+            "true"
           ]
         },
         {
@@ -99,11 +95,11 @@
           "questionType": "true-false",
           "questionText": "גודלה של זווית β הוא 7/9 · 180° = 140°.",
           "answers": [
-            "נכון",
-            "לא נכון"
+            "true",
+            "false"
           ],
           "correctAnswers": [
-            "נכון"
+            "true"
           ]
         },
         {
@@ -111,11 +107,11 @@
           "questionType": "true-false",
           "questionText": "זוויות α ו-β הן זוויות צמודות ולכן סכומן הוא 180°.",
           "answers": [
-            "נכון",
-            "לא נכון"
+            "true",
+            "false"
           ],
           "correctAnswers": [
-            "נכון"
+            "true"
           ]
         }
       ]
@@ -202,11 +198,11 @@
           "questionType": "true-false",
           "questionText": "ג. אחים קנו יחד כרטיס פיס בזוגי וזכו ב-90 ש\"ח, וצריכים לחלק אותם ביחס 5:2 לפי ההשקעה שלהם. האם ניתן לחלק את הסכום בשטרות שלמים בלבד (ללא צורך בעודף)?",
           "answers": [
-            "כן",
-            "לא"
+            "true",
+            "false"
           ],
           "correctAnswers": [
-            "לא"
+            "false"
           ]
         }
       ]

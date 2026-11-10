@@ -5,7 +5,11 @@
   "learningObjective": "MOE.MATH.G8.NUM.RATIO-PROP-SCL.RATIO.REAS",
   "targetSectors": [
     "state-general",
-    "state-religious"
+    "state-religious",
+    "orthodox",
+    "arab-sector",
+    "druze-sector",
+    "bedouin-sector"
   ],
   "targetAudience": "general",
   "manufacturer": "310"
