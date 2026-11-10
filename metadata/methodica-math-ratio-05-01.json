@@ -140,59 +140,7 @@
       "informationToBot": "מטרת הפריט: להדגים ללומד/ת שלב-אחר-שלב, יחד עם דמות מלווה, פתרון מלא של תרגיל חלוקה ביחס (56 גולות ביחס 2:5 בין אורי לדן), כהכנה לתרגול עצמאי בהמשך הרכיב. מה התלמיד אמור להבין/לתרגל: זיהוי החלק היחסי של כל צד (2/7, 5/7) מתוך סכום חלקי היחס (2+5=7); הכפלת השבר בסך הכול לקבלת כמות בפועל; שיטות חלופיות (חיסור, קיבוץ) לאימות התוצאה. כיווני חשיבה ואסטרטגיות: לוודא שסכום שני החלקים (16+40=56) מתאים לסך הכולל; להכיר כמה דרכים מקבילות לאותה תוצאה. טעויות נפוצות: בחירת 4/7 או 2/5 במקום 5/7 עבור החלק של דן; טעויות חישוב בהכפלת שבר בסכום (20 או 18 במקום 16). מידע נוסף: תרגול מונחה בממשק שני-פאנלים (מחברת עם הבעיה המקורית + כרטיס 'שלב מודרך') - mediaFormat: text לפי הכלל הקבוע לתרגול מונחה, גם שה-questions אינו ריק (הלומד צופה בפתרון עם הדמות, לא עונה בעצמו). מסך מעבר קודם ('בואו נפתור תרגיל אחד יחד') מתקפל לתוך פריט זה. צילום מסך: לא צורף.",
       "contentType": "solved-exercise",
       "mediaFormat": "text",
-      "questions": [
-        {
-          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-004/q1",
-          "questionType": "true-false",
-          "questionText": "א. האם נכון שיש לאורי 2/7 מהגולות?",
-          "answers": [
-            "נכון",
-            "לא נכון"
-          ],
-          "correctAnswers": [
-            "נכון"
-          ]
-        },
-        {
-          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-004/q2",
-          "questionType": "choice",
-          "questionText": "ב. איזה חלק קיבל דן?",
-          "answers": [
-            "5/7",
-            "4/7",
-            "2/5"
-          ],
-          "correctAnswers": [
-            "5/7"
-          ]
-        },
-        {
-          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-004/q3",
-          "questionType": "choice",
-          "questionText": "ג. 2/7 · 56 = ?",
-          "answers": [
-            "18",
-            "20",
-            "16"
-          ],
-          "correctAnswers": [
-            "16"
-          ]
-        },
-        {
-          "questionId": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-004/q4",
-          "questionType": "choice",
-          "questionText": "ד. 5/7 · 56 = ?",
-          "answers": [
-            "45",
-            "40",
-            "39"
-          ],
-          "correctAnswers": [
-            "40"
-          ]
-        }
-      ]
+      "questions": []
     },
     {
       "id": "https://lomdot.education.gov.il/metodica/720active/math/ratio/05/methodica-math-ratio-05-01/methodica-math-ratio-05-01-005/",

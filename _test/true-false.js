@@ -6,7 +6,8 @@
    Usage (from the repo root, with a static server on BASE):
      NODE_PATH=<tools>/node_modules node _test/true-false.js [BASE=http://127.0.0.1:8795/]
 
-   For every metadata question of type true-false (01-004 q1, 02-003 q2-q4, 03-002 q1-q4, 03-004 q3),
+   For every metadata question of type true-false (02-003 q2-q4, 03-002 q1-q4, 03-004 q3; 01-004 q1 left the
+   metadata on 10.11.26 — the guided walk-through reports nothing, _test/guided.js),
    answered all right and all wrong (twice), each answered statement must carry the reported value
    (result.response, else student_answer — what the live library turns into result.response) 'true' or
    'false', and that value equals the metadata's correct answer exactly when success is true. */
@@ -34,9 +35,6 @@ for (const c of ['01', '02', '03']) {
 
 /* one walk per component over its true/false screens, right or wrong (twice), through the handlers */
 const WALK = {
-  '01': `r => { __T.go(3); __T.go(4); const pills = [...document.querySelectorAll('#s4-pills-1 .s4-pill')];
-           const id = r ? S4_STEPS[1].correct : pills.map(p => p.dataset.id).find(x => x !== S4_STEPS[1].correct);
-           s4Choose(1, id, pills.find(p => p.dataset.id === id)); s4CheckStep(1); }`,
   '02': `r => { __T.go(3); __T.times(r, () => { [1, 2, 3].forEach(k => s3P3Select(k, r ? s3TfCorrect[k] : (s3TfCorrect[k] === 'true' ? 'false' : 'true'))); s3P3Check(); }); }`,
   '03': `r => { __T.go(2); __T.times(r, () => { [1, 2, 3, 4].forEach(k => s2P1Select(k, r ? s2TfCorrect[k] : (s2TfCorrect[k] === 'true' ? 'false' : 'true'))); s2P1Check(); });
            __T.go(5); __T.scq('s5p3', r); }`,
@@ -46,7 +44,7 @@ const WALK = {
   const browser = await puppeteer.launch({ executablePath: CHROME, headless: 'new', args: ['--mute-audio'] });
   let passes = 0, failures = 0;
   const ok = (what, cond, detail) => { if (cond) passes++; else { failures++; console.log('  FAIL ' + what + (detail ? '  —  ' + detail : '')); } };
-  ok('the metadata declares the 9 true/false questions', Object.keys(TF).length === 9, Object.keys(TF).join(' '));
+  ok('the metadata declares the 8 true/false questions', Object.keys(TF).length === 8, Object.keys(TF).join(' '));
 
   for (const c of Object.keys(WALK)) for (const right of [true, false]) {
     const page = await browser.newPage();
