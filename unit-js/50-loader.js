@@ -73,10 +73,15 @@ function bootXAPI() {
      platform could not be interpreted — and this unit has never had such a run.
      -k adds stateLastResult720() with {op,status,ok,reason} and keeps the return contracts exactly
      as they were, so it is backward compatible with -j.
+     -l (2026-11-10, hardening doc §2.10) is -k plus one additive function, saveState720OnLeave: the
+     leave save that still reaches Kata when Chrome refuses the synchronous PUT during page
+     dismissal (keepalive fallback). -k is untouched on the CDN. 40-resume.js typeof-guards the new
+     function, so this unit still runs on -k (the rollback is this letter, the regex and the
+     preload links).
 
      On localhost only, ?xapiLib=<same-origin path> may override it to test a local build.
 
-     ⚠️ The stub's filename must end in a library letter the regex below knows (xapi-720-k.js):
+     ⚠️ The stub's filename must end in a library letter the regex below knows (xapi-720-l.js):
      the regex is what sets XAPI_USING_G, and a name that does not match silences every
      item-level statement with no error.
 
@@ -84,14 +89,14 @@ function bootXAPI() {
      all. The regex must list every library letter that supports them — A NEW LETTER NOT ADDED
      HERE SILENCES xapiOnScreen AND THE VIDEO REPORTING WITH NO ERROR. Changing LIB720 and
      changing the regex must therefore happen in the same commit. */
-  var LIB720 = CDN + (RESUME_ENABLED ? 'xapi-720-k.js' : 'xapi-720-i.js');
+  var LIB720 = CDN + (RESUME_ENABLED ? 'xapi-720-l.js' : 'xapi-720-i.js');
   try {
     if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) {
       var _ovr = new URLSearchParams(location.search).get('xapiLib');
       if (_ovr && /^(\.\.?\/|\/)[^:]*$/.test(_ovr)) LIB720 = _ovr;   // same-origin relative only
     }
   } catch (e) {}
-  window.XAPI_USING_G = /xapi-720-[ghijk]\.js/.test(LIB720);
+  window.XAPI_USING_G = /xapi-720-[ghijkl]\.js/.test(LIB720);
 
   loadScript(CDN + 'xapiwrapper.min.js', function () {
     loadScript(LIB720, function () {

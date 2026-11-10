@@ -96,7 +96,7 @@ const loader = read('unit-js/50-loader.js');
 const letters = [...loader.matchAll(/xapi-720-([a-z])\.js'/g)].map(m => m[1]);
 const re = (loader.match(/XAPI_USING_G = \/xapi-720-\[([a-z]+)\]/) || [])[1] || '';
 letters.forEach(l => ok(re.includes(l), `50-loader.js loads xapi-720-${l}.js but XAPI_USING_G's regex lacks '${l}'`));
-ok(/RESUME_ENABLED = true;/.test(read('unit-js/10-identity.js')) && letters.includes('k'), 'resume on must load -k');
+ok(/RESUME_ENABLED = true;/.test(read('unit-js/10-identity.js')) && letters.includes('l'), 'resume on must load -l (the leave save, 2026-11-10)');
 
 /* 5. F-2 (QA 2026-10-02): a fraction answer keeps its slash. 01 S4 step 2's pills are drawn as
    .frac > .frac-num + .frac-den (the bar is a CSS border), so textContent read "57" for 5/7 — in
@@ -148,6 +148,12 @@ if (JSDOM_) {
      'the drain persists the document as read, never a capture');
   ok(/if \(!_resumeReady\) return;\s*try \{ persistUnitState\(captureUnitState\(\)\); \} catch \(e\) \{ console\.error\('\[resume\] ledger'/.test(res), 'markSent persists only once _resumeReady');
   ok(/if \(_resumeReadFailed\) \{[\s\S]{0,200}return false;/.test(res), 'persistUnitState refuses after a failed read');
+  /* Leave save (2026-11-10, hardening doc §2.10). Behaviour: _test/leave-save.js. */
+  ok(lib === 'xapi-720-l', 'the loader loads xapi-720-l.js (the leave save), got ' + lib);
+  const leaving = (res.split('function flushResumeSaveLeaving()')[1] || '').split(/\r?\nfunction /)[0];
+  ok(/_resumeReadFailed\) return;/.test(leaving) && /typeof window\.saveState720OnLeave === 'function'/.test(leaving),
+     'the leave flush has the write guards and typeof-guards saveState720OnLeave');
+  ok(/function flushResumeSaveOnLeave\(\) \{[^}]*flushResumeSaveLeaving\(\);/.test(res), 'the leave handler goes through flushResumeSaveLeaving');
   ok(/if \(!_payload && !_resumeReadFailed\) dropBootCover\(\);/.test(loader) && /_resumeReady = !_resumeReadFailed;/.test(loader), 'the loader keeps the cover and the writes closed on a failed read');
   UNITS.forEach(u => {
     const h = read(u + '/index.html');

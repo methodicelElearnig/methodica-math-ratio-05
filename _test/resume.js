@@ -51,7 +51,7 @@ async function screens(page) {
     await page.setViewport({ width: 1280, height: 710 });
     const errs = [];
     page.on('pageerror', e => errs.push(e.message));
-    const url = BASE + slug + '/index.html?xapiLib=../_test/xapi-720-k.js';
+    const url = BASE + slug + '/index.html?xapiLib=../_test/xapi-720-l.js';
     const ready = () => page.waitForFunction(() => window.__stmts && __stmts().filter(s => s.verb === 'initialized' && s.objectType === 'onlinelesson').length >= (window.__expectInit || 1) && !document.getElementById('boot-cover'), { timeout: 20000 });
     const style = () => page.addStyleTag({ content: '*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}' });
 

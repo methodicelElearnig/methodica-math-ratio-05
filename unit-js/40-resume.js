@@ -596,11 +596,24 @@ function flushResumeSave() {
   try { window.saveState720(RESUME_STATE_ID, captureUnitState()); } catch (e) {}
 }
 
+/* The leave flush (2026-11-10, xapi-720-l.js; hardening doc §2.10). Same guards as flushResumeSave,
+   but through saveState720OnLeave: Chrome refuses the synchronous PUT of saveState720 while the page
+   is being dismissed, so on -k every leave save failed and the last debounced change (≤ 800 ms) was
+   lost. -l tries the same synchronous PUT first and only when it throws re-sends it as a keepalive
+   fetch. typeof-guarded: on -k this is flushResumeSave. Answer / completion commits stay on
+   flushResumeSave — they run with the page alive. */
+function flushResumeSaveLeaving() {
+  if (!RESUME_ENABLED || !_resumeReady || _restoring || _resumeReadFailed) return;
+  var save = (typeof window.saveState720OnLeave === 'function') ? window.saveState720OnLeave : window.saveState720;
+  if (typeof save !== 'function') return;
+  try { save(RESUME_STATE_ID, captureUnitState()); } catch (e) {}
+}
+
 /* Leaving the page. beforeunload alone is not enough: it never fires when a mobile tab is
    backgrounded and then killed, which is exactly how a learner leaves mid-lesson. */
 function flushResumeSaveOnLeave() {
   if (_leavingToNextPart) return;
-  flushResumeSave();
+  flushResumeSaveLeaving();
 }
 
 /* ── O-2 (live Kata run 2026-09-27, QA/2026-09-27/REPORT.md) ──

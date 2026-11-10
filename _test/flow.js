@@ -37,7 +37,7 @@ function trim(u) { return String(u || '').replace(/\/+$/, ''); }
       const errs = [];
       page.on('pageerror', e => errs.push(e.message));
       page.on('console', m => { if (m.type() === 'error' && !/favicon|404/.test(m.text())) errs.push(m.text()); });
-      const url = BASE + slug + '/index.html?xapiLib=../_test/xapi-720-k.js';
+      const url = BASE + slug + '/index.html?xapiLib=../_test/xapi-720-l.js';
       await page.goto(url, { waitUntil: 'networkidle0' });
       await page.evaluate(() => __reset());
       await page.goto(url, { waitUntil: 'networkidle0' });

@@ -23,7 +23,7 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
   let passes = 0, failures = 0;
   const ok = (what, cond, detail) => { if (cond) passes++; else { failures++; console.log('  FAIL ' + what + (detail ? '  —  ' + detail : '')); } };
 
-  const url = u => BASE + 'methodica-math-ratio-05-' + u + '/index.html?xapiLib=../_test/xapi-720-k.js';
+  const url = u => BASE + 'methodica-math-ratio-05-' + u + '/index.html?xapiLib=../_test/xapi-720-l.js';
   const booted = page => page.waitForFunction(() => window.__stmts && __stmts().some(s => s.verb === 'initialized' && s.objectType === 'onlinelesson') && !document.getElementById('boot-cover'), { timeout: 20000 });
   const open = async u => {
     const page = await browser.newPage();

@@ -15,8 +15,8 @@ window.XAPI_UNIT_ID = 'methodica-math-ratio-05';
 /* Last path segment of a canonical id — the short slug the issue-report form records. */
 function shortId(u){ return String(u || '').replace(/\/+$/, '').split('/').pop(); }
 
-/* Resume (Kata State API) — ON. Also switches the loader to xapi-720-k.js (State transport +
-   diagnostics); with false it would load xapi-720-i.js and read/write no state document.
+/* Resume (Kata State API) — ON. Also switches the loader to xapi-720-l.js (State transport,
+   diagnostics and the leave save; 2026-11-10); with false it would load xapi-720-i.js and read/write no state document.
    One document per {learner, component}, addressed by ?registration (40-resume.js,
    45-resume-part.js). */
 var RESUME_ENABLED = true;

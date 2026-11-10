@@ -52,7 +52,7 @@ const WALK = {
     const page = await browser.newPage();
     const errs = [];
     page.on('pageerror', e => errs.push(e.message));
-    const url = BASE + UNIT + '-' + c + '/index.html?xapiLib=../_test/xapi-720-k.js';
+    const url = BASE + UNIT + '-' + c + '/index.html?xapiLib=../_test/xapi-720-l.js';
     await page.goto(url, { waitUntil: 'networkidle0' });
     await page.evaluate(() => { __reset(); try { localStorage.clear(); } catch (e) {} });
     await page.goto(url, { waitUntil: 'networkidle0' });
